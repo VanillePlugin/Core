@@ -1,0 +1,29 @@
+<?php
+/**
+ * @author    : JIHAD SINNAOUR
+ * @package   : VanillePlugin
+ * @version   : 0.0.1
+ * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
+ * @link      : https://jakiboy.github.io/VanillePlugin/
+ * @license   : MIT
+ *
+ * This file if a part of VanillePlugin Framework
+ * Allowed to edit for plugin customization
+ */
+
+namespace winamaz\core\system\includes\thirdparty;
+
+final class AMP
+{
+	/**
+	 * @access public
+	 * @param void
+	 * @return boolean
+	 */
+	public static function isActive()
+	{
+		if ( function_exists('is_amp_endpoint') ) {
+			return is_amp_endpoint();
+		} else return false;
+	}
+}

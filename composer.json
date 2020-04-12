@@ -1,0 +1,29 @@
+{
+  "name": "jakiboy/vanilleplugin-framework",
+  "version" : "1.0.0",
+  "type": "library",
+  "description": "Framwork for VanillePlugin",
+  "keywords": ["VanillePlugin","WordPress","WordPress-Plugin","WordPress-Plugin-Framework","jakiboy"],
+  "homepage": "https://jakiboy.github.io/VanillePlugin/",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jihad Sinnaour",
+      "email": "mail@jihadsinnaour.com",
+      "role": "Founder"
+    },
+    {
+      "name": "Softgine",
+      "email": "e-mailing@soft-gine.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=5.6"
+  },
+  "autoload": {
+    "psr-4" : {
+      "Apaapi\\" : "src/"
+    }
+  }
+}
