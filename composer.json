@@ -1,5 +1,5 @@
 {
-  "name": "jakiboy/vanilleplugin-framework",
+  "name": "jakiboy/vanilleplugin",
   "version" : "1.0.0",
   "type": "library",
   "description": "Framwork for VanillePlugin",
