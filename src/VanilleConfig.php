@@ -180,6 +180,17 @@ trait VanilleConfig
 	}
 
 	/**
+	 * Get logs path
+	 *
+	 * @param void
+	 * @return string
+	 */
+	public function getLoggerPath()
+	{
+		return "{$this->getRoot()}{$this->global->path->logs}";
+	}
+
+	/**
 	 * Get static migrate
 	 *
 	 * @param void

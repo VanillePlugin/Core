@@ -54,6 +54,18 @@ final class Json extends File
 	 * @param mixen $data
 	 * @return json
 	 *
+	 */
+	public static function encode($data)
+	{
+		return json_encode($data);
+	}
+
+	/**
+	 * Format JSON For WordPress
+	 *
+	 * @param mixen $data
+	 * @return json
+	 *
 	 * JSON_UNESCAPED_UNICODE : 256
 	 * JSON_UNESCAPED_SLASHES : 64
 	 * JSON_PRETTY_PRINT : 64
@@ -61,27 +73,5 @@ final class Json extends File
 	public static function format($data)
 	{
 		return json_encode($data,64|128|256);
-	}
-
-	/**
-	 * Strip Slashes
-	 *
-	 * @param mixen $data
-	 * @return json
-	 */
-	public static function stripSlash($data)
-	{
-		return stripslashes_deep($data);
-	}
-
-	/**
-	 * @param $json
-	 * @return json
-	 */
-	public static function clean($json, $single = null)
-	{
-		$json = str_replace('\\\\', '\\', $json);
-		if ($single) $json = str_replace('\\', '', $json);
-		return $json;
 	}
 }

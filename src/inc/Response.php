@@ -15,12 +15,14 @@ namespace VanillePlugin\inc;
 final class Response
 {
 	/**
+	 * @param string $message
+	 * @param array $content
 	 * @param string $status
 	 * @return json
 	 */
 	public static function set($message = '', $content = [], $status = 'success')
 	{
-		echo json_encode([
+		echo Json::encode([
 			'status'  => $status,
 			'message' => $message,
 			'content' => $content
@@ -29,12 +31,12 @@ final class Response
 	}
 
 	/**
-	 * @param string $reponse, boolean|null $array
-	 * @return array|object
+	 * @param string $reponse
+	 * @param boolean $isArray
+	 * @return mixed
 	 */
-	public static function get($reponse, $array = null)
+	public static function get($reponse, $isArray = false)
 	{
-		if ($array) return json_decode( $reponse, true );
-		else return json_decode( $reponse );
+		return Json::decode($reponse,$isArray);
 	}
 }
