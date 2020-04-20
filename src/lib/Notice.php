@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.0.1
+ * @version   : 0.0.9
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -11,13 +11,19 @@
  * Allowed to edit for plugin customization
  */
 
-namespace VanillePlugin\int;
+namespace VanillePlugin\lib;
 
-interface FrontInterface
+use VanillePlugin\int\NoticeInterface;
+
+class Notice extends View implements NoticeInterface
 {
-    /**
-     * @param ShortcodeInterface $shortcode
-     * @return void
-     */
-	function __construct(ShortcodeInterface $shortcode = null);
+	/**
+	 * @access public
+	 * @param array $callable
+	 * @return void
+	 */
+	public function init($callable = [])
+	{
+		$this->addAction('admin_notices', $callable);
+	}
 }

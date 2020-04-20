@@ -8,7 +8,6 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\int;
@@ -19,18 +18,17 @@ interface ConfigInterface
      * @param void
      * @return void
      */
-    function __construct();
-    
-    /**
-     * @param string $property
-     * @return void
-     */
-	public function __get($property);
+    public function __construct($path = '');
 
     /**
-     * @param string $property
-     * @param string $value
+     * @param void
      * @return void
      */
-	public function __set($property,$value);
+    public static function getNameSpace();    
+
+    /**
+     * @param void
+     * @return void
+     */
+    public static function getRoot();
 }

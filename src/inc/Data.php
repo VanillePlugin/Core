@@ -8,14 +8,11 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
-namespace VanillePlugin\lib;
+namespace VanillePlugin\inc;
 
-use VanilleNameSpace\core\system\libraries\interfaces\ConfigInterface;
-
-class Data
+final class Data
 {
 	/**
 	 * @since 4.0.0
@@ -47,6 +44,22 @@ class Data
 	 * @return mixed
 	 */
 	public static function slashStrip($data)
+	{
+		$data = stripslashes_deep($data);
+	    return $data;
+	}
+
+	/**
+	 * Deeply strip slashes
+	 *
+	 * @see /Function_Reference/stripslashes_deep/
+	 * @since 4.0.0
+	 * @version 5.4
+	 * @access public
+	 * @param mixed $data
+	 * @return mixed
+	 */
+	public static function translate($string)
 	{
 		$data = stripslashes_deep($data);
 	    return $data;

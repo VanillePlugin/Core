@@ -8,7 +8,6 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\int;
@@ -16,20 +15,20 @@ namespace VanillePlugin\int;
 interface AjaxInterface
 {
     /**
+     * @param object $callable
+     * @return void
+     */
+    function __construct($callable);
+    
+    /**
      * @param void
      * @return void
      */
-    function __construct();
-    
+    function callback();
+
     /**
      * @param string $action
      * @return boolean
      */
-	public function isAction($action);
-
-    /**
-     * @param void
-     * @return void
-     */
-	public function callback();
+    function isAction($action);
 }

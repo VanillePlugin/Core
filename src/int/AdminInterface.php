@@ -16,10 +16,9 @@ namespace VanillePlugin\int;
 interface AdminInterface
 {
     /**
-     * @param ConfigInterface $config
      * @param MenuInterface $menu
      * @param SettingsInterface $settings
      * @return void
      */
-	function __construct(ConfigInterface $config = null, MenuInterface $menu = null, SettingsInterface $settings = null);
+	function __construct(MenuInterface $menu = null, SettingsInterface $settings = null);
 }

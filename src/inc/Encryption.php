@@ -13,7 +13,7 @@
 
 namespace winamaz\core\system\includes;
 
-class Encryption
+final class Encryption
 {
 	/**
 	 * @access public

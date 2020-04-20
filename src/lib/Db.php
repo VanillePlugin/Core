@@ -8,24 +8,19 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\ConfigInterface;
-
-class Db
+class Db extends PluginOptions
 {
 	/**
 	 * @access public
-	 * @var string $prefix | db prefix
-	 * @var string $collate | collate
-	 * @var string $basePrefix | table prefix
+	 * @var string $prefix, default prefix
+	 * @var string $collate, collate
 	 */
 	public $prefix;
 	public $collate;
-	public $basePrefix;
 
 	/**
 	 * @access protected
@@ -37,15 +32,14 @@ class Db
 	 * Wrapp Wordpress database object
 	 *
 	 * @access protected
-	 * @param ConfigInterface $config
+	 * @param void
 	 * @return void
 	 */
-	protected function init(ConfigInterface $config = null)
+	protected function init()
 	{
 		global $wpdb;
 		$this->db = $wpdb;
 		$this->prefix  = $this->db->prefix;
 		$this->collate = $this->db->collate;
-		$this->basePrefix = $config->prefix;
 	}
 }

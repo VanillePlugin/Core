@@ -11,13 +11,19 @@
  * Allowed to edit for plugin customization
  */
 
-namespace VanillePlugin\int;
+namespace winamaz\core\system\includes\thirdparty;
 
-interface FrontInterface
+final class AMP
 {
-    /**
-     * @param ShortcodeInterface $shortcode
-     * @return void
-     */
-	function __construct(ShortcodeInterface $shortcode = null);
+	/**
+	 * @access public
+	 * @param void
+	 * @return boolean
+	 */
+	public static function isActive()
+	{
+		if ( function_exists('is_amp_endpoint') ) {
+			return is_amp_endpoint();
+		} else return false;
+	}
 }

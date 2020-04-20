@@ -13,23 +13,35 @@
 
 namespace VanillePlugin\int;
 
-interface SettingsInterface
+interface UpdaterInterface
 {
     /**
-     * @param void
+     * @param string $hostUrl
+     * @param array $params
+     * @param boolean $forceUnsafe
      * @return void
+     *
+     * action : admin_init
      */
-	public function init();
+    function __construct($hostUrl, $params = [], $forceUnsafe = false);
 
     /**
      * @param void
      * @return void
      */
-	public static function remove();
+    function init();
 
     /**
+     * @param object $transient
+     * @return mixed
+     */
+    function check($transient);
+
+    /**
+     * @param object $transient
      * @param string $action
-     * @return void
+     * @param array $args
+     * @return mixed
      */
-	public static function checkToken($action = -1);
+    function infos($transient, $action, $args)
 }

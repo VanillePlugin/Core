@@ -19,12 +19,5 @@ interface ShortcodeInterface
      * @param void
      * @return void
      */
-	function __construct();
-	
-    /**
-     * @param string $name
-     * @param array $callable
-     * @return void
-     */
-	public function add($name, $callable = []);
+	public function init();
 }

@@ -8,25 +8,44 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
-namespace winamaz\core\system\includes;
+namespace VanillePlugin\inc;
 
-class Json
+final class Json extends File
 {
 	/**
-	 * @param string $json
-	 * @param boolean $object
-	 * @return array|object
+	 * @param inherit
+	 * @return object File
 	 */
-	public static function decode($json, $object = false)
+	private $content;
+
+	/**
+	 * @param inherit
+	 * @return object File
+	 */
+	public function __construct($path)
 	{
-		if ($object) {
-			return json_decode($json, false);
-		} else {
-			return json_decode($json, true);
-		}
+		$this->content = parent::read($path);
+	}
+
+	/**
+	 * @param boolean $isArray
+	 * @return mixed
+	 */
+	public function parse($isArray = false)
+	{
+		return self::decode($this->content, $isArray);
+	}
+
+	/**
+	 * @param string $content
+	 * @param boolean $isArray
+	 * @return mixed
+	 */
+	public static function decode($content, $isArray = false)
+	{
+		return json_decode($content, $isArray);
 	}
 
 	/**
@@ -41,7 +60,7 @@ class Json
 	 */
 	public static function format($data)
 	{
-		return json_encode($data, 64|128|256);
+		return json_encode($data,64|128|256);
 	}
 
 	/**
@@ -62,9 +81,7 @@ class Json
 	public static function clean($json, $single = null)
 	{
 		$json = str_replace('\\\\', '\\', $json);
-		if ($single) {
-			$json = str_replace('\\', '', $json);
-		}
+		if ($single) $json = str_replace('\\', '', $json);
 		return $json;
 	}
 }

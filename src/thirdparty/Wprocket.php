@@ -11,13 +11,19 @@
  * Allowed to edit for plugin customization
  */
 
-namespace VanillePlugin\int;
+namespace winamaz\core\system\includes\thirdparty;
 
-interface FrontInterface
+final class Wprocket
 {
-    /**
-     * @param ShortcodeInterface $shortcode
-     * @return void
-     */
-	function __construct(ShortcodeInterface $shortcode = null);
+	/**
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	static public function purge()
+	{
+		if (function_exists('rocket_clean_domain')) {
+			rocket_clean_domain();
+		}
+	}
 }

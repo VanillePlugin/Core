@@ -13,21 +13,15 @@
 
 namespace VanillePlugin\int;
 
-interface OrmInterface
+interface OrmInterface extends NameSpaceInterface
 {
     /**
-     * @param void
-     * @return void
-     */
-    function __construct();
-    
-    /**
      * @param ConfigInterface $config
      * @param ShortcodeInterface $menu
      * @param SettingsInterface $settings
      * @return void
      */
-	public function select(OrmQueryInterface $data);
+	function select(OrmQueryInterface $data);
 
     /**
      * @param ConfigInterface $config
@@ -35,7 +29,7 @@ interface OrmInterface
      * @param SettingsInterface $settings
      * @return void
      */
-	public function count(OrmQueryInterface $data);
+	function count(OrmQueryInterface $data);
 
     /**
      * @param ConfigInterface $config
@@ -43,7 +37,7 @@ interface OrmInterface
      * @param SettingsInterface $settings
      * @return void
      */
-	public function insert($table, $data = [], $format = false);
+	function insert($table, $data = [], $format = false);
 
     /**
      * @param ConfigInterface $config
@@ -51,7 +45,7 @@ interface OrmInterface
      * @param SettingsInterface $settings
      * @return void
      */
-	public function delete($table, $where = [], $format = null);
+	function delete($table, $where = [], $format = null);
 
     /**
      * @param ConfigInterface $config
@@ -59,5 +53,5 @@ interface OrmInterface
      * @param SettingsInterface $settings
      * @return void
      */
-	public function deleteAll($table);
+	function deleteAll($table);
 }

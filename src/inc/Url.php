@@ -8,12 +8,11 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
-namespace winamaz\core\system\includes;
+namespace VanillePlugin\inc;
 
-class Url 
+final class Url 
 {
 	/**
 	 * @access public
@@ -112,11 +111,9 @@ class Url
 	 */
 	private function getProtocol()
 	{
-		if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
-		{
+		if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
 			$this->protocol = 'https://';
-		}
-		else
+		} else
 		{
 			$this->protocol = 'http://';
 		}

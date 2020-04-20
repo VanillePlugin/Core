@@ -13,7 +13,9 @@
 
 namespace VanillePlugin\lib;
 
-class Updater extends Settings
+use VanillePlugin\int\UpdaterInterface;
+
+class Updater extends PluginOptions implements UpdaterInterface
 {
 	/**
 	 * @access private
@@ -22,8 +24,6 @@ class Updater extends Settings
 	private $hostUrl;
 	private $siteUrl;
 	private $wpVerion;
-	private $pluginSlug;
-	private $plugin;
 	private $infoUrl;
 	private $license = [];
 	private $headers = [];
@@ -31,10 +31,18 @@ class Updater extends Settings
 	private $unsafe = false;
 
 	/**
-	 * @param void
+	 * @param string $hostUrl
+	 * @param array $params
+	 * @param boolean $forceUnsafe
+	 * @return void
+	 *
+	 * action : admin_init
 	 */
-	function __construct($hostUrl, $file, $params = [], $forceUnsafe = false)
+	public function __construct($hostUrl, $params = [], $forceUnsafe = false)
 	{
+		// Init plugin config
+		$this->initConfig();
+
 		global $wp_version;
 		$this->wpVerion = $wp_version;
 		$this->hostUrl  = $hostUrl;
@@ -46,13 +54,11 @@ class Updater extends Settings
 		}
 		
 		// Define request
-		$this->siteUrl    = get_bloginfo('url');
-		$this->pluginSlug = basename(dirname($file));
-		$this->plugin     = "{$this->pluginSlug}/{$this->pluginSlug}.php";
-		$this->license    = isset($params['license']) ? $params['license'] : false;
-		$this->headers    = isset($params['headers']) ? $params['headers'] : [];
-		$this->infoUrl    = isset($params['infoUrl']) ? $params['infoUrl'] : false;
-		$this->params     = $params;
+		$this->siteUrl = get_bloginfo('url');
+		$this->license = isset($params['license']) ? $params['license'] : false;
+		$this->headers = isset($params['headers']) ? $params['headers'] : [];
+		$this->infoUrl = isset($params['infoUrl']) ? $params['infoUrl'] : false;
+		$this->params  = $params;
 
 		// Split params
 		unset($this->params['headers']);
@@ -64,6 +70,7 @@ class Updater extends Settings
 	}
 
 	/**
+	 * @access public
 	 * @param void
 	 * @return void
 	 */
@@ -75,21 +82,22 @@ class Updater extends Settings
 	}
 
 	/**
-	 * Todo
-	 *
-	 * @param void
-	 * @return void
+	 * @access public
+	 * @param object $transient
+	 * @return mixed
 	 */
 	public function check($transient)
 	{
-		if ( empty($transient->checked) ) return $transient;
+		if ( empty($transient->checked) ) {
+			return $transient;
+		}
 
 		$response = false;
-		$version  = isset($transient->checked[$this->plugin])
-		? $transient->checked[$this->plugin] : null;
+		$version  = isset($transient->checked[$this->getMainFile()])
+		? $transient->checked[$this->getMainFile()] : null;
 		
 		$params = [
-			'slug'      => $this->pluginSlug,
+			'slug'      => $this->getNameSpace(),
 			'version'   => $version,
 			'wpversion' => $this->wpVerion
 		];
@@ -97,11 +105,11 @@ class Updater extends Settings
 		$query = [
 			'headers' => $this->headers,
 			'body' => [
-				'action'  => "{$this->pluginSlug}-check-update", 
+				'action'  => "{$this->getNameSpace()}-check-update", 
 				'request' => serialize($params),
 				'params'  => $this->params
 			],
-			'user-agent' => "{$this->pluginSlug}-wordpress/{$version};"
+			'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
 		];
 
 		$query = $this->setLicense($query);
@@ -112,19 +120,20 @@ class Updater extends Settings
 		}
 
 		if ( is_object($response) && !empty($response) ) {
-			$transient->response[$this->plugin] = $response;
+			$transient->response[$this->getMainFile()] = $response;
 		}
 		
 		return $transient;
 	}
 
 	/**
+	 * @access public
 	 * @param object $transient
 	 * @param string $action
 	 * @param array $args
 	 * @return mixed
 	 */
-	function infos($transient, $action, $args)
+	public function infos($transient, $action, $args)
 	{
 		// // Check activated option
 		if ( !$this->infoUrl ) return false;
@@ -132,21 +141,21 @@ class Updater extends Settings
 		// // Check action
 		if ( $action !== 'plugin_information' ) return false;
 
-		if ( $args->slug === $this->pluginSlug ) {
-			$pluginInfos = $this->pluginInfo($this->plugin);
+		if ( $args->slug === $this->getNameSpace() ) {
+			$pluginInfos = $this->getPluginInfo($this->getMainFile());
 			$params = [
-				'slug'      => $this->pluginSlug,
+				'slug'      => $this->getNameSpace(),
 				'version'   => $pluginInfos['Version'],
 				'wpversion' => $this->wpVerion
 			];
 			$query = [
 				'headers' => $this->headers,
 				'body' => [
-					'action'  => "{$this->pluginSlug}-get-info", 
+					'action'  => "{$this->getNameSpace()}-get-info", 
 					'request' => serialize($params),
 					'params'  => $this->params
 				],
-				'user-agent' => "{$this->pluginSlug}-wordpress/{$pluginInfos['Version']};"
+				'user-agent' => "{$this->getNameSpace()}-wordpress/{$pluginInfos['Version']};"
 			];
 
 			$query = $this->setLicense($query);
@@ -160,10 +169,9 @@ class Updater extends Settings
 	}
 
 	/**
-	 * Todo
-	 *
-	 * @param void
-	 * @return void
+	 * @access private
+	 * @param array $query
+	 * @return array
 	 */
 	private function setLicense($query)
 	{
@@ -176,12 +184,11 @@ class Updater extends Settings
 	}
 
 	/**
-	 * Todo
-	 *
-	 * @param void
-	 * @return void
+	 * @access private
+	 * @param array $args
+	 * @return array
 	 */
-	public function setRequest($args)
+	private function setRequest($args)
 	{
 		if ($this->unsafe) {
 			$args['reject_unsafe_urls'] = false;

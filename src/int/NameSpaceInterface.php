@@ -13,11 +13,11 @@
 
 namespace VanillePlugin\int;
 
-interface FrontInterface
+interface NameSpaceInterface
 {
-    /**
-     * @param ShortcodeInterface $shortcode
-     * @return void
-     */
-	function __construct(ShortcodeInterface $shortcode = null);
+	/**
+	 * @param PluginNameSpaceInterface $namespace
+	 * @return void
+	 */
+	function __construct(PluginNameSpaceInterface $namespace);
 }

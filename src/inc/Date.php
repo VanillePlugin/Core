@@ -8,14 +8,13 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
-namespace winamaz\core\system\includes;
+namespace VanillePlugin\inc;
 
 use \DateTime;
 
-class Date
+final class Date
 {
 	/**
 	 * @access public

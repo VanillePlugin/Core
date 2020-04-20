@@ -19,5 +19,5 @@ interface MenuInterface
      * @param void
      * @return void
      */
-	function __construct();
+	public function init();
 }

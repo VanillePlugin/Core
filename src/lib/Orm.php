@@ -8,39 +8,50 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\OrmInterface;
+use VanillePlugin\int\OrmQueryInterface;
+use VanillePlugin\int\PluginNameSpaceInterface;
 
-class Orm extends Db implements OrmInterface
+class Orm extends Db // implements OrmInterface
 {
 	/**
-	 * init Db object
-	 *
-	 * @param void
+	 * Init Db object
+	 * @param PluginNameSpaceInterface $namespace
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct(PluginNameSpaceInterface $namespace)
 	{
-		self::init(new Config);
+		$this->init();
+		$this->initConfig($namespace);
 	}
 
 	/**
-	 * Custom Query
+	 * Custom SQL Query
 	 *
 	 * @access public
 	 * @param string $sql
-	 * @param boolean $return
-	 * @return int
+	 * @return mixed
 	 */
-	public function query($sql, $return = false, $type = 'ARRAY_A')
+	public function query($sql)
 	{
-		if ($return) {
-			return $this->db->get_results($sql,$type);
-		} else return $this->db->query($sql);
+		return $this->db->query($sql);
+	}
+
+	/**
+	 * Fetch SQL Query
+	 *
+	 * @access public
+	 * @param string $sql
+	 * @param string $type
+	 * @return mixed
+	 */
+	public function fetchQuery($sql, $type = 'ARRAY_A')
+	{
+		return $this->db->get_results($sql, $type);
 	}
 
 	/**
@@ -53,7 +64,7 @@ class Orm extends Db implements OrmInterface
 	public function select(OrmQueryInterface $data)
 	{
 		extract($data->query);
-		$sql = "SELECT {$column} FROM {$this->prefix}{$this->basePrefix}{$table} {$where} {$orderby} {$limit}";
+		$sql = "SELECT {$column} FROM {$this->getPrefix()}{$this->basePrefix}{$table} {$where} {$orderby} {$limit}";
 		if ($isSingle) {
 			return $this->db->get_var($sql);
 		} elseif ($isRow) {
@@ -73,7 +84,7 @@ class Orm extends Db implements OrmInterface
 	public function count(OrmQueryInterface $data)
 	{
 		extract($data->query);
-		$sql = "SELECT COUNT(*) FROM {$this->prefix}{$this->basePrefix}{$table} {$where}";
+		$sql = "SELECT COUNT(*) FROM {$this->getPrefix()}{$this->basePrefix}{$table} {$where}";
 		return intval($this->db->get_var($sql));
 	}
 
@@ -88,7 +99,7 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function insert($table, $data = [], $format = false)
 	{
-		$this->db->insert("{$this->prefix}{$this->basePrefix}{$table}", $data, $format);
+		$this->db->insert("{$this->getPrefix()}{$this->basePrefix}{$table}", $data, $format);
 		return $this->db->insert_id;
 	}
 
@@ -104,7 +115,7 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function update($table, $data = [], $where = [], $format = false)
 	{
-		return $this->db->update("{$this->prefix}{$this->basePrefix}{$table}", $data, $where, $format);
+		return $this->db->update("{$this->getPrefix()}{$this->basePrefix}{$table}", $data, $where, $format);
 	}
 
 	/**
@@ -116,7 +127,7 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function deleteAll($table)
 	{
-		$sql = "DELETE FROM {$this->prefix}{$this->basePrefix}{$table}";
+		$sql = "DELETE FROM {$this->getPrefix()}{$this->basePrefix}{$table}";
 		return $this->db->query($sql);
 	}
 
@@ -129,6 +140,6 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function delete($table, $where = [], $format = null)
 	{
-		return $this->db->delete("{$this->prefix}{$this->basePrefix}{$table}", $where, $format);
+		return $this->db->delete("{$this->getPrefix()}{$this->basePrefix}{$table}", $where, $format);
 	}
 }

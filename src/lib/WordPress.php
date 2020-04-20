@@ -11,15 +11,67 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\lib;
 
-use VanilleNameSpace\core\system\includes\Config;
+use VanillePlugin\inc\Data;
 
+/**
+ * WordPress Class Wrrap Global Functions
+ * Defines Only Base Function Used by Plugin
+ */
 class WordPress
 {
+	/**
+	 * Set the activation hook for a plugin
+	 *
+	 * @see /reference/functions/register_activation_hook/
+	 * @since 4.0.0
+	 * @version 5.4
+	 * @access protected
+	 * @param string $file
+	 * @param callable $method
+	 * @return void
+	 */
+	protected function registerActivation($file, $method)
+	{
+		register_activation_hook($file, $method);
+	}
+
+	/**
+	 * Set the deactivation hook for a plugin
+	 *
+	 * @see /reference/functions/register_deactivation_hook/
+	 * @since 4.0.0
+	 * @version 5.4
+	 * @access protected
+	 * @param string $file
+	 * @param callable $method
+	 * @return void
+	 */
+	protected function registerDeactivation($file, $method)
+	{
+		register_deactivation_hook($file, $method);
+	}
+
+	/**
+	 * Set the uninstallation hook for a plugin
+	 * use class name instead of $this
+	 *
+	 * @see /reference/functions/register_uninstall_hook/
+	 * @since 4.0.0
+	 * @version 5.4
+	 * @access protected
+	 * @param string $file
+	 * @param callable $method
+	 * @return void
+	 */
+	protected function registerUninstall($file, $method)
+	{
+		register_uninstall_hook($file,$method);
+	}
+	
 	/**
 	 * Register a shortcode handler
 	 *
@@ -276,8 +328,8 @@ class WordPress
 		if ( strpos($path, 'http') == false ){
 		    $path = $this->getPluginUrl($path);
 		}
-		wp_register_style("{$id}-css", $path, $deps, $version, $media);
-		wp_enqueue_style("{$id}-css");
+		wp_register_style($id, $path, $deps, $version, $media);
+		wp_enqueue_style($id);
 	}
 
 	/**
@@ -295,13 +347,13 @@ class WordPress
 	 * @param string $footer
 	 * @return void
 	 */
-	protected function addJS($id, $path, $deps = [], $version = false, $footer = false)
+	protected function addJS($id, $path, $deps = [], $version = false, $footer = true)
 	{
 		if ( strpos($path, 'http') == false ){
 		    $path = $this->getPluginUrl($path);
 		}
-		wp_register_script("{$id}-js", $path, $deps, $version, $footer);
-		wp_enqueue_script("{$id}-js");
+		wp_register_script($id, $path, $deps, $version, $footer);
+		wp_enqueue_script($id);
 	}
 
 	/**
@@ -368,61 +420,12 @@ class WordPress
 	 * @access protected
 	 * @param string $id
 	 * @param object $object
-	 * @param array $data
+	 * @param array $content
 	 * @return boolean
 	 */
-	protected function localizeJS($id, $object, $data = [])
+	protected function localizeJS($id, $object, $content = [])
 	{
-		wp_localize_script("{$id}-js", $object, $data);
-	}
-
-	/**
-	 * Set the activation hook for a plugin
-	 *
-	 * @see /reference/functions/register_activation_hook/
-	 * @since 4.0.0
-	 * @version 5.4
-	 * @access protected
-	 * @param string $file
-	 * @param callable $method
-	 * @return void
-	 */
-	protected function registerActivation($file, $method)
-	{
-		register_activation_hook($file, $method);
-	}
-
-	/**
-	 * Set the deactivation hook for a plugin
-	 *
-	 * @see /reference/functions/register_deactivation_hook/
-	 * @since 4.0.0
-	 * @version 5.4
-	 * @access protected
-	 * @param string $file
-	 * @param callable $method
-	 * @return void
-	 */
-	protected function registerDeactivation($file, $method)
-	{
-		register_deactivation_hook($file, $method);
-	}
-
-	/**
-	 * Set the uninstallation hook for a plugin
-	 * use class name instead of $this
-	 *
-	 * @see /reference/functions/register_uninstall_hook/
-	 * @since 4.0.0
-	 * @version 5.4
-	 * @access protected
-	 * @param string $file
-	 * @param callable $method
-	 * @return void
-	 */
-	protected function registerUninstall($file, $method)
-	{
-		register_uninstall_hook($file,$method);
+		wp_localize_script($id, $object, $content);
 	}
 
 	/**
@@ -455,8 +458,7 @@ class WordPress
 	 */
 	protected static function getOption($name, $default = null)
 	{
-		$option = get_option($name,$default);
-		return Data::slashStrip($option);
+		return get_option($name, $default);
 	}
 
 	/**
@@ -561,40 +563,10 @@ class WordPress
 	 */
 	public function cleanAssetsUrl($url)
 	{
-		if( strpos($url,'?ver=') ) $url = remove_query_arg('ver',$url);
-		return $url;
-	}
-
-	/**
-	 * Check if is plugin namespace
-	 *
-	 * @param void
-	 * @return true|null
-	 */
-	public function isPluginAdmin()
-	{
-		$protocol = isset($_SERVER['HTTPS']) ? "https://" : "http://";
-		$url = "{$protocol}{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-
-		// plugin namespace
-		$namespace = Config::get('namespace');
-		if ( strpos($url,"?page={$namespace}") !== false ) {
-			return true;
+		if ( strpos($url,'?ver=') ) {
+			$url = remove_query_arg('ver',$url);
 		}
-	}
-
-	/**
-	 * Get plugin root path
-	 *
-	 * @param null|string $path
-	 * @return string
-	 *
-	 * @see plugin_dir_path
-	 */
-	protected function getRoot($path = null)
-	{
-		$path = isset($path) ? WP_PLUGIN_DIR . "/{$path}" : WP_PLUGIN_DIR;
-		return "{$path}";
+		return $url;
 	}
 
 	/**
@@ -612,6 +584,49 @@ class WordPress
 	}
 
 	/**
+	 * Retrieves a URL within the plugins or mu-plugins directory
+	 *
+	 * @param string $path
+	 * @param string $plugin
+	 * @return string
+	 *
+	 * @see plugin_dir_path
+	 */
+	protected function getPluginDir($plugin = null)
+	{
+		return isset($plugin) 
+		? wp_normalize_path( WP_PLUGIN_DIR . $plugin ) : WP_PLUGIN_DIR;
+	}
+
+	/**
+	 * Retrieves a URL within the plugins or mu-plugins directory
+	 *
+	 * @param string $path
+	 * @param string $plugin
+	 * @return string
+	 *
+	 * @see plugin_dir_path
+	 */
+	protected function getThemeUrl()
+	{
+		return plugins_url($path, $plugin);
+	}
+
+	/**
+	 * Retrieves a URL within the plugins or mu-plugins directory
+	 *
+	 * @param string $path
+	 * @param string $plugin
+	 * @return string
+	 *
+	 * @see plugin_dir_path
+	 */
+	protected function getThemeDir()
+	{
+		return wp_normalize_path( get_template_directory() );
+	}
+
+	/**
 	 * Send notification
 	 *
 	 * @param void
@@ -619,7 +634,10 @@ class WordPress
 	 */
 	protected function isAdmin($url = null)
 	{
-		if (is_admin($url)) return true;
+		if ( is_admin($url) ) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -631,19 +649,6 @@ class WordPress
 	protected function isLoggedIn()
 	{
 		if (is_user_logged_in()) return true;
-	}
-
-	/**
-	 * Send email
-	 *
-	 * @param $to, $subject, $body, $header = []
-	 * @return boolean
-	 */
-	protected function sendMail($to = null, $subject, $body, $header = null)
-	{
-		if ( is_null($header) ) $header = ['Content-Type:text/html;charset=UTF-8'];
-		if ( is_null($to) || !$to ) $to = $this->getOption('admin_email');
-		return wp_mail($to, $subject, $body, $header);
 	}
 
 	/**
@@ -728,21 +733,6 @@ class WordPress
 	}
 
 	/**
-	 * Loads a plugin’s translated strings
-	 *
-	 * @category Html
-	 * @param void
-	 * @return void
-	 *
-	 * action : after_setup_theme
-	 */
-	public function translate()
-	{
-		$namespace = Config::get('namespace');
-		load_plugin_textdomain( $namespace, false, "{$namespace}/languages" ); 
-	}
-
-	/**
 	 * Redirects to another page
 	 *
 	 * @category Http
@@ -777,16 +767,5 @@ class WordPress
 	protected function log($message = '')
 	{
 		error_log($message);
-	}
-
-	/**
-	 * Return plugin infos
-	 *
-	 * @param string $name {pluginDir}/{pluginMain}.php
-	 * @return void
-	 */
-	protected function pluginInfo($name)
-	{
-		return get_plugin_data("{$this->getRoot()}/{$name}");
 	}
 }

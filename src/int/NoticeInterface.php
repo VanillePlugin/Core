@@ -13,11 +13,12 @@
 
 namespace VanillePlugin\int;
 
-interface FrontInterface
+interface NoticeInterface
 {
-    /**
-     * @param ShortcodeInterface $shortcode
-     * @return void
-     */
-	function __construct(ShortcodeInterface $shortcode = null);
+	/**
+	 * @access public
+	 * @param array $callable
+	 * @return void
+	 */
+	public function init($callable = []);
 }
