@@ -12,16 +12,17 @@
 
 namespace VanillePlugin\lib;
 
+use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\inc\Post;
 use VanillePlugin\inc\Get;
 use VanillePlugin\int\AjaxInterface;
-use VanillePlugin\lib\PluginOptions;
+use VanillePlugin\int\AdminAjaxInterface;
 
 class Ajax extends PluginOptions implements AjaxInterface
 {
 	/**
-	 * Ajax Controller
 	 * @access private
+	 * @var array $callable
 	 * @var array $actions
 	 */
 	private $callable = [];
@@ -33,17 +34,17 @@ class Ajax extends PluginOptions implements AjaxInterface
 	 * @param object $callable
 	 * @return void
 	 *
-	 * action : wp_ajax_{namespace}{action}
-	 * action : wp_ajax_nopriv_{namespace}{action}
+	 * action : wp_ajax_{namespace}-{action}
+	 * action : wp_ajax_nopriv_{namespace}-{action}
 	 */
-	public function __construct($callable)
+	public function __construct(AdminAjaxInterface $callable)
 	{
 		// Init plugin config
 		$this->initConfig();
 
 		// Set vars
 		$this->callable = $callable;
-		$this->actions = $this->getConfig()->ajax;
+		$this->actions = $this->getAjax();
 
 		// Add hooks
 		foreach ($this->actions as $action) {

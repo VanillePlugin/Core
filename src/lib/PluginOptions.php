@@ -16,6 +16,7 @@ namespace VanillePlugin\lib;
 use VanillePlugin\VanilleConfig;
 use VanillePlugin\lib\WordPress;
 use VanillePlugin\inc\Data;
+use VanillePlugin\inc\Post;
 
 class PluginOptions extends WordPress
 {
@@ -274,12 +275,12 @@ class PluginOptions extends WordPress
 	/**
 	 * Return plugin infos
 	 *
-	 * @param string $name {pluginDir}/{pluginMain}.php
-	 * @return void
+	 * @param string $file {pluginDir}/{pluginMain}.php
+	 * @return array
 	 */
-	protected function getPluginInfo($name)
+	protected function getPluginInfo($file)
 	{
-		// return get_plugin_data("{$this->getRoot()}/{$name}");
+		return get_plugin_data($file);
 	}
 
 	/**

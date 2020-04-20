@@ -18,7 +18,7 @@ interface AjaxInterface
      * @param object $callable
      * @return void
      */
-    function __construct($callable);
+    function __construct(AdminAjaxInterface $callable);
     
     /**
      * @param void
