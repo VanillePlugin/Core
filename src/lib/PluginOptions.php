@@ -226,6 +226,50 @@ class PluginOptions extends WordPress
 	}
 
 	/**
+	 * Retrieves an option value based on an option name
+	 *
+	 * @see /reference/functions/get_transient/
+	 * @since 4.0.0
+	 * @access protected
+	 * @param string $name
+	 * @return mixed
+	 */
+	protected function getTransient($name)
+	{
+		return get_transient("{$this->getNameSpace()}{$name}");
+	}
+
+	/**
+	 * Retrieves an option value based on an option name
+	 *
+	 * @see /reference/functions/set_transient/
+	 * @since 4.0.0
+	 * @access protected
+	 * @param string $name
+	 * @param mixed $value
+	 * @param int $expiration
+	 * @return mixed
+	 */
+	protected function setTransient($name, $value, $expiration = 300 )
+	{
+		return set_transient("{$this->getNameSpace()}{$name}",$value,$expiration);
+	}
+
+	/**
+	 * Retrieves an option value based on an option name
+	 *
+	 * @see /reference/functions/set_transient/
+	 * @since 4.0.0
+	 * @access protected
+	 * @param string $name
+	 * @return mixed
+	 */
+	protected function deleteTransient($name)
+	{
+		delete_transient("{$this->getNameSpace()}{$name}");
+	}
+
+	/**
 	 * Check if is plugin namespace
 	 *
 	 * @param void

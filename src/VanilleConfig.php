@@ -2,13 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.0.9
+ * @version   : 0.0.1
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin;
@@ -244,6 +243,17 @@ trait VanilleConfig
 	public function getAjax()
 	{
 		return $this->global->ajax;
+	}
+
+	/**
+	 * Get Requirements
+	 *
+	 * @param void
+	 * @return string
+	 */
+	public function getRequirement()
+	{
+		return $this->global->requirement;
 	}
 
 	/**
