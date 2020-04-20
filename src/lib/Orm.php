@@ -20,13 +20,14 @@ class Orm extends Db // implements OrmInterface
 {
 	/**
 	 * Init Db object
-	 * @param PluginNameSpaceInterface $namespace
+	 * @param void
 	 * @return void
 	 */
-	public function __construct(PluginNameSpaceInterface $namespace)
+	public function __construct()
 	{
+		// Init plugin config
+		$this->initConfig();
 		$this->init();
-		$this->initConfig($namespace);
 	}
 
 	/**

@@ -8,7 +8,6 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\int;
@@ -16,9 +15,8 @@ namespace VanillePlugin\int;
 interface NoticeInterface
 {
 	/**
-	 * @access public
 	 * @param array $callable
 	 * @return void
 	 */
-	public function init($callable = []);
+	function init($callable = []);
 }

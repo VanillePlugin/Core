@@ -8,7 +8,6 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace winamaz\core\system\includes;
@@ -31,7 +30,7 @@ final class Encryption
 	private $secretKey;
 	private $password;
 	private $length;
-	private $prefix = '[wincrypt]';
+	private $prefix = '[vanillecrypt]';
 	private $method = 'AES-256-CBC';
 
 	/**

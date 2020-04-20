@@ -18,17 +18,17 @@ interface ConfigInterface
      * @param void
      * @return void
      */
-    public function __construct($path = '');
+    function __construct($path = '');
 
     /**
      * @param void
      * @return void
      */
-    public static function getNameSpace();    
+    static function getNameSpace();    
 
     /**
      * @param void
      * @return void
      */
-    public static function getRoot();
+    static function getRoot();
 }

@@ -8,44 +8,32 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\lib;
 
-class Session
+class Session extends PluginOptions
 {
 	/**
-	 * @access public
-	 * @var array $session
-	 * @var string $prefix
-	 */
-	public static $session;
-	public static $prefix = 'VanilleNameSpace';
-
-	/**
-	 * Construct front
 	 * @param void
 	 * @return void
-	 *
 	 */
 	public function __construct()
 	{
+		// Init plugin config
+		$this->initConfig();
 		wp_session_start();
 	}
 
 	/**
-	 * Construct front
 	 * @param void
 	 * @return void
-	 *
 	 */
 	public function __destruct()
 	{
 		wp_session_unset();
 	}
 
-
 	/**
 	 * Wrapp Wordpress session
 	 *
@@ -53,9 +41,9 @@ class Session
 	 * @param void
 	 * @return void
 	 */
-	public static function set($name,$value = '')
+	public function set($name, $value = '')
 	{
-		$_SESSION[static::$prefix][$name] = $value;
+		$_SESSION[$this->getNameSpace()][$name] = $value;
 	}
 
 	/**
@@ -65,10 +53,10 @@ class Session
 	 * @param void
 	 * @return void
 	 */
-	public static function get($name)
+	public function get($name)
 	{
-		if ( isset($_SESSION[static::$prefix][$name]) ) {
-			return $_SESSION[static::$prefix][$name];
+		if ( isset($_SESSION[$this->getNameSpace()][$name]) ) {
+			return $_SESSION[$this->getNameSpace()][$name];
 		} else return false;
 	}
 
@@ -79,8 +67,8 @@ class Session
 	 * @param void
 	 * @return void
 	 */
-	public static function isSetted()
+	public function isSetted()
 	{
-		if ( session_id() ) return true;
+		if (session_id()) return true;
 	}
 }

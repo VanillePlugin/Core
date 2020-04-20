@@ -8,12 +8,11 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\lib;
 
-use VanilleNameSpace\core\system\libraries\interfaces\OrmQueryInterface;
+use VanillePlugin\int\OrmQueryInterface;
 
 class OrmQuery implements OrmQueryInterface
 {

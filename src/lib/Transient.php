@@ -13,9 +13,7 @@
 
 namespace VanillePlugin\lib;
 
-use VanilleNameSpace\core\system\libraries\interfaces\ConfigInterface;
-
-class Transient extends WordPress
+class Transient extends PluginOptions
 {
 	/**
 	 * Retrieves an option value based on an option name

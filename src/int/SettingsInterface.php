@@ -8,7 +8,6 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\int;
@@ -19,17 +18,17 @@ interface SettingsInterface
      * @param void
      * @return void
      */
-	public function init();
+	function init();
 
     /**
      * @param void
      * @return void
      */
-	public static function remove();
+	static function remove();
 
     /**
      * @param string $action
      * @return void
      */
-	public static function checkToken($action = -1);
+	static function checkToken($action = -1);
 }

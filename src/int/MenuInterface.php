@@ -8,7 +8,6 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\int;
@@ -19,5 +18,5 @@ interface MenuInterface
      * @param void
      * @return void
      */
-	public function init();
+	function init();
 }

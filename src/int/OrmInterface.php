@@ -8,12 +8,11 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\int;
 
-interface OrmInterface extends NameSpaceInterface
+interface OrmInterface
 {
     /**
      * @param ConfigInterface $config

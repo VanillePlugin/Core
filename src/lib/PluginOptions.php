@@ -8,7 +8,6 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\lib;
@@ -257,20 +256,6 @@ class PluginOptions extends WordPress
 			return substr($lang, 0, strpos($lang, '_'));
 		}
 	}
-	
-	/**
-	 * Get plugin root path
-	 *
-	 * @param null|string $path
-	 * @return string
-	 *
-	 * @see plugin_dir_path
-	 */
-	// protected static function getRoot($path = null)
-	// {
-		// $path = isset($path) ? WP_PLUGIN_DIR . "/{$path}" : WP_PLUGIN_DIR;
-		// return "{$path}";
-	// }
 
 	/**
 	 * Return plugin infos

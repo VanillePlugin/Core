@@ -8,7 +8,6 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\int;
@@ -25,23 +24,23 @@ interface PluginInterface
      * @param void
      * @return void
      */
-	public static function start();
+	static function start();
 
     /**
      * @param void
      * @return void
      */
-	public function activate();
+	function activate();
 
     /**
      * @param void
      * @return void
      */
-	public function deactivate();
+	function deactivate();
 
     /**
      * @param void
      * @return void
      */
-	public static function uninstall();
+	static function uninstall();
 }

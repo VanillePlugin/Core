@@ -8,7 +8,6 @@
  * @license   : MIT
  *
  * This file if a part of VanillePlugin Framework
- * Allowed to edit for plugin customization
  */
 
 namespace VanillePlugin\int;
@@ -22,7 +21,7 @@ interface ViewInterface
      * @param array $callables
      * @return void
      */
-    public function setCallables($callables = []);
+    function setCallables($callables = []);
     
     /**
      * Render view
@@ -31,7 +30,7 @@ interface ViewInterface
      * @param {inherit}
      * @return void
      */
-    public function render($content = [], $template = 'default');
+    function render($content = [], $template = 'default');
 
     /**
      * Aassign content to view
@@ -41,5 +40,5 @@ interface ViewInterface
      * @param string $template
      * @return string
      */
-    public function assign($content = [], $template = 'default');
+    function assign($content = [], $template = 'default');
 }
