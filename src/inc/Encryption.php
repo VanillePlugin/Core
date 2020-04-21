@@ -10,7 +10,7 @@
  * This file if a part of VanillePlugin Framework
  */
 
-namespace winamaz\core\system\includes;
+namespace VanillePlugin\inc;
 
 final class Encryption
 {

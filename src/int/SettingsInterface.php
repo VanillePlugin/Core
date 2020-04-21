@@ -24,11 +24,11 @@ interface SettingsInterface
      * @param void
      * @return void
      */
-	static function remove();
+    static function setDefault();
 
     /**
-     * @param string $action
+     * @param void
      * @return void
      */
-	static function checkToken($action = -1);
+    static function remove();
 }

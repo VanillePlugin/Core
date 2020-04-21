@@ -436,13 +436,29 @@ class WordPress
 	 * @version 5.4
 	 * @access protected
 	 * @param string $group
-	 * @param string $name
+	 * @param string $option
 	 * @param array $args
 	 * @return void
 	 */
-	protected static function addOption($group, $name, $args = [])
+	protected function registerOption($group, $option, $args = [])
 	{
-		register_setting($group,$name,$args);
+		register_setting($group, $option, $args);
+	}
+
+	/**
+	 * Register a settings and its data
+	 *
+	 * @see /reference/functions/register_setting/
+	 * @since 4.0.0
+	 * @version 5.4
+	 * @access protected
+	 * @param string $option
+	 * @param mixed $value
+	 * @return boolean
+	 */
+	protected function addOption($option, $value)
+	{
+		return add_option($option, maybe_serialize($value));
 	}
 
 	/**
@@ -452,13 +468,13 @@ class WordPress
 	 * @since 4.0.0
 	 * @version 5.4
 	 * @access protected
-	 * @param string $name
+	 * @param string $option
 	 * @param string $default
 	 * @return mixed
 	 */
-	protected static function getOption($name, $default = null)
+	protected function getOption($option, $default = null)
 	{
-		return get_option($name, $default);
+		return maybe_unserialize(get_option($option, $default));
 	}
 
 	/**
@@ -467,26 +483,27 @@ class WordPress
 	 * @see /reference/functions/update_option/
 	 * @since 4.0.0
 	 * @access protected
-	 * @param string $name, mixed $value
+	 * @param string $option
+	 * @param mixed $value
 	 * @return boolean
 	 */
-	protected static function updateOption($name, $value)
+	protected function updateOption($option, $value)
 	{
-		return update_option($name, $value);
+		return update_option($option, $value);
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Removes option by name
 	 *
 	 * @see /reference/functions/delete_option/
 	 * @since 4.0.0
 	 * @access protected
-	 * @param string $name
+	 * @param string $option
 	 * @return boolean
 	 */
-	protected static function removeOption($name)
+	protected function removeOption($option)
 	{
-		return delete_option($name);
+		return delete_option($option);
 	}
 
 	/**
@@ -648,7 +665,7 @@ class WordPress
 	 */
 	protected function isLoggedIn()
 	{
-		if (is_user_logged_in()) return true;
+		return is_user_logged_in();
 	}
 
 	/**

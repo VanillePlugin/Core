@@ -34,72 +34,95 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Register a settings and its data
+	 * Register Plugin Settings
 	 *
 	 * @access protected
 	 * @param inherit
 	 * @return inherit
 	 */
-	protected function addPluginOption($group, $name, $args = null)
+	protected function registerPluginOption($group, $option, $args = null)
 	{
-		$args = isset($args) ? $args : ['type' => 'string'];
-		return parent::addOption("{$this->getPrefix()}{$group}","{$this->getPrefix()}{$name}",$args);
+		$this->registerOption("{$this->getPrefix()}{$group}","{$this->getPrefix()}{$option}",$args);
+	}
+
+	/**
+	 * Addd Plugin Option
+	 *
+	 * @access protected
+	 * @param inherit
+	 * @return inherit
+	 */
+	protected function addPluginOption($option, $value)
+	{
+		return $this->addOption("{$this->getPrefix()}{$option}",$value);
 	}
 
 	/**
 	 * Retrieves an option value based on an option name
 	 *
-	 * @see /reference/functions/get_option/
 	 * @access protected
-	 * @param inherit
-	 * @return inherit
+	 * @param string $option
+	 * @param string $type
+	 * @return mixed
 	 */
-	protected function getPluginOption($name, $default = null)
+	protected function getPluginOption($option, $type = 'string')
 	{
-		$default = isset($default) ? $default : false;
-		return parent::getOption("{$this->getPrefix()}{$name}",$default);
+		$value = $this->getOption("{$this->getPrefix()}{$option}", false);
+		switch ($type) {
+			case 'string':
+				return $value;
+				break;
+				
+			case 'integer':
+				return intval($value);
+				break;
+
+			case 'float':
+				return floatval($value);
+				break;
+
+			case 'boolean':
+				return boolval($value);
+				break;
+		}
+		return false;
 	}
 
 	/**
 	 * Update the value of an option that was already added
 	 *
-	 * @see /reference/functions/update_option/
-	 * @since 4.0.0
 	 * @access protected
-	 * @param string $name, mixed $value
-	 * @return boolean
+	 * @param string $option
+	 * @param mixed $value
+	 * @return {inherit}
 	 */
-	protected function updatePluginOption($name, $value)
+	protected function updatePluginOption($option, $value)
 	{
-		return parent::updateOption("{$this->getPrefix()}{$name}",$value);
+		return $this->updateOption("{$this->getPrefix()}{$option}",$value);
+	}
+
+	/**
+	 * Remove Plugin Option
+	 *
+	 * @access protected
+	 * @param string $option
+	 * @return {inherit}
+	 */
+	protected function removePluginOption($option)
+	{
+		return $this->removeOption("{$this->getPrefix()}{$option}");
 	}
 
 	/**
 	 * Retrieves an option value based on an option name as object
 	 *
-	 * @see /reference/functions/get_option/
-	 * @since 4.0.0
 	 * @access protected
-	 * @param string $name
-	 * @return object
-	 */
-	protected function getPluginObject($name)
-	{
-		return Data::toObject( parent::getOption("{$this->getPrefix()}{$name}") );
-	}
-
-	/**
-	 * Update the value of an option that was already added
-	 *
-	 * @see /reference/functions/delete_option/
-	 * @since 4.0.0
-	 * @access protected
-	 * @param string $name
+	 * @param string $option
 	 * @return {inherit}
 	 */
-	protected function removePluginOption($name)
+	protected function getPluginObject($option)
 	{
-		return parent::removeOption("{$this->getPrefix()}{$name}");
+		return Data::toObject( parent::getOption("{$this->getPrefix()}{$option}") );
 	}
 
 	/**
