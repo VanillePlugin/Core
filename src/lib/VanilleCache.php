@@ -68,6 +68,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access public
 	 * @param string $key
 	 * @return mixed
 	 */
@@ -78,6 +79,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access public
 	 * @param mixed $data
 	 * @return void
 	 */
@@ -89,6 +91,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access public
 	 * @param string $key
 	 * @param mixed $data
 	 * @return void
@@ -102,6 +105,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access public
 	 * @param string $key
 	 * @return void
 	 */
@@ -111,6 +115,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access public
 	 * @param void
 	 * @return boolean
 	 */
@@ -121,6 +126,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access public
 	 * @param int $expire
 	 * @return void
 	 */
@@ -130,6 +136,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access public
 	 * @param string $path
 	 * @return void
 	 */
@@ -139,6 +146,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access private
 	 * @param string $key
 	 * @return string
 	 */
@@ -163,6 +171,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access public
 	 * @param void
 	 * @return void
 	 */
@@ -193,6 +202,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * @access private
 	 * @param string $dir
 	 * @return void
 	 */

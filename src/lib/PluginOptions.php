@@ -393,7 +393,7 @@ class PluginOptions extends WordPress
 	 * @param int|string $action
 	 * @return boolean
 	 */
-	public static function checkToken($action = -1)
+	public function checkToken($action = -1)
 	{
 		if ( !wp_verify_nonce( Post::get('nonce'), $action ) ) {
 			die( $this->translateString('Invalid token') );
