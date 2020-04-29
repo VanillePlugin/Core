@@ -65,14 +65,10 @@ class PluginOptions extends WordPress
 	 * @param string $type
 	 * @return mixed
 	 */
-	protected function getPluginOption($option, $type = 'string')
+	protected function getPluginOption($option, $type = 'array')
 	{
 		$value = $this->getOption("{$this->getPrefix()}{$option}", false);
 		switch ($type) {
-			case 'string':
-				return $value;
-				break;
-				
 			case 'integer':
 				return intval($value);
 				break;
@@ -85,7 +81,7 @@ class PluginOptions extends WordPress
 				return boolval($value);
 				break;
 		}
-		return false;
+		return $value;
 	}
 
 	/**

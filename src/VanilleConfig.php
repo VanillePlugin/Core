@@ -47,11 +47,15 @@ trait VanilleConfig
 	protected function initConfig()
 	{
 		// Define Internal Namespace
-		$this->namespace = VANILLEPLUGIN;
-
+		if (!$this->namespace) {
+			$this->namespace = VANILLEPLUGIN;
+		}
+		
 		// Parse VanillePLugin Config file
-		$json = new Json("{$this->getRoot()}{$this->path}");
-		$this->global = $json->parse();
+		if (!$this->global) {
+			$json = new Json("{$this->getRoot()}{$this->path}");
+			$this->global = $json->parse();
+		}
 	}
 
 	/**
@@ -279,22 +283,21 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Update option
+	 * Update Custom Options
 	 *
-	 * @param array $var
+	 * @param array $options
 	 * @return void
 	 */
-	public function updateConfig($var = [])
+	public function updateConfig($options = [])
 	{
-		$json = new Json("{$this->root}/core/storage/config/global.json");
-		$update = $json->parse();
-		foreach ($var as $option => $value) {
-			if ( isset($update['option'][$option]) ) {
-				$update['option'][$option] = $value;
+		$json = new Json("{$this->getRoot()}{$this->path}");
+		$config = $json->parse(true);
+		foreach ($options as $option => $value) {
+			if ( isset($config['option'][$option]) ) {
+				$config['option'][$option] = $value;
 			}
 		}
-		$update = Json::format($update);
-		$json->write($update);
-		$json->close();
+		$config = Json::format($config);
+		$json->write($config);
 	}
 }

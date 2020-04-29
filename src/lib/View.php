@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 1.0.0
+ * @version   : 0.0.1
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -73,41 +73,47 @@ class View extends PluginOptions implements ViewInterface
         }
     
 		// Add view global functions
-        // $env->addFunction(Template::extend('dump', function ($var){
-            // var_dump($var);
-        // }));
-        // $env->addFunction(Template::extend('settingsFields', function ($group){
-            // settings_fields($group);
-        // }));
-        // $env->addFunction(Template::extend('settingsSections', function ($group){
-            // do_settings_sections($group);
-        // }));
-        // $env->addFunction(Template::extend('submitButton', function (){
-            // submit_button();
-        // }));
-        // $env->addFunction(Template::extend('getPluginOption', function ($option){
-            // $this->getPluginOption($option);
-        // }));
-        // $env->addFunction(Template::extend('getRoot', function (){
-            // $this->getRoot();
-        // }));
-        // $env->addFunction(Template::extend('getBaseUri', function (){
-            // $this->getBaseUri();
-        // }));
-        // $env->addFunction(Template::extend('getAsset', function (){
-            // $this->getAsset();
-        // }));
+        $env->addFunction(Template::extend('dump', function ($var){
+            var_dump($var);
+        }));
+        $env->addFunction(Template::extend('settingsFields', function ($group){
+            settings_fields($group);
+        }));
+        $env->addFunction(Template::extend('settingsSections', function ($group){
+            do_settings_sections($group);
+        }));
+        $env->addFunction(Template::extend('submitButton', function (){
+            submit_button();
+        }));
+        $env->addFunction(Template::extend('getPluginOption', function ($option){
+            return $this->getPluginOption($option);
+        }));
+        $env->addFunction(Template::extend('getRoot', function (){
+            return $this->getRoot();
+        }));
+        $env->addFunction(Template::extend('getBaseUri', function (){
+            return $this->getBaseUri();
+        }));
+        $env->addFunction(Template::extend('getAsset', function (){
+            return $this->getAsset();
+        }));
         $env->addFunction(Template::extend('nonce', function ($name = null){
             return wp_create_nonce($name);
         }));
         $env->addFunction(Template::extend('translate', function ($string){
             return $this->translateString($string);
         }));
-        $env->addFunction(Template::extend('doAction', function (){
-            $this->doPluginAction($action);
-        }));
         $env->addFunction(Template::extend('JSONdecode', function ($json){
             return Json::decode($json);
+        }));
+        $env->addFunction(Template::extend('hasFilter', function ($action){
+            return $this->hasFilter($action);
+        }));
+        $env->addFunction(Template::extend('applyFilter', function ($action){
+            return $this->applyFilter($action);
+        }));
+        $env->addFunction(Template::extend('doAction', function (){
+            $this->doPluginAction($action);
         }));
 
         // Return rendered view
