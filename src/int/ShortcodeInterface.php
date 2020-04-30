@@ -19,4 +19,12 @@ interface ShortcodeInterface
      * @return void
      */
 	function init();
+
+	/**
+	 * @param array $params
+	 * @param string $content
+	 * @param string $tag
+	 * @return string
+	 */
+	function callable($params = [], $content = null, $tag = '');
 }

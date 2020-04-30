@@ -241,7 +241,7 @@ class PluginOptions extends WordPress
 	 * @param {inherit}
 	 * @return {inherit}
 	 */
-	protected function addPluginGlobalCSS($path, $deps = [], $version = '', $media = 'all')
+	protected function addPluginGlobalCSS($path, $deps = [], $version = false, $media = 'all')
 	{
 		$path = "/{$this->getNameSpace()}{$this->getAsset()}{$path}";
 		$this->addCSS("{$this->getNameSpace()}-global",$path,$deps,$version,$media);

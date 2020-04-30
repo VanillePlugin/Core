@@ -323,7 +323,7 @@ class WordPress
 	 * @param string $media
 	 * @return void
 	 */
-	protected function addCSS($id, $path, $deps = [], $version = '', $media = 'all')
+	protected function addCSS($id, $path, $deps = [], $version = false, $media = 'all')
 	{
 		if ( strpos($path, 'http') == false ){
 		    $path = $this->getPluginUrl($path);
