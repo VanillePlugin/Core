@@ -36,4 +36,15 @@ class File
 	{
 		file_put_contents($path, $content);
 	}
+
+	/**
+	 * file exists
+	 *
+	 * @param string $file
+	 * @return boolean
+	 */
+	public static function exists($path)
+	{
+		return file_exists($path);
+	}
 }

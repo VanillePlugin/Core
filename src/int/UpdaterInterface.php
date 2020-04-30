@@ -42,5 +42,5 @@ interface UpdaterInterface
      * @param array $args
      * @return mixed
      */
-    function infos($transient, $action, $args)
+    function infos($transient, $action, $args);
 }

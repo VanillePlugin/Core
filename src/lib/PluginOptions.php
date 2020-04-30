@@ -25,12 +25,12 @@ class PluginOptions extends WordPress
 	 * Register a settings and its data
 	 *
 	 * @access protected
-	 * @param inherit
-	 * @return inherit
+	 * @param {inherit}
+	 * @return {inherit}
 	 */
 	protected function doPluginAction($action)
 	{
-		return $this->doAction("{$this->getNameSpace()}{$action}");
+		return $this->doAction("{$this->getNameSpace()}-{$action}");
 	}
 
 	/**
@@ -118,7 +118,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function getPluginObject($option)
 	{
-		return Data::toObject( parent::getOption("{$this->getPrefix()}{$option}") );
+		return Data::toObject( $this->getPluginOption($option) );
 	}
 
 	/**
@@ -132,13 +132,16 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginMenuPage($icon = 'admin-plugins')
 	{
+		if (strpos($icon, 'http') === false) {
+			$icon = "dashicons-{$icon}";
+		}
 		return $this->addMenuPage(
 			$this->translateString("{$this->getPluginName()} Dashboard"),
 			$this->translateString($this->getPluginName()),
 			"manage_{$this->getNameSpace()}",
 			$this->getNameSpace(),
 			[$this,'index'],
-			"dashicons-{$icon}"
+			$icon
 		);
 	}
 
@@ -227,7 +230,7 @@ class PluginOptions extends WordPress
 	protected function addPluginMainCSS($path, $deps = [], $version = '', $media = 'all')
 	{
 		$path = "/{$this->getNameSpace()}{$this->getAsset()}{$path}";
-		echo $this->addCSS("{$this->getNameSpace()}-main",$path,$deps,$version,$media);
+		$this->addCSS("{$this->getNameSpace()}-main",$path,$deps,$version,$media);
 	}
 
 	/**
@@ -241,7 +244,7 @@ class PluginOptions extends WordPress
 	protected function addPluginGlobalCSS($path, $deps = [], $version = '', $media = 'all')
 	{
 		$path = "/{$this->getNameSpace()}{$this->getAsset()}{$path}";
-		echo $this->addCSS("{$this->getNameSpace()}-global",$path,$deps,$version,$media);
+		$this->addCSS("{$this->getNameSpace()}-global",$path,$deps,$version,$media);
 	}
 
 	/**
@@ -255,7 +258,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function getTransient($name)
 	{
-		return get_transient("{$this->getNameSpace()}{$name}");
+		return get_transient("{$this->getNameSpace()}-{$name}");
 	}
 
 	/**
@@ -271,7 +274,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function setTransient($name, $value, $expiration = 300 )
 	{
-		return set_transient("{$this->getNameSpace()}{$name}",$value,$expiration);
+		return set_transient("{$this->getNameSpace()}-{$name}",$value,$expiration);
 	}
 
 	/**
@@ -285,7 +288,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function deleteTransient($name)
 	{
-		delete_transient("{$this->getNameSpace()}{$name}");
+		delete_transient("{$this->getNameSpace()}-{$name}");
 	}
 
 	/**
@@ -357,29 +360,30 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Loads a plugin’s translated strings
+	 * Add PLugin Cap
 	 *
-	 * @param void
-	 * @return void
-	 *
-	 * action : after_setup_theme
+	 * @access protected
+	 * @param string $role
+	 * @param string $cap
+	 * @return {inherit}
 	 */
-	protected static function addPluginCapability($role, $cap)
+	protected function addPluginCapability($role, $cap)
 	{
-		parent::addCapability($role, "{$cap}_{$this->getNameSpace()}");
+		$this->addCapability($role, "{$cap}_{$this->getNameSpace()}");
 	}
 
 	/**
-	 * Loads a plugin’s translated strings
+	 * Remove PLugin Cap
 	 *
-	 * @param void
-	 * @return void
-	 *
-	 * action : after_setup_theme
+	 * @access protected
+	 * @param string $role
+	 * @param string $cap
+	 * @return {inherit}
 	 */
 	protected static function removePluginCapability($role, $cap)
 	{
-		parent::removeCapability($role, "{$cap}_{$this->getNameSpace()}");
+		$config = self::getStatic();
+		parent::removeCapability($role, "{$cap}_{$config->getNameSpace()}");
 	}
 
 	/**

@@ -12,27 +12,42 @@
 
 namespace VanillePlugin\lib;
 
-class Cron extends Wordpress
+class Cron extends PluginOptions
 {
 	/**
 	* @access private
+	* @var array $schedules
+	* @var array $actions
 	*/
-	private $schedules;
+	private $schedules = [];
+	private $actions = [];
 
 	/**
 	 * Set Schedulers
 	 *
-	 * @access protected
+	 * @access public
 	 * @param array $schedules
 	 * @return void
 	 */
-	protected function setSchedules($schedules = [])
+	public function setSchedules($schedules = [])
 	{
 		$this->schedules = $schedules;
 	}
 
 	/**
-	 * Start Schedulers
+	 * Set Schedulers
+	 *
+	 * @access public
+	 * @param array $actions
+	 * @return void
+	 */
+	public function setActions($actions = [])
+	{
+		$this->actions = $actions;
+	}
+
+	/**
+	 * Apply Schedulers
 	 *
 	 * @access public
 	 * @param array $schedules
@@ -40,39 +55,46 @@ class Cron extends Wordpress
 	 *
 	 * Filter : cron_schedules
 	 */
-	public function start($schedules)
+	public function apply($schedules)
 	{
 		foreach ($this->schedules as $schedule) {
 			if ( !isset($schedules[$schedule['name']]) ) {
-		        $schedules[$schedule['name']] = array(
+		        $schedules[$schedule['name']] = [
 		            'display'  => $schedule['display'],
-		            'interval' => $schedule['interval'],
-		        );
+		            'interval' => $schedule['interval']
+		        ];
 			}
 		}
 	    return $schedules;
 	}
 
 	/**
-	 * Clean scheduled hook
+	 * Start Cron
 	 *
-	 * @access public
-	 * @param string $name
+	 * @access protected
+	 * @param void
 	 * @return void
 	 */
-	public static function clean($name)
+	protected function start()
 	{
-		wp_clear_scheduled_hook($name);
+		$this->initConfig();
+		$this->addFilter('cron_schedules', [$this,'apply']);
+		foreach ($this->actions as $action) {
+			if ( !$this->next("{$this->getNameSpace()}-{$action['name']}") ) {
+				$this->schedule($action['schedule'],"{$this->getNameSpace()}-{$action['name']}");
+			}
+			$this->addAction("{$this->getNameSpace()}-{$action['name']}", $action['callable']);
+		}
 	}
 
 	/**
 	 * Check scheduled waitlist
 	 *
-	 * @access public
+	 * @access protected
 	 * @param string $name
 	 * @return boolean
 	 */
-	public static function next($name)
+	protected function next($name)
 	{
 		return wp_next_scheduled($name);
 	}
@@ -80,12 +102,27 @@ class Cron extends Wordpress
 	/**
 	 * Check scheduled waitlist
 	 *
-	 * @access public
-	 * @param string $interval, string $hook
+	 * @access protected
+	 * @param string $interval
+	 * @param string $hook
 	 * @return void
 	 */
-	public static function schedule($interval,$hook)
+	protected function schedule($interval,$hook)
 	{
 		wp_schedule_event(time(), $interval, $hook);
+	}
+
+	/**
+	 * Clear scheduled hook
+	 *
+	 * @access public
+	 * @param string $name
+	 * @return void
+	 */
+	public static function clear($name)
+	{
+		$plugin = parent::getStatic();
+		$plugin->initConfig();
+		wp_clear_scheduled_hook("{$plugin->getNameSpace()}-{$name}");
 	}
 }

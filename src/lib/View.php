@@ -85,6 +85,9 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('submitButton', function (){
             submit_button();
         }));
+        $env->addFunction(Template::extend('getConfig', function ($config){
+            return $this->getConfig($config);
+        }));
         $env->addFunction(Template::extend('getPluginOption', function ($option){
             return $this->getPluginOption($option);
         }));

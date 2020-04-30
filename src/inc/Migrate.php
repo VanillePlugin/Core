@@ -12,18 +12,17 @@
 
 namespace VanillePlugin\inc;
 
-use VanillePlugin\int\NameSpaceInterface;
-use VanillePlugin\int\PluginNameSpaceInterface;
-use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\lib\Orm;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Text;
 
-final class Migrate extends Orm // implements NameSpaceInterface
+final class Migrate extends Orm
 {
 	/**
 	 * Init Db object
-	 * @param PluginNameSpaceInterface $namespace
+	 * Init Config object
+	 *
+	 * @param void
 	 * @return void
 	 */
 	public function __construct()
@@ -33,23 +32,20 @@ final class Migrate extends Orm // implements NameSpaceInterface
 	}
 
 	/**
-	 * Create plugin tables
+	 * Create Plugin Tables
 	 *
 	 * @param void
 	 * @return void
 	 */
 	public function table()
 	{
-		$dir = $this->getMigrate();
-		$tables = array_diff(scandir($dir),['.','..','uninstall.sql','upgrade.sql']);
-
+		$tables = array_diff(scandir($this->getMigrate()),['.','..','uninstall.sql','upgrade.sql']);
 		if (!$tables) return;
-
 		foreach ($tables as $table) {
-			$installSql = File::read("{$dir}{$table}");
+			$installSql = File::read("{$this->getMigrate()}/{$table}");
 			if ( !empty($installSql) ) {
 				$installSql = Text::replace($installSql, '[DBPREFIX]', $this->prefix);
-				$installSql = Text::replace($installSql, '[PREFIX]', $this->getNameSpace());
+				$installSql = Text::replace($installSql, '[PREFIX]', $this->getPrefix());
 				$installSql = Text::replace($installSql, '[COLLATE]', $this->collate);
 				$this->query($installSql);
 			}
@@ -57,34 +53,36 @@ final class Migrate extends Orm // implements NameSpaceInterface
 	}
 
 	/**
-	 * Upgrade plugin tables
+	 * Upgrade Plugin Tables
 	 *
 	 * @param void
 	 * @return void
 	 */
 	public function upgrade()
 	{
-		$dir = "{$this->getRoot()}{$this->getMigrate()}";
-		// $upgradeSql = = File::read("{$dir}{$table}");
-		// $upgradeSql = Text::replace($upgradeSql, '[DBPREFIX]', $this->prefix);
-		// $upgradeSql = Text::replace($upgradeSql, '[PREFIX]', $this->getNameSpace());
-		// $upgradeSql = Text::replace($upgradeSql, '[COLLATE]', $this->collate);
-		// if ( !empty($upgradeSql) ) {
-			// $this->query($upgradeSql);
-		// }
+		if ( !File::exists("{$this->getMigrate()}/upgrade.sql") ) return;
+		$upgradeSql = File::read("{$this->getMigrate()}/upgrade.sql");
+		if ( !empty($upgradeSql) ) {
+			$upgradeSql = Text::replace($upgradeSql, '[DBPREFIX]', $this->prefix);
+			$upgradeSql = Text::replace($upgradeSql, '[PREFIX]', $this->getPrefix());
+			$this->query($upgradeSql);
+		}
 	}
 
 	/**
-	 * Remove plugin tables
+	 * Remove Plugin Tables
 	 *
 	 * @param void
 	 * @return void
 	 */
-	public static function rollback()
+	public function rollback()
 	{
-		// $config->uninstallSql = File::read("{$config->root}/core/storage/migrate/uninstall.sql");
-		// $config->uninstallSql = Text::replace($config->uninstallSql, '[DBPREFIX]', $this->prefix);
-		// $config->uninstallSql = Text::replace($config->uninstallSql, '[PREFIX]', $this->getNameSpace());
-		// $this->query($config->uninstallSql);
+		if ( !File::exists("{$this->getMigrate()}/uninstall.sql") ) return;
+		$uninstallSql = File::read("{$this->getMigrate()}/uninstall.sql");
+		if ( !empty($uninstallSql) ) {
+			$uninstallSql = Text::replace($uninstallSql, '[DBPREFIX]', $this->prefix);
+			$uninstallSql = Text::replace($uninstallSql, '[PREFIX]', $this->getPrefix());
+			$this->query($uninstallSql);
+		}
 	}
 }

@@ -183,11 +183,11 @@ class Updater extends PluginOptions implements UpdaterInterface
 	}
 
 	/**
-	 * @access private
+	 * @access public
 	 * @param array $args
 	 * @return array
 	 */
-	private function setRequest($args)
+	public function setRequest($args)
 	{
 		if ($this->unsafe) {
 			$args['reject_unsafe_urls'] = false;

@@ -27,6 +27,8 @@ class Requirement extends Notice implements RequirementInterface
 		$this->init([$this,'requirePlugins']);
 		$this->init([$this,'requireOptions']);
 		$this->init([$this,'requireTemplate']);
+		$this->init([$this,'requireModules']);
+		$this->init([$this,'php']);
 	}
 
 	/**
@@ -110,6 +112,48 @@ class Requirement extends Notice implements RequirementInterface
 				'notice' => $this->translateString('Template Required.')
 			],'admin/notice/requirement');
 		}
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public function requireModules()
+	{
+		// Check modules
+		if ( !($modules = $this->getConfig()->requirement->modules) ) {
+			return;
+		}
+
+		// Requires modules
+		foreach ($modules as $module) {
+			if ( !$this->isActivated($module->callable) ) {
+				$this->render([
+					'item'   => $module->name,
+					'notice' => $this->translateString('Required, Please activate it.')
+				],'admin/notice/requirement');
+			}
+		}
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public function php()
+	{
+		// Check version
+		if ( !($version = $this->getConfig()->requirement->php) ) {
+			return;
+		}
+		if ( version_compare(phpversion(),$version,'<') ){
+			$this->render([
+				'item'   => 'PHP',
+				'notice' => $this->translateString('Update Required')
+			],'admin/notice/requirement');
+		};
 	}
 
 	/**

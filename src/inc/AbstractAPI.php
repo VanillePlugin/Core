@@ -17,6 +17,12 @@ use VanillePlugin\lib\PluginOptions;
 abstract class AbstractAPI extends PluginOptions
 {
 	/**
+	 * @access public
+	 * @var boolean $error
+	 */
+	public $error = false;	
+
+	/**
 	 * @access protected
 	 * @var object $client
 	 * @var object $response
@@ -29,7 +35,7 @@ abstract class AbstractAPI extends PluginOptions
 	 * @param void
 	 * @return void
 	 */
-	abstract public function setClient();
+	abstract public function setClient($params = null);
 
 	/**
 	 * @access protected
@@ -59,6 +65,8 @@ abstract class AbstractAPI extends PluginOptions
 	protected function isDown()
 	{
 		if ( $this->getStatus() > 401 ) {
+			return true;
+		} elseif ( empty($this->getResponse()) ) {
 			return true;
 		}
 		return false;
