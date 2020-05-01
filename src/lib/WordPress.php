@@ -80,12 +80,12 @@ class WordPress
 	 * @version 5.4
 	 * @access protected
 	 * @param string $tag, Tag name
-	 * @param array $method, callable
+	 * @param callable $callback
 	 * @return void
 	 */
-	protected function addShortcode($tag, $method)
+	protected function addShortcode($tag, $callback )
 	{
-		add_shortcode($tag, $method);
+		add_shortcode($tag, $callback);
 	}
 
 	/**

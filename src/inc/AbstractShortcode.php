@@ -18,29 +18,23 @@ use VanillePlugin\lib\View;
 abstract class AbstractShortcode extends View implements ShortcodeInterface
 {
 	/**
-	 * Return Shortcode Content
-	 *
-	 * Shortcode : [winamaz]
-	 *
+	 * @access public
 	 * @param array $params
 	 * @param string $content
 	 * @param string $tag
 	 * @return string
 	 */
-	abstract public function callable($params = [], $content = null, $tag = '');
+	abstract public function callable($atts = [], $content = null, $tag = '');
 
 	/**
-	 * Show shortcode exception error
-	 *
-	 * @param array errors
-	 * @return string
+	 * @access protected
+	 * @param array $default
+	 * @param array $atts
+	 * @param string $shortcode
+	 * @return array
 	 */
-	protected function exception($errors = [])
+	protected function attributes($default = [], $atts = [], $shortcode = '')
 	{
-		$errors = is_array($errors) ? $errors : [$errors];
-		return $this->assign([
-			'isLogged' => $this->isLoggedIn(),
-			'errors'   => $errors
-		], 'front/shortcode/error');
+		return shortcode_atts($default, $atts, $shortcode);
 	}
 }

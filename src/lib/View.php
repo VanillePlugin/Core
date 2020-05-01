@@ -88,8 +88,8 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('getConfig', function ($config){
             return $this->getConfig($config);
         }));
-        $env->addFunction(Template::extend('getPluginOption', function ($option){
-            return $this->getPluginOption($option);
+        $env->addFunction(Template::extend('getPluginOption', function ($option, $type = 'array'){
+            return $this->getPluginOption($option, $type);
         }));
         $env->addFunction(Template::extend('getRoot', function (){
             return $this->getRoot();
