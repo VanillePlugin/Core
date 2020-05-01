@@ -113,6 +113,6 @@ final class Encryption
 	 */
 	public function isCrypted()
 	{
-		return substr($this->password, 0, 10) === $this->prefix;
+		return substr($this->password, 0, strlen($this->prefix)) === $this->prefix;
 	}
 }

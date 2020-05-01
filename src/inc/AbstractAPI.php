@@ -39,12 +39,12 @@ abstract class AbstractAPI extends PluginOptions
 
 	/**
 	 * @access protected
-	 * @param void
+	 * @param boolean $array
 	 * @return string
 	 */
-	protected function getResponse()
+	protected function getResponse($array = false)
 	{
-		return Response::get( $this->response->getBody(), false);
+		return Response::get( $this->response->getBody(), $array);
 	}
 
 	/**
