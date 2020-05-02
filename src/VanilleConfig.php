@@ -145,9 +145,20 @@ trait VanilleConfig
 	 * @param void
 	 * @return string
 	 */
+	public function getAssetUri()
+	{
+		return "{$this->getBaseUri()}{$this->global->path->asset}";
+	}
+	
+	/**
+	 * Get static prefix
+	 *
+	 * @param void
+	 * @return string
+	 */
 	public function getAsset()
 	{
-		return $this->global->path->asset;
+		return "/{$this->getNameSpace()}{$this->global->path->asset}";
 	}
 
 	/**

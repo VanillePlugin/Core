@@ -100,8 +100,8 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('getBaseUri', function (){
             return $this->getBaseUri();
         }));
-        $env->addFunction(Template::extend('getAsset', function (){
-            return $this->getAsset();
+        $env->addFunction(Template::extend('getAssetUri', function (){
+            return $this->getAssetUri();
         }));
         $env->addFunction(Template::extend('nonce', function ($name = null){
             return wp_create_nonce($name);

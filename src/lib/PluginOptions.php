@@ -157,7 +157,7 @@ class PluginOptions extends WordPress
 	{
 		$id = str_replace('.js', '', basename($path));
 		$id = str_replace('.min', '', $id);
-		$path = "/{$this->getNameSpace()}{$this->getAsset()}{$path}";
+		$path = "{$this->getAsset()}{$path}";
 		$this->addJS("{$this->getNameSpace()}-{$id}",$path,$deps,$version,$footer);
 	}
 
@@ -171,7 +171,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginMainJS($path, $deps = [], $version = false, $footer = false)
 	{
-		$path = "/{$this->getNameSpace()}{$this->getAsset()}{$path}";
+		$path = "{$this->getAsset()}{$path}";
 		$this->addJS("{$this->getNameSpace()}-main",$path,$deps,$version,$footer);
 	}
 
@@ -185,7 +185,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginGlobalJS($path, $deps = [], $version = false, $footer = false)
 	{
-		$path = "/{$this->getNameSpace()}{$this->getAsset()}{$path}";
+		$path = "{$this->getAsset()}{$path}";
 		$this->addJS("{$this->getNameSpace()}-global",$path,$deps,$version,$footer);
 	}
 
@@ -215,7 +215,7 @@ class PluginOptions extends WordPress
 	{
 		$id = str_replace('.css', '', basename($path));
 		$id = str_replace('.min', '', $id);
-		$path = "/{$this->getNameSpace()}{$this->getAsset()}{$path}";
+		$path = "{$this->getAsset()}{$path}";
 		$this->addCSS("{$this->getNameSpace()}-{$id}",$path,$deps,$version,$media);
 	}
 
@@ -229,7 +229,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginMainCSS($path, $deps = [], $version = '', $media = 'all')
 	{
-		$path = "/{$this->getNameSpace()}{$this->getAsset()}{$path}";
+		$path = "{$this->getAsset()}{$path}";
 		$this->addCSS("{$this->getNameSpace()}-main",$path,$deps,$version,$media);
 	}
 
@@ -243,7 +243,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginGlobalCSS($path, $deps = [], $version = false, $media = 'all')
 	{
-		$path = "/{$this->getNameSpace()}{$this->getAsset()}{$path}";
+		$path = "{$this->getAsset()}{$path}";
 		$this->addCSS("{$this->getNameSpace()}-global",$path,$deps,$version,$media);
 	}
 
