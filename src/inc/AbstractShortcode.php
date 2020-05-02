@@ -37,4 +37,14 @@ abstract class AbstractShortcode extends View implements ShortcodeInterface
 	{
 		return shortcode_atts($default, $atts, $shortcode);
 	}
+
+	/**
+	 * @access protected
+	 * @param array $atts
+	 * @return array
+	 */
+	protected function formatAtts($atts = [])
+	{
+		return array_change_key_case((array)$atts, CASE_LOWER);
+	}
 }

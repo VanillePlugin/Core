@@ -48,4 +48,16 @@ final class Text
 			return str_replace($search, $replace, $subject);
 		}
 	}
+
+	/**
+	 * @param mixed $number
+	 * @param mixed $decimals
+	 * @param mixed $point
+	 * @param mixed $sep
+	 * @return string
+	 */
+	public static function money($number, $decimals = 2, $point = '.', $sep = '')
+	{
+		return number_format($number,$decimals,$point,$sep);
+	}
 }

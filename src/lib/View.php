@@ -85,6 +85,9 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('submitButton', function (){
             submit_button();
         }));
+        $env->addFunction(Template::extend('isLoggedIn', function (){
+            return $this->isLoggedIn();
+        }));
         $env->addFunction(Template::extend('getConfig', function ($config){
             return $this->getConfig($config);
         }));
@@ -115,7 +118,7 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('applyFilter', function ($action){
             return $this->applyFilter($action);
         }));
-        $env->addFunction(Template::extend('doAction', function (){
+        $env->addFunction(Template::extend('doAction', function ($action){
             $this->doPluginAction($action);
         }));
 
