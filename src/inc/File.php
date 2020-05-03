@@ -38,6 +38,18 @@ class File
 	}
 
 	/**
+	 * write file
+	 *
+	 * @param string $file
+	 * @param string $content
+	 * @return void
+	 */
+	public static function append($path, $content)
+	{
+		file_put_contents($path, $content, FILE_APPEND);
+	}
+
+	/**
 	 * file exists
 	 *
 	 * @param string $file

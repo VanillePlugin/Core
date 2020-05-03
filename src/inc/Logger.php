@@ -12,58 +12,72 @@
 
 namespace VanillePlugin\inc;
 
-final class Logger
+use VanillePlugin\lib\PluginOptions;
+
+class Logger extends PluginOptions
 {
     /**
-     * @param string $tag
-     * @param string $message
+     * @param void
      * @return void
      */
-    public static function debug($message)
+    public function __construct()
     {
-        self::write('DEBUG', $message);
+        // Init plugin config
+        $this->initConfig();
     }
 
     /**
-     * @param string $tag
+     * @access public
      * @param string $message
      * @return void
      */
-    public static function error($message)
+    public function debug($message)
     {
-        self::write('ERROR', $message);
+        $this->write('DEBUG', $message);
     }
 
     /**
-     * @param string $tag
+     * @access public
      * @param string $message
      * @return void
      */
-    public static function warning($message)
+    public function error($message)
     {
-        self::write('WARNING', $message);
+        $this->write('ERROR', $message);
     }
 
     /**
-     * @param string $tag
+     * @access public
      * @param string $message
      * @return void
      */
-    public static function info($message)
+    public function warning($message)
     {
-        self::write('INFO', $message);
+        $this->write('WARNING', $message);
     }
 
     /**
-     * @param string $tag,$message 
+     * @access public
+     * @param string $message
      * @return void
      */
-    private static function write($status, $message)
+    public function info($message)
     {
-        $config = new Config();
-        $file = "{$config->root}/core/storage/logs/debug.log";
+        $this->write('INFO', $message);
+    }
+
+    /**
+     * @access private
+     * @param string $status 
+     * @param string $message 
+     * @return void
+     */
+    private function write($status, $message)
+    {
+        $date = date('[d-m-Y]');
+        $file = "{$this->getLoggerPath()}/debug-{$date}.log";
         $date = date('[d-m-Y H:i:s]');
         $msg = "{$date} : [{$status}] - {$message}" . PHP_EOL;
-        file_put_contents($file, $msg, FILE_APPEND);
+        File::append($file, $msg);
     }
 }

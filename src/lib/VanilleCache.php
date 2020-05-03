@@ -46,7 +46,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 
 		// Set cache path
 		if ( !self::$path ) {
-			self::$path = $this->getCachePath();
+			self::$path = "{$this->getCachePath()}/data";
 		}
 
 		// Set cache expire
@@ -178,10 +178,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	public static function remove()
 	{
 		new self;
-
 		if ( is_dir(self::$path) ) $handler = opendir(self::$path);
 		if ( !$handler ) return false;
-
 	   	while( $file = readdir($handler) ) {
 			if ($file !== '.' && $file !== '..') {
 			    if ( !is_dir(self::$path.'/'.$file) ) {
@@ -189,8 +187,12 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 			    } else {
 			    	$dir = self::$path.'/'.$file;
 				    foreach( scandir($dir) as $file ) {
-				        if ( '.' === $file || '..' === $file ) continue;
-				        if ( is_dir("{$dir}/{$file}") ) self::recursiveRemove("{$dir}/{$file}");
+				        if ( '.' === $file || '..' === $file ) {
+				        	continue;
+				        }
+				        if ( is_dir("{$dir}/{$file}") ) {
+				        	self::recursiveRemove("{$dir}/{$file}");
+				        }
 				        else unlink("{$dir}/{$file}");
 				    }
 				    @rmdir($dir);
@@ -212,8 +214,10 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 			$objects = scandir($dir);
 			foreach ($objects as $object) {
 				if ($object !== '.' && $object !== '..') {
-					if (filetype($dir.'/'.$object) == 'dir') self::recursiveRemove($dir.'/'.$object);
-					else unlink($dir.'/'.$object);
+					if (filetype("{$dir}/{$object}") == 'dir') {
+						self::recursiveRemove("{$dir}/{$object}");
+					}
+					else unlink("{$dir}/{$object}");
 				}
 			 }
 			reset($objects);
@@ -229,8 +233,18 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	public static function removeAll()
 	{
 		$plugin = parent::getStatic();
-		self::setPath( dirname($plugin->getCachePath()) );
+		$plugin->initConfig();
+		self::setPath($plugin->getCachePath());
 		self::remove();
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public static function removeThirdParty()
+	{
 		ThirdPartyCache::purge();
 	}
 }
