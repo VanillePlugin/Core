@@ -15,14 +15,14 @@ namespace VanillePlugin\inc;
 final class Json extends File
 {
 	/**
-	 * @param inherit
-	 * @return object File
+	 * @access private
+	 * @var string content
 	 */
 	private $content;
 
 	/**
-	 * @param inherit
-	 * @return object File
+	 * @param string $path
+	 * @return void
 	 */
 	public function __construct($path)
 	{
@@ -30,6 +30,7 @@ final class Json extends File
 	}
 
 	/**
+	 * @access public
 	 * @param boolean $isArray
 	 * @return mixed
 	 */
@@ -39,6 +40,7 @@ final class Json extends File
 	}
 
 	/**
+	 * @access public
 	 * @param string $content
 	 * @param boolean $isArray
 	 * @return mixed
@@ -51,9 +53,9 @@ final class Json extends File
 	/**
 	 * Format JSON For WordPress
 	 *
+	 * @access public
 	 * @param mixen $data
 	 * @return json
-	 *
 	 */
 	public static function encode($data)
 	{
@@ -63,6 +65,7 @@ final class Json extends File
 	/**
 	 * Format JSON For WordPress
 	 *
+	 * @access public
 	 * @param mixen $data
 	 * @return json
 	 *

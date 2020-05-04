@@ -13,6 +13,7 @@
 namespace VanillePlugin;
 
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\inc\File;
 use VanillePlugin\inc\Json;
 
 trait VanilleConfig
@@ -304,11 +305,11 @@ trait VanilleConfig
 		$json = new Json("{$this->getRoot()}{$this->path}");
 		$config = $json->parse(true);
 		foreach ($options as $option => $value) {
-			if ( isset($config['option'][$option]) ) {
-				$config['option'][$option] = $value;
+			if ( isset($config['options'][$option]) ) {
+				$config['options'][$option] = $value;
 			}
 		}
 		$config = Json::format($config);
-		$json->write($config);
+		File::write("{$this->getRoot()}{$this->path}",$config);
 	}
 }
