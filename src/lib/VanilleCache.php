@@ -81,12 +81,16 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	/**
 	 * @access public
 	 * @param mixed $data
+	 * @param string $tag
 	 * @return void
 	 */
-	public function set($data)
+	public function set($data, $tag = null)
 	{
 		$this->cache->set($data)
 		->expiresAfter( self::$expireIn );
+		if ($tag) {
+			$this->cache->addTag($tag);
+		}
 		$this->adapter->save( $this->cache );
 	}
 
@@ -112,6 +116,16 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	public function delete($key)
 	{
 		$this->adapter->deleteItem( $this->formatKey($key) );
+	}
+
+	/**
+	 * @access public
+	 * @param string $tag
+	 * @return void
+	 */
+	public function deleteByTag($tag)
+	{
+		$this->adapter->deleteItemsByTag($tag);
 	}
 
 	/**
