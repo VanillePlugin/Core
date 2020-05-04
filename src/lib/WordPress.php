@@ -272,7 +272,7 @@ class WordPress
 	 */
 	protected function removeFilter($hook, $method, $priority = 10)
 	{
-		remove_filter($hook,$method,$priority,$args);
+		remove_filter($hook,$method,$priority);
 	}
 
 	/**
