@@ -474,7 +474,8 @@ class WordPress
 	 */
 	protected function getOption($option, $default = null)
 	{
-		return maybe_unserialize(get_option($option, $default));
+		$option = maybe_unserialize(get_option($option, $default));
+		return Data::slashStrip($option);
 	}
 
 	/**

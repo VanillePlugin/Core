@@ -48,20 +48,4 @@ final class Data
 		$data = stripslashes_deep($data);
 	    return $data;
 	}
-
-	/**
-	 * Deeply strip slashes
-	 *
-	 * @see /Function_Reference/stripslashes_deep/
-	 * @since 4.0.0
-	 * @version 5.4
-	 * @access public
-	 * @param mixed $data
-	 * @return mixed
-	 */
-	public static function translate($string)
-	{
-		$data = stripslashes_deep($data);
-	    return $data;
-	}
 }
