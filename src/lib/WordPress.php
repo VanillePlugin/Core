@@ -514,19 +514,19 @@ class WordPress
 	 * @since 4.0.0
 	 * @access protected
 	 * @param string $title
-	 * @param string $menuTitle
+	 * @param string $menu
 	 * @param string $capability
 	 * @param string $slug
-	 * @param callable $method
+	 * @param callable $callable
 	 * @param string $icon default dashicons-warning
 	 * @param boolean $customIcon default false
 	 * @param int $position default 20
 	 * @return string
 	 */
-	protected function addMenuPage($title, $menuTitle, $capability, $slug, $method, $icon = 'admin-plugins',$customIcon = false, $position = 20)
+	protected function addMenuPage($title, $menu, $capability, $slug, $callable, $icon = 'admin-plugins', $customIcon = false, $position = 20)
 	{
 		if ($customIcon) $icon = "dashicons-{$icon}";
-		return add_menu_page($title,$menuTitle,$capability,$slug,$method,$icon,$position);
+		return add_menu_page($title,$menu,$capability,$slug,$callable,$icon,$position);
 	}
 
 	/**
@@ -535,12 +535,17 @@ class WordPress
 	 * @see /reference/functions/add_menu_page/
 	 * @since 4.0.0
 	 * @access protected
-	 * @param string $title, string $menuTitle, string $capability, string $slug, callable $method
+	 * @param string $parent
+	 * @param string $title
+	 * @param string $menu
+	 * @param string $capability
+	 * @param string $slug
+	 * @param callable $callable
 	 * @return string
 	 */
-	protected function addSubMenuPage($parent, $pageTitle, $menuTitle, $capability, $slug, $method)
+	protected function addSubMenuPage($parent, $title, $menu, $capability, $slug, $callable)
 	{
-		return add_submenu_page( $parent, $pageTitle, $menuTitle, $capability, $slug, $method);
+		return add_submenu_page($parent,$title,$menu,$capability,$slug,$callable);
 	}
 
 	/**

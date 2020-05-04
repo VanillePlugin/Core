@@ -112,6 +112,9 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('JSONdecode', function ($json){
             return Json::decode($json);
         }));
+        $env->addFunction(Template::extend('exit', function (){
+            exit;
+        }));
         $env->addFunction(Template::extend('hasFilter', function ($action){
             return $this->hasFilter($action);
         }));

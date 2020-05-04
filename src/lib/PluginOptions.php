@@ -137,12 +137,36 @@ class PluginOptions extends WordPress
 		}
 		return $this->addMenuPage(
 			$this->translateString("{$this->getPluginName()} Dashboard"),
-			$this->translateString($this->getPluginName()),
+			$this->getPluginName(),
 			"manage_{$this->getNameSpace()}",
 			$this->getNameSpace(),
 			[$this,'index'],
 			$icon
 		);
+	}
+
+	/**
+	 * Update the value of an option that was already added
+	 *
+	 * @see /reference/functions/delete_option/
+	 * @since 4.0.0
+	 * @access protected
+	 * @param string void
+	 * @return {inherit}
+	 */
+	protected function addPluginSubMenuPage($callable, $slug, $title = '', $parent = null)
+	{
+		$slug = "{$this->getNameSpace()}-{$slug}";
+		$menu = $this->translateString("{$this->getPluginName()} Dashboard");
+		if ( empty($title) ) {
+			$title = $this->getPluginName();
+			$menu = $this->translateString("{$this->getPluginName()} {$title}");
+		}
+		if ( $parent == 'this' ) {
+			$parent = $this->getNameSpace();
+		}
+		$capability = "manage_{$this->getNameSpace()}";
+		return $this->addSubMenuPage($parent, $title, $title, $capability, $slug, [$this, $callable]);
 	}
 
 	/**
