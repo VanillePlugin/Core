@@ -284,10 +284,10 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get ajax Uri
+	 * Get Debug
 	 *
 	 * @param void
-	 * @return string
+	 * @return boolean
 	 */
 	public function isDebug()
 	{

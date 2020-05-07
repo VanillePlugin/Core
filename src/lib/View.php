@@ -14,6 +14,7 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\Template;
 use VanillePlugin\inc\Json;
+use VanillePlugin\inc\Data;
 use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\int\ViewInterface;
 
@@ -114,6 +115,9 @@ class View extends PluginOptions implements ViewInterface
         }));
         $env->addFunction(Template::extend('JSONencode', function ($array){
             return Json::encode($array);
+        }));
+        $env->addFunction(Template::extend('slashStrip', function ($string){
+            return Data::slashStrip($string);
         }));
         $env->addFunction(Template::extend('exit', function (){
             exit;
