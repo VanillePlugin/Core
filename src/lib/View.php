@@ -116,11 +116,14 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('JSONencode', function ($array){
             return Json::encode($array);
         }));
-        $env->addFunction(Template::extend('slashStrip', function ($string){
-            return Data::slashStrip($string);
-        }));
         $env->addFunction(Template::extend('exit', function (){
             exit;
+        }));
+        $env->addFunction(Template::extend('serialize', function ($data){
+            return Data::serialize($data);
+        }));
+        $env->addFunction(Template::extend('unserialize', function ($string){
+            return Data::unserialize($string);
         }));
         $env->addFunction(Template::extend('hasFilter', function ($action){
             return $this->hasFilter($action);

@@ -48,4 +48,34 @@ final class Data
 		$data = stripslashes_deep($data);
 	    return $data;
 	}
+
+	/**
+	 * Unserialize value only if it was serialized.
+	 *
+	 * @see /Function_Reference/maybe_serialize/
+	 * @since 4.0.0
+	 * @version 5.4
+	 * @access public
+	 * @param string $string
+	 * @return mixed
+	 */
+	public static function unserialize($string)
+	{
+		return maybe_unserialize($string);
+	}
+
+	/**
+	 * Serialize data, if needed.
+	 *
+	 * @see /Function_Reference/maybe_serialize/
+	 * @since 4.0.0
+	 * @version 5.4
+	 * @access public
+	 * @param mixed $data
+	 * @return mixed
+	 */
+	public static function serialize($data)
+	{
+		return maybe_serialize($data);
+	}
 }
