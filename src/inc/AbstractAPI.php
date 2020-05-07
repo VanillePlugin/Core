@@ -38,31 +38,31 @@ abstract class AbstractAPI extends PluginOptions
 	abstract public function setClient($params = null);
 
 	/**
-	 * @access protected
+	 * @access public
 	 * @param boolean $array
 	 * @return string
 	 */
-	protected function getResponse($array = false)
+	public function getResponse($array = false)
 	{
 		return Response::get( $this->response->getBody(), $array);
 	}
 
 	/**
-	 * @access protected
+	 * @access public
 	 * @param void
 	 * @return int
 	 */
-	protected function getStatus()
+	public function getStatus()
 	{
 		return $this->response->getStatusCode();
 	}
 
 	/**
-	 * @access protected
+	 * @access public
 	 * @param void
 	 * @return boolean
 	 */
-	protected function isDown()
+	public function isDown()
 	{
 		if ( $this->getStatus() > 401 ) {
 			return true;

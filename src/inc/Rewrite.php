@@ -19,8 +19,10 @@ class Rewrite extends WordPress
     /**
      * @access private
      * @return string $rules
+     * @return array $vars
      */
     private $rules;
+    private $vars = [];
 
     /**
      * @param string $rules
@@ -43,6 +45,16 @@ class Rewrite extends WordPress
     {
         // Add rules
         add_rewrite_rule($regex, $redirect, $after);
+    }
+
+    /**
+     * @access public
+     * @param string $vars
+     * @return void
+     */
+    public function addVars($vars = [])
+    {
+        $this->vars = $vars;
     }
 
     /**
@@ -77,6 +89,9 @@ class Rewrite extends WordPress
      */
     public function getRules()
     {
+        if ($this->vars) {
+            $this->rules = Text::replace($this->rules, $this->vars);
+        }
         return $this->rules;
     }
 
