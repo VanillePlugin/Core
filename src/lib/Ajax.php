@@ -37,10 +37,10 @@ class Ajax extends PluginOptions implements AjaxInterface
 	 * action : wp_ajax_{namespace}-{action}
 	 * action : wp_ajax_nopriv_{namespace}-{action}
 	 */
-	public function __construct(AdminAjaxInterface $callable)
+	public function __construct(AdminAjaxInterface $callable, $plugin)
 	{
 		// Init plugin config
-		$this->initConfig();
+		$this->initConfig($plugin);
 
 		// Set vars
 		$this->callable = $callable;

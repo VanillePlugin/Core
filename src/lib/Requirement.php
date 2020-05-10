@@ -20,10 +20,10 @@ class Requirement extends Notice implements RequirementInterface
 	 * @param void
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct($plugin)
 	{
 		// Init plugin config
-		$this->initConfig();
+		$this->initConfig($plugin);
 		$this->init([$this,'requirePlugins']);
 		$this->init([$this,'requireOptions']);
 		$this->init([$this,'requireTemplate']);

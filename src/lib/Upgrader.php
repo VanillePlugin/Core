@@ -23,10 +23,10 @@ class Upgrader extends Notice
 	 * @param void
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct($plugin)
 	{
 		// Init plugin config
-		$this->initConfig();
+		$this->initConfig($plugin);
 		$this->init([$this,'check']);
 	}
 

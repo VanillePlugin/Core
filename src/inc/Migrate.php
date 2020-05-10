@@ -25,10 +25,10 @@ final class Migrate extends Orm
 	 * @param void
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct($plugin)
 	{
 		$this->init();
-		$this->initConfig();
+		$this->initConfig($plugin);
 	}
 
 	/**

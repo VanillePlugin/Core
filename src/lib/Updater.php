@@ -37,10 +37,10 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 *
 	 * action : admin_init
 	 */
-	public function __construct($hostUrl, $params = [], $forceUnsafe = false)
+	public function __construct($plugin, $hostUrl, $params = [], $forceUnsafe = false)
 	{
 		// Init plugin config
-		$this->initConfig();
+		$this->initConfig($plugin);
 
 		global $wp_version;
 		$this->wpVerion = $wp_version;

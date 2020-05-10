@@ -39,10 +39,10 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * @param void
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct($plugin)
 	{
 		// Init plugin config
-		$this->initConfig();
+		$this->initConfig($plugin);
 
 		// Set cache path
 		if ( !self::$path ) {

@@ -15,6 +15,7 @@ namespace VanillePlugin\int;
 interface UpdaterInterface
 {
     /**
+     * @param object $plugin
      * @param string $hostUrl
      * @param array $params
      * @param boolean $forceUnsafe
@@ -22,7 +23,7 @@ interface UpdaterInterface
      *
      * action : admin_init
      */
-    function __construct($hostUrl, $params = [], $forceUnsafe = false);
+    function __construct($plugin, $hostUrl, $params = [], $forceUnsafe = false);
 
     /**
      * @param void
