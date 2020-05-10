@@ -49,7 +49,7 @@ trait VanilleConfig
 	{
 		// Define Internal Namespace
 		if (!$this->namespace) {
-			$this->namespace = VANILLEPLUGIN;
+			$this->namespace = $this->generateNameSpace();
 		}
 		
 		// Parse VanillePLugin Config file
@@ -292,6 +292,21 @@ trait VanilleConfig
 	public function isDebug()
 	{
 		return $this->global->options->debug;
+	}
+
+	/**
+	 * Get Debug
+	 *
+	 * @param void
+	 * @return boolean
+	 */
+	protected function generateNameSpace()
+	{
+		$exclude = [
+			'/core/vendor/jakiboy/vanilleplugin/src/VanilleConfig.php',
+			wp_normalize_path(WP_PLUGIN_DIR . '/'),
+		];
+		return str_replace($exclude, '', wp_normalize_path(__FILE__));
 	}
 
 	/**
