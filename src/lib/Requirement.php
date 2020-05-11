@@ -176,7 +176,6 @@ class Requirement extends Notice implements RequirementInterface
 	 */
 	protected function isActivated($callable)
 	{
-		$callable = str_replace('/', "\\", $callable);
 		if ( class_exists($callable) || function_exists($callable) ) {
 			return true;
 		}
