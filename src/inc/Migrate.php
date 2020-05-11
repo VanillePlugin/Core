@@ -17,6 +17,7 @@ use VanillePlugin\inc\File;
 use VanillePlugin\inc\Text;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
+final class Migrate extends Orm
 {
 	/**
 	 * Init Db object
