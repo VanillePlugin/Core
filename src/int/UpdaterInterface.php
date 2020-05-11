@@ -15,15 +15,14 @@ namespace VanillePlugin\int;
 interface UpdaterInterface
 {
     /**
+     * @param PluginNameSpaceInterface $plugin
      * @param object $plugin
      * @param string $hostUrl
      * @param array $params
      * @param boolean $forceUnsafe
      * @return void
-     *
-     * action : admin_init
      */
-    function __construct($plugin, $hostUrl, $params = [], $forceUnsafe = false);
+    function __construct(PluginNameSpaceInterface $plugin, $hostUrl, $params = [], $forceUnsafe = false);
 
     /**
      * @param void

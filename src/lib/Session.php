@@ -12,13 +12,16 @@
 
 namespace VanillePlugin\lib;
 
-class Session extends PluginOptions
+use VanillePlugin\int\NameSpaceInterface;
+use VanillePlugin\int\PluginNameSpaceInterface;
+
+class Session extends PluginOptions implements NameSpaceInterface
 {
 	/**
-	 * @param void
+	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
 	 */
-	public function __construct($plugin)
+	public function __construct(PluginNameSpaceInterface $plugin)
 	{
 		// Init plugin config
 		$this->initConfig($plugin);

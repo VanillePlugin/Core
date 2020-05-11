@@ -61,11 +61,11 @@ interface VanilleCacheInterface
      * @param void
      * @return void
      */
-    static function remove();
+    function remove();
 
     /**
      * @param void
      * @return void
      */
-    static function removeAll();
+    function removeAll();
 }

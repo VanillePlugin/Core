@@ -42,10 +42,10 @@ trait VanilleConfig
 	/**
 	 * Set Config Json File
 	 *
-	 * @param string $path
+	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
 	 */
-	protected function initConfig($plugin)
+	protected function initConfig(PluginNameSpaceInterface $plugin)
 	{
 		// Define Internal Namespace
 		if (!$this->namespace) {

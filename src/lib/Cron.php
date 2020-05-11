@@ -77,7 +77,6 @@ class Cron extends PluginOptions
 	 */
 	protected function start()
 	{
-		$this->initConfig();
 		$this->addFilter('cron_schedules', [$this,'apply']);
 		foreach ($this->actions as $action) {
 			if ( !$this->next("{$this->getNameSpace()}-{$action['name']}") ) {
@@ -119,10 +118,8 @@ class Cron extends PluginOptions
 	 * @param string $name
 	 * @return void
 	 */
-	public static function clear($name)
+	public function clear($name)
 	{
-		$plugin = parent::getStatic();
-		$plugin->initConfig();
-		wp_clear_scheduled_hook("{$plugin->getNameSpace()}-{$name}");
+		wp_clear_scheduled_hook("{$this->getNameSpace()}-{$name}");
 	}
 }

@@ -13,14 +13,15 @@
 namespace VanillePlugin\inc;
 
 use VanillePlugin\lib\PluginOptions;
+use VanillePlugin\int\PluginNameSpaceInterface;
 
 class Logger extends PluginOptions
 {
     /**
-     * @param void
+     * @param PluginNameSpaceInterface $plugin
      * @return void
      */
-    public function __construct($plugin)
+    public function __construct(PluginNameSpaceInterface $plugin)
     {
         // Init plugin config
         $this->initConfig($plugin);

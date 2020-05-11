@@ -13,6 +13,7 @@
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\UpdaterInterface;
+use VanillePlugin\int\PluginNameSpaceInterface;
 
 class Updater extends PluginOptions implements UpdaterInterface
 {
@@ -30,6 +31,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 	private $unsafe = false;
 
 	/**
+	 * @param PluginNameSpaceInterface $plugin
 	 * @param string $hostUrl
 	 * @param array $params
 	 * @param boolean $forceUnsafe
@@ -37,7 +39,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 *
 	 * action : admin_init
 	 */
-	public function __construct($plugin, $hostUrl, $params = [], $forceUnsafe = false)
+	public function __construct(PluginNameSpaceInterface $plugin, $hostUrl, $params = [], $forceUnsafe = false)
 	{
 		// Init plugin config
 		$this->initConfig($plugin);

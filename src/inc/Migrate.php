@@ -15,20 +15,21 @@ namespace VanillePlugin\inc;
 use VanillePlugin\lib\Orm;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Text;
+use VanillePlugin\int\PluginNameSpaceInterface;
 
-final class Migrate extends Orm
+final class Migrate
 {
 	/**
 	 * Init Db object
 	 * Init Config object
 	 *
-	 * @param void
+	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
 	 */
-	public function __construct($plugin)
+	public function __construct(PluginNameSpaceInterface $plugin)
 	{
-		$this->init();
 		$this->initConfig($plugin);
+		$this->init();
 	}
 
 	/**

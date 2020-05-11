@@ -16,14 +16,16 @@ namespace winamaz\core\system\functions\admin;
 use VanillePlugin\lib\Notice;
 use VanillePlugin\lib\Migrate;
 use VanillePlugin\lib\VanilleCache;
+use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\int\NameSpaceInterface;
 
-class Upgrader extends Notice
+class Upgrader extends Notice implements NameSpaceInterface
 {
 	/**
-	 * @param void
+	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
 	 */
-	public function __construct($plugin)
+	public function __construct(PluginNameSpaceInterface $plugin)
 	{
 		// Init plugin config
 		$this->initConfig($plugin);

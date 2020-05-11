@@ -17,6 +17,7 @@ use VanillePlugin\inc\Post;
 use VanillePlugin\inc\Get;
 use VanillePlugin\int\AjaxInterface;
 use VanillePlugin\int\AdminAjaxInterface;
+use VanillePlugin\int\PluginNameSpaceInterface;
 
 class Ajax extends PluginOptions implements AjaxInterface
 {
@@ -32,12 +33,13 @@ class Ajax extends PluginOptions implements AjaxInterface
 	 * Ajax Controller
 	 *
 	 * @param object $callable
+	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
 	 *
 	 * action : wp_ajax_{namespace}-{action}
 	 * action : wp_ajax_nopriv_{namespace}-{action}
 	 */
-	public function __construct(AdminAjaxInterface $callable, $plugin)
+	public function __construct(AdminAjaxInterface $callable, PluginNameSpaceInterface $plugin)
 	{
 		// Init plugin config
 		$this->initConfig($plugin);

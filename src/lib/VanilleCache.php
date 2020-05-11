@@ -14,6 +14,7 @@ namespace VanillePlugin\lib;
 
 use phpFastCache\CacheManager;
 use VanillePlugin\int\VanilleCacheInterface;
+use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
 class VanilleCache extends PluginOptions implements VanilleCacheInterface
@@ -36,10 +37,10 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	private const EXTENSION = 'db';
 
 	/**
-	 * @param void
+	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
 	 */
-	public function __construct($plugin)
+	public function __construct(PluginNameSpaceInterface $plugin)
 	{
 		// Init plugin config
 		$this->initConfig($plugin);
@@ -189,9 +190,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * @param void
 	 * @return void
 	 */
-	public static function remove()
+	public function remove()
 	{
-		new self;
 		if ( is_dir(self::$path) ) $handler = opendir(self::$path);
 		if ( !$handler ) return false;
 	   	while( $file = readdir($handler) ) {
@@ -205,7 +205,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 				        	continue;
 				        }
 				        if ( is_dir("{$dir}/{$file}") ) {
-				        	self::recursiveRemove("{$dir}/{$file}");
+				        	$this->recursiveRemove("{$dir}/{$file}");
 				        }
 				        else unlink("{$dir}/{$file}");
 				    }
@@ -222,14 +222,14 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * @param string $dir
 	 * @return void
 	 */
-	private static function recursiveRemove($dir)
+	private function recursiveRemove($dir)
 	{
 		if ( is_dir($dir) ) {
 			$objects = scandir($dir);
 			foreach ($objects as $object) {
 				if ($object !== '.' && $object !== '..') {
 					if (filetype("{$dir}/{$object}") == 'dir') {
-						self::recursiveRemove("{$dir}/{$object}");
+						$this->recursiveRemove("{$dir}/{$object}");
 					}
 					else unlink("{$dir}/{$object}");
 				}
@@ -244,12 +244,10 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * @param void
 	 * @return void
 	 */
-	public static function removeAll()
+	public function removeAll()
 	{
-		$plugin = parent::getStatic();
-		$plugin->initConfig();
-		self::setPath($plugin->getCachePath());
-		self::remove();
+		$this->setPath($this->getCachePath());
+		$this->remove();
 	}
 
 	/**

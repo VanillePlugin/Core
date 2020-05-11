@@ -16,17 +16,16 @@ use VanillePlugin\int\OrmInterface;
 use VanillePlugin\int\OrmQueryInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
-class Orm extends Db // implements OrmInterface
+class Orm extends Db implements OrmInterface
 {
 	/**
 	 * Init Db object
+	 *
 	 * @param void
 	 * @return void
 	 */
 	public function __construct()
 	{
-		// Init plugin config
-		$this->initConfig();
 		$this->init();
 	}
 

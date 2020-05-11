@@ -13,14 +13,15 @@
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\RequirementInterface;
+use VanillePlugin\int\PluginNameSpaceInterface;
 
 class Requirement extends Notice implements RequirementInterface
 {
 	/**
-	 * @param void
+	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
 	 */
-	public function __construct($plugin)
+	public function __construct(PluginNameSpaceInterface $plugin)
 	{
 		// Init plugin config
 		$this->initConfig($plugin);
