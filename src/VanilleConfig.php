@@ -137,7 +137,8 @@ trait VanilleConfig
 	 */
 	public function getPrefix()
 	{
-		return "{$this->getNameSpace()}_";
+		$prefix = str_replace('-', '_', $this->getNameSpace());
+		return "{$prefix}_";
 	}
 
 	/**

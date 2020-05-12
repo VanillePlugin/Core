@@ -15,7 +15,10 @@ namespace VanillePlugin\int;
 interface AjaxInterface
 {
     /**
+     * Ajax Controller
+     *
      * @param object $callable
+     * @param PluginNameSpaceInterface $plugin
      * @return void
      */
     function __construct(AdminAjaxInterface $callable, PluginNameSpaceInterface $plugin);
