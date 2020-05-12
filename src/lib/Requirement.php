@@ -14,6 +14,7 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\int\RequirementInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\inc\File;
 
 class Requirement extends Notice implements RequirementInterface
 {
@@ -164,7 +165,7 @@ class Requirement extends Notice implements RequirementInterface
 	 */
 	protected function isInstalled($slug)
 	{
-		if ( file_exists($this->getPluginDir("/{$slug}/{$slug}.php")) ) {
+		if ( File::exists($this->getPluginDir("/{$slug}/{$slug}.php")) ) {
 			return true;
 		}
 	}
@@ -176,7 +177,7 @@ class Requirement extends Notice implements RequirementInterface
 	 */
 	protected function isActivated($callable)
 	{
-		if ( class_exists(str_replace('/', '\\', $callable)) || function_exists($callable) ) {
+		if ( $this->isClass($callable) || $this->isFunction($callable) ) {
 			return true;
 		}
 	}

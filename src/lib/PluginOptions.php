@@ -370,6 +370,28 @@ class PluginOptions extends WordPress
 	}
 
 	/**
+	 * Return class exists
+	 *
+	 * @param string $callable
+	 * @return array
+	 */
+	protected function isClass($callable)
+	{
+		return class_exists(str_replace('/', '\\', $callable));
+	}
+
+	/**
+	 * Return function exists
+	 *
+	 * @param string $callable
+	 * @return array
+	 */
+	protected function isFunction($callable)
+	{
+		return function_exists($callable);
+	}
+
+	/**
 	 * Loads a plugin’s translated strings
 	 *
 	 * @param void
