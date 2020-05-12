@@ -359,6 +359,17 @@ class PluginOptions extends WordPress
 	}
 
 	/**
+	 * Return plugin
+	 *
+	 * @param string $file {pluginDir}/{pluginMain}.php
+	 * @return array
+	 */
+	protected function isPlugin($file)
+	{
+		return is_plugin_active($file);
+	}
+
+	/**
 	 * Loads a plugin’s translated strings
 	 *
 	 * @param void
