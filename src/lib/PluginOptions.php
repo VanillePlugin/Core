@@ -28,9 +28,9 @@ class PluginOptions extends WordPress
 	 * @param {inherit}
 	 * @return {inherit}
 	 */
-	protected function doPluginAction($action)
+	protected function doPluginAction($action, $args = null)
 	{
-		return $this->doAction("{$this->getNameSpace()}-{$action}");
+		return $this->doAction("{$this->getNameSpace()}-{$action}", $args);
 	}
 
 	/**

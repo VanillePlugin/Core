@@ -235,7 +235,7 @@ class WordPress
 	 * @param mixed $args
 	 * @return void
 	 */
-	protected function doAction($tag, $args = '')
+	protected function doAction($tag, $args = null)
 	{
 		do_action($tag,$args);
 	}
