@@ -47,7 +47,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 
 		// Set cache path
 		if ( !self::$path ) {
-			self::$path = realpath("{$this->getCachePath()}/data");
+			self::$path = "{$this->getCachePath()}/data";
 		}
 
 		// Set cache expire
@@ -157,7 +157,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public static function setPath($path)
 	{
-		self::$path = realpath(wp_normalize_path($path));
+		self::$path = wp_normalize_path($path);
 	}
 
 	/**
@@ -192,8 +192,13 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function remove()
 	{
-		if ( is_dir(self::$path) ) $handler = opendir(self::$path);
-		if ( !$handler ) return false;
+		$handler = false;
+		if ( is_dir(self::$path) ) {
+			$handler = opendir(self::$path);
+		}
+		if ( !$handler ) {
+			return false;
+		}
 	   	while( $file = readdir($handler) ) {
 			if ($file !== '.' && $file !== '..') {
 			    if ( !is_dir(self::$path.'/'.$file) ) {
