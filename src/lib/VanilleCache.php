@@ -47,7 +47,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 
 		// Set cache path
 		if ( !self::$path ) {
-			self::$path = "{$this->getCachePath()}/data";
+			self::$path = realpath("{$this->getCachePath()}/data");
 		}
 
 		// Set cache expire
@@ -157,7 +157,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public static function setPath($path)
 	{
-		self::$path = wp_normalize_path($path);
+		self::$path = realpath(wp_normalize_path($path));
 	}
 
 	/**
