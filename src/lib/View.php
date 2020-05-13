@@ -89,6 +89,9 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('isLoggedIn', function (){
             return $this->isLoggedIn();
         }));
+        $env->addFunction(Template::extend('isDebug', function (){
+            return $this->isDebug();
+        }));
         $env->addFunction(Template::extend('getConfig', function ($config){
             return $this->getConfig($config);
         }));
