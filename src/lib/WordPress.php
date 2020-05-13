@@ -285,11 +285,12 @@ class WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param mixed $value
+	 * @param mixed $args
 	 * @return mixed
 	 */
-	protected function applyFilter($hook, $value)
+	protected function applyFilter($hook, $value, $args = null)
 	{
-		return apply_filters($hook,$value);
+		return apply_filters($hook,$value,$args);
 	}
 
 	/**
