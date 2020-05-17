@@ -359,14 +359,20 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Return plugin
+	 * Return plugin active
 	 *
 	 * @param string $file {pluginDir}/{pluginMain}.php
-	 * @return array
+	 * @return boolean
 	 */
 	protected function isPlugin($file)
 	{
-		return is_plugin_active($file);
+		if ( function_exists('is_plugin_active') ) {
+			return is_plugin_active($file);
+		} else {
+			$plugins = $this->applyFilter('active_plugins', $this->getOption('active_plugins'));
+			return in_array($file, $plugins);
+		}
+		return false;
 	}
 
 	/**
