@@ -16,6 +16,7 @@ use VanillePlugin\VanilleConfig;
 use VanillePlugin\lib\WordPress;
 use VanillePlugin\inc\Data;
 use VanillePlugin\inc\Post;
+use VanillePlugin\inc\File;
 
 class PluginOptions extends WordPress
 {
@@ -375,7 +376,13 @@ class PluginOptions extends WordPress
 	 */
 	protected function isClass($callable)
 	{
-		return class_exists(str_replace('/', '\\', $callable));
+		$callable = str_replace('/', '\\', $callable);
+		if ( strpos($callable, '\\') !== false ) {
+			if ( !File::exists( wp_normalize_path(WP_PLUGIN_DIR."{$callable}.php") ) ) {
+				return false;
+			}
+		}
+		return class_exists($callable);
 	}
 
 	/**
