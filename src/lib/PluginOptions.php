@@ -222,7 +222,8 @@ class PluginOptions extends WordPress
 	 */
 	protected function localizePluginJS($content = [], $id = 'main')
 	{
-		$object = "{$this->getNameSpace()}Plugin";
+		$prefix = str_replace('-', '', $this->getNameSpace());
+		$object = "{$prefix}Plugin";
 		$this->localizeJS("{$this->getNameSpace()}-{$id}",$object,$content);
 	}
 
