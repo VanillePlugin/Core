@@ -533,7 +533,7 @@ class WordPress
 	/**
 	 * Add a top-level menu page
 	 *
-	 * @see /reference/functions/add_menu_page/
+	 * @see /reference/functions/add_submenu_page/
 	 * @since 4.0.0
 	 * @access protected
 	 * @param string $parent
@@ -552,7 +552,7 @@ class WordPress
 	/**
 	 * Add a top-level menu page
 	 *
-	 * @see /reference/functions/add_menu_page/
+	 * @see /reference/functions/add_options_page/
 	 * @since 4.0.0
 	 * @access protected
 	 * @param string $title, string $menuTitle, string $capability, string $slug, callable $method

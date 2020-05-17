@@ -124,10 +124,8 @@ class PluginOptions extends WordPress
 	/**
 	 * Update the value of an option that was already added
 	 *
-	 * @see /reference/functions/delete_option/
-	 * @since 4.0.0
 	 * @access protected
-	 * @param string $name
+	 * @param string $icon
 	 * @return {inherit}
 	 */
 	protected function addPluginMenuPage($icon = 'admin-plugins')
@@ -135,10 +133,11 @@ class PluginOptions extends WordPress
 		if (strpos($icon, 'http') === false) {
 			$icon = "dashicons-{$icon}";
 		}
+		$prefix = str_replace('-', '_', $this->getNameSpace());
 		return $this->addMenuPage(
 			$this->translateString("{$this->getPluginName()} Dashboard"),
 			$this->getPluginName(),
-			"manage_{$this->getNameSpace()}",
+			"manage_{$prefix}",
 			$this->getNameSpace(),
 			[$this,'index'],
 			$icon
@@ -148,10 +147,8 @@ class PluginOptions extends WordPress
 	/**
 	 * Update the value of an option that was already added
 	 *
-	 * @see /reference/functions/delete_option/
-	 * @since 4.0.0
 	 * @access protected
-	 * @param string void
+	 * @param string callable
 	 * @return {inherit}
 	 */
 	protected function addPluginSubMenuPage($callable, $slug, $title = '', $parent = null)
@@ -165,7 +162,8 @@ class PluginOptions extends WordPress
 		if ( $parent == 'this' ) {
 			$parent = $this->getNameSpace();
 		}
-		$capability = "manage_{$this->getNameSpace()}";
+		$prefix = str_replace('-', '_', $this->getNameSpace());
+		$capability = "manage_{$prefix}";
 		return $this->addSubMenuPage($parent, $title, $title, $capability, $slug, [$this, $callable]);
 	}
 
@@ -426,7 +424,8 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginCapability($role, $cap)
 	{
-		$this->addCapability($role, "{$cap}_{$this->getNameSpace()}");
+		$prefix = str_replace('-', '_', $this->getNameSpace());
+		$this->addCapability($role, "{$cap}_{$prefix}");
 	}
 
 	/**
@@ -439,8 +438,9 @@ class PluginOptions extends WordPress
 	 */
 	protected static function removePluginCapability($role, $cap)
 	{
-		$config = self::getStatic();
-		parent::removeCapability($role, "{$cap}_{$config->getNameSpace()}");
+		$plugin = self::getStatic();
+		$prefix = str_replace('-', '_', $plugin->getNameSpace());
+		parent::removeCapability($role, "{$cap}_{$prefix}");
 	}
 
 	/**
