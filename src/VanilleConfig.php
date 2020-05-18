@@ -41,6 +41,7 @@ trait VanilleConfig
 	
 	/**
 	 * Set Config Json File
+	 * Allow Parent Config Access
 	 *
 	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
@@ -48,15 +49,11 @@ trait VanilleConfig
 	protected function initConfig(PluginNameSpaceInterface $plugin)
 	{
 		// Define Internal Namespace
-		if (!$this->namespace) {
-			$this->namespace = $plugin->getNameSpace();
-		}
+		$this->namespace = $plugin->getNameSpace();
 		
 		// Parse VanillePLugin Config file
-		if (!$this->global) {
-			$json = new Json("{$this->getRoot()}{$this->path}");
-			$this->global = $json->parse();
-		}
+		$json = new Json("{$this->getRoot()}{$this->path}");
+		$this->global = $json->parse();
 	}
 
 	/**
