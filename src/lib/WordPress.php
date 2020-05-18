@@ -348,7 +348,7 @@ class WordPress
 	 * @param string $footer
 	 * @return void
 	 */
-	protected function addJS($id, $path, $deps = [], $version = false, $footer = true)
+	protected function addJS($id, $path, $deps = [], $version = false, $footer = false)
 	{
 		if ( strpos($path, 'http') == false ){
 		    $path = $this->getPluginUrl($path);

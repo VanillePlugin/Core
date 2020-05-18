@@ -176,7 +176,7 @@ class PluginOptions extends WordPress
 	 * @param {inherit}
 	 * @return {inherit}
 	 */
-	protected function addPluginJS($path, $deps = [], $version = false, $footer = false)
+	protected function addPluginJS($path, $deps = [], $version = false, $footer = true)
 	{
 		$id = str_replace('.js', '', basename($path));
 		$id = str_replace('.min', '', $id);
@@ -192,7 +192,7 @@ class PluginOptions extends WordPress
 	 * @param {inherit}
 	 * @return {inherit}
 	 */
-	protected function addPluginMainJS($path, $deps = [], $version = false, $footer = false)
+	protected function addPluginMainJS($path, $deps = [], $version = false, $footer = true)
 	{
 		$path = "{$this->getAsset()}{$path}";
 		$this->addJS("{$this->getNameSpace()}-main",$path,$deps,$version,$footer);
@@ -206,7 +206,7 @@ class PluginOptions extends WordPress
 	 * @param {inherit}
 	 * @return {inherit}
 	 */
-	protected function addPluginGlobalJS($path, $deps = [], $version = false, $footer = false)
+	protected function addPluginGlobalJS($path, $deps = [], $version = false, $footer = true)
 	{
 		$path = "{$this->getAsset()}{$path}";
 		$this->addJS("{$this->getNameSpace()}-global",$path,$deps,$version,$footer);
@@ -235,7 +235,22 @@ class PluginOptions extends WordPress
 	 * @param string $name
 	 * @return {inherit}
 	 */
-	protected function addPluginCSS($path, $deps = [], $version = '', $media = 'all')
+	protected function localizeGlobalJS($content = [], $id = 'global')
+	{
+		$prefix = str_replace('-', '', $this->getNameSpace());
+		$object = "{$prefix}Global";
+		$this->localizeJS("{$this->getNameSpace()}-{$id}",$object,$content);
+	}
+
+	/**
+	 * Update the value of an option that was already added
+	 *
+	 * @since 4.0.0
+	 * @access protected
+	 * @param string $name
+	 * @return {inherit}
+	 */
+	protected function addPluginCSS($path, $deps = [], $version = false, $media = 'all')
 	{
 		$id = str_replace('.css', '', basename($path));
 		$id = str_replace('.min', '', $id);
@@ -251,7 +266,7 @@ class PluginOptions extends WordPress
 	 * @param string $name
 	 * @return {inherit}
 	 */
-	protected function addPluginMainCSS($path, $deps = [], $version = '', $media = 'all')
+	protected function addPluginMainCSS($path, $deps = [], $version = false, $media = 'all')
 	{
 		$path = "{$this->getAsset()}{$path}";
 		$this->addCSS("{$this->getNameSpace()}-main",$path,$deps,$version,$media);
