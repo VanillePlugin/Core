@@ -453,6 +453,7 @@ class PluginOptions extends WordPress
 	 */
 	public function translateVar($string = '', $var = null)
 	{
+		$var = preg_replace('/\s+/', $this->translateString('{Empty}'), $var);
 		return sprintf( $this->translateString(str_replace($var, '%s', $string)), $var);
 	}
 
