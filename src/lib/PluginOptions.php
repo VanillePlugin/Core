@@ -434,13 +434,26 @@ class PluginOptions extends WordPress
 	/**
 	 * Translated string
 	 *
-	 * @param void
-	 * @return void
-	 *
+	 * @access public
+	 * @param string $string
+	 * @return string
 	 */
-	public function translateString($string)
+	public function translateString($string = '')
 	{
 		return __($string, $this->getNameSpace());
+	}
+
+	/**
+	 * Translated string
+	 *
+	 * @access public
+	 * @param string $string
+	 * @param mixed $var
+	 * @return string
+	 */
+	public function translateVar($string = '', $var = null)
+	{
+		return sprintf( $this->translateString(str_replace($var, '%s', $string)), $var);
 	}
 
 	/**
