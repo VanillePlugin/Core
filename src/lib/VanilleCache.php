@@ -33,8 +33,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	private static $path = null;
 	private static $expireIn = null;
 
-	private const EXPIRE = 30;
-	private const EXTENSION = 'db';
+	const EXPIRE = 30;
+	const EXTENSION = 'db';
 
 	/**
 	 * @param PluginNameSpaceInterface $plugin

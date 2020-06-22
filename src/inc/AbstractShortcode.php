@@ -24,7 +24,7 @@ abstract class AbstractShortcode extends View implements ShortcodeInterface
 	 * @param string $tag
 	 * @return string
 	 */
-	abstract public function callable($atts = [], $content = null, $tag = '');
+	abstract public function doCallable($atts = [], $content = null, $tag = '');
 
 	/**
 	 * @access protected

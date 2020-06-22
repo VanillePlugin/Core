@@ -26,5 +26,5 @@ interface ShortcodeInterface
 	 * @param string $tag
 	 * @return string
 	 */
-	function callable($atts = [], $content = null, $tag = '');
+	function doCallable($atts = [], $content = null, $tag = '');
 }
