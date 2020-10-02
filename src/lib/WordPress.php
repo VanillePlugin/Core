@@ -651,14 +651,14 @@ class WordPress
 	}
 
 	/**
-	 * Send notification
+	 * Check is WordPress Admin
 	 *
 	 * @param void
 	 * @return boolean
 	 */
-	protected function isAdmin($url = null)
+	protected function isAdmin()
 	{
-		if ( is_admin($url) ) {
+		if ( is_admin() ) {
 			return true;
 		}
 		return false;

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.0.1
+ * @version   : 0.1.2
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -333,14 +333,15 @@ class PluginOptions extends WordPress
 	/**
 	 * Check if is plugin namespace
 	 *
-	 * @param void
+	 * @param string $slug null
 	 * @return boolean
 	 */
-	protected function isPluginAdmin()
+	protected function isPluginAdmin($slug = null)
 	{
 		$protocol = isset($_SERVER['HTTPS']) ? "https://" : "http://";
 		$url = "{$protocol}{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-		if ( strpos($url,"?page={$this->getNameSpace()}") !== false ) {
+		$current = ($slug) ? $slug : "?page={$this->getNameSpace()}";
+		if ( strpos($url,$current) !== false ) {
 			return true;
 		}
 		return false;
