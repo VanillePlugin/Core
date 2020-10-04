@@ -14,7 +14,7 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\Template;
 use VanillePlugin\inc\Json;
-use VanillePlugin\inc\Data;
+use VanillePlugin\inc\Stringify;
 use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\int\ViewInterface;
 
@@ -123,10 +123,10 @@ class View extends PluginOptions implements ViewInterface
             exit;
         }));
         $env->addFunction(Template::extend('serialize', function ($data){
-            return Data::serialize($data);
+            return Stringify::serialize($data);
         }));
         $env->addFunction(Template::extend('unserialize', function ($string){
-            return Data::unserialize($string);
+            return Stringify::unserialize($string);
         }));
         $env->addFunction(Template::extend('hasFilter', function ($hook){
             return $this->hasFilter($hook);

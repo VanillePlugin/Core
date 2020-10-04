@@ -14,7 +14,7 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\VanilleConfig;
 use VanillePlugin\lib\WordPress;
-use VanillePlugin\inc\Data;
+use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Post;
 use VanillePlugin\inc\File;
 

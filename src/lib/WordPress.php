@@ -5,7 +5,7 @@
  *
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.0.1
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,7 +15,7 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\Data;
+use VanillePlugin\inc\Stringify;
 
 /**
  * WordPress Class Wrrap Global Functions
@@ -476,7 +476,7 @@ class WordPress
 	protected function getOption($option, $default = null)
 	{
 		$option = maybe_unserialize(get_option($option, $default));
-		return Data::slashStrip($option);
+		return Stringify::slashStrip($option);
 	}
 
 	/**

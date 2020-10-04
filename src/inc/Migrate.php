@@ -14,7 +14,7 @@ namespace VanillePlugin\inc;
 
 use VanillePlugin\lib\Orm;
 use VanillePlugin\inc\File;
-use VanillePlugin\inc\Text;
+use VanillePlugin\inc\Stringify;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
 final class Migrate extends Orm
@@ -45,9 +45,9 @@ final class Migrate extends Orm
 		foreach ($tables as $table) {
 			$installSql = File::r("{$this->getMigrate()}/{$table}");
 			if ( !empty($installSql) ) {
-				$installSql = Text::replace($installSql, '[DBPREFIX]', $this->prefix);
-				$installSql = Text::replace($installSql, '[PREFIX]', $this->getPrefix());
-				$installSql = Text::replace($installSql, '[COLLATE]', $this->collate);
+				$installSql = Stringify::replace($installSql, '[DBPREFIX]', $this->prefix);
+				$installSql = Stringify::replace($installSql, '[PREFIX]', $this->getPrefix());
+				$installSql = Stringify::replace($installSql, '[COLLATE]', $this->collate);
 				$this->query($installSql);
 			}
 		}
@@ -65,8 +65,8 @@ final class Migrate extends Orm
 		if ( !$file->exists("{$this->getMigrate()}/upgrade.sql") ) return;
 		$upgradeSql = File::r("{$this->getMigrate()}/upgrade.sql");
 		if ( !empty($upgradeSql) ) {
-			$upgradeSql = Text::replace($upgradeSql, '[DBPREFIX]', $this->prefix);
-			$upgradeSql = Text::replace($upgradeSql, '[PREFIX]', $this->getPrefix());
+			$upgradeSql = Stringify::replace($upgradeSql, '[DBPREFIX]', $this->prefix);
+			$upgradeSql = Stringify::replace($upgradeSql, '[PREFIX]', $this->getPrefix());
 			$this->query($upgradeSql);
 		}
 	}
@@ -83,8 +83,8 @@ final class Migrate extends Orm
 		if ( !$file->exists("{$this->getMigrate()}/uninstall.sql") ) return;
 		$uninstallSql = File::r("{$this->getMigrate()}/uninstall.sql");
 		if ( !empty($uninstallSql) ) {
-			$uninstallSql = Text::replace($uninstallSql, '[DBPREFIX]', $this->prefix);
-			$uninstallSql = Text::replace($uninstallSql, '[PREFIX]', $this->getPrefix());
+			$uninstallSql = Stringify::replace($uninstallSql, '[DBPREFIX]', $this->prefix);
+			$uninstallSql = Stringify::replace($uninstallSql, '[PREFIX]', $this->getPrefix());
 			$this->query($uninstallSql);
 		}
 	}
