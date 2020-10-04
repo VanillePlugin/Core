@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.2
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,31 +15,30 @@ namespace VanillePlugin\inc;
 final class Json extends File
 {
 	/**
-	 * @access private
-	 * @var string content
-	 */
-	private $content;
-
-	/**
 	 * @param string $path
 	 * @return void
 	 */
 	public function __construct($path)
 	{
-		$this->content = parent::read($path);
+		parent::__construct($path);
+		$this->read();
 	}
 
 	/**
+	 * Parse JSON object
+	 *
 	 * @access public
 	 * @param boolean $isArray
 	 * @return mixed
 	 */
 	public function parse($isArray = false)
 	{
-		return self::decode($this->content, $isArray);
+		return self::decode($this->getContent(), $isArray);
 	}
 
 	/**
+	 * Decode JSON
+	 *
 	 * @access public
 	 * @param string $content
 	 * @param boolean $isArray
@@ -51,11 +50,11 @@ final class Json extends File
 	}
 
 	/**
-	 * Format JSON For WordPress
+	 * Encode JSON
 	 *
 	 * @access public
 	 * @param mixen $data
-	 * @return json
+	 * @return string
 	 */
 	public static function encode($data)
 	{
@@ -67,14 +66,15 @@ final class Json extends File
 	 *
 	 * @access public
 	 * @param mixen $data
-	 * @return json
+	 * @param int $args
+	 * @return string
 	 *
 	 * JSON_UNESCAPED_UNICODE : 256
 	 * JSON_UNESCAPED_SLASHES : 64
 	 * JSON_PRETTY_PRINT : 64
 	 */
-	public static function format($data)
+	public static function format($data, $args = 64|256)
 	{
-		return json_encode($data,64|128|256);
+		return json_encode($data, $args);
 	}
 }

@@ -12,35 +12,42 @@
 
 namespace VanillePlugin\inc;
 
-final class Get
+class Upload
 {
 	/**
-	 * @param string|null $item
-	 * @return array|string
+	 * @access public
+	 * @param string $item
+	 * @return mixed
 	 */
 	public static function get($item = null)
 	{
-		if (isset($item)) return $_GET[$item];
-		else return $_GET;
+		if ( isset($item) ) {
+			return $_FILES[$item];
+		} else return $_FILES;
 	}
 
 	/**
-	 * @param string|null $item,$value
+	 * @access public
+	 * @param string $item
+	 * @param mixed $value
 	 * @return void
 	 */
 	public static function set($item,$value)
 	{
-		$_GET[$item] = $value;
+		$_FILES[$item] = $value;
 	}
 	
 	/**
-	 * @param string|null $item
-	 * @return boolean|null
+	 * @access public
+	 * @param string $item
+	 * @return boolean
 	 */
 	public static function isSetted($item = null)
 	{
-		if ( $item && isset($_GET[$item]) ) return true;
-		elseif ( !$item && isset($_GET) ) return true;
-		else return false;
+		if ( $item && isset($_FILES[$item]) ) {
+			return true;
+		} elseif ( !$item && isset($_FILES) ) {
+			return true;
+		} else return false;
 	}
 }

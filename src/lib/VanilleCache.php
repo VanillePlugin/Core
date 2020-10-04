@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.2
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,6 +15,7 @@ namespace VanillePlugin\lib;
 use phpFastCache\CacheManager;
 use VanillePlugin\int\VanilleCacheInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\inc\File;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
 class VanilleCache extends PluginOptions implements VanilleCacheInterface
@@ -192,56 +193,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function remove()
 	{
-		$handler = false;
-		if ( is_dir(self::$path) ) {
-			$handler = opendir(self::$path);
-		}
-		if ( !$handler ) {
-			return false;
-		}
-	   	while( $file = readdir($handler) ) {
-			if ($file !== '.' && $file !== '..') {
-			    if ( !is_dir(self::$path.'/'.$file) ) {
-			    	@unlink(self::$path.'/'.$file);
-			    } else {
-			    	$dir = self::$path.'/'.$file;
-				    foreach( scandir($dir) as $file ) {
-				        if ( '.' === $file || '..' === $file ) {
-				        	continue;
-				        }
-				        if ( is_dir("{$dir}/{$file}") ) {
-				        	$this->recursiveRemove("{$dir}/{$file}");
-				        }
-				        else unlink("{$dir}/{$file}");
-				    }
-				    @rmdir($dir);
-			    }
-			}
-	   }
-	   closedir($handler);
-	   return true;
-	}
-
-	/**
-	 * @access private
-	 * @param string $dir
-	 * @return void
-	 */
-	private function recursiveRemove($dir)
-	{
-		if ( is_dir($dir) ) {
-			$objects = scandir($dir);
-			foreach ($objects as $object) {
-				if ($object !== '.' && $object !== '..') {
-					if (filetype("{$dir}/{$object}") == 'dir') {
-						$this->recursiveRemove("{$dir}/{$object}");
-					}
-					else unlink("{$dir}/{$object}");
-				}
-			 }
-			reset($objects);
-			rmdir($dir);
-		}
+		$cacheDir = new File();
+		$cacheDir->emptyDir(self::$path);
 	}
 
 	/**
