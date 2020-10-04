@@ -76,9 +76,10 @@ class Logger extends PluginOptions
     private function write($status, $message)
     {
         $date = date('[d-m-Y]');
-        $file = "{$this->getLoggerPath()}/debug-{$date}.log";
+        $log = "{$this->getLoggerPath()}/debug-{$date}.log";
         $date = date('[d-m-Y H:i:s]');
         $msg = "{$date} : [{$status}] - {$message}" . PHP_EOL;
-        File::append($file, $msg);
+        $file = new File();
+        $file->append($log, $msg);
     }
 }
