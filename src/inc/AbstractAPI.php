@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.4
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -20,7 +20,7 @@ abstract class AbstractAPI extends PluginOptions
 	 * @access public
 	 * @var boolean $error
 	 */
-	public $error = false;	
+	public $error = false;
 
 	/**
 	 * @access protected
@@ -32,14 +32,14 @@ abstract class AbstractAPI extends PluginOptions
 
 	/**
 	 * @access public
-	 * @param void
+	 * @param array $params null
 	 * @return void
 	 */
 	abstract public function setClient($params = null);
 
 	/**
 	 * @access public
-	 * @param boolean $array
+	 * @param boolean $array false
 	 * @return string
 	 */
 	public function getResponse($array = false)

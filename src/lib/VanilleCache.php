@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.4
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,6 +16,7 @@ use phpFastCache\CacheManager;
 use VanillePlugin\int\VanilleCacheInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
+use VanillePlugin\inc\Stringify;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
 class VanilleCache extends PluginOptions implements VanilleCacheInterface
@@ -76,7 +77,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function get($key)
 	{
-		$this->cache = $this->adapter->getItem( $this->formatKey($key) );
+		$this->cache = $this->adapter->getItem(Stringify::formatKey($key));
 		return $this->isCached = $this->cache->get();
 	}
 
@@ -104,7 +105,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function update($key, $data)
 	{
-		$this->cache = $this->adapter->getItem( $this->formatKey($key) );
+		$this->cache = $this->adapter->getItem(Stringify::formatKey($key));
 		$this->cache->set($data)
 		->expiresAfter( self::$expireIn );
 		$this->adapter->save( $this->cache );
@@ -117,7 +118,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function delete($key)
 	{
-		$this->adapter->deleteItem( $this->formatKey($key) );
+		$this->adapter->deleteItem(Stringify::formatKey($key));
 	}
 
 	/**
@@ -159,31 +160,6 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	public static function setPath($path)
 	{
 		self::$path = wp_normalize_path($path);
-	}
-
-	/**
-	 * @access private
-	 * @param string $key
-	 * @return string
-	 */
-	private function formatKey($key)
-	{
-	    $chars = [
-	        "{"  => "rcb",
-	        "}"  => "lcb",
-	        "("  => "rpn",
-	        ")"  => "lpn",
-	        "/"  => "fsl",
-	        "\\" => "bsl",
-	        "@"  => "ats",
-	        ":"  => "cln"
-	    ];
-	    foreach ($chars as $character => $replacement) {
-	        if (strpos($key, $character)) {
-	            $key = str_replace($character, "~".$replacement."~", $key);
-	        }
-	    }
-	    return $key;
 	}
 
 	/**

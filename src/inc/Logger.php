@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.4
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -80,6 +80,6 @@ class Logger extends PluginOptions
         $date = date('[d-m-Y H:i:s]');
         $msg = "{$date} : [{$status}] - {$message}" . PHP_EOL;
         $file = new File();
-        $file->append($log, $msg);
+        $file->w($log, $msg, true);
     }
 }

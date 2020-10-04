@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.4
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -401,7 +401,8 @@ class PluginOptions extends WordPress
 	{
 		$callable = str_replace('/', '\\', $callable);
 		if ( strpos($callable, '\\') !== false ) {
-			if ( !File::exists( wp_normalize_path(WP_PLUGIN_DIR."{$callable}.php") ) ) {
+			$file = new File();
+			if ( !$file->exists( wp_normalize_path(WP_PLUGIN_DIR."{$callable}.php") ) ) {
 				return false;
 			}
 		}

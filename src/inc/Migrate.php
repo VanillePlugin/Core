@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.4
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -43,7 +43,7 @@ final class Migrate extends Orm
 		$tables = array_diff(scandir($this->getMigrate()),['.','..','uninstall.sql','upgrade.sql']);
 		if (!$tables) return;
 		foreach ($tables as $table) {
-			$installSql = File::read("{$this->getMigrate()}/{$table}");
+			$installSql = File::r("{$this->getMigrate()}/{$table}");
 			if ( !empty($installSql) ) {
 				$installSql = Text::replace($installSql, '[DBPREFIX]', $this->prefix);
 				$installSql = Text::replace($installSql, '[PREFIX]', $this->getPrefix());
@@ -61,8 +61,9 @@ final class Migrate extends Orm
 	 */
 	public function upgrade()
 	{
-		if ( !File::exists("{$this->getMigrate()}/upgrade.sql") ) return;
-		$upgradeSql = File::read("{$this->getMigrate()}/upgrade.sql");
+		$file = new file();
+		if ( !$file->exists("{$this->getMigrate()}/upgrade.sql") ) return;
+		$upgradeSql = File::r("{$this->getMigrate()}/upgrade.sql");
 		if ( !empty($upgradeSql) ) {
 			$upgradeSql = Text::replace($upgradeSql, '[DBPREFIX]', $this->prefix);
 			$upgradeSql = Text::replace($upgradeSql, '[PREFIX]', $this->getPrefix());
@@ -78,8 +79,9 @@ final class Migrate extends Orm
 	 */
 	public function rollback()
 	{
-		if ( !File::exists("{$this->getMigrate()}/uninstall.sql") ) return;
-		$uninstallSql = File::read("{$this->getMigrate()}/uninstall.sql");
+		$file = new file();
+		if ( !$file->exists("{$this->getMigrate()}/uninstall.sql") ) return;
+		$uninstallSql = File::r("{$this->getMigrate()}/uninstall.sql");
 		if ( !empty($uninstallSql) ) {
 			$uninstallSql = Text::replace($uninstallSql, '[DBPREFIX]', $this->prefix);
 			$uninstallSql = Text::replace($uninstallSql, '[PREFIX]', $this->getPrefix());

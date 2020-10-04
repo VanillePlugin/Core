@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.4
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -20,7 +20,7 @@ final class Date
 	 * @access public
 	 * @param string $date
 	 * @param string $format
-	 * @return object $date
+	 * @return object
 	 */
 	public static function get($date, $format = 'm/d/Y H:i:s')
 	{
@@ -59,7 +59,7 @@ final class Date
 	 * @access public
 	 * @param string $date
 	 * @param string $format
-	 * @return object $date
+	 * @return object
 	 */
 	public static function toString($date, $format = 'M/d/Y H:i:s', $to = 'd/m/Y H:i:s')
 	{

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.4
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -223,7 +223,7 @@ trait VanilleConfig
 	 */
 	public function getRoot()
 	{
-		return wp_normalize_path( WP_PLUGIN_DIR . '/' . self::getNameSpace() );
+		return Stringify::formatPath( WP_PLUGIN_DIR . '/' . self::getNameSpace() );
 	}
 
 	/**
@@ -308,6 +308,6 @@ trait VanilleConfig
 			}
 		}
 		$config = Json::format($config);
-		File::write("{$this->getRoot()}{$this->path}",$config);
+		File::w("{$this->getRoot()}{$this->path}",$config);
 	}
 }

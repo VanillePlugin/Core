@@ -12,19 +12,19 @@
 
 namespace VanillePlugin\inc;
 
-final class Post
+class Server
 {
 	/**
 	 * @access public
-	 * @param string $item null
+	 * @param string $item
 	 * @return mixed
 	 */
 	public static function get($item = null)
 	{
 		if ( isset($item) ) {
-			return $_POST[$item];
-		} else return $_POST;
-	}	
+			return $_SERVER[$item];
+		} else return $_SERVER;
+	}
 
 	/**
 	 * @access public
@@ -34,20 +34,32 @@ final class Post
 	 */
 	public static function set($item,$value)
 	{
-		$_POST[$item] = $value;
+		$_SERVER[$item] = $value;
 	}
 
 	/**
 	 * @access public
-	 * @param string $item null
+	 * @param string $item
 	 * @return boolean
 	 */
 	public static function isSetted($item = null)
 	{
-		if ( $item && isset($_POST[$item]) ) {
+		if ( $item && isset($_SERVER[$item]) ) {
 			return true;
-		} elseif ( !$item && isset($_POST) ) {
+		} elseif ( !$item && isset($_SERVER) ) {
 			return true;
 		} else return false;
+	}
+	
+	/**
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public static function remote()
+	{
+		return self::isSetted('REMOTE_ADDR') 
+		? self::get('REMOTE_ADDR') 
+		: self::get('HTTP_X_FORWARDED_FOR');
 	}
 }

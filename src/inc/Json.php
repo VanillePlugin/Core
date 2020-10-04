@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.4
+ * @version   : 0.1.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -28,7 +28,7 @@ final class Json extends File
 	 * Parse JSON object
 	 *
 	 * @access public
-	 * @param boolean $isArray
+	 * @param boolean $isArray false
 	 * @return mixed
 	 */
 	public function parse($isArray = false)
@@ -41,7 +41,7 @@ final class Json extends File
 	 *
 	 * @access public
 	 * @param string $content
-	 * @param boolean $isArray
+	 * @param boolean $isArray false
 	 * @return mixed
 	 */
 	public static function decode($content, $isArray = false)
