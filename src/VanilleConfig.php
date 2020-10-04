@@ -15,6 +15,7 @@ namespace VanillePlugin;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Json;
+use VanillePlugin\inc\Stringify;
 
 trait VanilleConfig
 {
