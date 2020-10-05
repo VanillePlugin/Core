@@ -43,7 +43,7 @@ class File
 	 */
 	public function __construct($path = null)
 	{
-		if ( $path && !$this->exists($this->path = $path) ) {
+		if ( $path && !$this->isExists($this->path = $path) ) {
 			$this->write();
 		}
 		$this->analyze();
@@ -77,7 +77,7 @@ class File
 	protected function open($mode = 'c+')
 	{
 		clearstatcache();
-		if ( $this->exists($this->path) ) {
+		if ( $this->isExists($this->path) ) {
 			$this->handler = fopen($this->path, $mode);
 		}
 	}
@@ -153,7 +153,7 @@ class File
 	 */
     public function getLastAccess()
     {
-        if ( $this->exists($this->path) ) {
+        if ( $this->isExists($this->path) ) {
             if ( ($access = fileatime($this->path)) ) {
                 return $access;
             } else {
@@ -171,7 +171,7 @@ class File
 	 */
     public function getLastChange()
     {
-        if ( $this->exists($this->path) ) {
+        if ( $this->isExists($this->path) ) {
             if ( ($change = filemtime($this->path)) ) {
                 return $change;
             } else {
@@ -289,7 +289,7 @@ class File
 	public function delete()
 	{
 		$this->close();
-		if ( $this->exists() ) {
+		if ( $this->isExists() ) {
 			if ( unlink($this->path) ) {
 				return true;
 			} else {
@@ -429,7 +429,7 @@ class File
 	 * @param void
 	 * @return boolean
 	 */
-	public function exists()
+	public function isExists()
 	{
 		if ( $this->isFile() && file_exists($this->path) ) {
 			return true;
@@ -473,7 +473,22 @@ class File
 	 */
 	public function isEmpty()
 	{
-		if ( $this->exists($this->path) && filesize($this->path) == 0 ) {
+		if ( $this->isExists($this->path) && filesize($this->path) == 0 ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Check File Exists without stream
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return boolean
+	 */
+	public static function exists($path)
+	{
+		if ( file_exists($path) ) {
 			return true;
 		}
 		return false;

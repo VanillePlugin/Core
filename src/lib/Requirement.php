@@ -165,8 +165,7 @@ class Requirement extends Notice implements RequirementInterface
 	 */
 	protected function isInstalled($slug)
 	{
-		$file = new File();
-		if ( $file->exists($this->getPluginDir("/{$slug}/{$slug}.php")) ) {
+		if ( File::exists($this->getPluginDir("/{$slug}/{$slug}.php")) ) {
 			return true;
 		}
 	}

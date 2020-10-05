@@ -308,7 +308,7 @@ trait VanilleConfig
 				$config['options'][$option] = $value;
 			}
 		}
-		$config = Json::format($config);
+		$config = Json::format($config, 64|128|256);
 		File::w("{$this->getRoot()}{$this->path}",$config);
 	}
 }

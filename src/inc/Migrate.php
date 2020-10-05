@@ -45,9 +45,9 @@ final class Migrate extends Orm
 		foreach ($tables as $table) {
 			$installSql = File::r("{$this->getMigrate()}/{$table}");
 			if ( !empty($installSql) ) {
-				$installSql = Stringify::replace($installSql, '[DBPREFIX]', $this->prefix);
-				$installSql = Stringify::replace($installSql, '[PREFIX]', $this->getPrefix());
-				$installSql = Stringify::replace($installSql, '[COLLATE]', $this->collate);
+				$installSql = Stringify::replace('[DBPREFIX]', $this->prefix, $installSql);
+				$installSql = Stringify::replace('[PREFIX]', $this->getPrefix(), $installSql);
+				$installSql = Stringify::replace('[COLLATE]', $this->collate, $installSql);
 				$this->query($installSql);
 			}
 		}
@@ -61,12 +61,11 @@ final class Migrate extends Orm
 	 */
 	public function upgrade()
 	{
-		$file = new file();
-		if ( !$file->exists("{$this->getMigrate()}/upgrade.sql") ) return;
+		if ( !File::exists("{$this->getMigrate()}/upgrade.sql") ) return;
 		$upgradeSql = File::r("{$this->getMigrate()}/upgrade.sql");
 		if ( !empty($upgradeSql) ) {
-			$upgradeSql = Stringify::replace($upgradeSql, '[DBPREFIX]', $this->prefix);
-			$upgradeSql = Stringify::replace($upgradeSql, '[PREFIX]', $this->getPrefix());
+			$upgradeSql = Stringify::replace('[DBPREFIX]', $this->prefix, $upgradeSql);
+			$upgradeSql = Stringify::replace('[PREFIX]', $this->getPrefix(), $upgradeSql);
 			$this->query($upgradeSql);
 		}
 	}
@@ -79,12 +78,11 @@ final class Migrate extends Orm
 	 */
 	public function rollback()
 	{
-		$file = new file();
-		if ( !$file->exists("{$this->getMigrate()}/uninstall.sql") ) return;
+		if ( !File::exists("{$this->getMigrate()}/uninstall.sql") ) return;
 		$uninstallSql = File::r("{$this->getMigrate()}/uninstall.sql");
 		if ( !empty($uninstallSql) ) {
-			$uninstallSql = Stringify::replace($uninstallSql, '[DBPREFIX]', $this->prefix);
-			$uninstallSql = Stringify::replace($uninstallSql, '[PREFIX]', $this->getPrefix());
+			$uninstallSql = Stringify::replace('[DBPREFIX]', $this->prefix, $uninstallSql);
+			$uninstallSql = Stringify::replace('[PREFIX]', $this->getPrefix(), $uninstallSql);
 			$this->query($uninstallSql);
 		}
 	}

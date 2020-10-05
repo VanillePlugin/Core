@@ -79,7 +79,6 @@ class Logger extends PluginOptions
         $log = "{$this->getLoggerPath()}/debug-{$date}.log";
         $date = date('[d-m-Y H:i:s]');
         $msg = "{$date} : [{$status}] - {$message}" . PHP_EOL;
-        $file = new File();
-        $file->w($log, $msg, true);
+        File::w($log, $msg, true);
     }
 }

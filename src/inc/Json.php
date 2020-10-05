@@ -70,8 +70,8 @@ final class Json extends File
 	 * @return string
 	 *
 	 * JSON_UNESCAPED_UNICODE : 256
+	 * JSON_PRETTY_PRINT : 128
 	 * JSON_UNESCAPED_SLASHES : 64
-	 * JSON_PRETTY_PRINT : 64
 	 */
 	public static function format($data, $args = 64|256)
 	{

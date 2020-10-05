@@ -401,8 +401,7 @@ class PluginOptions extends WordPress
 	{
 		$callable = str_replace('/', '\\', $callable);
 		if ( strpos($callable, '\\') !== false ) {
-			$file = new File();
-			if ( !$file->exists( wp_normalize_path(WP_PLUGIN_DIR."{$callable}.php") ) ) {
+			if ( !File::exists( wp_normalize_path(WP_PLUGIN_DIR."{$callable}.php") ) ) {
 				return false;
 			}
 		}

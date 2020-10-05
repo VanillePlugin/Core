@@ -111,10 +111,9 @@ class Rewrite extends WordPress
      */
     public function backupHtaccess()
     {
-        $file = new File();
-        if ( $file->exists( $htaccess = ABSPATH . '/.htaccess') ) {
+        if ( File::exists( $htaccess = ABSPATH . '/.htaccess') ) {
             $date = date('dmY');
-            if ( !$file->exists( $backup = ABSPATH . ".htaccess-{$date}.backup") ){
+            if ( !File::exists( $backup = ABSPATH . ".htaccess-{$date}.backup") ){
                 File::w($backup, File::r($htaccess));
             }
         }
