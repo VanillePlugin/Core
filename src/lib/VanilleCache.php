@@ -49,6 +49,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 
 		// Set cache path
 		if ( !self::$path ) {
+			// Default data cache folder
 			self::$path = "{$this->getCachePath()}/data";
 		}
 
@@ -180,6 +181,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function removeAll()
 	{
+		// Reset Cache Folder
 		$this->setPath($this->getCachePath());
 		$this->remove();
 	}
