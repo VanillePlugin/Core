@@ -119,7 +119,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function getPluginObject($option)
 	{
-		return Data::toObject( $this->getPluginOption($option) );
+		return Stringify::toObject( $this->getPluginOption($option) );
 	}
 
 	/**

@@ -89,7 +89,7 @@ class Rewrite extends WordPress
     public function getRules()
     {
         if ($this->vars) {
-            $this->rules = Text::replace($this->rules, $this->vars);
+            $this->rules = Stringify::replace($this->rules, $this->vars);
         }
         return $this->rules;
     }
