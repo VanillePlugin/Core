@@ -386,33 +386,32 @@ class File
      * Remove directory content
 	 *
 	 * @access public
-	 * @param string $dir
+	 * @param string $path
 	 * @return boolean
 	 */
-    public function emptyDir($dir)
+    public function emptyDir($path)
     {
 		$handler = false;
-		if ( is_dir($dir) ) {
-			$handler = opendir($dir);
+		if ( is_dir($path) ) {
+			$handler = opendir($path);
 		}
 		if ( !$handler ) {
 			return false;
 		}
 	   	while( $file = readdir($handler) ) {
 			if ($file !== '.' && $file !== '..') {
-			    if ( !is_dir($dir.'/'.$file) ) {
-			    	@unlink($dir.'/'.$file);
+			    if ( !is_dir("{$path}/{$file}") ) {
+			    	@unlink("{$path}/{$file}");
 			    } else {
-			    	$dir = $dir.'/'.$file;
+			    	$dir = "{$path}/{$file}";
 				    foreach( scandir($dir) as $file ) {
 				        if ( '.' === $file || '..' === $file ) {
 				        	continue;
 				        }
 				        if ( is_dir("{$dir}/{$file}") ) {
 				        	$this->recursiveRemove("{$dir}/{$file}");
-				        } else {
-				        	unlink("{$dir}/{$file}");
 				        }
+				        else unlink("{$dir}/{$file}");
 				    }
 				    @rmdir($dir);
 			    }

@@ -28,7 +28,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/register_activation_hook/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $file
 	 * @param callable $method
@@ -44,7 +44,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/register_deactivation_hook/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $file
 	 * @param callable $method
@@ -61,7 +61,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/register_uninstall_hook/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $file
 	 * @param callable $method
@@ -77,7 +77,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/add_shortcode/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $tag, Tag name
 	 * @param callable $callback
@@ -93,7 +93,7 @@ class WordPress
 	 * and filter shortcodes through their hooks
 	 *
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param inherit
 	 * @param inherit
@@ -110,7 +110,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/do_shortcode/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $content
 	 * @param boolean $ignore, Ignore HTML
@@ -126,7 +126,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/remove_shortcode/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $tag, Tag name
 	 * @return void
@@ -141,12 +141,12 @@ class WordPress
 	 *
 	 * @see /reference/functions/shortcode_exists/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $tag, Tag name
 	 * @return boolean
 	 */
-	protected function shortcodeExist($tag)
+	protected function shortcodeExists($tag)
 	{
 		return shortcode_exists($tag);
 	}
@@ -156,13 +156,13 @@ class WordPress
 	 *
 	 * @see /reference/functions/has_shortcode/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $content
 	 * @param string $tag
 	 * @return boolean
 	 */
-	protected function shortcodeIn($content,$tag)
+	protected function shortcodeIn($content, $tag)
 	{
 		return has_shortcode($content,$tag);
 	}
@@ -172,7 +172,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/add_action/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
@@ -201,7 +201,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/remove_action/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $target
 	 * @param callable $method
@@ -229,7 +229,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/do_action/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $tag
 	 * @param mixed $args
@@ -245,7 +245,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/add_filter/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
@@ -263,7 +263,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/remove_filter/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
@@ -281,7 +281,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/apply_filters/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $hook
 	 * @param mixed $value
@@ -298,7 +298,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/has_filter/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $tag
 	 * @param callable $method
@@ -315,7 +315,7 @@ class WordPress
 	 * @see /reference/functions/wp_register_style/
 	 * @see /reference/functions/wp_enqueue_style/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $id
 	 * @param string $path
@@ -339,7 +339,7 @@ class WordPress
 	 * @see /reference/functions/wp_register_script/
 	 * @see /reference/functions/wp_enqueue_script/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $id
 	 * @param string $path
@@ -363,7 +363,7 @@ class WordPress
 	 * @see /reference/functions/wp_register_script/
 	 * @see /reference/functions/wp_enqueue_script/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $id
 	 * @param string $list
@@ -383,7 +383,7 @@ class WordPress
 	 * @see /reference/functions/wp_dequeue_style/
 	 * @see /reference/functions/wp_deregister_style/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $id 
 	 * @return void
@@ -400,7 +400,7 @@ class WordPress
 	 * @see /reference/functions/wp_dequeue_script/
 	 * @see /reference/functions/wp_deregister_script/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $id 
 	 * @return void
@@ -417,7 +417,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/wp_deregister_script/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $id
 	 * @param object $object
@@ -434,7 +434,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/register_setting/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $group
 	 * @param string $option
@@ -451,7 +451,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/register_setting/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
@@ -467,7 +467,7 @@ class WordPress
 	 *
 	 * @see /reference/functions/get_option/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access protected
 	 * @param string $option
 	 * @param string $default

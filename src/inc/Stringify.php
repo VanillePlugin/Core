@@ -71,7 +71,7 @@ final class Stringify
 	}
 	/**
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access public
 	 * @param array $array
 	 * @return object
@@ -178,7 +178,7 @@ final class Stringify
 	 *
 	 * @see /Function_Reference/stripslashes_deep/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access public
 	 * @param mixed $data
 	 * @return mixed
@@ -224,7 +224,7 @@ final class Stringify
 	 *
 	 * @see /Function_Reference/maybe_serialize/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access public
 	 * @param string $string
 	 * @return mixed
@@ -239,7 +239,7 @@ final class Stringify
 	 *
 	 * @see /Function_Reference/maybe_serialize/
 	 * @since 4.0.0
-	 * @version 5.4
+	 * @version 5.5.1
 	 * @access public
 	 * @param mixed $data
 	 * @return mixed
@@ -275,7 +275,7 @@ final class Stringify
 	 * @param mixed $sep
 	 * @return string
 	 */
-	public static function money($number, $decimals = 2, $point = '.', $sep = '')
+	public static function toMoney($number, $decimals = 2, $point = '.', $sep = '')
 	{
 		return number_format($number,$decimals,$point,$sep);
 	}

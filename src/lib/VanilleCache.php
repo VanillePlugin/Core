@@ -170,8 +170,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function remove()
 	{
-		$cacheDir = new File();
-		$cacheDir->emptyDir(self::$path);
+		$dir = new File();
+		$dir->emptyDir(self::$path);
 	}
 
 	/**
