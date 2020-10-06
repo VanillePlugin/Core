@@ -88,7 +88,7 @@ class Rewrite extends WordPress
      */
     public function removeRules()
     {
-        // Remove rule
+        // Remove rules
        $this->removeFilter('mod_rewrite_rules', [$this, 'getRules'], 90);
        $this->flushRewrite();
     }
