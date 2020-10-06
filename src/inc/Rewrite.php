@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.3
+ * @version   : 0.1.4
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -49,6 +49,18 @@ class Rewrite extends WordPress
 
     /**
      * @access public
+     * @param string $name
+     * @param int $places
+     * @return void
+     */
+    public function addEndpoint($name, $places)
+    {
+        // Add endpoint
+        add_rewrite_endpoint($name, $places);
+    }
+
+    /**
+     * @access public
      * @param string $vars
      * @return void
      */
@@ -76,7 +88,7 @@ class Rewrite extends WordPress
      */
     public function removeRules()
     {
-        // Remove rules
+        // Remove rule
        $this->removeFilter('mod_rewrite_rules', [$this, 'getRules'], 90);
        $this->flushRewrite();
     }
@@ -99,8 +111,9 @@ class Rewrite extends WordPress
      * @param void
      * @return void
      */
-    public function flushRewrite()
+    public function flush()
     {
+       flush_rules();
        flush_rewrite_rules();
     }
 
