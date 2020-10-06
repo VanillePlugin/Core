@@ -297,9 +297,10 @@ trait VanilleConfig
 	 * Update Custom Options
 	 *
 	 * @param array $options
+	 * @param int $args
 	 * @return void
 	 */
-	public function updateConfig($options = [])
+	public function updateConfig($options = [], $args = 64|128|256)
 	{
 		$json = new Json("{$this->getRoot()}{$this->path}");
 		$config = $json->parse(true);
@@ -308,7 +309,7 @@ trait VanilleConfig
 				$config['options'][$option] = $value;
 			}
 		}
-		$config = Json::format($config, 64|128|256);
+		$config = Json::format($config, $args);
 		File::w("{$this->getRoot()}{$this->path}",$config);
 	}
 }

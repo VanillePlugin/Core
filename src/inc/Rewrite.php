@@ -89,7 +89,7 @@ class Rewrite extends WordPress
     public function getRules()
     {
         if ($this->vars) {
-            $this->rules = Stringify::replace($this->rules, $this->vars);
+            $this->rules = Stringify::replaceArray($this->vars, $this->rules);
         }
         return $this->rules;
     }
@@ -113,7 +113,7 @@ class Rewrite extends WordPress
     {
         if ( File::exists( $htaccess = ABSPATH . '/.htaccess') ) {
             $date = date('dmY');
-            if ( !File::exists( $backup = ABSPATH . ".htaccess-{$date}.backup") ){
+            if ( !File::exists( $backup = ABSPATH . '.htaccess.backup') ){
                 File::w($backup, File::r($htaccess));
             }
         }

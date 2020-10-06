@@ -34,8 +34,10 @@ final class Stringify
 	 */
 	public static function replaceArray($replace = [], $subject)
 	{
-		foreach ($replace as $key => $value) {
-			$subject = str_replace($key,$value,$subject);
+		if ( is_array($replace) ) {
+			foreach ($replace as $key => $value) {
+				$subject = str_replace($key,$value,$subject);
+			}
 		}
 		return $subject;
 	}
