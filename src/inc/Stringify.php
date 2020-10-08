@@ -272,13 +272,13 @@ final class Stringify
 
 	/**
 	 * @param mixed $number
-	 * @param mixed $decimals
-	 * @param mixed $point
-	 * @param mixed $sep
-	 * @return string
+	 * @param int $decimals
+	 * @param string $dSep Decimals Separator
+	 * @param string $tSep Thousands Separator
+	 * @return float
 	 */
-	public static function toMoney($number, $decimals = 2, $point = '.', $sep = '')
+	public static function toMoney($number, $decimals = 2, $dSep = '.', $tSep = ' ')
 	{
-		return number_format($number,$decimals,$point,$sep);
+		return number_format((float)$number,$decimals,$dSep,$tSep);
 	}
 }
