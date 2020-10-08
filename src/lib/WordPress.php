@@ -5,7 +5,7 @@
  *
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.4
+ * @version   : 0.1.6
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -459,7 +459,7 @@ class WordPress
 	 */
 	protected function addOption($option, $value)
 	{
-		return add_option($option, maybe_serialize($value));
+		return add_option($option, Stringify::serialize($value));
 	}
 
 	/**
@@ -475,7 +475,7 @@ class WordPress
 	 */
 	protected function getOption($option, $default = null)
 	{
-		$option = maybe_unserialize(get_option($option, $default));
+		$option = Stringify::unserialize(get_option($option, $default));
 		return Stringify::slashStrip($option);
 	}
 
@@ -599,8 +599,6 @@ class WordPress
 	 * @param string $path
 	 * @param string $plugin
 	 * @return string
-	 *
-	 * @see plugin_dir_path
 	 */
 	protected function getPluginUrl($path = '', $plugin = '')
 	{
@@ -610,44 +608,35 @@ class WordPress
 	/**
 	 * Retrieves a URL within the plugins or mu-plugins directory
 	 *
-	 * @param string $path
 	 * @param string $plugin
 	 * @return string
-	 *
-	 * @see plugin_dir_path
 	 */
 	protected function getPluginDir($plugin = null)
 	{
 		return isset($plugin) 
-		? wp_normalize_path( WP_PLUGIN_DIR . $plugin ) : WP_PLUGIN_DIR;
+		? Stringify::formatPath( WP_PLUGIN_DIR . $plugin ) : WP_PLUGIN_DIR;
 	}
 
 	/**
-	 * Retrieves a URL within the plugins or mu-plugins directory
+	 * Retrieves current theme url
 	 *
-	 * @param string $path
-	 * @param string $plugin
+	 * @param void
 	 * @return string
-	 *
-	 * @see plugin_dir_path
 	 */
 	protected function getThemeUrl()
 	{
-		return plugins_url($path, $plugin);
+		return get_stylesheet_directory_uri();
 	}
 
 	/**
-	 * Retrieves a URL within the plugins or mu-plugins directory
+	 * Retrieves current theme directory
 	 *
-	 * @param string $path
-	 * @param string $plugin
+	 * @param void
 	 * @return string
-	 *
-	 * @see plugin_dir_path
 	 */
 	protected function getThemeDir()
 	{
-		return wp_normalize_path( get_template_directory() );
+		return Stringify::formatPath( get_stylesheet_directory() );
 	}
 
 	/**
