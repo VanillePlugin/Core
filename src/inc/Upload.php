@@ -50,4 +50,20 @@ class Upload
 			return true;
 		} else return false;
 	}
+
+	/**
+	 * @access public
+	 * @param string $upload
+	 * @param string $file null
+	 * @return mixed
+	 */
+	public static function doUpload($upload, $file = null)
+	{
+		if ( isset($_FILES) && !$_FILES['file']['error'] ) {
+			$tmp = ($file) ? $file : $_FILES['file']['tmp_name'];
+			$name = ($file) ? basename($file) : $_FILES['file']['name'];
+			move_uploaded_file($tmp, "{$upload}/{$name}");
+			return "{$upload}/{$name}";
+		} else return false;
+	}
 }
