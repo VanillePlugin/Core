@@ -129,7 +129,7 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('unserialize', function ($string){
             return Stringify::unserialize($string);
         }));
-        $env->addFunction(Template::extend('date', function ($date, $format = 'M/d/Y H:i:s', $to = 'd/m/Y H:i:s'){
+        $env->addFunction(Template::extend('formatDate', function ($date, $format = 'M/d/Y H:i:s', $to = 'd/m/Y H:i:s'){
             return Date::toString($date, $format, $to);
         }));
         $env->addFunction(Template::extend('hasFilter', function ($hook){
