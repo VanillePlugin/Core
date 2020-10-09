@@ -15,6 +15,7 @@ namespace VanillePlugin\lib;
 use VanillePlugin\inc\Template;
 use VanillePlugin\inc\Json;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\Date;
 use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\int\ViewInterface;
 
@@ -127,6 +128,9 @@ class View extends PluginOptions implements ViewInterface
         }));
         $env->addFunction(Template::extend('unserialize', function ($string){
             return Stringify::unserialize($string);
+        }));
+        $env->addFunction(Template::extend('date', function ($date, $format = 'M/d/Y H:i:s', $to = 'd/m/Y H:i:s'){
+            return Date::toString($date, $format, $to);
         }));
         $env->addFunction(Template::extend('hasFilter', function ($hook){
             return $this->hasFilter($hook);
