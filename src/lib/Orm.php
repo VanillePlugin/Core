@@ -64,7 +64,7 @@ class Orm extends Db implements OrmInterface
 	public function select(OrmQueryInterface $data)
 	{
 		extract($data->query);
-		$sql = "SELECT {$column} FROM `{$this->prefix}{$this->getPrefix()}{$table}` {$where} {$orderby} {$limit}";
+		$sql = "SELECT {$column} FROM {$this->prefix}{$this->getPrefix()}{$table} {$where} {$orderby} {$limit}";
 		if ($isSingle) {
 			return $this->db->get_var($sql);
 		} elseif ($isRow) {
@@ -84,7 +84,7 @@ class Orm extends Db implements OrmInterface
 	public function count(OrmQueryInterface $data)
 	{
 		extract($data->query);
-		$sql = "SELECT COUNT(*) FROM `{$this->prefix}{$this->getPrefix()}{$table}` {$where}";
+		$sql = "SELECT COUNT(*) FROM {$this->prefix}{$this->getPrefix()}{$table} {$where}";
 		return intval($this->db->get_var($sql));
 	}
 
@@ -99,7 +99,7 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function insert($table, $data = [], $format = false)
 	{
-		$this->db->insert("`{$this->prefix}{$this->getPrefix()}{$table}`", $data, $format);
+		$this->db->insert("{$this->prefix}{$this->getPrefix()}{$table}", $data, $format);
 		return $this->db->insert_id;
 	}
 
@@ -115,7 +115,7 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function update($table, $data = [], $where = [], $format = false)
 	{
-		return $this->db->update("`{$this->prefix}{$this->getPrefix()}{$table}`", $data, $where, $format);
+		return $this->db->update("{$this->prefix}{$this->getPrefix()}{$table}", $data, $where, $format);
 	}
 
 	/**
@@ -127,7 +127,7 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function deleteAll($table)
 	{
-		$sql = "DELETE FROM `{$this->prefix}{$this->getPrefix()}{$table}`";
+		$sql = "DELETE FROM {$this->prefix}{$this->getPrefix()}{$table}";
 		return $this->db->query($sql);
 	}
 
@@ -142,6 +142,6 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function delete($table, $where = [], $format = null)
 	{
-		return $this->db->delete("`{$this->prefix}{$this->getPrefix()}{$table}`", $where, $format);
+		return $this->db->delete("{$this->prefix}{$this->getPrefix()}{$table}", $where, $format);
 	}
 }
