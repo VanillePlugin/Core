@@ -122,11 +122,11 @@ class Request extends WordPress
 	/**
 	 * @access public
 	 * @param void
-	 * @return string|json
+	 * @return string
 	 */
 	public function getStatusCode()
 	{
-		if (isset($this->raw->errors)) {
+		if ( isset($this->raw->errors) ) {
 			return 500;
 		}
 		return $this->raw['response']['code'];
@@ -135,7 +135,7 @@ class Request extends WordPress
 	/**
 	 * @access public
 	 * @param void
-	 * @return string|json
+	 * @return string
 	 */
 	public function getBody()
 	{

@@ -85,17 +85,17 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	/**
 	 * @access public
 	 * @param mixed $data
-	 * @param string $tag
+	 * @param string $tag null
 	 * @return void
 	 */
 	public function set($data, $tag = null)
 	{
 		$this->cache->set($data)
-		->expiresAfter( self::$expireIn );
+		->expiresAfter(self::$expireIn);
 		if ($tag) {
 			$this->cache->addTag($tag);
 		}
-		$this->adapter->save( $this->cache );
+		$this->adapter->save($this->cache);
 	}
 
 	/**
@@ -108,8 +108,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	{
 		$this->cache = $this->adapter->getItem(Stringify::formatKey($key));
 		$this->cache->set($data)
-		->expiresAfter( self::$expireIn );
-		$this->adapter->save( $this->cache );
+		->expiresAfter(self::$expireIn);
+		$this->adapter->save($this->cache);
 	}
 
 	/**
@@ -160,7 +160,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public static function setPath($path)
 	{
-		self::$path = wp_normalize_path($path);
+		self::$path = Stringify::formatPath($path);
 	}
 
 	/**

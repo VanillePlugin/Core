@@ -127,8 +127,9 @@ final class Stringify
 	 * Search string
 	 *
 	 * @access public
-	 * @param string $path
-	 * @return string
+	 * @param string $string
+	 * @param string $search
+	 * @return boolean
 	 */
 	public static function contains($string, $search)
 	{

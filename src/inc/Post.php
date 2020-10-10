@@ -21,10 +21,12 @@ final class Post
 	 */
 	public static function get($item = null)
 	{
-		if ( isset($item) ) {
-			return $_POST[$item];
-		} else return $_POST;
-	}	
+		if ($item) {
+			return self::isSetted($item) ? $_POST[$item] : false;
+		} else {
+			return $_POST;
+		}
+	}
 
 	/**
 	 * @access public
@@ -32,7 +34,7 @@ final class Post
 	 * @param mixed $value
 	 * @return void
 	 */
-	public static function set($item,$value)
+	public static function set($item, $value)
 	{
 		$_POST[$item] = $value;
 	}
@@ -44,10 +46,10 @@ final class Post
 	 */
 	public static function isSetted($item = null)
 	{
-		if ( $item && isset($_POST[$item]) ) {
-			return true;
-		} elseif ( !$item && isset($_POST) ) {
-			return true;
-		} else return false;
+		if ($item) {
+			return isset($_POST[$item]);
+		} else {
+			return isset($_POST);
+		}
 	}
 }

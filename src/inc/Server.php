@@ -16,14 +16,16 @@ class Server
 {
 	/**
 	 * @access public
-	 * @param string $item
+	 * @param string $item null
 	 * @return mixed
 	 */
 	public static function get($item = null)
 	{
-		if ( isset($item) ) {
-			return $_SERVER[$item];
-		} else return $_SERVER;
+		if ($item) {
+			return self::isSetted($item) ? $_SERVER[$item] : false;
+		} else {
+			return $_SERVER;
+		}
 	}
 
 	/**
@@ -32,23 +34,38 @@ class Server
 	 * @param mixed $value
 	 * @return void
 	 */
-	public static function set($item,$value)
+	public static function set($item, $value)
 	{
 		$_SERVER[$item] = $value;
 	}
 
 	/**
 	 * @access public
-	 * @param string $item
+	 * @param string $item null
 	 * @return boolean
 	 */
 	public static function isSetted($item = null)
 	{
-		if ( $item && isset($_SERVER[$item]) ) {
-			return true;
-		} elseif ( !$item && isset($_SERVER) ) {
-			return true;
-		} else return false;
+		if ($item) {
+			return isset($_SERVER[$item]);
+		} else {
+			return isset($_SERVER);
+		}
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return boolean
+	 */
+	public static function isHttps()
+	{
+		if ( self::isSetted('HTTPS') 
+			&& !empty(self::get('HTTPS')) 
+			&& self::get('HTTPS') !== 'off' ) {
+		    return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -56,10 +73,24 @@ class Server
 	 * @param void
 	 * @return string
 	 */
-	public static function remote()
+	public static function getRemote()
 	{
-		return self::isSetted('REMOTE_ADDR') 
-		? self::get('REMOTE_ADDR') 
-		: self::get('HTTP_X_FORWARDED_FOR');
+		$remote = self::isSetted('REMOTE_ADDR') 
+		? self::get('REMOTE_ADDR') : false;
+		if ( !$remote ) {
+			$remote = self::isSetted('HTTP_X_FORWARDED_FOR') 
+			? self::get('HTTP_X_FORWARDED_FOR') : false;
+		}
+		return $remote;
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public static function getProtocol()
+	{
+		return Server::isHttps() ? 'https://' : 'http://';
 	}
 }

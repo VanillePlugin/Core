@@ -326,7 +326,7 @@ class WordPress
 	 */
 	protected function addCSS($id, $path, $deps = [], $version = false, $media = 'all')
 	{
-		if ( strpos($path, 'http') == false ){
+		if ( !Stringify::contains($path, 'http') ){
 		    $path = $this->getPluginUrl($path);
 		}
 		wp_register_style($id, $path, $deps, $version, $media);
@@ -350,7 +350,7 @@ class WordPress
 	 */
 	protected function addJS($id, $path, $deps = [], $version = false, $footer = false)
 	{
-		if ( strpos($path, 'http') == false ){
+		if ( !Stringify::contains($path, 'http') ){
 		    $path = $this->getPluginUrl($path);
 		}
 		wp_register_script($id, $path, $deps, $version, $footer);
@@ -587,7 +587,7 @@ class WordPress
 	 */
 	public function cleanAssetsUrl($url)
 	{
-		if ( strpos($url,'?ver=') ) {
+		if ( Stringify::contains($url,'?ver=') ) {
 			$url = remove_query_arg('ver',$url);
 		}
 		return $url;
@@ -665,9 +665,9 @@ class WordPress
 	}
 
 	/**
-	 * userExists
+	 * User Exists
 	 *
-	 * @param $to, $subject, $body, $header = []
+	 * @param string
 	 * @return boolean
 	 */
 	protected function userExists($email)
@@ -678,8 +678,8 @@ class WordPress
 	/**
 	 * Get user role
 	 *
-	 * @param void
-	 * @return string | array
+	 * @param mixed id null
+	 * @return mixed
 	 */
 	protected function getRole($id = null)
 	{
@@ -694,20 +694,20 @@ class WordPress
 	/**
 	 * Get user role
 	 *
-	 * @param void
-	 * @return object|null
+	 * @param string $role
+	 * @param string $name null
+	 * @param string $capability null
+	 * @return void
 	 */
 	protected function addRole($role, $name = null, $capability = null)
 	{
-		if (is_null($name)) $name = $role;
-		if (is_null($capability))
-		{
+		if ( is_null($name) ) $name = $role;
+		if ( is_null($capability) ) {
 			$capability = [
-
 				'read' => true
 			];
 		}
-		add_role($role,$name,$capability);
+		return add_role($role,$name,$capability);
 	}
 
 	/**
@@ -724,8 +724,10 @@ class WordPress
 	/**
 	 * Get user role
 	 *
-	 * @param void
-	 * @return object|null
+	 * @param string $role
+	 * @param string $capability
+	 * @param boolean $grant true
+	 * @return mixed
 	 */
 	protected function addCapability($role, $capability, $grant = true)
 	{
@@ -736,8 +738,9 @@ class WordPress
 	/**
 	 * Get user role
 	 *
-	 * @param void
-	 * @return object|null
+	 * @param string $role
+	 * @param string $capability
+	 * @return mixed
 	 */
 	protected static function removeCapability($role, $capability)
 	{
@@ -748,8 +751,8 @@ class WordPress
 	/**
 	 * Redirects to another page
 	 *
-	 * @category Http
-	 * @param string $location, int $status
+	 * @param string $location
+	 * @param int $status 301
 	 * @return void
 	 */
 	public function redirect($location, $status = 301)
@@ -761,8 +764,9 @@ class WordPress
 	/**
 	 * Kill WordPress execution and display HTML message with error message
 	 *
-	 * @category System
-	 * @param string $messsage, string $title, array $args
+	 * @param string $message
+	 * @param string $title
+	 * @param array $args
 	 * @return void
 	 */
 	protected function except($message = '', $title = '', $args = [])
@@ -771,10 +775,9 @@ class WordPress
 	}
 
 	/**
-	 * Kill WordPress execution and display HTML message with error message
+	 * Log WordPress error message
 	 *
-	 * @category System
-	 * @param string $messsage, string $title, array $args
+	 * @param string $message
 	 * @return void
 	 */
 	protected function log($message = '')

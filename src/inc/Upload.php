@@ -12,7 +12,7 @@
 
 namespace VanillePlugin\inc;
 
-class Upload
+final class Upload
 {
 	/**
 	 * @access public
@@ -21,9 +21,11 @@ class Upload
 	 */
 	public static function get($item = null)
 	{
-		if ( isset($item) ) {
-			return $_FILES[$item];
-		} else return $_FILES;
+		if ($item) {
+			return self::isSetted($item) ? $_FILES[$item] : false;
+		} else {
+			return $_FILES;
+		}
 	}
 
 	/**
@@ -44,11 +46,11 @@ class Upload
 	 */
 	public static function isSetted($item = null)
 	{
-		if ( $item && isset($_FILES[$item]) ) {
-			return true;
-		} elseif ( !$item && isset($_FILES) ) {
-			return true;
-		} else return false;
+		if ($item) {
+			return isset($_FILES[$item]);
+		} else {
+			return isset($_FILES);
+		}
 	}
 
 	/**

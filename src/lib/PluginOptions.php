@@ -16,7 +16,9 @@ use VanillePlugin\VanilleConfig;
 use VanillePlugin\lib\WordPress;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Post;
+use VanillePlugin\inc\Get;
 use VanillePlugin\inc\File;
+use VanillePlugin\inc\Server;
 
 class PluginOptions extends WordPress
 {
@@ -131,10 +133,10 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginMenuPage($icon = 'admin-plugins')
 	{
-		if (strpos($icon, 'http') === false) {
+		if ( !Stringify::contains($icon, 'http') ) {
 			$icon = "dashicons-{$icon}";
 		}
-		$prefix = str_replace('-', '_', $this->getNameSpace());
+		$prefix = Stringify::replace('-', '_', $this->getNameSpace());
 		return $this->addMenuPage(
 			$this->translateString("{$this->getPluginName()} Dashboard"),
 			$this->getPluginName(),
@@ -163,7 +165,7 @@ class PluginOptions extends WordPress
 		if ( $parent == 'this' ) {
 			$parent = $this->getNameSpace();
 		}
-		$prefix = str_replace('-', '_', $this->getNameSpace());
+		$prefix = Stringify::replace('-', '_', $this->getNameSpace());
 		$capability = "manage_{$prefix}";
 		return $this->addSubMenuPage($parent, $title, $title, $capability, $slug, [$this, $callable]);
 	}
@@ -178,8 +180,8 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginJS($path, $deps = [], $version = false, $footer = true)
 	{
-		$id = str_replace('.js', '', basename($path));
-		$id = str_replace('.min', '', $id);
+		$id = Stringify::replace('.js', '', basename($path));
+		$id = Stringify::replace('.min', '', $id);
 		$path = "{$this->getAsset()}{$path}";
 		$this->addJS("{$this->getNameSpace()}-{$id}",$path,$deps,$version,$footer);
 	}
@@ -222,7 +224,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function localizePluginJS($content = [], $id = 'main')
 	{
-		$prefix = str_replace('-', '', $this->getNameSpace());
+		$prefix = Stringify::replace('-', '', $this->getNameSpace());
 		$object = "{$prefix}Plugin";
 		$this->localizeJS("{$this->getNameSpace()}-{$id}",$object,$content);
 	}
@@ -237,7 +239,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function localizeGlobalJS($content = [], $id = 'global')
 	{
-		$prefix = str_replace('-', '', $this->getNameSpace());
+		$prefix = Stringify::replace('-', '', $this->getNameSpace());
 		$object = "{$prefix}Global";
 		$this->localizeJS("{$this->getNameSpace()}-{$id}",$object,$content);
 	}
@@ -252,8 +254,8 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginCSS($path, $deps = [], $version = false, $media = 'all')
 	{
-		$id = str_replace('.css', '', basename($path));
-		$id = str_replace('.min', '', $id);
+		$id = Stringify::replace('.css', '', basename($path));
+		$id = Stringify::replace('.min', '', $id);
 		$path = "{$this->getAsset()}{$path}";
 		$this->addCSS("{$this->getNameSpace()}-{$id}",$path,$deps,$version,$media);
 	}
@@ -338,10 +340,12 @@ class PluginOptions extends WordPress
 	 */
 	protected function isPluginAdmin($slug = null)
 	{
-		$protocol = isset($_SERVER['HTTPS']) ? "https://" : "http://";
-		$url = "{$protocol}{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+		$protocol = Server::getProtocol();
+		$host = Server::get('HTTP_HOST');
+		$request = Server::get('REQUEST_URI');
+		$url = "{$protocol}{$host}{$request}";
 		$current = ($slug) ? $slug : "?page={$this->getNameSpace()}";
-		if ( strpos($url,$current) !== false ) {
+		if ( Stringify::contains($url, $current) ) {
 			return true;
 		}
 		return false;
@@ -399,9 +403,9 @@ class PluginOptions extends WordPress
 	 */
 	protected function isClass($callable)
 	{
-		$callable = str_replace('/', '\\', $callable);
-		if ( strpos($callable, '\\') !== false ) {
-			if ( !File::exists( wp_normalize_path(WP_PLUGIN_DIR."{$callable}.php") ) ) {
+		$callable = Stringify::replace('/', '\\', $callable);
+		if ( Stringify::contains($callable, '\\') ) {
+			if ( !File::exists( Stringify::formatPath(WP_PLUGIN_DIR."{$callable}.php") ) ) {
 				return false;
 			}
 		}
@@ -429,7 +433,7 @@ class PluginOptions extends WordPress
 	 */
 	public function translate()
 	{
-		load_plugin_textdomain($this->getNameSpace(),false,"{$this->getNameSpace()}/languages");
+		load_plugin_textdomain($this->getNameSpace(), false, "{$this->getNameSpace()}/languages");
 	}
 
 	/**
@@ -455,7 +459,7 @@ class PluginOptions extends WordPress
 	public function translateVar($string = '', $var = null)
 	{
 		$var = preg_replace('/\s+/', $this->translateString('{Empty}'), $var);
-		return sprintf( $this->translateString(str_replace($var, '%s', $string)), $var);
+		return sprintf( $this->translateString(Stringify::replace($var, '%s', $string)), $var);
 	}
 
 	/**
@@ -468,7 +472,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginCapability($role, $cap)
 	{
-		$prefix = str_replace('-', '_', $this->getNameSpace());
+		$prefix = Stringify::replace('-', '_', $this->getNameSpace());
 		$this->addCapability($role, "{$cap}_{$prefix}");
 	}
 
@@ -483,7 +487,7 @@ class PluginOptions extends WordPress
 	protected static function removePluginCapability($role, $cap)
 	{
 		$plugin = self::getStatic();
-		$prefix = str_replace('-', '_', $plugin->getNameSpace());
+		$prefix = Stringify::replace('-', '_', $plugin->getNameSpace());
 		parent::removeCapability($role, "{$cap}_{$prefix}");
 	}
 
@@ -496,8 +500,12 @@ class PluginOptions extends WordPress
 	 */
 	public function checkToken($action = -1)
 	{
-		if ( !wp_verify_nonce( Post::get('nonce'), $action ) ) {
-			die( $this->translateString('Invalid token') );
+		$nonce = Post::isSetted('nonce') ? Post::get('nonce') : false;
+		if ( !$nonce ) {
+			$nonce = Get::isSetted('nonce') ? Get::get('nonce') : false;
+		}
+		if ( !wp_verify_nonce($nonce, $action) ) {
+			die($this->translateString('Invalid token'));
 		}
 	}
 
@@ -513,18 +521,6 @@ class PluginOptions extends WordPress
 		if ( Get::isSetted('settings-updated') 
 		&& Get::get('settings-updated') == 'true' ) {
 			return true;
-		}
-	}
-
-	/**
-	 * @param void
-	 * @return boolean
-	 */
-	protected static function isHttps()
-	{
-		if ( !empty($_SERVER['HTTPS']) 
-		&& $_SERVER['HTTPS'] !== 'off' ) {
-		    return true;
 		}
 	}
 }

@@ -14,6 +14,7 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\int\UpdaterInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\inc\Server;
 
 class Updater extends PluginOptions implements UpdaterInterface
 {
@@ -49,7 +50,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 		$this->hostUrl  = $hostUrl;
 
 		if ($forceUnsafe) {
-			$this->unsafe = parent::isHttps() ? false : true;
+			$this->unsafe = Server::isHttps() ? false : true;
 		} else {
 			$this->unsafe = true;
 		}

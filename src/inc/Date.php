@@ -66,7 +66,7 @@ final class Date
 		if ( is_string($date) ) {
 			$date = self::from($format,$date,$to);
 		} else {
-			$date = self::get($date, $to);
+			$date = self::get($date,$to);
 		}
 		return $date->format($to);
 	}

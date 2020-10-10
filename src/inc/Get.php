@@ -21,9 +21,11 @@ final class Get
 	 */
 	public static function get($item = null)
 	{
-		if ( isset($item) ) {
-			return $_GET[$item];
-		} else return $_GET;
+		if ($item) {
+			return self::isSetted($item) ? $_GET[$item] : false;
+		} else {
+			return $_GET;
+		}
 	}
 
 	/**
@@ -44,10 +46,10 @@ final class Get
 	 */
 	public static function isSetted($item = null)
 	{
-		if ( $item && isset($_GET[$item]) ) {
-			return true;
-		} elseif ( !$item && isset($_GET) ) {
-			return true;
-		} else return false;
+		if ($item) {
+			return isset($_GET[$item]);
+		} else {
+			return isset($_GET);
+		}
 	}
 }

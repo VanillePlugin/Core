@@ -127,6 +127,9 @@ class Mailer
 	 */
 	public function send()
 	{
-		return wp_mail( $this->email, $this->subject , $this->content, $this->headers, $this->attachments);
+		if ( function_exists('wp_mail') ) {
+			return wp_mail($this->email,$this->subject,$this->content,$this->headers,$this->attachments);
+		}
+		return false;
 	}
 }
