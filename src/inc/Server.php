@@ -71,15 +71,15 @@ class Server
 	/**
 	 * @access public
 	 * @param void
-	 * @return string
+	 * @return mixed
 	 */
 	public static function getRemote()
 	{
-		$remote = self::isSetted('REMOTE_ADDR') 
-		? self::get('REMOTE_ADDR') : false;
+		$remote = self::isSetted('HTTP_X_FORWARDED_FOR') 
+		? self::get('HTTP_X_FORWARDED_FOR') : false;
 		if ( !$remote ) {
-			$remote = self::isSetted('HTTP_X_FORWARDED_FOR') 
-			? self::get('HTTP_X_FORWARDED_FOR') : false;
+			$remote = self::isSetted('REMOTE_ADDR') 
+			? self::get('REMOTE_ADDR') : false;
 		}
 		return $remote;
 	}
