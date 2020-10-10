@@ -1,0 +1,198 @@
+<?php
+/**
+ * @author    : JIHAD SINNAOUR
+ * @package   : VanillePlugin
+ * @version   : 0.1.6
+ * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
+ * @link      : https://jakiboy.github.io/VanillePlugin/
+ * @license   : MIT
+ *
+ * This file if a part of VanillePlugin Framework
+ */
+
+namespace VanillePluginTest\lib;
+
+use phpFastCache\CacheManager;
+use VanillePluginTest\int\VanilleCacheInterfaceTest;
+use VanillePluginTest\int\PluginNameSpaceInterfaceTest;
+use VanillePluginTest\inc\FileTest;
+use VanillePluginTest\inc\StringifyTest;
+use VanillePluginTest\thirdparty\CacheTest as ThirdPartyCacheTest;
+
+class VanilleCacheTest extends PluginOptionsTest implements VanilleCacheInterfaceTest
+{
+	/**
+	 * @access private
+	 * @var object $adapter, adapter instance
+	 * @var object $cache, adapter object
+	 * @var boolean $isCached, cache bool
+	 * @var int $expireIn, cache TTL
+	 * @var string $path, cache path
+	 */
+	private $adapter;
+	private $cache;
+	private $isCached = false;
+	private static $path = null;
+	private static $expireIn = null;
+
+	const EXPIRE = 30;
+	const EXTENSION = 'db';
+
+	/**
+	 * @param PluginNameSpaceInterfaceTest $plugin
+	 * @return void
+	 */
+	public function __construct(PluginNameSpaceInterfaceTest $plugin)
+	{
+		// Init plugin config
+		$this->initConfig($plugin);
+
+		// Set cache path
+		if ( !self::$path ) {
+			// Default data cache folder
+			self::$path = "{$this->getCachePath()}/data";
+		}
+
+		// Set cache expire
+		if ( !self::$expireIn ) {
+			self::expireIn();
+		}
+		
+		// Set adapter default params
+		CacheManager::setDefaultConfig([
+		    'path' => self::$path,
+		    'cacheFileExtension' => self::EXTENSION
+		]);
+
+		global $cacheAdapter;
+		if ( !$cacheAdapter ) {
+			$cacheAdapter = CacheManager::getInstance('Files');
+		}
+		$this->adapter = $cacheAdapter;
+	}
+
+	/**
+	 * @access public
+	 * @param string $key
+	 * @return mixed
+	 */
+	public function get($key)
+	{
+		$this->cache = $this->adapter->getItem(StringifyTest::formatKey($key));
+		return $this->isCached = $this->cache->get();
+	}
+
+	/**
+	 * @access public
+	 * @param mixed $data
+	 * @param string $tag null
+	 * @return void
+	 */
+	public function set($data, $tag = null)
+	{
+		$this->cache->set($data)
+		->expiresAfter(self::$expireIn);
+		if ($tag) {
+			$this->cache->addTag($tag);
+		}
+		$this->adapter->save($this->cache);
+	}
+
+	/**
+	 * @access public
+	 * @param string $key
+	 * @param mixed $data
+	 * @return void
+	 */
+	public function update($key, $data)
+	{
+		$this->cache = $this->adapter->getItem(StringifyTest::formatKey($key));
+		$this->cache->set($data)
+		->expiresAfter(self::$expireIn);
+		$this->adapter->save($this->cache);
+	}
+
+	/**
+	 * @access public
+	 * @param string $key
+	 * @return void
+	 */
+	public function delete($key)
+	{
+		$this->adapter->deleteItem(StringifyTest::formatKey($key));
+	}
+
+	/**
+	 * @access public
+	 * @param string $tag
+	 * @return void
+	 */
+	public function deleteByTag($tag)
+	{
+		$this->adapter->deleteItemsByTag($tag);
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return boolean
+	 */
+	public function isCached()
+	{
+		if ( !$this->isCached ) return false;
+		else return true;
+	}
+
+	/**
+	 * @access public
+	 * @param int $expire
+	 * @return void
+	 */
+	public static function expireIn($expire = self::EXPIRE)
+	{
+		self::$expireIn = $expire;
+	}
+
+	/**
+	 * @access public
+	 * @param string $path
+	 * @return void
+	 */
+	public static function setPath($path)
+	{
+		self::$path = StringifyTest::formatPath($path);
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public function remove()
+	{
+		$dir = new FileTest();
+		$dir->emptyDir(self::$path);
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public function removeAll()
+	{
+		// Reset Cache Folder
+		$this->setPath($this->getCachePath());
+		$this->remove();
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public static function removeThirdParty()
+	{
+		ThirdPartyCacheTest::purge();
+	}
+}

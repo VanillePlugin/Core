@@ -10,13 +10,13 @@
  * This file if a part of VanillePlugin Framework
  */
 
-namespace VanillePlugin\lib;
+namespace VanillePluginTest\lib;
 
-use VanillePlugin\int\OrmInterface;
-use VanillePlugin\int\OrmQueryInterface;
-use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePluginTest\int\OrmInterfaceTest;
+use VanillePluginTest\int\OrmQueryInterfaceTest;
+use VanillePluginTest\int\PluginNameSpaceInterfaceTest;
 
-class Orm extends Db implements OrmInterface
+class OrmTest extends DbTest implements OrmInterfaceTest
 {
 	/**
 	 * Init Db object
@@ -58,10 +58,10 @@ class Orm extends Db implements OrmInterface
 	 * Select Query
 	 *
 	 * @access public
-	 * @param OrmQueryInterface $data
+	 * @param OrmQueryInterfaceTest $data
 	 * @return mixed
 	 */
-	public function select(OrmQueryInterface $data)
+	public function select(OrmQueryInterfaceTest $data)
 	{
 		extract($data->query);
 		$sql = "SELECT {$column} FROM {$this->prefix}{$this->getPrefix()}{$table} {$where} {$orderby} {$limit}";
@@ -78,10 +78,10 @@ class Orm extends Db implements OrmInterface
 	 * Select Count Query
 	 *
 	 * @access public
-	 * @param OrmQueryInterface $data
+	 * @param OrmQueryInterfaceTest $data
 	 * @return int
 	 */
-	public function count(OrmQueryInterface $data)
+	public function count(OrmQueryInterfaceTest $data)
 	{
 		extract($data->query);
 		$sql = "SELECT COUNT(*) FROM {$this->prefix}{$this->getPrefix()}{$table} {$where}";
@@ -94,8 +94,8 @@ class Orm extends Db implements OrmInterface
 	 * @access public
 	 * @param string $table
 	 * @param array $data
-	 * @param mixed $format false
-	 * @return mixed 
+	 * @param array|string $format
+	 * @return int|false
 	 */
 	public function insert($table, $data = [], $format = false)
 	{
@@ -110,8 +110,8 @@ class Orm extends Db implements OrmInterface
 	 * @param string $table
 	 * @param array $data
 	 * @param array $where
-	 * @param mixed $format false
-	 * @return mixed
+	 * @param array|string $format
+	 * @return int|false
 	 */
 	public function update($table, $data = [], $where = [], $format = false)
 	{
