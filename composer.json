@@ -19,7 +19,9 @@
     }
   ],
   "require": {
-    "php": ">=5.6.30"
+    "php": ">=5.6.30",
+    "twig/twig": "1.42.5",
+    "phpfastcache/phpfastcache": "6.1.4"
   },
   "autoload": {
     "psr-4" : {

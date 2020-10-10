@@ -1,0 +1,11 @@
+{
+    "config": {
+        "optimize-autoloader": false
+    },
+    "require": {
+    	"php": ">=5.6.30",
+    	"ext-curl": "*",
+        "ext-intl": "*",
+        "jakiboy/vanilleplugin":"0.1.7"
+    }
+}
