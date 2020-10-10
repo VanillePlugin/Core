@@ -59,9 +59,10 @@ final class Date
 	 * @access public
 	 * @param string $date
 	 * @param string $format
+	 * @param string $to
 	 * @return object
 	 */
-	public static function toString($date, $format = 'M/d/Y H:i:s', $to = 'd/m/Y H:i:s')
+	public static function toString($date, $format = 'm/d/Y H:i:s', $to = 'd/m/Y H:i:s')
 	{
 		if ( is_string($date) ) {
 			$date = self::from($format,$date,$to);

@@ -133,6 +133,54 @@ class File
 	}
 
 	/**
+	 * Get File Extension
+	 *
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public function getExtension()
+	{
+        return $this->extension;
+	}
+
+	/**
+	 * Get File Name
+	 *
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public function getName()
+	{
+        return $this->name;
+	}
+
+	/**
+	 * Get File Full Name
+	 *
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public function getFileName()
+	{
+        return "{$this->name}.{$this->extension}";
+	}
+	
+	/**
+	 * Get File Path
+	 *
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public function getPath()
+	{
+        return $this->path;
+	}
+
+	/**
 	 * Get file content
 	 *
 	 * @access public
