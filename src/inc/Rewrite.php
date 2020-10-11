@@ -111,10 +111,9 @@ class Rewrite extends WordPress
      * @param void
      * @return void
      */
-    public function flush()
+    public function flush($force = false)
     {
-       flush_rules();
-       flush_rewrite_rules();
+       flush_rewrite_rules($force);
     }
 
     /**
