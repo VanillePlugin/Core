@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.7
+ * @version   : 0.1.8
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -87,6 +87,8 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @access public
 	 * @param object $transient
 	 * @return mixed
+	 *
+	 * filter : pre_set_site_transient_update_plugins
 	 */
 	public function check($transient)
 	{
@@ -134,6 +136,8 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param string $action
 	 * @param array $args
 	 * @return mixed
+	 *
+	 * filter : plugins_api
 	 */
 	public function infos($transient, $action, $args)
 	{
@@ -189,6 +193,8 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @access public
 	 * @param array $args
 	 * @return array
+	 *
+	 * filter : http_request_args
 	 */
 	public function setRequest($args)
 	{

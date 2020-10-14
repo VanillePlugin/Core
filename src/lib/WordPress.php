@@ -5,7 +5,7 @@
  *
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.7
+ * @version   : 0.1.8
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -596,6 +596,7 @@ class WordPress
 	/**
 	 * Retrieves a URL within the plugins or mu-plugins directory
 	 *
+	 * @access public
 	 * @param string $path
 	 * @param string $plugin
 	 * @return string
@@ -608,6 +609,7 @@ class WordPress
 	/**
 	 * Retrieves a URL within the plugins or mu-plugins directory
 	 *
+	 * @access public
 	 * @param string $plugin
 	 * @return string
 	 */
@@ -620,6 +622,7 @@ class WordPress
 	/**
 	 * Retrieves current theme url
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -631,6 +634,7 @@ class WordPress
 	/**
 	 * Retrieves current theme directory
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -642,6 +646,7 @@ class WordPress
 	/**
 	 * Check is WordPress Admin
 	 *
+	 * @access public
 	 * @param void
 	 * @return boolean
 	 */
@@ -656,6 +661,7 @@ class WordPress
 	/**
 	 * Check user logged in
 	 *
+	 * @access protected
 	 * @param void
 	 * @return boolean
 	 */
@@ -667,6 +673,7 @@ class WordPress
 	/**
 	 * User Exists
 	 *
+	 * @access protected
 	 * @param string
 	 * @return boolean
 	 */
@@ -678,6 +685,7 @@ class WordPress
 	/**
 	 * Get user role
 	 *
+	 * @access protected
 	 * @param mixed id null
 	 * @return mixed
 	 */
@@ -694,6 +702,7 @@ class WordPress
 	/**
 	 * Get user role
 	 *
+	 * @access protected
 	 * @param string $role
 	 * @param string $name null
 	 * @param string $capability null
@@ -713,6 +722,7 @@ class WordPress
 	/**
 	 * Remove user role
 	 *
+	 * @access protected
 	 * @param string $role
 	 * @return void
 	 */
@@ -724,6 +734,7 @@ class WordPress
 	/**
 	 * Get user role
 	 *
+	 * @access protected
 	 * @param string $role
 	 * @param string $capability
 	 * @param boolean $grant true
@@ -738,6 +749,7 @@ class WordPress
 	/**
 	 * Get user role
 	 *
+	 * @access protected
 	 * @param string $role
 	 * @param string $capability
 	 * @return mixed
@@ -751,6 +763,7 @@ class WordPress
 	/**
 	 * Redirects to another page
 	 *
+	 * @access public
 	 * @param string $location
 	 * @param int $status 301
 	 * @return void
@@ -764,6 +777,7 @@ class WordPress
 	/**
 	 * Kill WordPress execution and display HTML message with error message
 	 *
+	 * @access protected
 	 * @param string $message
 	 * @param string $title
 	 * @param array $args
@@ -772,16 +786,5 @@ class WordPress
 	protected function except($message = '', $title = '', $args = [])
 	{
 		wp_die($message,$title,$args);
-	}
-
-	/**
-	 * Log WordPress error message
-	 *
-	 * @param string $message
-	 * @return void
-	 */
-	protected function log($message = '')
-	{
-		error_log($message);
 	}
 }

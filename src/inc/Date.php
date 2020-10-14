@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.7
+ * @version   : 0.1.8
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -14,17 +14,17 @@ namespace VanillePlugin\inc;
 
 use \DateTime;
 
-final class Date
+final class Date extends DateTime
 {
 	/**
 	 * @access public
 	 * @param string $date
-	 * @param string $format
-	 * @return object
+	 * @param string $format 'd/m/Y H:i:s'
+	 * @return object $date
 	 */
-	public static function get($date, $format = 'm/d/Y H:i:s')
+	public static function get($date, $format = 'd/m/Y H:i:s')
 	{
-		$date = new DateTime($date);
+		$date = new self($date);
 		$date->format($format);
 		return $date;
 	}
@@ -33,7 +33,7 @@ final class Date
 	 * @access public
 	 * @param object $date
 	 * @param object $expire
-	 * @return int
+	 * @return mixed
 	 */
 	public static function difference($date, $expire)
 	{
@@ -43,14 +43,14 @@ final class Date
 
 	/**
 	 * @access public
+	 * @param string $date
 	 * @param string $format
-	 * @param string $string
-	 * @param string $to
+	 * @param string $to 'd/m/Y H:i:s'
 	 * @return object $date
 	 */
-	public static function from($format, $string, $to = 'm/d/Y H:i:s')
+	public static function createFrom($date, $format, $to = 'd/m/Y H:i:s')
 	{
-		$date = DateTime::createFromFormat($format, $string);
+		$date = self::createFromFormat($format, $date);
 		$date->format($to);
 		return $date;
 	}
@@ -59,16 +59,11 @@ final class Date
 	 * @access public
 	 * @param string $date
 	 * @param string $format
-	 * @param string $to
-	 * @return object
+	 * @param string $to 'd/m/Y H:i:s'
+	 * @return string
 	 */
-	public static function toString($date, $format = 'm/d/Y H:i:s', $to = 'd/m/Y H:i:s')
+	public static function toString($date, $format, $to = 'd/m/Y H:i:s')
 	{
-		if ( is_string($date) ) {
-			$date = self::from($format,$date,$to);
-		} else {
-			$date = self::get($date,$to);
-		}
-		return $date->format($to);
+		return Date::createFrom($date,$format)->format($to);
 	}
 }

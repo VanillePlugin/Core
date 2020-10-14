@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.7
+ * @version   : 0.1.8
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -65,6 +65,21 @@ class Logger extends PluginOptions
     public function info($message)
     {
         $this->write('INFO', $message);
+    }
+
+    /**
+     * Log plugin message
+     *
+     * @access protected
+     * @param string $message
+     * @param int $type 0
+     * @param string $path
+     * @param string $headers
+     * @return void
+     */
+    protected function log($message = '', $type = 0, $path = null, $headers = null)
+    {
+        error_log("{$this->getPluginName()} : {$message}", $type, $path, $headers);
     }
 
     /**

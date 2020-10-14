@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.7
+ * @version   : 0.1.8
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -108,10 +108,10 @@ class Rewrite extends WordPress
 
     /**
      * @access public
-     * @param void
+     * @param boolean $force
      * @return void
      */
-    public function flush($force = false)
+    public function flush($force = true)
     {
        flush_rewrite_rules($force);
     }
