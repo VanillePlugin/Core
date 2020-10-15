@@ -21,8 +21,8 @@ final class ResponseXML
 	 */
 	public static function format($xml)
 	{
-		$xml = str_replace('<?xml version="1.0" encoding="utf-8" ?>', '', $xml);
-		$xml = str_replace('</xml>', '', $xml);
+		$xml = Stringify::replace('<?xml version="1.0" encoding="utf-8" ?>', '', $xml);
+		$xml = Stringify::replace('</xml>', '', $xml);
 		return $xml;
 	}
 	

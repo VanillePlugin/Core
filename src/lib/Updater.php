@@ -88,7 +88,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param object $transient
 	 * @return mixed
 	 *
-	 * filter : pre_set_site_transient_update_plugins
+	 * Filter : pre_set_site_transient_update_plugins
 	 */
 	public function check($transient)
 	{
@@ -137,7 +137,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param array $args
 	 * @return mixed
 	 *
-	 * filter : plugins_api
+	 * Filter : plugins_api
 	 */
 	public function infos($transient, $action, $args)
 	{
@@ -194,7 +194,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param array $args
 	 * @return array
 	 *
-	 * filter : http_request_args
+	 * Filter : http_request_args
 	 */
 	public function setRequest($args)
 	{

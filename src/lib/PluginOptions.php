@@ -313,7 +313,7 @@ class PluginOptions extends WordPress
 	 * @param int $expiration
 	 * @return mixed
 	 */
-	protected function setTransient($name, $value, $expiration = 300 )
+	protected function setTransient($name, $value, $expiration = 300)
 	{
 		return set_transient("{$this->getNameSpace()}-{$name}",$value,$expiration);
 	}

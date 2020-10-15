@@ -61,7 +61,7 @@ class File
 		if ( $this->path && ($this->path = realpath($this->path)) ) {
 			$this->parentDir = dirname($this->path);
 			$this->extension = pathinfo($this->path, PATHINFO_EXTENSION);
-			$this->name = basename(str_replace(".{$this->extension}", '', $this->path));
+			$this->name = basename(Stringify::replace(".{$this->extension}", '', $this->path));
 			$this->extension = strtolower($this->extension);
 			$this->size = filesize($this->path);
 		}

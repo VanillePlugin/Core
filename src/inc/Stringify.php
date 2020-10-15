@@ -36,7 +36,7 @@ final class Stringify
 	{
 		if ( is_array($replace) ) {
 			foreach ($replace as $key => $value) {
-				$subject = str_replace($key,$value,$subject);
+				$subject = self::replace($key,$value,$subject);
 			}
 		}
 		return $subject;
@@ -98,29 +98,21 @@ final class Stringify
 	public static function slugify($string)
 	{
 	  	// Replace non letter or digits by -
-	  	$string = preg_replace('~[^\pL\d]+~u', '-', $string);
-
+	  	$slug = preg_replace('~[^\pL\d]+~u', '-', $string);
 	  	// Transliterate
 		$json = new Json(dirname(__FILE__).'/bin/accents.json');
 		$accents = $json->parse(true);
-	  	$string = strtr($string, $accents );
-	  	$string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
-
-	  	// remove unwanted characters
-	  	$string = preg_replace('~[^-\w]+~', '', $string);
-
+	  	$slug = strtr($slug, $accents);
+	  	$slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $slug);
+	  	// Temove unwanted characters
+	  	$slug = preg_replace('~[^-\w]+~', '', $slug);
 	  	// trim
-	  	$string = trim($string, '-');
-
+	  	$slug = trim($slug, '-');
 	  	// remove duplicate -
-	  	$string = preg_replace('~-+~', '-', $string);
-
+	  	$slug = preg_replace('~-+~', '-', $slug);
 	  	// lowercase
-	  	$string = strtolower($string);
-		if ( empty($string) ) {
-		  return 'invalid';
-		}
-	  	return $string;
+	  	$slug = strtolower($slug);
+	  	return !empty($slug) ? $slug : sanitize_title($string);
 	}
 
 	/**
@@ -170,7 +162,7 @@ final class Stringify
 	    ];
 	    foreach ($chars as $character => $replacement) {
 	        if (strpos($key, $character)) {
-	            $key = str_replace($character, "~".$replacement."~", $key);
+	            $key = self::replace($character, "~{$replacement}~", $key);
 	        }
 	    }
 	    return $key;
@@ -219,7 +211,7 @@ final class Stringify
 	 */
 	public static function spaceStrip($string)
 	{
-		return preg_replace('/\s+/', '', $string);
+		return preg_replace('/\s+/', '', trim($string));
 	}
 
 	/**

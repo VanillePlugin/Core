@@ -16,6 +16,11 @@ class Mailer
 {
 	/**
 	 * @access private
+	 * @var mixed $email
+	 * @var string $subject
+	 * @var string $content
+	 * @var array $headers
+	 * @var array $attachments
 	 */
 	private $email = [];
 	private $subject;
@@ -24,7 +29,7 @@ class Mailer
 	private $attachments = [];
 
 	/**
-	 * @param void
+	 * @param mixed $email null
 	 * @return void
 	 */
 	public function __construct($email = null)
@@ -56,7 +61,7 @@ class Mailer
 
 	/**
 	 * @access public
-	 * @param string $message
+	 * @param string $content
 	 * @return object
 	 */
 	public function addContent($content)

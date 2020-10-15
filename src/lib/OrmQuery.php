@@ -16,12 +16,15 @@ use VanillePlugin\int\OrmQueryInterface;
 
 class OrmQuery implements OrmQueryInterface
 {
+	/**
+	 * @access public
+	 * @var array $query
+	 */
 	public $query = [];
 
 	/**
-	 * Construct Basic ORM
-	 *
 	 * @param array $query
+	 * @return void
 	 */
 	public function __construct($query = [])
 	{
