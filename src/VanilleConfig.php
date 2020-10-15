@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.8
+ * @version   : 0.1.9
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -44,6 +44,7 @@ trait VanilleConfig
 	 * Set Config Json File
 	 * Allow Parent Config Access
 	 *
+	 * @access protected
 	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
 	 */
@@ -60,7 +61,8 @@ trait VanilleConfig
 	/**
 	 * Get global
 	 *
-	 * @param void
+	 * @access public
+	 * @param string $var null
 	 * @return mixed
 	 */
 	public function getConfig($var = null)
@@ -75,6 +77,7 @@ trait VanilleConfig
 	/**
 	 * Get static namespace
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -86,6 +89,7 @@ trait VanilleConfig
 	/**
 	 * Get static namespace
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -97,6 +101,7 @@ trait VanilleConfig
 	/**
 	 * Get static namespace
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -108,6 +113,7 @@ trait VanilleConfig
 	/**
 	 * Get static namespace
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -119,6 +125,7 @@ trait VanilleConfig
 	/**
 	 * Get static namespace
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -130,6 +137,7 @@ trait VanilleConfig
 	/**
 	 * Get static prefix
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -142,6 +150,7 @@ trait VanilleConfig
 	/**
 	 * Get static prefix
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -153,6 +162,7 @@ trait VanilleConfig
 	/**
 	 * Get static prefix
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -164,6 +174,7 @@ trait VanilleConfig
 	/**
 	 * Get static migrate
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -175,6 +186,7 @@ trait VanilleConfig
 	/**
 	 * Get static migrate
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -186,6 +198,7 @@ trait VanilleConfig
 	/**
 	 * Get static migrate
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -197,6 +210,7 @@ trait VanilleConfig
 	/**
 	 * Get logs path
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -208,6 +222,7 @@ trait VanilleConfig
 	/**
 	 * Get static migrate
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -219,6 +234,7 @@ trait VanilleConfig
 	/**
 	 * Get static root
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -230,6 +246,7 @@ trait VanilleConfig
 	/**
 	 * Get static root
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -241,6 +258,7 @@ trait VanilleConfig
 	/**
 	 * Get static Base Uri
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -252,6 +270,7 @@ trait VanilleConfig
 	/**
 	 * Get ajax Uri
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -263,6 +282,7 @@ trait VanilleConfig
 	/**
 	 * Get ajax Uri
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -274,6 +294,7 @@ trait VanilleConfig
 	/**
 	 * Get Requirements
 	 *
+	 * @access public
 	 * @param void
 	 * @return string
 	 */
@@ -285,6 +306,7 @@ trait VanilleConfig
 	/**
 	 * Get Debug
 	 *
+	 * @access public
 	 * @param void
 	 * @return boolean
 	 */
@@ -296,6 +318,7 @@ trait VanilleConfig
 	/**
 	 * Update Custom Options
 	 *
+	 * @access public
 	 * @param array $options
 	 * @param int $args
 	 * @return void
