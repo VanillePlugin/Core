@@ -99,7 +99,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get static namespace
+	 * Get static description
 	 *
 	 * @access public
 	 * @param void
@@ -123,7 +123,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get static namespace
+	 * Get static version
 	 *
 	 * @access public
 	 * @param void
@@ -148,7 +148,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get static prefix
+	 * Get static assets url
 	 *
 	 * @access public
 	 * @param void
@@ -160,7 +160,7 @@ trait VanilleConfig
 	}
 	
 	/**
-	 * Get static prefix
+	 * Get static assets path
 	 *
 	 * @access public
 	 * @param void
@@ -172,7 +172,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get static migrate
+	 * Get static migrate path
 	 *
 	 * @access public
 	 * @param void
@@ -184,7 +184,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get static migrate
+	 * Get static cache path
 	 *
 	 * @access public
 	 * @param void
@@ -196,7 +196,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get static migrate
+	 * Get static view path
 	 *
 	 * @access public
 	 * @param void
@@ -208,7 +208,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get logs path
+	 * Get static logs path
 	 *
 	 * @access public
 	 * @param void
@@ -220,7 +220,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get static migrate
+	 * Get static view extension
 	 *
 	 * @access public
 	 * @param void
@@ -240,11 +240,11 @@ trait VanilleConfig
 	 */
 	public function getRoot()
 	{
-		return Stringify::formatPath( WP_PLUGIN_DIR . '/' . self::getNameSpace() );
+		return Stringify::formatPath( WP_PLUGIN_DIR . "/{$this->getNameSpace()}" );
 	}
 
 	/**
-	 * Get static root
+	 * Get main filename
 	 *
 	 * @access public
 	 * @param void
@@ -252,11 +252,11 @@ trait VanilleConfig
 	 */
 	public function getMainFile()
 	{
-		return self::getNameSpace() . '/' . self::getNameSpace() . '.php';
+		return $this->getNameSpace() . "/{$this->getNameSpace()}.php";
 	}
 
 	/**
-	 * Get static Base Uri
+	 * Get static Base url
 	 *
 	 * @access public
 	 * @param void
@@ -264,11 +264,11 @@ trait VanilleConfig
 	 */
 	public function getBaseUri()
 	{
-		return WP_PLUGIN_URL . '/' . self::getNameSpace();
+		return WP_PLUGIN_URL . "/{$this->getNameSpace()}";
 	}
 
 	/**
-	 * Get ajax Uri
+	 * Get ajax url
 	 *
 	 * @access public
 	 * @param void
@@ -280,7 +280,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get ajax Uri
+	 * Get ajax actions
 	 *
 	 * @access public
 	 * @param void
@@ -292,7 +292,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get Requirements
+	 * Get requirements
 	 *
 	 * @access public
 	 * @param void
@@ -304,7 +304,7 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get Debug
+	 * Get debug status
 	 *
 	 * @access public
 	 * @param void
