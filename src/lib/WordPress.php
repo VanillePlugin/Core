@@ -5,7 +5,7 @@
  *
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.1.9
+ * @version   : 0.2.0
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -25,10 +25,8 @@ class WordPress
 {
 	/**
 	 * Set the activation hook for a plugin
-	 *
 	 * @see /reference/functions/register_activation_hook/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $file
 	 * @param callable $method
@@ -36,15 +34,13 @@ class WordPress
 	 */
 	protected function registerActivation($file, $method)
 	{
-		register_activation_hook($file, $method);
+		register_activation_hook($file,$method);
 	}
 
 	/**
 	 * Set the deactivation hook for a plugin
-	 *
 	 * @see /reference/functions/register_deactivation_hook/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $file
 	 * @param callable $method
@@ -52,16 +48,14 @@ class WordPress
 	 */
 	protected function registerDeactivation($file, $method)
 	{
-		register_deactivation_hook($file, $method);
+		register_deactivation_hook($file,$method);
 	}
 
 	/**
 	 * Set the uninstallation hook for a plugin
 	 * use class name instead of $this
-	 *
 	 * @see /reference/functions/register_uninstall_hook/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $file
 	 * @param callable $method
@@ -74,61 +68,53 @@ class WordPress
 	
 	/**
 	 * Register a shortcode handler
-	 *
 	 * @see /reference/functions/add_shortcode/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
-	 * @param string $tag, Tag name
+	 * @param string $tag
 	 * @param callable $callback
 	 * @return void
 	 */
-	protected function addShortcode($tag, $callback )
+	protected function addShortcode($tag, $callback)
 	{
-		add_shortcode($tag, $callback);
+		add_shortcode($tag,$callback);
 	}
 
 	/**
 	 * Search content for shortcodes 
 	 * and filter shortcodes through their hooks
 	 *
-	 * @since 4.0.0
-	 * @version 5.5.1
-	 * @access protected
-	 * @param inherit
-	 * @param inherit
-	 * @return void
-	 */
-	protected function renderShortcode($content, $ignore = false)
-	{
-		echo $this->doShortcode($content, $ignore);
-	}
-
-	/**
-	 * Search content for shortcodes 
-	 * and filter shortcodes through their hooks
-	 *
-	 * @see /reference/functions/do_shortcode/
-	 * @since 4.0.0
-	 * @version 5.5.1
 	 * @access protected
 	 * @param string $content
-	 * @param boolean $ignore, Ignore HTML
+	 * @param boolean $ignoreHTML
+	 * @return void
+	 */
+	protected function renderShortcode($content, $ignoreHTML = false)
+	{
+		echo $this->doShortcode($content,$ignoreHTML);
+	}
+
+	/**
+	 * Search content for shortcodes 
+	 * and filter shortcodes through their hooks
+	 * @see /reference/functions/do_shortcode/
+	 *
+	 * @access protected
+	 * @param string $content
+	 * @param boolean $ignoreHTML
 	 * @return string
 	 */
-	protected function doShortcode($content, $ignore = false)
+	protected function doShortcode($content, $ignoreHTML = false)
 	{
-		return do_shortcode($content, $ignore);
+		return do_shortcode($content,$ignoreHTML);
 	}
 
 	/**
 	 * Removes hook for shortcode
-	 *
 	 * @see /reference/functions/remove_shortcode/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
-	 * @param string $tag, Tag name
+	 * @param string $tag
 	 * @return void
 	 */
 	protected function removeShortcode($tag)
@@ -138,12 +124,10 @@ class WordPress
 
 	/**
 	 * Checks Whether a registered shortcode exists named $tag
-	 *
 	 * @see /reference/functions/shortcode_exists/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
-	 * @param string $tag, Tag name
+	 * @param string $tag
 	 * @return boolean
 	 */
 	protected function shortcodeExists($tag)
@@ -153,10 +137,8 @@ class WordPress
 
 	/**
 	 * Checks whether content contains shortcode
-	 *
 	 * @see /reference/functions/has_shortcode/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $content
 	 * @param string $tag
@@ -169,67 +151,61 @@ class WordPress
 
 	/**
 	 * Hook a method on a specific action
-	 *
 	 * @see /reference/functions/add_action/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
-	 * @param int $priority default 10
-	 * @param int $args default 1
-	 * @return true
+	 * @param int $priority 10
+	 * @param int $args 1
+	 * @return inherit
 	 */
 	protected function addAction($hook, $method, $priority = 10, $args = 1)
 	{
-		switch ($hook)
-		{
+		switch ( Stringify::lowercase($hook) ) {
 			case 'head':
-				return add_action('wp_head',$method,$priority,$args);
+				$hook = 'wp_head';
 				break;
 			case 'footer':
-				return add_action('wp_footer',$method,$priority,$args);
+				$hook = 'wp_footer';
 				break;
-			default:
-				return add_action($hook,$method,$priority,$args);
+			case 'content':
+				$hook = 'the_content';
 				break;
 		}
+		return add_action($hook,$method,$priority,$args);
 	}
 
 	/**
 	 * Remove a method from a specified action hook
-	 *
 	 * @see /reference/functions/remove_action/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $target
 	 * @param callable $method
-	 * @param int $priority default 10
-	 * @return boolean
+	 * @param int $priority 10
+	 * @return inherit
 	 */
-	protected function removeAction($target, $method, $priority = 10)
+	protected function removeAction($hook, $method, $priority = 10)
 	{
-		switch ($target)
-		{
+		switch ( Stringify::lowercase($hook) ) {
 			case 'head':
-				return remove_action('wp_head',$method,$priority);
+				$hook = 'wp_head';
 				break;
 			case 'footer':
-				return remove_action('wp_footer',$method,$priority);
+				$hook = 'wp_footer';
 				break;
-			default:
-				return remove_action($target,$method,$priority);
+			case 'content':
+				$hook = 'the_content';
 				break;
 		}
+		return remove_action($target,$method,$priority);
 	}
 
 	/**
 	 * Add a method from a specified action hook
-	 *
 	 * @see /reference/functions/do_action/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $tag
 	 * @param mixed $args
@@ -242,51 +218,56 @@ class WordPress
 
 	/**
 	 * Hook a function or method to a specific filter action
-	 *
 	 * @see /reference/functions/add_filter/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
-	 * @param int $priority default 10
-	 * @param int $args default 1
-	 * @return true
+	 * @param int $priority 10
+	 * @param int $args 1
+	 * @return inherit
 	 */
 	protected function addFilter($hook, $method, $priority = 10, $args = 1)
 	{
+		switch ( Stringify::lowercase($hook) ) {
+			case 'head':
+				$hook = 'wp_head';
+				break;
+			case 'footer':
+				$hook = 'wp_footer';
+				break;
+			case 'content':
+				$hook = 'the_content';
+				break;
+		}
 		return add_filter($hook,$method,$priority,$args);
 	}
 
 	/**
 	 * Remove a function from a specified filter hook
-	 *
 	 * @see /reference/functions/remove_filter/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
-	 * @param int $priority default 10
-	 * @return boolean
+	 * @param int $priority 10
+	 * @return inherit
 	 */
 	protected function removeFilter($hook, $method, $priority = 10)
 	{
-		remove_filter($hook,$method,$priority);
+		return remove_filter($hook,$method,$priority);
 	}
 
 	/**
 	 * Calls the callback functions 
 	 * that have been added to a filter hook
-	 *
 	 * @see /reference/functions/apply_filters/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $hook
 	 * @param mixed $value
-	 * @param mixed $args
-	 * @return mixed
+	 * @param mixed $args null
+	 * @return inherit
 	 */
 	protected function applyFilter($hook, $value, $args = null)
 	{
@@ -295,14 +276,12 @@ class WordPress
 
 	/**
 	 * Check if any filter has been registered for a hook
-	 *
 	 * @see /reference/functions/has_filter/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $tag
-	 * @param callable $method
-	 * @return mixed
+	 * @param callable $method false
+	 * @return inherit
 	 */
 	protected function hasFilter($tag, $method = false)
 	{
@@ -311,59 +290,53 @@ class WordPress
 
 	/**
 	 * Register and Enqueue a CSS stylesheet
-	 *
 	 * @see /reference/functions/wp_register_style/
 	 * @see /reference/functions/wp_enqueue_style/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $id
 	 * @param string $path
-	 * @param array $deps
-	 * @param string $version
+	 * @param mixed $deps
+	 * @param mixed $version false
 	 * @param string $media
 	 * @return void
 	 */
 	protected function addCSS($id, $path, $deps = [], $version = false, $media = 'all')
 	{
-		if ( !Stringify::contains($path, 'http') ){
+		if ( !Stringify::contains($path, 'http') ) {
 		    $path = $this->getPluginUrl($path);
 		}
-		wp_register_style($id, $path, $deps, $version, $media);
+		wp_register_style($id,$path,$deps,$version,$media);
 		wp_enqueue_style($id);
 	}
 
 	/**
 	 * Register and Enqueue a new script
-	 *
 	 * @see /reference/functions/wp_register_script/
 	 * @see /reference/functions/wp_enqueue_script/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $id
 	 * @param string $path
-	 * @param array $deps
-	 * @param string $version
-	 * @param string $footer
+	 * @param mixed $deps
+	 * @param mixed $version false
+	 * @param string $footer false
 	 * @return void
 	 */
 	protected function addJS($id, $path, $deps = [], $version = false, $footer = false)
 	{
-		if ( !Stringify::contains($path, 'http') ){
+		if ( !Stringify::contains($path, 'http') ) {
 		    $path = $this->getPluginUrl($path);
 		}
-		wp_register_script($id, $path, $deps, $version, $footer);
+		wp_register_script($id,$path,$deps,$version,$footer);
 		wp_enqueue_script($id);
 	}
 
 	/**
 	 * Determines whether a script has been added to the queue
-	 *
 	 * @see /reference/functions/wp_register_script/
 	 * @see /reference/functions/wp_enqueue_script/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $id
 	 * @param string $list
@@ -379,11 +352,9 @@ class WordPress
 
 	/**
 	 * Remove a previously enqueued and registered CSS stylesheet
-	 *
 	 * @see /reference/functions/wp_dequeue_style/
 	 * @see /reference/functions/wp_deregister_style/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $id 
 	 * @return void
@@ -396,11 +367,9 @@ class WordPress
 
 	/**
 	 * Remove a previously enqueued and registered script
-	 *
 	 * @see /reference/functions/wp_dequeue_script/
 	 * @see /reference/functions/wp_deregister_script/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $id 
 	 * @return void
@@ -414,10 +383,8 @@ class WordPress
 	/**
 	 * Localize a script
 	 * Works on already added script only
-	 *
 	 * @see /reference/functions/wp_deregister_script/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $id
 	 * @param object $object
@@ -426,15 +393,13 @@ class WordPress
 	 */
 	protected function localizeJS($id, $object, $content = [])
 	{
-		wp_localize_script($id, $object, $content);
+		wp_localize_script($id,$object,$content);
 	}
 
 	/**
 	 * Register a settings and its data
-	 *
 	 * @see /reference/functions/register_setting/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $group
 	 * @param string $option
@@ -443,19 +408,17 @@ class WordPress
 	 */
 	protected function registerOption($group, $option, $args = [])
 	{
-		register_setting($group, $option, $args);
+		register_setting($group,$option,$args);
 	}
 
 	/**
 	 * Register a settings and its data
-	 *
 	 * @see /reference/functions/register_setting/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
-	 * @return boolean
+	 * @return inherit
 	 */
 	protected function addOption($option, $value)
 	{
@@ -464,44 +427,40 @@ class WordPress
 
 	/**
 	 * Retrieves an option value based on an option name
-	 *
 	 * @see /reference/functions/get_option/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 *
 	 * @access protected
 	 * @param string $option
-	 * @param string $default
+	 * @param string $default null
 	 * @return mixed
 	 */
 	protected function getOption($option, $default = null)
 	{
-		$option = Stringify::unserialize(get_option($option, $default));
+		$option = Stringify::unserialize(get_option($option,$default));
 		return Stringify::slashStrip($option);
 	}
 
 	/**
 	 * Update the value of an option that was already added
-	 *
 	 * @see /reference/functions/update_option/
-	 * @since 4.0.0
+	 *
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
-	 * @return boolean
+	 * @return inherit
 	 */
 	protected function updateOption($option, $value)
 	{
-		return update_option($option, $value);
+		return update_option($option,$value);
 	}
 
 	/**
 	 * Removes option by name
-	 *
 	 * @see /reference/functions/delete_option/
-	 * @since 4.0.0
+	 *
 	 * @access protected
 	 * @param string $option
-	 * @return boolean
+	 * @return inherit
 	 */
 	protected function removeOption($option)
 	{
@@ -510,31 +469,31 @@ class WordPress
 
 	/**
 	 * Add a top-level menu page
-	 *
 	 * @see /reference/functions/add_menu_page/
-	 * @since 4.0.0
+	 *
 	 * @access protected
 	 * @param string $title
 	 * @param string $menu
 	 * @param string $capability
 	 * @param string $slug
 	 * @param callable $callable
-	 * @param string $icon default dashicons-warning
-	 * @param boolean $customIcon default false
-	 * @param int $position default 20
-	 * @return string
+	 * @param string $icon
+	 * @param boolean $customIcon false
+	 * @param int $position 20
+	 * @return inherit
 	 */
 	protected function addMenuPage($title, $menu, $capability, $slug, $callable, $icon = 'admin-plugins', $customIcon = false, $position = 20)
 	{
-		if ($customIcon) $icon = "dashicons-{$icon}";
+		if ($customIcon) {
+			$icon = "dashicons-{$icon}";
+		}
 		return add_menu_page($title,$menu,$capability,$slug,$callable,$icon,$position);
 	}
 
 	/**
 	 * Add a top-level menu page
-	 *
 	 * @see /reference/functions/add_submenu_page/
-	 * @since 4.0.0
+	 *
 	 * @access protected
 	 * @param string $parent
 	 * @param string $title
@@ -542,7 +501,7 @@ class WordPress
 	 * @param string $capability
 	 * @param string $slug
 	 * @param callable $callable
-	 * @return string
+	 * @return inherit
 	 */
 	protected function addSubMenuPage($parent, $title, $menu, $capability, $slug, $callable)
 	{
@@ -551,31 +510,41 @@ class WordPress
 
 	/**
 	 * Add a top-level menu page
-	 *
 	 * @see /reference/functions/add_options_page/
-	 * @since 4.0.0
+	 *
 	 * @access protected
-	 * @param string $title, string $menuTitle, string $capability, string $slug, callable $method
-	 * @return string
+	 * @param string $title
+	 * @param string $menu
+	 * @param string $capability
+	 * @param string $slug
+	 * @param callable $callable
+	 * @return inherit
 	 */
-	protected function addOptionPage($pageTitle, $menuTitle, $capability, $slug, $method)
+	protected function addOptionPage($title, $menu, $capability, $slug, $method)
 	{
-		return add_options_page($pageTitle,$menuTitle,$capability,$slug,$method);
+		return add_options_page($title,$menu,$capability,$slug,$method);
 	}
 
 	/**
 	 * Add Metabox
+	 * @see /reference/functions/add_meta_box/
 	 *
 	 * @access protected
-	 * @param string $type, array $args
-	 * @return boolean
+	 * @param string $id
+	 * @param string $title
+	 * @param callback $callback
+	 * @param mixed $screen
+	 * @param string $context
+	 * @param string $priority
+	 * @param array $args null
+	 * @return void
 	 *
 	 * action : add_meta_boxes
 	 * action : add_meta_boxes_{type}
 	 */
 	protected function addMetabox($id, $title, $callback, $screen, $context = 'advanced', $priority = 'high', $args = null)
 	{
-		add_meta_box($id, $title, $callback, $screen, $context, $priority, $args);
+		add_meta_box($id,$title,$callback,$screen,$context,$priority,$args);
 	}
 
 	/**
@@ -603,7 +572,7 @@ class WordPress
 	 */
 	protected function getPluginUrl($path = '', $plugin = '')
 	{
-		return plugins_url($path, $plugin);
+		return plugins_url($path,$plugin);
 	}
 
 	/**
@@ -660,10 +629,11 @@ class WordPress
 
 	/**
 	 * Check user logged in
+	 * @see /reference/functions/is_user_logged_in/
 	 *
 	 * @access protected
 	 * @param void
-	 * @return boolean
+	 * @return inherit
 	 */
 	protected function isLoggedIn()
 	{
@@ -671,56 +641,84 @@ class WordPress
 	}
 
 	/**
-	 * User Exists
+	 * Check user exists
+	 * @see /reference/functions/username_exists/
+	 * @see /reference/functions/email_exists/
 	 *
 	 * @access protected
-	 * @param string
-	 * @return boolean
+	 * @param mixed $user
+	 * @param string $property
+	 * @return inherit
 	 */
-	protected function userExists($email)
+	protected function isUser($user, $property = 'username')
 	{
-		return email_exists($email);
+		switch ( Stringify::lowercase($property) ) {
+			case 'username':
+				return username_exists(sanitize_user($user));
+				break;
+			case 'email':
+				return email_exists($user);
+				break;
+			case 'id':
+				$id = intval($user);
+				$user = new \WP_User($id);
+				return $user->exists();
+				break;
+		}
 	}
 
 	/**
-	 * Get user role
+	 * Get user permission
+	 * @see /reference/functions/get_current_user_id/
+	 * @see /reference/functions/user_can/
 	 *
 	 * @access protected
-	 * @param mixed id null
-	 * @return mixed
+	 * @param mixed $id null
+	 * @param string $capability
+	 * @param mixed $args
+	 * @return inherit
+	 */
+	protected function hasPermission($id = null, $capability = 'edit_posts', $args = [])
+	{
+		$id = ($id) ? intval($id) : get_current_user_id();
+		return user_can($id,$capability,$args);
+	}
+
+	/**
+	 * Get role
+	 * @see /reference/functions/get_current_user_id/
+	 *
+	 * @access protected
+	 * @param mixed $id null
+	 * @return array
 	 */
 	protected function getRole($id = null)
 	{
-		if ( is_null($id) || empty($id) ) $id = get_current_user_id();
+		$id = ($id) ? intval($id) : get_current_user_id();
 		$user = new \WP_User($id);
-		if ( !empty( $user->roles ) && is_array( $user->roles ) ) {
-		    foreach ( $user->roles as $role )
-		    echo $role;
-		}
+		return (array)$user->roles;
 	}
 
 	/**
-	 * Get user role
+	 * Add role
+	 * @see /reference/functions/add_role/
 	 *
 	 * @access protected
-	 * @param string $role
-	 * @param string $name null
-	 * @param string $capability null
-	 * @return void
+	 * @param string $display
+	 * @param string $role null
+	 * @param array $capability null
+	 * @return inherit
 	 */
-	protected function addRole($role, $name = null, $capability = null)
+	protected function addRole($display, $role = null, $capability = [])
 	{
-		if ( is_null($name) ) $name = $role;
-		if ( is_null($capability) ) {
-			$capability = [
-				'read' => true
-			];
-		}
-		return add_role($role,$name,$capability);
+		$role = ($role) ? $role : Stringify::slugify($display);
+		$role = Stringify::replace('-','_',$role);
+		return add_role($role,$display,$capability);
 	}
 
 	/**
-	 * Remove user role
+	 * Remove role
+	 * @see /reference/functions/remove_role/
 	 *
 	 * @access protected
 	 * @param string $role
@@ -732,13 +730,13 @@ class WordPress
 	}
 
 	/**
-	 * Get user role
+	 * Add capability
 	 *
 	 * @access protected
 	 * @param string $role
 	 * @param string $capability
 	 * @param boolean $grant true
-	 * @return mixed
+	 * @return void
 	 */
 	protected function addCapability($role, $capability, $grant = true)
 	{
@@ -747,12 +745,12 @@ class WordPress
 	}
 
 	/**
-	 * Get user role
+	 * Remove capability
 	 *
 	 * @access protected
 	 * @param string $role
 	 * @param string $capability
-	 * @return mixed
+	 * @return void
 	 */
 	protected static function removeCapability($role, $capability)
 	{
@@ -762,6 +760,7 @@ class WordPress
 
 	/**
 	 * Redirects to another page
+	 * @see /reference/functions/wp_redirect/
 	 *
 	 * @access public
 	 * @param string $location
@@ -770,7 +769,7 @@ class WordPress
 	 */
 	public function redirect($location, $status = 301)
 	{
-		wp_redirect($location, $status);
+		wp_redirect($location,$status);
 		exit();
 	}
 
