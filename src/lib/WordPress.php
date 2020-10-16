@@ -86,12 +86,12 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $content
-	 * @param boolean $ignoreHTML
+	 * @param boolean $ignore, Ignore HTML false
 	 * @return void
 	 */
-	protected function renderShortcode($content, $ignoreHTML = false)
+	protected function renderShortcode($content, $ignore = false)
 	{
-		echo $this->doShortcode($content,$ignoreHTML);
+		echo $this->doShortcode($content,$ignore);
 	}
 
 	/**
@@ -101,12 +101,12 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $content
-	 * @param boolean $ignoreHTML
+	 * @param boolean $ignore, Ignore HTML false
 	 * @return string
 	 */
-	protected function doShortcode($content, $ignoreHTML = false)
+	protected function doShortcode($content, $ignore = false)
 	{
-		return do_shortcode($content,$ignoreHTML);
+		return do_shortcode($content,$ignore);
 	}
 
 	/**
