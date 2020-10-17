@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.0
+ * @version   : 0.2.1
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -212,6 +212,16 @@ final class Stringify
 	public static function spaceStrip($string)
 	{
 		return preg_replace('/\s+/', '', trim($string));
+	}
+
+	/**
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function breakStrip($string)
+	{
+		return normalize_whitespace($string);
 	}
 
 	/**
