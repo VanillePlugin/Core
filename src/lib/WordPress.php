@@ -5,7 +5,7 @@
  *
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.1
+ * @version   : 0.2.2
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -181,7 +181,7 @@ class WordPress
 	 * @see /reference/functions/remove_action/
 	 *
 	 * @access protected
-	 * @param string $target
+	 * @param string $hook
 	 * @param callable $method
 	 * @param int $priority 10
 	 * @return inherit
@@ -199,7 +199,7 @@ class WordPress
 				$hook = 'the_content';
 				break;
 		}
-		return remove_action($target,$method,$priority);
+		return remove_action($hook,$method,$priority);
 	}
 
 	/**
