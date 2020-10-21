@@ -5,7 +5,7 @@
  *
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.2
+ * @version   : 0.2.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -545,21 +545,6 @@ class WordPress
 	protected function addMetabox($id, $title, $callback, $screen, $context = 'advanced', $priority = 'high', $args = null)
 	{
 		add_meta_box($id,$title,$callback,$screen,$context,$priority,$args);
-	}
-
-	/**
-	 * Clean Assets Url
-	 *
-	 * @access public
-	 * @param string $url
-	 * @return string
-	 */
-	public function cleanAssetsUrl($url)
-	{
-		if ( Stringify::contains($url,'?ver=') ) {
-			$url = remove_query_arg('ver',$url);
-		}
-		return $url;
 	}
 
 	/**

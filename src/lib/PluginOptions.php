@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.2
+ * @version   : 0.2.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -28,20 +28,23 @@ class PluginOptions extends WordPress
 	 * Register a settings and its data
 	 *
 	 * @access protected
-	 * @param {inherit}
-	 * @return {inherit}
+	 * @param string $action
+	 * @param array $args null
+	 * @return void
 	 */
 	protected function doPluginAction($action, $args = null)
 	{
-		return $this->doAction("{$this->getNameSpace()}-{$action}", $args);
+		$this->doAction("{$this->getNameSpace()}-{$action}", $args);
 	}
 
 	/**
 	 * Register Plugin Settings
 	 *
 	 * @access protected
-	 * @param inherit
-	 * @return inherit
+	 * @param string $group
+	 * @param mixed $option
+	 * @param array $args null
+	 * @return void
 	 */
 	protected function registerPluginOption($group, $option, $args = null)
 	{
@@ -52,8 +55,9 @@ class PluginOptions extends WordPress
 	 * Addd Plugin Option
 	 *
 	 * @access protected
-	 * @param inherit
-	 * @return inherit
+	 * @param string $option
+	 * @param mixed $value
+	 * @return mixed
 	 */
 	protected function addPluginOption($option, $value)
 	{
@@ -93,7 +97,7 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
-	 * @return {inherit}
+	 * @return boolean
 	 */
 	protected function updatePluginOption($option, $value)
 	{
@@ -105,7 +109,7 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $option
-	 * @return {inherit}
+	 * @return boolean
 	 */
 	protected function removePluginOption($option)
 	{
@@ -117,7 +121,7 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $option
-	 * @return {inherit}
+	 * @return object
 	 */
 	protected function getPluginObject($option)
 	{
@@ -129,7 +133,7 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $icon
-	 * @return {inherit}
+	 * @return string
 	 */
 	protected function addPluginMenuPage($icon = 'admin-plugins')
 	{
@@ -152,7 +156,7 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string callable
-	 * @return {inherit}
+	 * @return mixed
 	 */
 	protected function addPluginSubMenuPage($callable, $slug, $title = '', $parent = null)
 	{
@@ -173,10 +177,12 @@ class PluginOptions extends WordPress
 	/**
 	 * Update the value of an option that was already added
 	 *
-	 * @since 4.0.0
 	 * @access protected
-	 * @param {inherit}
-	 * @return {inherit}
+	 * @param string $path
+	 * @param mixed $deps
+	 * @param mixed $version false
+	 * @param string $footer true
+	 * @return void
 	 */
 	protected function addPluginJS($path, $deps = [], $version = false, $footer = true)
 	{
@@ -189,10 +195,12 @@ class PluginOptions extends WordPress
 	/**
 	 * Update the value of an option that was already added
 	 *
-	 * @since 4.0.0
 	 * @access protected
-	 * @param {inherit}
-	 * @return {inherit}
+	 * @param string $path
+	 * @param mixed $deps
+	 * @param mixed $version false
+	 * @param string $footer true
+	 * @return void
 	 */
 	protected function addPluginMainJS($path, $deps = [], $version = false, $footer = true)
 	{
@@ -203,10 +211,12 @@ class PluginOptions extends WordPress
 	/**
 	 * Update the value of an option that was already added
 	 *
-	 * @since 4.0.0
 	 * @access protected
-	 * @param {inherit}
-	 * @return {inherit}
+	 * @param string $path
+	 * @param mixed $deps
+	 * @param mixed $version false
+	 * @param string $footer true
+	 * @return void
 	 */
 	protected function addPluginGlobalJS($path, $deps = [], $version = false, $footer = true)
 	{
@@ -217,10 +227,10 @@ class PluginOptions extends WordPress
 	/**
 	 * Update the value of an option that was already added
 	 *
-	 * @since 4.0.0
 	 * @access protected
-	 * @param string $name
-	 * @return {inherit}
+	 * @param array $name
+	 * @param string $id
+	 * @return void
 	 */
 	protected function localizePluginJS($content = [], $id = 'main')
 	{
@@ -232,10 +242,10 @@ class PluginOptions extends WordPress
 	/**
 	 * Update the value of an option that was already added
 	 *
-	 * @since 4.0.0
 	 * @access protected
-	 * @param string $name
-	 * @return {inherit}
+	 * @param array $name
+	 * @param string $id
+	 * @return void
 	 */
 	protected function localizeGlobalJS($content = [], $id = 'global')
 	{
@@ -247,10 +257,12 @@ class PluginOptions extends WordPress
 	/**
 	 * Update the value of an option that was already added
 	 *
-	 * @since 4.0.0
 	 * @access protected
-	 * @param string $name
-	 * @return {inherit}
+	 * @param string $path
+	 * @param mixed $deps
+	 * @param mixed $version false
+	 * @param string $media
+	 * @return void
 	 */
 	protected function addPluginCSS($path, $deps = [], $version = false, $media = 'all')
 	{
@@ -263,10 +275,12 @@ class PluginOptions extends WordPress
 	/**
 	 * Add Plugin Main CSS
 	 *
-	 * @since 4.0.0
 	 * @access protected
-	 * @param string $name
-	 * @return {inherit}
+	 * @param string $path
+	 * @param mixed $deps
+	 * @param mixed $version false
+	 * @param string $media
+	 * @return void
 	 */
 	protected function addPluginMainCSS($path, $deps = [], $version = false, $media = 'all')
 	{
@@ -277,10 +291,12 @@ class PluginOptions extends WordPress
 	/**
 	 * Add Plugin Global CSS
 	 *
-	 * @since 4.0.0
 	 * @access protected
-	 * @param {inherit}
-	 * @return {inherit}
+	 * @param string $path
+	 * @param mixed $deps
+	 * @param mixed $version false
+	 * @param string $media
+	 * @return void
 	 */
 	protected function addPluginGlobalCSS($path, $deps = [], $version = false, $media = 'all')
 	{
@@ -292,7 +308,6 @@ class PluginOptions extends WordPress
 	 * Retrieves an option value based on an option name
 	 *
 	 * @see /reference/functions/get_transient/
-	 * @since 4.0.0
 	 * @access protected
 	 * @param string $name
 	 * @return mixed
@@ -306,12 +321,11 @@ class PluginOptions extends WordPress
 	 * Retrieves an option value based on an option name
 	 *
 	 * @see /reference/functions/set_transient/
-	 * @since 4.0.0
 	 * @access protected
 	 * @param string $name
 	 * @param mixed $value
 	 * @param int $expiration
-	 * @return mixed
+	 * @return boolean
 	 */
 	protected function setTransient($name, $value, $expiration = 300)
 	{
@@ -322,10 +336,9 @@ class PluginOptions extends WordPress
 	 * Retrieves an option value based on an option name
 	 *
 	 * @see /reference/functions/set_transient/
-	 * @since 4.0.0
 	 * @access protected
 	 * @param string $name
-	 * @return mixed
+	 * @return void
 	 */
 	protected function deleteTransient($name)
 	{
@@ -335,6 +348,7 @@ class PluginOptions extends WordPress
 	/**
 	 * Check if is plugin namespace
 	 *
+	 * @access protected
 	 * @param string $slug null
 	 * @return boolean
 	 */
@@ -354,6 +368,7 @@ class PluginOptions extends WordPress
 	/**
 	 * Get current used lang
 	 *
+	 * @access protected
 	 * @param boolean $local
 	 * @return string
 	 */
@@ -370,6 +385,7 @@ class PluginOptions extends WordPress
 	/**
 	 * Return plugin infos
 	 *
+	 * @access protected
 	 * @param string $file {pluginDir}/{pluginMain}.php
 	 * @return array
 	 */
@@ -381,6 +397,7 @@ class PluginOptions extends WordPress
 	/**
 	 * Return plugin active
 	 *
+	 * @access protected
 	 * @param string $file {pluginDir}/{pluginMain}.php
 	 * @return boolean
 	 */
@@ -398,8 +415,9 @@ class PluginOptions extends WordPress
 	/**
 	 * Return class exists
 	 *
+	 * @access protected
 	 * @param string $callable
-	 * @return array
+	 * @return boolean
 	 */
 	protected function isClass($callable)
 	{
@@ -415,8 +433,9 @@ class PluginOptions extends WordPress
 	/**
 	 * Return function exists
 	 *
+	 * @access protected
 	 * @param string $callable
-	 * @return array
+	 * @return boolean
 	 */
 	protected function isFunction($callable)
 	{
@@ -426,6 +445,7 @@ class PluginOptions extends WordPress
 	/**
 	 * Loads a plugin’s translated strings
 	 *
+	 * @access public
 	 * @param void
 	 * @return void
 	 *
@@ -468,7 +488,7 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $role
 	 * @param string $cap
-	 * @return {inherit}
+	 * @return void
 	 */
 	protected function addPluginCapability($role, $cap)
 	{
@@ -482,7 +502,7 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $role
 	 * @param string $cap
-	 * @return {inherit}
+	 * @return void
 	 */
 	protected static function removePluginCapability($role, $cap)
 	{

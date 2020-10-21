@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.2
+ * @version   : 0.2.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -23,20 +23,19 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 {
 	/**
 	 * @access private
-	 * @var object $adapter, adapter instance
-	 * @var object $cache, adapter object
-	 * @var boolean $isCached, cache bool
-	 * @var int $expireIn, cache TTL
+	 * @var object $cache, cache object
+	 * @var object $adapter, adapter object
+	 * @var boolean $isCached, cache status
 	 * @var string $path, cache path
+	 * @var int $expireIn, cache TTL
 	 */
-	private $adapter;
-	private $cache;
+	private $cache = false;
+	private $adapter = false;
 	private $isCached = false;
 	private static $path = null;
 	private static $expireIn = null;
 
 	const EXPIRE = 30;
-	const EXTENSION = 'db';
 
 	/**
 	 * @param PluginNameSpaceInterface $plugin
@@ -61,14 +60,15 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 		// Set adapter default params
 		CacheManager::setDefaultConfig([
 		    'path' => self::$path,
-		    'cacheFileExtension' => self::EXTENSION
+		    'default_chmod' => 777,
+		    'cacheFileExtension' => 'db'
 		]);
 
-		global $cacheAdapter;
-		if ( !$cacheAdapter ) {
-			$cacheAdapter = CacheManager::getInstance('Files');
+		global $vanilleCacheAdapter;
+		if ( !$vanilleCacheAdapter ) {
+			$vanilleCacheAdapter = CacheManager::getInstance('Files');
 		}
-		$this->adapter = $cacheAdapter;
+		$this->adapter = $vanilleCacheAdapter;
 	}
 
 	/**
@@ -139,28 +139,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function isCached()
 	{
-		if ( !$this->isCached ) return false;
-		else return true;
-	}
-
-	/**
-	 * @access public
-	 * @param int $expire
-	 * @return void
-	 */
-	public static function expireIn($expire = self::EXPIRE)
-	{
-		self::$expireIn = $expire;
-	}
-
-	/**
-	 * @access public
-	 * @param string $path
-	 * @return void
-	 */
-	public static function setPath($path)
-	{
-		self::$path = Stringify::formatPath($path);
+		return ($this->isCached) ? true : false;
 	}
 
 	/**
@@ -181,9 +160,42 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function removeAll()
 	{
-		// Reset Cache Folder
+		// Clear Cache Folder
 		$this->setPath($this->getCachePath());
 		$this->remove();
+	}
+
+	/**
+	 * @access public
+	 * @param int $expire
+	 * @return void
+	 */
+	public static function expireIn($expire = self::EXPIRE)
+	{
+		self::$expireIn = intval($expire);
+	}
+
+	/**
+	 * @access public
+	 * @param string $path
+	 * @return void
+	 */
+	public static function setPath($path)
+	{
+		self::$path = Stringify::formatPath($path);
+	}
+
+	/**
+	 * Reset Cache Global
+	 * 
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public static function reset()
+	{
+		global $vanilleCacheAdapter;
+		$vanilleCacheAdapter = false;
 	}
 
 	/**
