@@ -190,12 +190,14 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * 
 	 * @access public
 	 * @param void
-	 * @return void
+	 * @return boolean
 	 */
 	public static function reset()
 	{
-		global $vanilleCacheAdapter;
-		$vanilleCacheAdapter = false;
+		if ( isset($GLOBALS['vanilleCacheAdapter']) ) {
+			unset($GLOBALS['vanilleCacheAdapter']);
+			return true;
+		}
 	}
 
 	/**
