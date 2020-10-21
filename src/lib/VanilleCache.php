@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.3
+ * @version   : 0.2.4
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -64,11 +64,9 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 		    'cacheFileExtension' => 'db'
 		]);
 
-		global $vanilleCacheAdapter;
-		if ( !$vanilleCacheAdapter ) {
-			$vanilleCacheAdapter = CacheManager::getInstance('Files');
-		}
-		$this->adapter = $vanilleCacheAdapter;
+		// Set instance
+		CacheManager::clearInstances();
+		$this->adapter = CacheManager::getInstance('Files');
 	}
 
 	/**
@@ -183,21 +181,6 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	public static function setPath($path)
 	{
 		self::$path = Stringify::formatPath($path);
-	}
-
-	/**
-	 * Reset Cache Global
-	 * 
-	 * @access public
-	 * @param void
-	 * @return boolean
-	 */
-	public static function reset()
-	{
-		if ( isset($GLOBALS['vanilleCacheAdapter']) ) {
-			unset($GLOBALS['vanilleCacheAdapter']);
-			return true;
-		}
 	}
 
 	/**

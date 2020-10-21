@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.3
+ * @version   : 0.2.4
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -40,6 +40,12 @@ interface VanilleCacheInterface
     function delete($key);
 
     /**
+     * @param string $tag
+     * @return void
+     */
+    public function deleteByTag($tag);
+
+    /**
      * @param void
      * @return boolean
      */
@@ -49,13 +55,13 @@ interface VanilleCacheInterface
      * @param int $expire
      * @return void
      */
-    static function expireIn($expire = self::EXPIRE);
+    function expireIn($expire = self::EXPIRE);
 
     /**
      * @param string $path
      * @return void
      */
-    static function setPath($path);
+    function setPath($path);
 
     /**
      * @param void
@@ -68,4 +74,10 @@ interface VanilleCacheInterface
      * @return void
      */
     function removeAll();
+
+    /**
+     * @param void
+     * @return void
+     */
+    function removeThirdParty();
 }
