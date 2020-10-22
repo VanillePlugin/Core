@@ -18,7 +18,7 @@ interface OrmInterface
      * @param OrmQueryInterface $data
      * @return mixed
      */
-    function select(OrmQueryInterface $data)
+    function select(OrmQueryInterface $data);
 
     /**
      * @param OrmQueryInterface $data
