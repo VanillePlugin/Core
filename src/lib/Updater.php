@@ -22,7 +22,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @access private
 	 * @var array $content
 	 */
-	private $hostUrl;
+	private $host;
 	private $siteUrl;
 	private $wpVerion;
 	private $infoUrl;
@@ -33,23 +33,23 @@ class Updater extends PluginOptions implements UpdaterInterface
 
 	/**
 	 * @param PluginNameSpaceInterface $plugin
-	 * @param string $hostUrl
+	 * @param string $host
 	 * @param array $params
-	 * @param boolean $forceUnsafe
+	 * @param boolean $unsafe true
 	 * @return void
 	 *
 	 * action : admin_init
 	 */
-	public function __construct(PluginNameSpaceInterface $plugin, $hostUrl, $params = [], $forceUnsafe = false)
+	public function __construct(PluginNameSpaceInterface $plugin, $host, $params = [], $unsafe = true)
 	{
 		// Init plugin config
 		$this->initConfig($plugin);
 
 		global $wp_version;
 		$this->wpVerion = $wp_version;
-		$this->hostUrl  = $hostUrl;
+		$this->host = $host;
 
-		if ($forceUnsafe) {
+		if ($unsafe) {
 			$this->unsafe = Server::isHttps() ? false : true;
 		} else {
 			$this->unsafe = true;
@@ -67,19 +67,34 @@ class Updater extends PluginOptions implements UpdaterInterface
 		unset($this->params['license']);
 		unset($this->params['infoUrl']);
 
-		// Hooks init
-		$this->init();
-	}
-
-	/**
-	 * @access public
-	 * @param void
-	 * @return void
-	 */
-	public function init()
-	{
+		/**
+		 * Get plugin info
+		 * Filter : plugins_api
+		 *
+		 * @see infos@self
+		 * @property priority 20
+		 * @property count 3
+		 */
 		$this->addFilter('plugins_api', [$this,'infos'], 20, 3);
+
+		/**
+		 * Get plugin update
+		 * Filter : pre_set_site_transient_update_plugins
+		 *
+		 * @see check@self
+		 * @property priority 20
+		 * @property count 1
+		 */
 		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'check'], 20);
+
+		/**
+		 * Set request args
+		 * Filter : http_request_args
+		 *
+		 * @see setRequest@self
+		 * @property priority 20
+		 * @property count 1
+		 */
 		$this->addFilter('http_request_args', [$this,'setRequest'], 20);
 	}
 
@@ -87,8 +102,6 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @access public
 	 * @param object $transient
 	 * @return mixed
-	 *
-	 * Filter : pre_set_site_transient_update_plugins
 	 */
 	public function check($transient)
 	{
@@ -117,7 +130,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 		];
 
 		$query = $this->setLicense($query);
-		$raw = wp_remote_post($this->hostUrl, $query);
+		$raw = wp_remote_post($this->host, $query);
 
 		if ( !is_wp_error($raw) && ($raw['response']['code'] == 200) ) {
 			$response = unserialize($raw['body']);
@@ -136,8 +149,6 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param string $action
 	 * @param array $args
 	 * @return mixed
-	 *
-	 * Filter : plugins_api
 	 */
 	public function infos($transient, $action, $args)
 	{
@@ -193,8 +204,6 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @access public
 	 * @param array $args
 	 * @return array
-	 *
-	 * Filter : http_request_args
 	 */
 	public function setRequest($args)
 	{

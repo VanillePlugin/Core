@@ -15,41 +15,35 @@ namespace VanillePlugin\int;
 interface OrmInterface
 {
     /**
-     * @param ConfigInterface $config
-     * @param ShortcodeInterface $menu
-     * @param SettingsInterface $settings
-     * @return void
+     * @param OrmQueryInterface $data
+     * @return mixed
      */
-	function select(OrmQueryInterface $data);
+    function select(OrmQueryInterface $data)
 
     /**
-     * @param ConfigInterface $config
-     * @param ShortcodeInterface $menu
-     * @param SettingsInterface $settings
-     * @return void
+     * @param OrmQueryInterface $data
+     * @return int
      */
 	function count(OrmQueryInterface $data);
 
     /**
-     * @param ConfigInterface $config
-     * @param ShortcodeInterface $menu
-     * @param SettingsInterface $settings
-     * @return void
+     * @param string $table
+     * @param array $data
+     * @param string $format false
+     * @return boolean
      */
 	function insert($table, $data = [], $format = false);
 
     /**
-     * @param ConfigInterface $config
-     * @param ShortcodeInterface $menu
-     * @param SettingsInterface $settings
-     * @return void
+     * @param string $table
+     * @param array $where
+     * @param string $format false
+     * @return boolean
      */
 	function delete($table, $where = [], $format = null);
 
     /**
-     * @param ConfigInterface $config
-     * @param ShortcodeInterface $menu
-     * @param SettingsInterface $settings
+     * @param string $table
      * @return void
      */
 	function deleteAll($table);

@@ -16,19 +16,12 @@ interface UpdaterInterface
 {
     /**
      * @param PluginNameSpaceInterface $plugin
-     * @param object $plugin
-     * @param string $hostUrl
+     * @param string $host
      * @param array $params
-     * @param boolean $forceUnsafe
+     * @param boolean $unsafe true
      * @return void
      */
-    function __construct(PluginNameSpaceInterface $plugin, $hostUrl, $params = [], $forceUnsafe = false);
-
-    /**
-     * @param void
-     * @return void
-     */
-    function init();
+    function __construct(PluginNameSpaceInterface $plugin, $host, $params = [], $unsafe = true);
 
     /**
      * @param object $transient
@@ -43,4 +36,10 @@ interface UpdaterInterface
      * @return mixed
      */
     function infos($transient, $action, $args);
+
+    /**
+     * @param array $args
+     * @return array
+     */
+    function setRequest($args);
 }

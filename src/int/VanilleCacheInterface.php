@@ -55,13 +55,13 @@ interface VanilleCacheInterface
      * @param int $expire
      * @return void
      */
-    function expireIn($expire = self::EXPIRE);
+    static function expireIn($expire = self::EXPIRE);
 
     /**
      * @param string $path
      * @return void
      */
-    function setPath($path);
+    static function setPath($path);
 
     /**
      * @param void
@@ -79,5 +79,5 @@ interface VanilleCacheInterface
      * @param void
      * @return void
      */
-    function removeThirdParty();
+    static function removeThirdParty();
 }

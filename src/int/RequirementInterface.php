@@ -31,4 +31,16 @@ interface RequirementInterface
 	 * @return void
 	 */
 	function requireTemplate();
+	
+	/**
+	 * @param void
+	 * @return void
+	 */
+	function requireModules();
+
+	/**
+	 * @param void
+	 * @return void
+	 */
+	function php();
 }

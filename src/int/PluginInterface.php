@@ -24,7 +24,7 @@ interface PluginInterface
      * @param void
      * @return void
      */
-	function start();
+	static function start();
 
     /**
      * @param void
@@ -42,5 +42,5 @@ interface PluginInterface
      * @param void
      * @return void
      */
-	function uninstall();
+	static function uninstall();
 }

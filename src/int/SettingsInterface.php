@@ -24,11 +24,11 @@ interface SettingsInterface
      * @param void
      * @return void
      */
-    function setDefault();
+    static function setDefault();
 
     /**
      * @param void
      * @return void
      */
-    function remove();
+   static function remove();
 }
