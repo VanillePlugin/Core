@@ -114,7 +114,7 @@ class File
 				}
 			}
 			reset($objects);
-			rmdir($dir);
+			@rmdir($dir);
 		}
 	}
 
