@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.5
+ * @version   : 0.2.6
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -14,6 +14,18 @@ namespace VanillePlugin\int;
 
 interface VanilleCacheInterface
 {
+    /**
+     * @param PluginNameSpaceInterface $plugin
+     * @return void
+     */
+    function __construct(PluginNameSpaceInterface $plugin);
+
+    /**
+     * @param void
+     * @return void
+     */
+    function __destruct();
+
     /**
      * @param string $key
      * @return mixed
@@ -43,7 +55,7 @@ interface VanilleCacheInterface
      * @param string $tag
      * @return void
      */
-    public function deleteByTag($tag);
+    function deleteByTag($tag);
 
     /**
      * @param void
@@ -52,32 +64,20 @@ interface VanilleCacheInterface
     function isCached();
 
     /**
-     * @param int $expire
+     * @param string $path null
      * @return void
      */
-    static function expireIn($expire = self::EXPIRE);
-
-    /**
-     * @param string $path
-     * @return void
-     */
-    static function setPath($path);
-
-    /**
-     * @param void
-     * @return void
-     */
-    function remove();
-
-    /**
-     * @param void
-     * @return void
-     */
-    function removeAll();
+    function clear($path = null);
 
     /**
      * @param void
      * @return void
      */
     static function removeThirdParty();
+
+    /**
+     * @param int $ttl 30
+     * @return void
+     */
+    static function expireIn($ttl = 30);
 }

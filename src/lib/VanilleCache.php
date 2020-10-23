@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.5
+ * @version   : 0.2.6
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -19,6 +19,10 @@ use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
+/**
+ * Wrapper Class for External Filecache
+ * Includes Third-Party Cache Helper
+ */
 class VanilleCache extends PluginOptions implements VanilleCacheInterface
 {
 	/**
@@ -27,15 +31,13 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * @var object $adapter, adapter object
 	 * @var boolean $isCached, cache status
 	 * @var string $path, cache path
-	 * @var int $expireIn, cache TTL
+	 * @var int $ttl, cache TTL
 	 */
 	private $cache = false;
 	private $adapter = false;
 	private $isCached = false;
-	private static $path = null;
-	private static $expireIn = null;
-
-	const EXPIRE = 30;
+	private $path = false;
+	private static $ttl = false;
 
 	/**
 	 * @param PluginNameSpaceInterface $plugin
@@ -46,27 +48,34 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 		// Init plugin config
 		$this->initConfig($plugin);
 
-		// Set cache path
-		if ( !self::$path ) {
-			// Default data cache folder
-			self::$path = "{$this->getCachePath()}/data";
+		// Set default ttl
+		if (!self::$ttl) {
+			self::expireIn($this->getExpireIn());
 		}
 
-		// Set cache expire
-		if ( !self::$expireIn ) {
-			self::expireIn();
-		}
+		// Set default path
+		$this->path = "{$this->getCachePath()}/data";
 		
 		// Set adapter default params
 		CacheManager::setDefaultConfig([
-		    'path' => self::$path,
+		    'path' => $this->path,
 		    'default_chmod' => 777,
 		    'cacheFileExtension' => 'db'
 		]);
 
-		// Set instance
-		CacheManager::clearInstances();
+		// Set adapter instance
 		$this->adapter = CacheManager::getInstance('Files');
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public function __destruct()
+	{
+		// Clear adapter instances
+		CacheManager::clearInstances();
 	}
 
 	/**
@@ -76,7 +85,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function get($key)
 	{
-		$this->cache = $this->adapter->getItem(Stringify::formatKey($key));
+		$key = Stringify::formatKey($key);
+		$this->cache = $this->adapter->getItem($key);
 		return $this->isCached = $this->cache->get();
 	}
 
@@ -89,8 +99,9 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	public function set($data, $tag = null)
 	{
 		$this->cache->set($data)
-		->expiresAfter(self::$expireIn);
+		->expiresAfter(self::$ttl);
 		if ($tag) {
+			$tag = Stringify::formatKey($tag);
 			$this->cache->addTag($tag);
 		}
 		$this->adapter->save($this->cache);
@@ -104,9 +115,10 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function update($key, $data)
 	{
-		$this->cache = $this->adapter->getItem(Stringify::formatKey($key));
+		$key = Stringify::formatKey($key);
+		$this->cache = $this->adapter->getItem($key);
 		$this->cache->set($data)
-		->expiresAfter(self::$expireIn);
+		->expiresAfter(self::$ttl);
 		$this->adapter->save($this->cache);
 	}
 
@@ -117,7 +129,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function delete($key)
 	{
-		$this->adapter->deleteItem(Stringify::formatKey($key));
+		$key = Stringify::formatKey($key);
+		$this->adapter->deleteItem($key);
 	}
 
 	/**
@@ -142,45 +155,27 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 
 	/**
 	 * @access public
-	 * @param void
+	 * @param string $path null
 	 * @return void
 	 */
-	public function remove()
+	public function clear($path = null)
 	{
-		$dir = new File();
-		$dir->emptyDir(self::$path);
+		// Secured clear
+		$this->path = ($path) ? $path : $this->path;
+		if ( Stringify::contains($this->path, $this->getRoot()) ) {
+			$dir = new File();
+			$dir->emptyDir($this->path);
+		}
 	}
 
 	/**
 	 * @access public
-	 * @param void
+	 * @param int $ttl 30
 	 * @return void
 	 */
-	public function removeAll()
+	public static function expireIn($ttl = 30)
 	{
-		// Clear Cache Folder
-		$this->setPath($this->getCachePath());
-		$this->remove();
-	}
-
-	/**
-	 * @access public
-	 * @param int $expire
-	 * @return void
-	 */
-	public static function expireIn($expire = self::EXPIRE)
-	{
-		self::$expireIn = intval($expire);
-	}
-
-	/**
-	 * @access public
-	 * @param string $path
-	 * @return void
-	 */
-	public static function setPath($path)
-	{
-		self::$path = Stringify::formatPath($path);
+		self::$ttl = intval($ttl);
 	}
 
 	/**

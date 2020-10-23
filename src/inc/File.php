@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.5
+ * @version   : 0.2.6
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -37,8 +37,6 @@ class File
 	private $handler = null;
 
 	/**
-	 * Construct file object
-	 *
 	 * @param string $path null
 	 */
 	public function __construct($path = null)
@@ -71,7 +69,7 @@ class File
 	 * Open File
 	 *
 	 * @access protected
-	 * @param string $mode 'c+'
+	 * @param string $mode
 	 * @return void
 	 */
 	protected function open($mode = 'c+')
@@ -114,7 +112,7 @@ class File
 					}
 					else unlink("{$dir}/{$object}");
 				}
-			 }
+			}
 			reset($objects);
 			rmdir($dir);
 		}
@@ -282,7 +280,7 @@ class File
 	 * Write File & create folder if not exists
 	 *
 	 * @access public
-	 * @param string $input
+	 * @param string $input empty
 	 * @return void
 	 */
 	public function write($input = '')
@@ -351,8 +349,8 @@ class File
 	 * Copy file
 	 *
 	 * @access public
-	 * @param void
-	 * @return string $dest
+	 * @param string $dest
+	 * @return boolean
 	 */
     public function copy($dest)
     {
@@ -367,7 +365,7 @@ class File
 	 * Move file
 	 *
 	 * @access public
-	 * @param void
+	 * @param string $dest
 	 * @return boolean
 	 */
     public function move($dest)
@@ -399,8 +397,8 @@ class File
 	 *
 	 * @access public
 	 * @param string $dir
-	 * @param int $mode
-	 * @param boolean $recursive
+	 * @param int $mode 0755
+	 * @param boolean $recursive true
 	 * @return boolean
 	 */
     public function addDir($dir, $mode = 0755, $recursive = true)

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.5
+ * @version   : 0.2.6
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -195,6 +195,18 @@ trait VanilleConfig
 		return "{$this->getRoot()}{$this->global->path->cache}";
 	}
 
+	/**
+	 * Get static expire
+	 *
+	 * @access public
+	 * @param void
+	 * @return int
+	 */
+	public function getExpireIn()
+	{
+		return intval($this->global->options->ttl);
+	}
+	
 	/**
 	 * Get static view path
 	 *
