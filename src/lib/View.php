@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.6
+ * @version   : 0.2.7
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -102,11 +102,11 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('getRoot', function (){
             return $this->getRoot();
         }));
-        $env->addFunction(Template::extend('getBaseUri', function (){
-            return $this->getBaseUri();
+        $env->addFunction(Template::extend('getBaseUrl', function (){
+            return $this->getBaseUrl();
         }));
-        $env->addFunction(Template::extend('getAssetUri', function (){
-            return $this->getAssetUri();
+        $env->addFunction(Template::extend('getAssetUrl', function (){
+            return $this->getAssetUrl();
         }));
         $env->addFunction(Template::extend('nonce', function ($name = null){
             return wp_create_nonce($name);

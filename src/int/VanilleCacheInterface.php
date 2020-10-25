@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.6
+ * @version   : 0.2.7
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -64,20 +64,20 @@ interface VanilleCacheInterface
     function isCached();
 
     /**
-     * @param string $path null
-     * @return void
-     */
-    function clear($path = null);
-
-    /**
      * @param void
      * @return void
      */
-    static function removeThirdParty();
+    public function clear();
 
     /**
      * @param int $ttl 30
      * @return void
      */
     static function expireIn($ttl = 30);
+    
+    /**
+     * @param void
+     * @return void
+     */
+    static function removeThirdParty();
 }

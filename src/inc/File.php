@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.6
+ * @version   : 0.2.7
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -18,7 +18,7 @@ class File
 	 * @access protected
 	 * @var string $path
 	 * @var string $name
-	 * @var string $size
+	 * @var int $size
 	 * @var string $extension
 	 * @var string $content
 	 * @var string $parentDir
@@ -38,17 +38,30 @@ class File
 
 	/**
 	 * @param string $path null
+	 * @return void
 	 */
 	public function __construct($path = null)
 	{
-		if ( $path && !$this->isExists($this->path = $path) ) {
-			$this->write();
+		if ( ($this->path = $path) ) {
+			$this->analyze();
 		}
+	}
+
+	/**
+	 * Set file
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return void
+	 */
+	public function set($path)
+	{
+		$this->path = $path;
 		$this->analyze();
 	}
 
 	/**
-	 * Analyze File
+	 * Analyze file
 	 *
 	 * @access protected
 	 * @param void
@@ -56,32 +69,32 @@ class File
 	 */
 	protected function analyze()
 	{
-		if ( $this->path && ($this->path = realpath($this->path)) ) {
-			$this->parentDir = dirname($this->path);
-			$this->extension = pathinfo($this->path, PATHINFO_EXTENSION);
-			$this->name = basename(Stringify::replace(".{$this->extension}", '', $this->path));
-			$this->extension = strtolower($this->extension);
-			$this->size = filesize($this->path);
-		}
+		$this->path = Stringify::formatPath($this->path);
+		$this->parentDir = dirname($this->path);
+		$this->extension = pathinfo($this->path, PATHINFO_EXTENSION);
+		$file = Stringify::replace(".{$this->extension}", '', $this->path);
+		$this->name = basename($file);
+		$this->extension = strtolower($this->extension);
+		$this->size = @filesize($this->path);
 	}
 
 	/**
-	 * Open File
+	 * Open file stream
 	 *
 	 * @access protected
 	 * @param string $mode
-	 * @return void
+	 * @param boolean $include false
+	 * @return mixed
 	 */
-	protected function open($mode = 'c+')
+	protected function open($mode = 'c+', $include = false)
 	{
 		clearstatcache();
-		if ( $this->isExists($this->path) ) {
-			$this->handler = fopen($this->path, $mode);
-		}
+		$this->handler = @fopen($this->path,$mode,$include);
+		return $this->handler;
 	}
 
 	/**
-	 * Close file handler
+	 * Close file stream
 	 *
 	 * @access protected
 	 * @param void
@@ -94,28 +107,6 @@ class File
 			$this->handler = null;
 		}
 		clearstatcache();
-	}
-
-	/**
-	 * @access protected
-	 * @param string $dir
-	 * @return void
-	 */
-	protected function recursiveRemove($dir)
-	{
-		if ( is_dir($dir) ) {
-			$objects = scandir($dir);
-			foreach ($objects as $object) {
-				if ($object !== '.' && $object !== '..') {
-					if (filetype("{$dir}/{$object}") == 'dir') {
-						$this->recursiveRemove("{$dir}/{$object}");
-					}
-					else unlink("{$dir}/{$object}");
-				}
-			}
-			reset($objects);
-			@rmdir($dir);
-		}
 	}
 
 	/**
@@ -143,7 +134,7 @@ class File
 	}
 
 	/**
-	 * Get File Name
+	 * Get file name
 	 *
 	 * @access public
 	 * @param void
@@ -155,7 +146,7 @@ class File
 	}
 
 	/**
-	 * Get File Full Name
+	 * Get file full name
 	 *
 	 * @access public
 	 * @param void
@@ -167,7 +158,7 @@ class File
 	}
 	
 	/**
-	 * Get File Path
+	 * Get file path
 	 *
 	 * @access public
 	 * @param void
@@ -199,7 +190,7 @@ class File
 	 */
     public function getLastAccess()
     {
-        if ( $this->isExists($this->path) ) {
+        if ( $this->isExists() ) {
             if ( ($access = fileatime($this->path)) ) {
                 return $access;
             } else {
@@ -217,7 +208,7 @@ class File
 	 */
     public function getLastChange()
     {
-        if ( $this->isExists($this->path) ) {
+        if ( $this->isExists() ) {
             if ( ($change = filemtime($this->path)) ) {
                 return $change;
             } else {
@@ -227,7 +218,7 @@ class File
     }
 
 	/**
-	 * Get File Size int
+	 * Get file Size value
 	 *
 	 * @access public
 	 * @param void
@@ -239,7 +230,7 @@ class File
 	}
 
 	/**
-	 * Get File Size
+	 * Get file Size
 	 *
 	 * @access public
 	 * @param int $decimals 2
@@ -253,7 +244,7 @@ class File
 	}
 
 	/**
-	 * Read File & Get Content
+	 * Read file & get content
 	 *
 	 * @access public
 	 * @param boolean $return false
@@ -266,7 +257,7 @@ class File
 			if ( $this->isEmpty() ) {
 				$this->content = '';
 			} else {
-				$this->content = fread($this->handler, filesize($this->path));
+				$this->content = @fread($this->handler, $this->size);
 			}
 			if ($return) {
 				$this->close();
@@ -277,7 +268,7 @@ class File
 	}
 
 	/**
-	 * Write File & create folder if not exists
+	 * Write file & create folder if not exists
 	 *
 	 * @access public
 	 * @param string $input empty
@@ -285,26 +276,25 @@ class File
 	 */
 	public function write($input = '')
 	{
-		$dir = dirname($this->path);
-		if ( !is_file($dir) && !is_dir($dir) ) {
-			if ( !$this->addDir($dir) ) {
+		if ( !self::exists($this->parentDir) ) {
+			if ( !self::addDir($this->parentDir) ) {
 				return false;
 			}
 		}
-		if ( ($this->handler = fopen($this->path, 'w', true)) ) {
+		if ( $this->open('w', true) ) {
 			fwrite($this->handler, $input);
 		}
 		$this->close();
 	}
 
 	/**
-	 * Add String to File
+	 * Add string to file
 	 *
 	 * @access public
 	 * @param string $input
 	 * @return void
 	 */
-	public function addString($input)
+	public function addString($input = '')
 	{
 		$this->open('a');
 		if ( $this->handler ) {
@@ -322,24 +312,26 @@ class File
 	 */
 	public function addBreak()
 	{
-		fwrite(fopen($this->path, 'a'), PHP_EOL);
+		$this->open('a');
+		if ( $this->handler ) {
+			fwrite($this->handler, PHP_EOL);
+		}
+		$this->close();
 	}
 
 	/**
-	 * Delete file object
+	 * Remove file
 	 *
 	 * @access public
 	 * @param void
 	 * @return boolean
 	 */
-	public function delete()
+	public function remove()
 	{
 		$this->close();
 		if ( $this->isExists() ) {
-			if ( unlink($this->path) ) {
+			if ( @unlink($this->path) ) {
 				return true;
-			} else {
-				return false;
 			}
 		}
 		return false;
@@ -349,15 +341,17 @@ class File
 	 * Copy file
 	 *
 	 * @access public
-	 * @param string $dest
+	 * @param string $path
 	 * @return boolean
 	 */
-    public function copy($dest)
+    public function copy($path)
     {
     	$this->close();
-        if ( copy($this->path, $dest) ) {
-            return true;
-        }
+    	if ( $this->isExists() ) {
+	        if ( copy($this->path, $path) ) {
+	            return true;
+	        }
+    	}
         return false;
     }
 
@@ -365,48 +359,125 @@ class File
 	 * Move file
 	 *
 	 * @access public
-	 * @param string $dest
+	 * @param string $path
 	 * @return boolean
 	 */
-    public function move($dest)
+    public function move($path)
     {
     	$this->close();
-        if ( rename($this->path, $dest) ) {
-            return true;
-        }
+    	if ( $this->isExists() ) {
+	        if ( rename($this->path, $path) ) {
+	            return true;
+	        }
+    	}
         return false;
     }
+
+	/**
+	 * Check file only exists
+	 *
+	 * @access public
+	 * @param void
+	 * @return boolean
+	 */
+	public function isExists()
+	{
+		if ( file_exists($this->path) && is_file($this->path) ) {
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Check whether path is regular file
 	 *
 	 * @access public
 	 * @param void
-	 * @return boolean
+	 * @return mixed
 	 */
     public function isFile()
     {
-        if ( $this->path && is_file($this->path) ) {
-            return true;
-        }
-        return false;
+    	if ( $this->isExists() ) {
+    		return is_file($this->path);
+    	}
+        return null;
     }
 
+	/**
+	 * Check file empty
+	 *
+	 * @access public
+	 * @param void
+	 * @return mixed
+	 */
+	public function isEmpty()
+	{
+		if ( $this->isExists() ) {
+			return ($this->size == 0);
+		}
+		return null;
+	}
+
+	/**
+	 * Check file readable
+	 *
+	 * @access public
+	 * @param void
+	 * @return mixed
+	 */
+	public function isReadable()
+	{
+		if ( $this->isExists() ) {
+			return ($this->open('r') !== false);
+		}
+		return null;
+	}
+
+	/**
+	 * Check file writable
+	 *
+	 * @access public
+	 * @param void
+	 * @return mixed
+	 */
+	public function isWritable()
+	{
+		if ( $this->isExists() ) {
+			return is_writable($this->path);
+		}
+		return null;
+	}
+	
     /**
      * Add directory
 	 *
 	 * @access public
-	 * @param string $dir
+	 * @param string $path
 	 * @param int $mode 0755
 	 * @param boolean $recursive true
 	 * @return boolean
 	 */
-    public function addDir($dir, $mode = 0755, $recursive = true)
+    public static function addDir($path = null, $mode = 0755, $recursive = true)
     {
-    	if ( !is_file($dir) && !is_dir($dir) ) {
-    		if ( @mkdir($dir, $mode, $recursive) ) {
+    	if ( !is_file($path) && !self::isDir($path) ) {
+    		if ( @mkdir($path,$mode,$recursive) ) {
             	return true;
         	}
+    	}
+        return false;
+    }
+
+    /**
+     * Check directory
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return boolean
+	 */
+    public static function isDir($path = null)
+    {
+    	if ( file_exists($path) && is_dir($path) ) {
+    		return true;
     	}
         return false;
     }
@@ -418,10 +489,10 @@ class File
 	 * @param string $dir
 	 * @return boolean
 	 */
-    public function removeDir($dir)
+    public static function removeDir($path)
     {
-    	if ( !is_file($dir) && is_dir($dir) ) {
-    		if ( @rmdir($dir) ) {
+    	if ( self::isDir($path) ) {
+    		if ( @rmdir($path) ) {
             	return true;
         	}
     	}
@@ -429,24 +500,24 @@ class File
     }
 
     /**
-     * Remove directory content
+     * Clear directory from content
 	 *
 	 * @access public
 	 * @param string $path
 	 * @return boolean
 	 */
-    public function emptyDir($path)
+    public static function clearDir($path)
     {
 		$handler = false;
-		if ( is_dir($path) ) {
+		if ( self::isDir($path) ) {
 			$handler = opendir($path);
 		}
 		if ( !$handler ) {
 			return false;
 		}
 	   	while( $file = readdir($handler) ) {
-			if ($file !== '.' && $file !== '..') {
-			    if ( !is_dir("{$path}/{$file}") ) {
+			if ( $file !== '.' && $file !== '..' ) {
+			    if ( !self::isDir("{$path}/{$file}") ) {
 			    	@unlink("{$path}/{$file}");
 			    } else {
 			    	$dir = "{$path}/{$file}";
@@ -454,10 +525,11 @@ class File
 				        if ( '.' === $file || '..' === $file ) {
 				        	continue;
 				        }
-				        if ( is_dir("{$dir}/{$file}") ) {
-				        	$this->recursiveRemove("{$dir}/{$file}");
+				        if ( self::isDir("{$dir}/{$file}") ) {
+				        	self::recursiveRemove("{$dir}/{$file}");
+				        } else {
+				        	@unlink("{$dir}/{$file}");
 				        }
-				        else unlink("{$dir}/{$file}");
 				    }
 				    @rmdir($dir);
 			    }
@@ -468,60 +540,26 @@ class File
     }
 
 	/**
-	 * Check File Exists
-	 *
-	 * @access public
-	 * @param void
-	 * @return boolean
+	 * @access private
+	 * @param string $path
+	 * @return void
 	 */
-	public function isExists()
+	private static function recursiveRemove($path)
 	{
-		if ( $this->isFile() && file_exists($this->path) ) {
-			return true;
+		if ( self::isDir($path) ) {
+			$objects = scandir($path);
+			foreach ($objects as $object) {
+				if ( $object !== '.' && $object !== '..' ) {
+					if ( filetype("{$path}/{$object}") == 'dir' ) {
+						self::recursiveRemove("{$path}/{$object}");
+					} else {
+						@unlink("{$path}/{$object}");
+					}
+				}
+			}
+			reset($objects);
+			@rmdir($path);
 		}
-		return false;
-	}
-
-	/**
-	 * Check file readable
-	 *
-	 * @access public
-	 * @param void
-	 * @return boolean
-	 */
-	public function isReadable()
-	{
-		if ( $this->path && !fopen($this->path, 'r') === false ) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Check file writable
-	 *
-	 * @access public
-	 * @param void
-	 * @return boolean
-	 */
-	public function isWritable()
-	{
-		return is_writable($this->path) ? true : false;
-	}
-
-	/**
-	 * Check file empty
-	 *
-	 * @access public
-	 * @param void
-	 * @return boolean
-	 */
-	public function isEmpty()
-	{
-		if ( $this->isExists($this->path) && filesize($this->path) == 0 ) {
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -548,7 +586,7 @@ class File
 	 */
 	public static function r($path)
 	{
-		return file_get_contents($path);
+		return @file_get_contents($path);
 	}
 
 	/**
@@ -566,6 +604,6 @@ class File
 		if ($append) {
 			$flag = FILE_APPEND;
 		}
-		return file_put_contents($path, $input, $flag);
+		return @file_put_contents($path,$input,$flag);
 	}
 }

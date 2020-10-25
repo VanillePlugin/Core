@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.6
+ * @version   : 0.2.7
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -20,7 +20,7 @@ use VanillePlugin\inc\Stringify;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
 /**
- * Wrapper Class for External Filecache
+ * Wrapper Class for External Filecache & Templates
  * Includes Third-Party Cache Helper
  */
 class VanilleCache extends PluginOptions implements VanilleCacheInterface
@@ -30,13 +30,11 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * @var object $cache, cache object
 	 * @var object $adapter, adapter object
 	 * @var boolean $isCached, cache status
-	 * @var string $path, cache path
 	 * @var int $ttl, cache TTL
 	 */
 	private $cache = false;
 	private $adapter = false;
 	private $isCached = false;
-	private $path = false;
 	private static $ttl = false;
 
 	/**
@@ -52,14 +50,11 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 		if (!self::$ttl) {
 			self::expireIn($this->getExpireIn());
 		}
-
-		// Set default path
-		$this->path = "{$this->getCachePath()}/data";
 		
 		// Set adapter default params
 		CacheManager::setDefaultConfig([
-		    'path' => $this->path,
-		    'default_chmod' => 777,
+		    'path' => $this->getTempPath(),
+		    'default_chmod' => 755,
 		    'cacheFileExtension' => 'db'
 		]);
 
@@ -155,16 +150,26 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 
 	/**
 	 * @access public
-	 * @param string $path null
+	 * @param void
 	 * @return void
 	 */
-	public function clear($path = null)
+	public function clear()
 	{
-		// Secured clear
-		$this->path = ($path) ? $path : $this->path;
-		if ( Stringify::contains($this->path, $this->getRoot()) ) {
-			$dir = new File();
-			$dir->emptyDir($this->path);
+		// Secured removing
+		$root = $this->getRoot();
+		$temp = $this->getTempPath();
+
+		// Clear filecache
+		if ( Stringify::contains($temp, $root) ) {
+			File::clearDir($temp);
+		}
+
+		// Clear template cache on debug
+		if ( $this->isDebug() ) {
+			$cache = $this->getCachePath();
+			if ( Stringify::contains($cache, $root) ) {
+				File::clearDir($cache);
+			}
 		}
 	}
 
@@ -185,6 +190,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public static function removeThirdParty()
 	{
+		// Clear WordPress 3rd-party cache
 		ThirdPartyCache::purge();
 	}
 }

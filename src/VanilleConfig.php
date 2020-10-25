@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.6
+ * @version   : 0.2.7
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -154,9 +154,9 @@ trait VanilleConfig
 	 * @param void
 	 * @return string
 	 */
-	public function getAssetUri()
+	public function getAssetUrl()
 	{
-		return "{$this->getBaseUri()}{$this->global->path->asset}";
+		return "{$this->getBaseUrl()}{$this->global->path->asset}";
 	}
 	
 	/**
@@ -193,6 +193,18 @@ trait VanilleConfig
 	public function getCachePath()
 	{
 		return "{$this->getRoot()}{$this->global->path->cache}";
+	}
+
+	/**
+	 * Get static temp path
+	 *
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public function getTempPath()
+	{
+		return "{$this->getRoot()}{$this->global->path->temp}";
 	}
 
 	/**
@@ -274,7 +286,7 @@ trait VanilleConfig
 	 * @param void
 	 * @return string
 	 */
-	public function getBaseUri()
+	public function getBaseUrl()
 	{
 		return WP_PLUGIN_URL . "/{$this->getNameSpace()}";
 	}
@@ -283,12 +295,25 @@ trait VanilleConfig
 	 * Get ajax url
 	 *
 	 * @access public
-	 * @param void
+	 * @param string $scheme
 	 * @return string
 	 */
-	public function getAjaxUrl()
+	public function getAjaxUrl($scheme = 'admin')
 	{
-		return admin_url('admin-ajax.php');
+		return $this->getAdminUrl('admin-ajax.php', $scheme);
+	}
+
+	/**
+	 * Get admin url
+	 *
+	 * @access public
+	 * @param string $url null
+	 * @param string $scheme
+	 * @return string
+	 */
+	public function getAdminUrl($url = null, $scheme = 'admin')
+	{
+		return admin_url($url,$scheme);
 	}
 
 	/**
