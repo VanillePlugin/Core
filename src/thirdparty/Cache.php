@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.7
+ * @version   : 0.2.8
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -23,8 +23,13 @@ final class Cache
 	{
 		// Check WordPress Cache
 		if ( !defined('WP_CACHE') || WP_CACHE == false ) return;
-		
-		// Purge WP-Rocket
+
+		// Clear Opcode cache
+		if ( function_exists('opcache_reset') ) {
+			opcache_reset();
+		}
+
+		// Purge WP Rocket
 		if ( function_exists('rocket_clean_domain') ) {
 			rocket_clean_domain();
 		}
