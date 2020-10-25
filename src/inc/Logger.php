@@ -25,11 +25,6 @@ class Logger extends PluginOptions
     {
         // Init plugin config
         $this->initConfig($plugin);
-
-        // Check logger path
-        if ( !File::exists($this->getLoggerPath()) ) {
-            File::addDir($this->getLoggerPath());
-        }
     }
 
     /**
@@ -95,6 +90,10 @@ class Logger extends PluginOptions
      */
     private function write($status, $message)
     {
+        // Check logger path
+        if ( !File::exists($this->getLoggerPath()) ) {
+            File::addDir($this->getLoggerPath());
+        }
         $date = date('[d-m-Y]');
         $log = "{$this->getLoggerPath()}/debug-{$date}.log";
         $date = date('[d-m-Y H:i:s]');
