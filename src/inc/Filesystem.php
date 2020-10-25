@@ -12,8 +12,6 @@
 
 namespace VanillePlugin\inc;
 
-use VanillePlugin\int\PluginNameSpaceInterface;
-
 final class Filesystem extends File
 {
 	/**
