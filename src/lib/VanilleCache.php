@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.8
+ * @version   : 0.2.9
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -54,7 +54,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 		// Set adapter default params
 		CacheManager::setDefaultConfig([
 		    'path' => $this->getTempPath(),
-		    'default_chmod' => 755,
+		    'default_chmod' => 0755,
 		    'cacheFileExtension' => 'db'
 		]);
 

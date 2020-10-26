@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.8
+ * @version   : 0.2.9
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -29,18 +29,16 @@ class Updater extends PluginOptions implements UpdaterInterface
 	private $license = [];
 	private $headers = [];
 	private $params = [];
-	private $unsafe = false;
 
 	/**
 	 * @param PluginNameSpaceInterface $plugin
 	 * @param string $host
 	 * @param array $params
-	 * @param boolean $unsafe true
 	 * @return void
 	 *
 	 * action : admin_init
 	 */
-	public function __construct(PluginNameSpaceInterface $plugin, $host, $params = [], $unsafe = true)
+	public function __construct(PluginNameSpaceInterface $plugin, $host, $params = [])
 	{
 		// Init plugin config
 		$this->initConfig($plugin);
@@ -48,12 +46,6 @@ class Updater extends PluginOptions implements UpdaterInterface
 		global $wp_version;
 		$this->wpVerion = $wp_version;
 		$this->host = $host;
-
-		if ($unsafe) {
-			$this->unsafe = Server::isHttps() ? false : true;
-		} else {
-			$this->unsafe = true;
-		}
 		
 		// Define request
 		$this->siteUrl = get_bloginfo('url');
@@ -198,18 +190,5 @@ class Updater extends PluginOptions implements UpdaterInterface
 			}
 		}
 		return $query;
-	}
-
-	/**
-	 * @access public
-	 * @param array $args
-	 * @return array
-	 */
-	public function setRequest($args)
-	{
-		if ($this->unsafe) {
-			$args['reject_unsafe_urls'] = false;
-			return $args;
-		}
 	}
 }
