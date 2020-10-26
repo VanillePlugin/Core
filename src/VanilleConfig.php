@@ -276,7 +276,19 @@ trait VanilleConfig
 	 */
 	public function getMainFile()
 	{
-		return $this->getNameSpace() . "/{$this->getNameSpace()}.php";
+		return  "{$this->getNameSpace()}/{$this->getNameSpace()}.php";
+	}
+
+	/**
+	 * Get main file path
+	 *
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public function getMainFilePath()
+	{
+		return "{$this->getRoot()}/{$this->getNameSpace()}.php";
 	}
 
 	/**

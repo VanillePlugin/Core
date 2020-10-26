@@ -383,10 +383,10 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Return plugin infos
+	 * Return plugin infos via absolute path
 	 *
 	 * @access protected
-	 * @param string $file {pluginDir}/{pluginMain}.php
+	 * @param string $file
 	 * @return array
 	 */
 	protected function getPluginInfo($file)

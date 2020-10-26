@@ -159,7 +159,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 		if ( $action !== 'plugin_information' ) return false;
 
 		if ( $args->slug === $this->getNameSpace() ) {
-			$pluginInfos = $this->getPluginInfo($this->getMainFile());
+			$pluginInfos = $this->getPluginInfo($this->getMainFilePath());
 			$params = [
 				'slug'      => $this->getNameSpace(),
 				'version'   => $pluginInfos['Version'],
