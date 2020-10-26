@@ -78,16 +78,6 @@ class Updater extends PluginOptions implements UpdaterInterface
 		 * @property count 1
 		 */
 		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'check'], 20);
-
-		/**
-		 * Set request args
-		 * Filter : http_request_args
-		 *
-		 * @see setRequest@self
-		 * @property priority 20
-		 * @property count 1
-		 */
-		$this->addFilter('http_request_args', [$this,'setRequest'], 20);
 	}
 
 	/**
