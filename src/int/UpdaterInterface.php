@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.9
+ * @version   : 0.3.0
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -18,10 +18,9 @@ interface UpdaterInterface
      * @param PluginNameSpaceInterface $plugin
      * @param string $host
      * @param array $params
-     * @param boolean $unsafe true
      * @return void
      */
-    function __construct(PluginNameSpaceInterface $plugin, $host, $params = [], $unsafe = true);
+    function __construct(PluginNameSpaceInterface $plugin, $host, $params = []);
 
     /**
      * @param object $transient
@@ -36,10 +35,4 @@ interface UpdaterInterface
      * @return mixed
      */
     function infos($transient, $action, $args);
-
-    /**
-     * @param array $args
-     * @return array
-     */
-    function setRequest($args);
 }

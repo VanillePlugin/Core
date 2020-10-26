@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.2.9
+ * @version   : 0.3.0
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -23,7 +23,7 @@ final class Filesystem extends File
 	{
 		foreach ($directories as $directory) {
 	        if ( !self::exists($directory) ) {
-	            self::addDir($directory, 0777);
+	            self::addDir($directory);
 	        }
 		}
 	}
