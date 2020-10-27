@@ -12,7 +12,9 @@
 
 namespace VanillePlugin\lib;
 
-class Cron extends PluginOptions
+use VanillePlugin\int\CronInterface;
+
+class Cron extends PluginOptions implements CronInterface
 {
 	/**
 	* @access private
@@ -23,7 +25,7 @@ class Cron extends PluginOptions
 	private $actions = [];
 
 	/**
-	 * Set Schedulers
+	 * Set schedulers
 	 *
 	 * @access public
 	 * @param array $schedules
@@ -35,7 +37,7 @@ class Cron extends PluginOptions
 	}
 
 	/**
-	 * Set Schedulers
+	 * Set actions
 	 *
 	 * @access public
 	 * @param array $actions
@@ -47,13 +49,12 @@ class Cron extends PluginOptions
 	}
 
 	/**
-	 * Apply Schedulers
+	 * Apply schedulers
+	 * Filter : cron_schedules
 	 *
 	 * @access public
 	 * @param array $schedules
 	 * @return void
-	 *
-	 * Filter : cron_schedules
 	 */
 	public function apply($schedules)
 	{
@@ -69,13 +70,13 @@ class Cron extends PluginOptions
 	}
 
 	/**
-	 * Start Cron
+	 * Start schedulers
 	 *
-	 * @access protected
+	 * @access public
 	 * @param void
 	 * @return void
 	 */
-	protected function start()
+	public function start()
 	{
 		$this->addFilter('cron_schedules', [$this,'apply']);
 		foreach ($this->actions as $action) {
@@ -89,11 +90,11 @@ class Cron extends PluginOptions
 	/**
 	 * Check scheduled waitlist
 	 *
-	 * @access protected
+	 * @access public
 	 * @param string $name
 	 * @return boolean
 	 */
-	protected function next($name)
+	public function next($name)
 	{
 		return wp_next_scheduled($name);
 	}
@@ -101,12 +102,12 @@ class Cron extends PluginOptions
 	/**
 	 * Check scheduled waitlist
 	 *
-	 * @access protected
-	 * @param string $interval
+	 * @access public
+	 * @param int $interval
 	 * @param string $hook
 	 * @return void
 	 */
-	protected function schedule($interval,$hook)
+	public function schedule($interval,$hook)
 	{
 		wp_schedule_event(time(), $interval, $hook);
 	}

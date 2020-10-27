@@ -87,10 +87,12 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	public function check($transient)
 	{
+		// Check transient
 		if ( empty($transient->checked) ) {
 			return $transient;
 		}
 
+		// Prepare response
 		$response = false;
 		$version  = isset($transient->checked[$this->getMainFile()])
 		? $transient->checked[$this->getMainFile()] : null;
@@ -101,6 +103,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 			'wpversion' => $this->wpVerion
 		];
 
+		// Build query
 		$query = [
 			'headers' => $this->headers,
 			'body' => [
@@ -111,17 +114,22 @@ class Updater extends PluginOptions implements UpdaterInterface
 			'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
 		];
 
+		// Add licence
 		$query = $this->setLicense($query);
-		$raw = wp_remote_post($this->host, $query);
 
-		if ( !is_wp_error($raw) && ($raw['response']['code'] == 200) ) {
-			$response = unserialize($raw['body']);
+		// Get response & Update transient
+		$client = new Request();
+		$response = $client->post($this->host, $query);
+		if ( $response->getStatusCode() == 200 ) {
+			$body = $response->getBody();
+			if ( !empty($body) ) {
+				$response = unserialize($body);
+				if ( $this->isValid($response) ) {
+					$transient->response[$this->getMainFile()] = $response;
+				}
+			}
 		}
 
-		if ( is_object($response) && !empty($response) ) {
-			$transient->response[$this->getMainFile()] = $response;
-		}
-		
 		return $transient;
 	}
 
@@ -134,14 +142,18 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	public function infos($transient, $action, $args)
 	{
-		// // Check activated option
+		// Check activated option
 		if ( !$this->infoUrl ) return false;
 
-		// // Check action
+		// Check action
 		if ( $action !== 'plugin_information' ) return false;
 
 		if ( $args->slug === $this->getNameSpace() ) {
+
+			// Prepare response
 			$pluginInfos = $this->getPluginInfo($this->getMainFilePath());
+
+			// Build query
 			$params = [
 				'slug'      => $this->getNameSpace(),
 				'version'   => $pluginInfos['Version'],
@@ -157,13 +169,23 @@ class Updater extends PluginOptions implements UpdaterInterface
 				'user-agent' => "{$this->getNameSpace()}-wordpress/{$pluginInfos['Version']};"
 			];
 
+			// Add licence
 			$query = $this->setLicense($query);
-			$raw = wp_remote_post($this->infoUrl, $query);
 
-			if ( !is_wp_error($raw) && ($raw['response']['code'] == 200) ) {
-				$transient = unserialize($raw['body']);
+			// Get response & Update transient
+			$client = new Request();
+			$response = $client->post($this->infoUrl, $query);
+			if ( $response->getStatusCode() == 200 ) {
+				$body = $response->getBody();
+				if ( !empty($body) ) {
+					$response = unserialize($body);
+					if ( $this->isValid($response) ) {
+						$transient = $response;
+					}
+				}
 			}
 		}
+
 		return $transient;
 	}
 
@@ -174,11 +196,24 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	private function setLicense($query)
 	{
-		if (is_array($this->license)) {
+		if ( is_array($this->license) ) {
 			foreach ($this->license as $param => $value) {
 				$query['body'][$param] = $value;
 			}
 		}
 		return $query;
+	}
+
+	/**
+	 * @access private
+	 * @param object $response
+	 * @return boolean
+	 */
+	private function isValid($response)
+	{
+		if ( is_object($response) && !empty($response) ) {
+			return true;
+		}
+		return false;
 	}
 }

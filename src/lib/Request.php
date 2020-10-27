@@ -12,7 +12,9 @@
 
 namespace VanillePlugin\lib;
 
-class Request extends WordPress
+use VanillePlugin\int\RequestInterface;
+
+class Request extends WordPress implements RequestInterface
 {
 	/**
 	 * @access private
@@ -28,6 +30,7 @@ class Request extends WordPress
 	/**
 	 * @param string $method
 	 * @param array $params
+	 * @param string $baseUrl null
 	 * @return void
 	 */
 	public function __construct($method = 'GET', $params = [], $baseUrl = null)
@@ -43,7 +46,7 @@ class Request extends WordPress
 	 * @param mixed $value
 	 * @return void
 	 */
-	public function addParam($param,$value)
+	public function addParameter($param,$value)
 	{
 		$this->params[$param] = $value;
 	}
@@ -121,15 +124,52 @@ class Request extends WordPress
 
 	/**
 	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return object
+	 */
+	public function post($url, $args = [])
+	{
+		$this->raw = wp_remote_post($url, $args);
+		return $this;
+	}
+
+	/**
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return object
+	 */
+	public function get($url, $args = [])
+	{
+		$this->raw = wp_remote_get($url, $args);
+		return $this;
+	}
+
+	/**
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return object
+	 */
+	public function head($url, $args = [])
+	{
+		$this->raw = wp_remote_head($url, $args);
+		return $this;
+	}
+
+	/**
+	 * @access public
 	 * @param void
-	 * @return string
+	 * @return int
 	 */
 	public function getStatusCode()
 	{
 		if ( isset($this->raw->errors) ) {
 			return 500;
 		}
-		return $this->raw['response']['code'];
+		return isset($this->raw['response']['code'])
+		? intval($this->raw['response']['code']) : 400;
 	}
 
 	/**
