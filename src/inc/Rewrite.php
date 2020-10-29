@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.1
+ * @version   : 0.3.2
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -78,7 +78,7 @@ class Rewrite extends WordPress
     {
         // Apply rules
        $this->addFilter('mod_rewrite_rules', [$this, 'getRules'], 90);
-       $this->flushRewrite();
+       $this->flush();
     }
 
     /**
@@ -90,7 +90,7 @@ class Rewrite extends WordPress
     {
         // Remove rules
        $this->removeFilter('mod_rewrite_rules', [$this, 'getRules'], 90);
-       $this->flushRewrite();
+       $this->flush();
     }
 
     /**
