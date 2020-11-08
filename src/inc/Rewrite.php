@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.2
+ * @version   : 0.3.3
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -35,33 +35,40 @@ class Rewrite extends WordPress
     }
 
     /**
+     * Action : init
+     * 
      * @access public
      * @param string $regex
-     * @param string $redirect
+     * @param string $query
      * @param string $after
      * @return void
      */
-    public function addRules($regex, $redirect, $after = 'bottom')
+    public function addRules($regex, $query, $after = 'bottom')
     {
         // Add rules
-        add_rewrite_rule($regex, $redirect, $after);
+        add_rewrite_rule($regex,$query,$after);
     }
 
     /**
+     * Action : init
+     *
      * @access public
      * @param string $name
-     * @param int $places
+     * @param int $places 8191
+     * @param mixed $query true
      * @return void
+     *
+     * EP_ALL : 8191
      */
-    public function addEndpoint($name, $places)
+    public function addEndpoint($name, $places = 8191, $query = true)
     {
         // Add endpoint
-        add_rewrite_endpoint($name, $places);
+        add_rewrite_endpoint($name,$places,$query);
     }
 
     /**
      * @access public
-     * @param string $vars
+     * @param array $vars
      * @return void
      */
     public function addVars($vars = [])
@@ -71,29 +78,31 @@ class Rewrite extends WordPress
 
     /**
      * @access public
-     * @param void
+     * @param int $priority 90
      * @return void
      */
-    public function applyRules()
+    public function applyRules($priority = 90)
     {
         // Apply rules
-       $this->addFilter('mod_rewrite_rules', [$this, 'getRules'], 90);
-       $this->flush();
+        $this->addFilter('mod_rewrite_rules',[$this,'getRules'],$priority);
+        $this->flush();
     }
 
     /**
      * @access public
-     * @param void
+     * @param int $priority 90
      * @return void
      */
-    public function removeRules()
+    public function removeRules($priority = 90)
     {
         // Remove rules
-       $this->removeFilter('mod_rewrite_rules', [$this, 'getRules'], 90);
-       $this->flush();
+        $this->removeFilter('mod_rewrite_rules',[$this,'getRules'],$priority);
+        $this->flush();
     }
 
     /**
+     * Filter : mod_rewrite_rules
+     *
      * @access public
      * @param void
      * @return string
@@ -108,7 +117,7 @@ class Rewrite extends WordPress
 
     /**
      * @access public
-     * @param boolean $force
+     * @param boolean $force true
      * @return void
      */
     public function flush($force = true)
@@ -124,7 +133,6 @@ class Rewrite extends WordPress
     public function backup()
     {
         if ( File::exists( $htaccess = ABSPATH . '/.htaccess') ) {
-            $date = date('dmY');
             if ( !File::exists( $backup = ABSPATH . '.htaccess.backup') ){
                 File::w($backup, File::r($htaccess));
             }
