@@ -540,7 +540,7 @@ class PluginOptions extends WordPress
 	 */
 	public function versionCompare($version1, $version2, $operator = '==')
 	{
-		retutn version_compare($version1,$version2,$operator);
+		return version_compare($version1,$version2,$operator);
 	}
 
 	/**
