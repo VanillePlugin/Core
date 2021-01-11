@@ -2,8 +2,8 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.3
- * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
+ * @version   : 0.3.4
+ * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -443,6 +443,107 @@ class PluginOptions extends WordPress
 	}
 
 	/**
+	 * Add PLugin Cap
+	 *
+	 * @access protected
+	 * @param string $role
+	 * @param string $cap
+	 * @return void
+	 */
+	protected function addPluginCapability($role, $cap)
+	{
+		$prefix = Stringify::replace('-', '_', $this->getNameSpace());
+		$this->addCapability($role, "{$cap}_{$prefix}");
+	}
+
+	/**
+	 * Remove PLugin Cap
+	 *
+	 * @access protected
+	 * @param string $role
+	 * @param string $cap
+	 * @return void
+	 */
+	protected static function removePluginCapability($role, $cap)
+	{
+		$plugin = self::getStatic();
+		$prefix = Stringify::replace('-', '_', $plugin->getNameSpace());
+		parent::removeCapability($role, "{$cap}_{$prefix}");
+	}
+
+	/**
+	 * @access protected
+	 * @param void
+	 * @return boolean
+	 */
+	protected function isGutenberg()
+	{
+		$gutenberg = false;
+		$classic = false;
+		if ( $this->hasFilter('replace_editor','gutenberg_init') ) {
+			$gutenberg = true;
+		}
+		if ( $this->versionCompare($GLOBALS['wp_version'],'5.0-beta','>') ) {
+			$classic = true;
+		}
+		if ( !$gutenberg && !$classic ) {
+			return false;
+		}
+		if ( !$this->isPlugin('classic-editor/classic-editor.php') ) {
+			return true;
+		}
+		return ( get_option('classic-editor-replace') === 'no-replace' );
+	}
+
+	/**
+	 * @access protected
+	 * @param string $haystack
+	 * @param mixed $needle
+	 * @return boolean
+	 */
+	protected function hasScript($haystack, $needle)
+	{
+	    if ( !is_array($needle) ) {
+	    	$needle = [$needle];
+	    }
+	    foreach ($needle as $search) {
+	        if ( Stringify::contains($haystack,$search) ) {
+	        	return true;
+	        }
+	    }
+	    return false;
+	}
+
+	/**
+	 * Simple save action
+	 *
+	 * @access protected
+	 * @param void
+	 * @return boolean
+	 */
+	protected function saved()
+	{
+		if ( Get::isSetted('settings-updated') 
+		&& Get::get('settings-updated') == 'true' ) {
+			return true;
+		}
+	}
+	
+	/**
+	 * Compare Versions
+	 *
+	 * @access public
+	 * @param string $version1
+	 * @param string $version2
+	 * @param string $operator
+	 * @return boolean
+	 */
+	public function versionCompare($version1, $version2, $operator = '==')
+	{
+		retutn version_compare($version1,$version2,$operator);
+	}
+
+	/**
 	 * Loads a plugin’s translated strings
 	 *
 	 * @access public
@@ -483,35 +584,6 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add PLugin Cap
-	 *
-	 * @access protected
-	 * @param string $role
-	 * @param string $cap
-	 * @return void
-	 */
-	protected function addPluginCapability($role, $cap)
-	{
-		$prefix = Stringify::replace('-', '_', $this->getNameSpace());
-		$this->addCapability($role, "{$cap}_{$prefix}");
-	}
-
-	/**
-	 * Remove PLugin Cap
-	 *
-	 * @access protected
-	 * @param string $role
-	 * @param string $cap
-	 * @return void
-	 */
-	protected static function removePluginCapability($role, $cap)
-	{
-		$plugin = self::getStatic();
-		$prefix = Stringify::replace('-', '_', $plugin->getNameSpace());
-		parent::removeCapability($role, "{$cap}_{$prefix}");
-	}
-
-	/**
 	 * Check token
 	 *
 	 * @access public
@@ -526,21 +598,6 @@ class PluginOptions extends WordPress
 		}
 		if ( !wp_verify_nonce($nonce, $action) ) {
 			die($this->translateString('Invalid token'));
-		}
-	}
-
-	/**
-	 * Simple save action
-	 *
-	 * @access protected
-	 * @param void
-	 * @return boolean
-	 */
-	protected function saved()
-	{
-		if ( Get::isSetted('settings-updated') 
-		&& Get::get('settings-updated') == 'true' ) {
-			return true;
 		}
 	}
 }
