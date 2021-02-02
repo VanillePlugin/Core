@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.4
+ * @version   : 0.3.5
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -12,7 +12,7 @@
 
 namespace VanillePlugin\inc;
 
-final class Response
+final class Response extends Status
 {
 	/**
 	 * @param string $message
@@ -40,9 +40,10 @@ final class Response
 	 */
 	public static function setHttpHeaders($code, $type = 'application/json')
 	{
-		$statusMessage = Status::getMessage($code);
+		$status = self::getMessage($code);
+		$protocol = Server::get('SERVER_PROTOCOL');
 		header("Content-Type: {$type}");
-		header("HTTP/1.1 {$code} {$statusMessage}");
+		header("{$protocol} {$code} {$status}");
 	}
 
 	/**

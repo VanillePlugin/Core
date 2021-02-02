@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.4
+ * @version   : 0.3.5
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -71,9 +71,8 @@ final class Stringify
 	{
 		return ucfirst(self::lowercase($string));
 	}
+	
 	/**
-	 * @since 4.0.0
-	 * @version 5.5.1
 	 * @access public
 	 * @param array $array
 	 * @return object
@@ -120,15 +119,38 @@ final class Stringify
 	 *
 	 * @access public
 	 * @param string $string
-	 * @param string $search
+	 * @param mixed $search
 	 * @return boolean
 	 */
 	public static function contains($string, $search)
 	{
+		if ( is_array($search) ) {
+			return in_array($string, $search);
+		}
 		if ( strpos($string, $search) !== false ) {
 		    return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Split string
+	 *
+	 * @access public
+	 * @param string $string
+	 * @param array $args
+	 * @return mixed
+	 */
+	public static function split($string, $args = [])
+	{
+		if ( isset($args['regex']) ) {
+			$limit = isset($args['$limit']) ? $args['$limit'] : -1;
+			$flags = isset($args['$flags']) ? $args['$flags'] : 0;
+			return preg_split($args['regex'],$string,$limit,$flags);
+		} else {
+			$length = isset($args['length']) ? $args['length'] : 1;
+			return str_split($string,$length);
+		}
 	}
 
 	/**
@@ -171,17 +193,14 @@ final class Stringify
 	/**
 	 * Deeply strip slashes
 	 *
-	 * @see /Function_Reference/stripslashes_deep/
-	 * @since 4.0.0
-	 * @version 5.5.1
+	 * @see /reference/functions/wp_unslash/
 	 * @access public
 	 * @param mixed $data
 	 * @return mixed
 	 */
 	public static function slashStrip($data)
 	{
-		$data = stripslashes_deep($data);
-	    return $data;
+		return wp_unslash($data);
 	}
 
 	/**
@@ -225,11 +244,19 @@ final class Stringify
 	}
 
 	/**
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function sanitizeText($string)
+	{
+		return sanitize_text_field($string);
+	}
+
+	/**
 	 * Unserialize value only if it was serialized.
 	 *
 	 * @see /Function_Reference/maybe_serialize/
-	 * @since 4.0.0
-	 * @version 5.5.1
 	 * @access public
 	 * @param string $string
 	 * @return mixed
@@ -243,8 +270,6 @@ final class Stringify
 	 * Serialize data, if needed.
 	 *
 	 * @see /Function_Reference/maybe_serialize/
-	 * @since 4.0.0
-	 * @version 5.5.1
 	 * @access public
 	 * @param mixed $data
 	 * @return mixed
@@ -272,7 +297,7 @@ final class Stringify
 		}
 		return $excerpt;
 	}
-
+	
 	/**
 	 * @param mixed $number
 	 * @param int $decimals

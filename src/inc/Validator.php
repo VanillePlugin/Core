@@ -10,25 +10,17 @@
  * This file if a part of VanillePlugin Framework
  */
 
-namespace VanillePlugin\int;
+namespace VanillePlugin\inc;
 
-interface SettingsInterface
+final class Validator
 {
-    /**
-     * @param void
-     * @return void
-     */
-	function init();
-
-    /**
-     * @param void
-     * @return void
-     */
-    static function setDefault();
-
-    /**
-     * @param void
-     * @return void
-     */
-   static function remove();
+	/**
+	 * @access public
+	 * @param string $ip
+	 * @return mixed
+	 */
+	public static function isValidIP($ip)
+	{
+		return rest_is_ip_address($ip);
+	}
 }

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.4
+ * @version   : 0.3.5
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -69,22 +69,34 @@ class Server
 	}
 	
 	/**
+	 * Get current user IP Address
+	 *
 	 * @access public
 	 * @param void
 	 * @return mixed
 	 */
 	public static function getRemote()
 	{
-		$remote = self::isSetted('HTTP_X_FORWARDED_FOR') 
-		? self::get('HTTP_X_FORWARDED_FOR') : false;
-		if ( !$remote ) {
-			$remote = self::isSetted('REMOTE_ADDR') 
-			? self::get('REMOTE_ADDR') : false;
+		if ( self::isSetted('HTTP_X_REAL_IP') ) {
+			$ip = self::get('HTTP_X_REAL_IP');
+			return Stringify::sanitizeText(Stringify::slashStrip($ip));
+
+		} elseif ( self::isSetted('HTTP_X_FORWARDED_FOR') ) {
+			$ip = self::get('HTTP_X_FORWARDED_FOR');
+			$ip = Stringify::sanitizeText(Stringify::slashStrip($ip));
+			$ip = Stringify::split($ip, ['regex' => '/,/']);
+ 			return (string) Validator::isValidIP(trim(current($ip)));
+
+		} elseif ( self::isSetted('REMOTE_ADDR') ) {
+			$ip = self::get('REMOTE_ADDR');
+			return Stringify::sanitizeText(Stringify::slashStrip($ip));
 		}
-		return $remote;
+		return false;
 	}
 
 	/**
+	 * Get prefered protocol
+	 *
 	 * @access public
 	 * @param void
 	 * @return string
@@ -92,5 +104,33 @@ class Server
 	public static function getProtocol()
 	{
 		return Server::isHttps() ? 'https://' : 'http://';
+	}
+
+	/**
+	 * Get country code from request headers
+	 *
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public static function getCountryCode()
+	{
+		$headers = [
+			'MM_COUNTRY_CODE',
+			'GEOIP_COUNTRY_CODE',
+			'HTTP_CF_IPCOUNTRY',
+			'HTTP_X_COUNTRY_CODE'
+		];
+		foreach ($headers as $header) {
+			if ( self::isSetted($header) ) {
+				$code = self::get($header);
+				if ( !empty($code) ) {
+					$code = Stringify::sanitizeText(Stringify::slashStrip($code));
+					return Stringify::uppercase($code);
+					break;
+				}
+			}
+		}
+		return false;
 	}
 }
