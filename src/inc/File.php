@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.5
+ * @version   : 0.3.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -37,7 +37,7 @@ class File
 	private $handler = null;
 
 	/**
-	 * @param string $path null
+	 * @param string $path
 	 * @return void
 	 */
 	public function __construct($path = null)
@@ -83,7 +83,7 @@ class File
 	 *
 	 * @access protected
 	 * @param string $mode
-	 * @param boolean $include false
+	 * @param boolean $include
 	 * @return mixed
 	 */
 	protected function open($mode = 'c+', $include = false)
@@ -233,7 +233,7 @@ class File
 	 * Get file Size
 	 *
 	 * @access public
-	 * @param int $decimals 2
+	 * @param int $decimals
 	 * @return string
 	 */
 	public function getSize($decimals = 2)
@@ -247,7 +247,7 @@ class File
 	 * Read file & get content
 	 *
 	 * @access public
-	 * @param boolean $return false
+	 * @param boolean $return
 	 * @return mixed
 	 */
 	public function read($return = false)
@@ -271,7 +271,7 @@ class File
 	 * Write file & create folder if not exists
 	 *
 	 * @access public
-	 * @param string $input empty
+	 * @param string $input
 	 * @return void
 	 */
 	public function write($input = '')
@@ -453,8 +453,8 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @param int $mode 0755
-	 * @param boolean $recursive true
+	 * @param int $mode
+	 * @param boolean $recursive
 	 * @return boolean
 	 */
     public static function addDir($path = null, $mode = 0755, $recursive = true)
@@ -594,8 +594,8 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @param string $input empty
-	 * @param string $append false
+	 * @param string $input
+	 * @param string $append
 	 * @return mixed
 	 */
 	public static function w($path, $input = '', $append = false)

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.5
+ * @version   : 0.3.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -39,9 +39,9 @@ class Session extends PluginOptions implements NameSpaceInterface
      */
     public function register($time = 60)
     {
-        $this->set('session_id', session_id());
-        $this->set('session_time', intval($time));
-        $this->set('session_start', $this->newTime());
+        $this->set('sessionId', session_id());
+        $this->set('sessionTime', intval($time));
+        $this->set('sessionStart', $this->newTime());
     }
 
     /**
@@ -53,7 +53,7 @@ class Session extends PluginOptions implements NameSpaceInterface
      */
     public function isRegistered()
     {
-        if ( !empty($this->get('session_id')) ) {
+        if ( !empty($this->get('sessionId')) ) {
             return true;
         } else {
             return false;
@@ -123,7 +123,7 @@ class Session extends PluginOptions implements NameSpaceInterface
      */
     public function getSessionId()
     {
-        return $this->get('session_id');
+        return $this->get('sessionId');
     }
 
     /**
@@ -135,11 +135,10 @@ class Session extends PluginOptions implements NameSpaceInterface
      */
     public function isExpired()
     {
-        if ( $this->get('session_start') < $this->timeNow() ) {
-            return false;
-        } else {
+        if ( $this->get('sessionStart') < $this->timeNow() ) {
             return true;
         }
+        return false;
     }
 
     /**
@@ -151,7 +150,7 @@ class Session extends PluginOptions implements NameSpaceInterface
      */
     public function renew()
     {
-        $this->set('session_start', $this->newTime());
+        $this->set('sessionStart', $this->newTime());
     }
 
     /**
@@ -196,7 +195,7 @@ class Session extends PluginOptions implements NameSpaceInterface
         $currentYear = date('y');
         return mktime(
             $currentHour,
-            ($currentMin + $this->get('session_time')),
+            ($currentMin + $this->get('sessionTime')),
             $currentSec,
             $currentMon,
             $currentDay,

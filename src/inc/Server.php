@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.5
+ * @version   : 0.3.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -105,6 +105,32 @@ class Server
 	{
 		return Server::isHttps() ? 'https://' : 'http://';
 	}
+
+	/**
+	 * @access private
+	 * @param void
+	 * @return mixed
+	 */
+	public static function getAuthorizationHeaders()
+	{
+        $headers = null;
+        if ( self::isSetted('Authorization') ) {
+            $headers = trim(self::get('Authorization'));
+
+        } elseif ( self::isSetted('HTTP_AUTHORIZATION') ) {
+            $headers = trim(self::get('HTTP_AUTHORIZATION'));
+
+        } elseif ( function_exists('apache_request_headers') ) {
+            $requestHeaders = apache_request_headers();
+            $requestHeaders = array_combine(
+            	array_map('ucwords',array_keys($requestHeaders)),array_values($requestHeaders)
+            );
+            if ( isset($requestHeaders['Authorization']) ) {
+                $headers = trim($requestHeaders['Authorization']);
+            }
+        }
+        return $headers;
+    }
 
 	/**
 	 * Get country code from request headers

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.5
+ * @version   : 0.3.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -19,7 +19,7 @@ final class Date extends DateTime
 	/**
 	 * @access public
 	 * @param string $date
-	 * @param string $format 'd/m/Y H:i:s'
+	 * @param string $format
 	 * @return object $date
 	 */
 	public static function get($date, $format = 'd/m/Y H:i:s')
@@ -45,7 +45,7 @@ final class Date extends DateTime
 	 * @access public
 	 * @param string $date
 	 * @param string $format
-	 * @param string $to 'd/m/Y H:i:s'
+	 * @param string $to
 	 * @return object $date
 	 */
 	public static function createFrom($date, $format, $to = 'd/m/Y H:i:s')
@@ -59,7 +59,7 @@ final class Date extends DateTime
 	 * @access public
 	 * @param string $date
 	 * @param string $format
-	 * @param string $to 'd/m/Y H:i:s'
+	 * @param string $to
 	 * @return string
 	 */
 	public static function toString($date, $format, $to = 'd/m/Y H:i:s')

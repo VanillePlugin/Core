@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.5
+ * @version   : 0.3.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -21,8 +21,8 @@ final class ResponseXML
 	 */
 	public static function format($xml)
 	{
-		$xml = Stringify::replace('<?xml version="1.0" encoding="utf-8" ?>', '', $xml);
-		$xml = Stringify::replace('</xml>', '', $xml);
+		$xml = Stringify::replace('<?xml version="1.0" encoding="utf-8" ?>','',$xml);
+		$xml = Stringify::replace('</xml>','',$xml);
 		return $xml;
 	}
 	
@@ -37,7 +37,7 @@ final class ResponseXML
 	 */
 	public static function parse($xml, $args = 16384|20908)
 	{
-		return simplexml_load_string($xml, 'SimpleXMLElement', $args);
+		return simplexml_load_string($xml,'SimpleXMLElement',$args);
 	}
 
 	/**
@@ -48,6 +48,6 @@ final class ResponseXML
 	 */
 	public static function parseFile($xml, $args = 16384|20908)
 	{
-		return simplexml_load_file($xml, 'SimpleXMLElement', $args);
+		return simplexml_load_file($xml,'SimpleXMLElement',$args);
 	}
 }

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.5
+ * @version   : 0.3.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -13,6 +13,7 @@
 namespace VanillePlugin\inc;
 
 use VanillePlugin\lib\PluginOptions;
+use VanillePlugin\inc\Response;
 
 abstract class AbstractAPI extends PluginOptions
 {
@@ -32,14 +33,14 @@ abstract class AbstractAPI extends PluginOptions
 
 	/**
 	 * @access public
-	 * @param array $params null
+	 * @param array $params
 	 * @return void
 	 */
 	abstract public function setClient($params = null);
 
 	/**
 	 * @access public
-	 * @param boolean $array false
+	 * @param boolean $array
 	 * @return string
 	 */
 	public function getResponse($array = false)

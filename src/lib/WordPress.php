@@ -1,11 +1,11 @@
 <?php
 /**
- * WordPress Class Wrapper
+ * WordPress Main Class Wrapper
  * @see https://developer.wordpress.org/
  *
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.3
+ * @version   : 0.3.6
  * @copyright : (c) 2018 - 2020 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -18,8 +18,8 @@ namespace VanillePlugin\lib;
 use VanillePlugin\inc\Stringify;
 
 /**
- * WordPress Class Wrrap Global Functions
- * Defines Only Base Function Used by Plugin
+ * WordPress Class Wrap Global Functions
+ * Defines Only Base Functions Used by Plugin
  */
 class WordPress
 {
@@ -550,7 +550,7 @@ class WordPress
 	/**
 	 * Retrieves a URL within the plugins or mu-plugins directory
 	 *
-	 * @access public
+	 * @access protected
 	 * @param string $path
 	 * @param string $plugin
 	 * @return string
@@ -563,7 +563,7 @@ class WordPress
 	/**
 	 * Retrieves a URL within the plugins or mu-plugins directory
 	 *
-	 * @access public
+	 * @access protected
 	 * @param string $plugin
 	 * @return string
 	 */
@@ -576,7 +576,7 @@ class WordPress
 	/**
 	 * Retrieves current theme url
 	 *
-	 * @access public
+	 * @access protected
 	 * @param void
 	 * @return string
 	 */
@@ -588,7 +588,7 @@ class WordPress
 	/**
 	 * Retrieves current theme directory
 	 *
-	 * @access public
+	 * @access protected
 	 * @param void
 	 * @return string
 	 */
@@ -600,7 +600,7 @@ class WordPress
 	/**
 	 * Check is WordPress Admin
 	 *
-	 * @access public
+	 * @access protected
 	 * @param void
 	 * @return boolean
 	 */
@@ -747,15 +747,42 @@ class WordPress
 	 * Redirects to another page
 	 * @see /reference/functions/wp_redirect/
 	 *
-	 * @access public
+	 * @access protected
 	 * @param string $location
 	 * @param int $status 301
 	 * @return void
 	 */
-	public function redirect($location, $status = 301)
+	protected function redirect($location, $status = 301)
 	{
 		wp_redirect($location,$status);
 		exit();
+	}
+
+	/**
+	 * WordPress Authentication
+	 *
+	 * @access protected
+	 * @param string $username
+	 * @param string $password
+	 * @return mixed
+	 */
+	protected function authenticate($username = '', $password = '')
+	{
+		return wp_authenticate($username,$password);
+	}
+
+	/**
+	 * Return WordPress error object
+	 *
+	 * @access protected
+	 * @param string $code
+	 * @param string $message
+	 * @param array $args
+	 * @return object
+	 */
+	protected function error($code = '', $message = '', $args = [])
+	{
+	    return new \WP_Error($code,$message,$args);
 	}
 
 	/**

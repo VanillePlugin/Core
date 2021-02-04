@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.5
+ * @version   : 0.3.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -20,7 +20,7 @@ abstract class AbstractShortcode extends View implements ShortcodeInterface
 	/**
 	 * @access public
 	 * @param array $atts
-	 * @param string $content null
+	 * @param string $content
 	 * @param string $tag
 	 * @return string
 	 */

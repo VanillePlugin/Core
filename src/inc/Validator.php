@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.5
+ * @version   : 0.3.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -22,5 +22,18 @@ final class Validator
 	public static function isValidIP($ip)
 	{
 		return rest_is_ip_address($ip);
+	}
+
+	/**
+	 * @access public
+	 * @param string $email
+	 * @return boolean
+	 */
+	public static function isValidEmail($email)
+	{
+		if ( is_email($email) ) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -1,0 +1,31 @@
+{
+    "name": "{name}",
+    "version": "{version}",
+    "author": "{author}",
+    "description": "{description}",
+    "path": {
+        "asset": "/core/assets",
+        "view": "/core/view",
+        "migrate": "/core/storage/migrate",
+        "logs": "/core/storage/logs",
+        "temp": "/core/storage/temp",
+        "cache": "/core/storage/cache"
+    },
+    "options": {
+        "ttl": 30,
+        "footprint": true,
+        "debug": true,
+        "view": {
+            "extension": ".tpl.html"
+        }
+    },
+    "requirement": {
+        "plugins": false,
+        "options": false,
+        "template": false,
+        "modules": false,
+        "php": "5.6.30"
+    },
+    "ajax": [],
+    "routes": []
+}
