@@ -21,10 +21,13 @@ trait VanilleConfig
 {
 	/**
 	 * @access private
+	 * @var string $path
+	 * @var object $default
 	 * @var object $global
 	 * @var string $namespace
 	 */
 	private $path = '/core/storage/config/global.json';
+	private $default = false;
 	private $global = false;
 	private $namespace = false;
 
@@ -53,16 +56,17 @@ trait VanilleConfig
 		// Define Plugin Internal Namespace
 		$this->namespace = $plugin->getNameSpace();
 
+		// Parse VanillePLugin Default Config file
+		$json = new Json(dirname(__FILE__).'/config.json');
+		$this->default = $json->parse();
+
 		// Parse Plugin Config file
 		$config = "{$this->getRoot()}{$this->path}";
 		if ( File::exists($config) ) {
 			$json = new Json($config);
 			$this->global = $json->parse();
-
 		} else {
-			// Parse VanillePLugin Default Config file
-			$json = new Json(dirname(__FILE__).'/config.json');
-			$this->global = $json->parse();
+			$this->global = $this->default;
 		}
 	}
 

@@ -17,12 +17,27 @@ final class Cache
 	/**
 	 * @access public
 	 * @param void
+	 * @return boolean
+	 */
+	public static function isActive()
+	{
+		// Check WordPress Cache
+		if ( !defined('WP_CACHE') || WP_CACHE == false ) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @access public
+	 * @param void
 	 * @return void
 	 */
 	static public function purge()
 	{
-		// Check WordPress Cache
-		if ( !defined('WP_CACHE') || WP_CACHE == false ) return;
+		if ( !self::isActive() ) {
+			return;
+		}
 
 		/**
 		 * Clear Opcode cache

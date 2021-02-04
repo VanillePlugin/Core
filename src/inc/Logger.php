@@ -28,58 +28,25 @@ class Logger extends PluginOptions
     }
 
     /**
-     * @access public
-     * @param string $message
-     * @return void
-     */
-    public function debug($message)
-    {
-        $this->write('DEBUG', $message);
-    }
-
-    /**
-     * @access public
-     * @param string $message
-     * @return void
-     */
-    public function error($message)
-    {
-        $this->write('ERROR', $message);
-    }
-
-    /**
-     * @access public
-     * @param string $message
-     * @return void
-     */
-    public function warning($message)
-    {
-        $this->write('WARNING', $message);
-    }
-
-    /**
-     * @access public
-     * @param string $message
-     * @return void
-     */
-    public function info($message)
-    {
-        $this->write('INFO', $message);
-    }
-
-    /**
      * Log plugin message
      *
-     * @access protected
+     * @access public
      * @param string $message
-     * @param int $type 0
-     * @param string $path
-     * @param string $headers
+     * @param string $type
+     * @param array $args
      * @return void
      */
-    protected function log($message = '', $type = 0, $path = null, $headers = null)
+    public function log($message = 'Unknown', $type = 'DEBUG', $args = [])
     {
-        error_log("{$this->getPluginName()} : {$message}", $type, $path, $headers);
+        $type = Stringify::uppercase($type);
+        if ($type == 'PHP') {
+            $type = isset($args['type']) ? $args['type'] : 0;
+            $path = isset($args['path']) ? $args['path'] : null;
+            $headers = isset($args['headers']) ? $args['headers'] : null;
+            error_log("{$this->getPluginName()} : {$message}", $type, $path, $headers);
+            return;
+        }
+        $this->write($message, $type);
     }
 
     /**
@@ -88,7 +55,7 @@ class Logger extends PluginOptions
      * @param string $message 
      * @return void
      */
-    private function write($status, $message)
+    private function write($message, $status)
     {
         // Check logger path
         if ( !File::exists($this->getLoggerPath()) ) {
