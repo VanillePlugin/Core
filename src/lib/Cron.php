@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.8
+ * @version   : 0.3.9
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -37,6 +37,18 @@ class Cron extends PluginOptions implements CronInterface
 	}
 
 	/**
+	 * Add schedulers
+	 *
+	 * @access public
+	 * @param array $schedules
+	 * @return void
+	 */
+	public function addSchedules($schedules = [])
+	{
+		$this->schedules[] = $schedules;
+	}
+
+	/**
 	 * Set actions
 	 *
 	 * @access public
@@ -46,6 +58,18 @@ class Cron extends PluginOptions implements CronInterface
 	public function setActions($actions = [])
 	{
 		$this->actions = $actions;
+	}
+
+	/**
+	 * Add actions
+	 *
+	 * @access public
+	 * @param array $actions
+	 * @return void
+	 */
+	public function addActions($actions = [])
+	{
+		$this->actions[] = $actions;
 	}
 
 	/**

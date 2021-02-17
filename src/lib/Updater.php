@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.8
+ * @version   : 0.3.9
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -14,18 +14,23 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\int\UpdaterInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
-use VanillePlugin\inc\Server;
 
 class Updater extends PluginOptions implements UpdaterInterface
 {
 	/**
 	 * @access private
-	 * @var array $content
+	 * @var string $updateUrl
+	 * @var string $infoUrl
+	 * @var string $translationUrl
+	 * @var string $wpVerion
+	 * @var array $license
+	 * @var array $headers
+	 * @var array $params
 	 */
-	private $host;
-	private $siteUrl;
-	private $wpVerion;
+	private $updateUrl;
 	private $infoUrl;
+	private $translationUrl;
+	private $wpVerion;
 	private $license = [];
 	private $headers = [];
 	private $params = [];
@@ -40,97 +45,73 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin, $host, $params = [])
 	{
+		// Check update capability
+		if ( !current_user_can('update_plugins') ) {
+		    return;
+		}
+
 		// Init plugin config
 		$this->initConfig($plugin);
 
+		// Init updater config
 		global $wp_version;
 		$this->wpVerion = $wp_version;
-		$this->host = $host;
+		$this->updateUrl = $host;
 		
 		// Define request
-		$this->siteUrl = get_bloginfo('url');
-		$this->license = isset($params['license']) ? $params['license'] : false;
 		$this->headers = isset($params['headers']) ? $params['headers'] : [];
+		$this->license = isset($params['license']) ? $params['license'] : false;
 		$this->infoUrl = isset($params['infoUrl']) ? $params['infoUrl'] : false;
-		$this->params  = $params;
+		$this->translationUrl = isset($params['translationUrl']) ? $params['translationUrl'] : false;
+		$this->params = $params;
 
-		// Split params
+		// Clean request params
 		unset($this->params['headers']);
 		unset($this->params['license']);
 		unset($this->params['infoUrl']);
+		unset($this->params['translationUrl']);
 
 		/**
 		 * Get plugin info
 		 * Filter : plugins_api
 		 *
-		 * @see infos@self
+		 * @see getInfo@self
 		 * @property priority 20
 		 * @property count 3
 		 */
-		$this->addFilter('plugins_api', [$this,'infos'], 20, 3);
+		$this->addFilter('plugins_api', [$this,'getInfo'], 20, 3);
 
 		/**
-		 * Get plugin update
-		 * Filter : pre_set_site_transient_update_plugins
+		 * Check plugin update
+		 * Filter : pre_set_site_transient_{$transient}
+		 * Filter : site_transient_update_{$transient}
 		 *
-		 * @see check@self
+		 * @see checkUpdate@self
 		 * @property priority 20
 		 * @property count 1
 		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'check'], 20);
-	}
+		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkUpdate'], 20);
 
-	/**
-	 * @access public
-	 * @param object $transient
-	 * @return mixed
-	 */
-	public function check($transient)
-	{
-		// Check transient
-		if ( empty($transient->checked) ) {
-			return $transient;
-		}
+		/**
+		 * Check plugin translation update
+		 * Filter : pre_set_site_transient_{$transient}
+		 * Filter : site_transient_update_{$transient}
+		 *
+		 * @see checkTranslation@self
+		 * @property priority 20
+		 * @property count 1
+		 */
+		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkTranslation'], 20);
 
-		// Prepare response
-		$response = false;
-		$version  = isset($transient->checked[$this->getMainFile()])
-		? $transient->checked[$this->getMainFile()] : null;
-		
-		$params = [
-			'slug'      => $this->getNameSpace(),
-			'version'   => $version,
-			'wpversion' => $this->wpVerion
-		];
-
-		// Build query
-		$query = [
-			'headers' => $this->headers,
-			'body' => [
-				'action'  => "{$this->getNameSpace()}-check-update", 
-				'request' => serialize($params),
-				'params'  => $this->params
-			],
-			'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
-		];
-
-		// Add licence
-		$query = $this->setLicense($query);
-
-		// Get response & Update transient
-		$client = new Request();
-		$response = $client->post($this->host, $query);
-		if ( $response->getStatusCode() == 200 ) {
-			$body = $response->getBody();
-			if ( !empty($body) ) {
-				$response = unserialize($body);
-				if ( $this->isValid($response) ) {
-					$transient->response[$this->getMainFile()] = $response;
-				}
-			}
-		}
-
-		return $transient;
+		/**
+		 * Clear plugin updates cache
+		 * Filter : upgrader_process_complete
+		 *
+		 * @see clearUpdateCache@self
+		 * @property priority 20
+		 * @property count 2
+		 */
+		$this->addFilter('upgrader_process_complete', [$this,'clearUpdateCache'], 20, 2);
 	}
 
 	/**
@@ -140,33 +121,108 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param array $args
 	 * @return mixed
 	 */
-	public function infos($transient, $action, $args)
+	public function getInfo($transient, $action, $args)
 	{
-		// Check activated option
-		if ( !$this->infoUrl ) return false;
-
 		// Check action
-		if ( $action !== 'plugin_information' ) return false;
+		if ( $action !== 'plugin_information' ) {
+			return false;
+		}
 
 		if ( $args->slug === $this->getNameSpace() ) {
 
-			// Prepare response
-			$pluginInfos = $this->getPluginInfo($this->getMainFilePath());
+			// Check info option
+			if ( !$this->infoUrl ) {
+				return false;
+			}
+
+			// Get response from cache
+			$response = $this->getTransient('get-info');
+			if ( !$response ) {
+
+				// Prepare response
+				$pluginInfos = $this->getPluginInfo($this->getMainFilePath());
+
+				// Build query
+				$params = [
+					'slug'      => $this->getNameSpace(),
+					'version'   => $pluginInfos['Version'],
+					'wpversion' => $this->wpVerion
+				];
+				$query = [
+					'headers' => $this->headers,
+					'body' => [
+						'action'  => "{$this->getNameSpace()}-get-info", 
+						'request' => serialize($params),
+						'params'  => $this->params
+					],
+					'user-agent' => "{$this->getNameSpace()}-wordpress/{$pluginInfos['Version']};"
+				];
+
+				// Add licence
+				$query = $this->setLicense($query);
+
+				// Get response
+				$client = new Request();
+				$response = $client->post($this->infoUrl, $query);
+
+				// Cache on success
+				if ( $response->getStatusCode() == 200 ) {
+					$body = $response->getBody();
+					if ( !empty($body) ) {
+						$response = unserialize($body);
+						$this->setTransient('get-info', $response, 1800);
+					}
+				}
+			}
+
+			// Update transient
+			if ( $this->isValidResponse($response) ) {
+				$transient = $response;
+			}
+		}
+
+		return $transient;
+	}
+
+	/**
+	 * @access public
+	 * @param object $transient
+	 * @return mixed
+	 */
+	public function checkUpdate($transient)
+	{
+		// Check WordPress update
+		if ( wp_installing() ) {
+			return $transient;
+		}
+
+		// Check transient
+		if ( empty($transient->checked) ) {
+			return $transient;
+		}
+
+		// Get response from cache
+		$response = $this->getTransient('check-update');
+		if ( !$response ) {
+
+			// Get plugin version
+			$version = isset($transient->checked[$this->getMainFile()])
+			? $transient->checked[$this->getMainFile()] : '0.0.0';
 
 			// Build query
 			$params = [
 				'slug'      => $this->getNameSpace(),
-				'version'   => $pluginInfos['Version'],
+				'version'   => $version,
 				'wpversion' => $this->wpVerion
 			];
 			$query = [
 				'headers' => $this->headers,
 				'body' => [
-					'action'  => "{$this->getNameSpace()}-get-info", 
+					'action'  => "{$this->getNameSpace()}-check-update", 
 					'request' => serialize($params),
 					'params'  => $this->params
 				],
-				'user-agent' => "{$this->getNameSpace()}-wordpress/{$pluginInfos['Version']};"
+				'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
 			];
 
 			// Add licence
@@ -174,19 +230,124 @@ class Updater extends PluginOptions implements UpdaterInterface
 
 			// Get response & Update transient
 			$client = new Request();
-			$response = $client->post($this->infoUrl, $query);
+			$response = $client->post($this->updateUrl, $query);
+
+			// Cache on success
 			if ( $response->getStatusCode() == 200 ) {
 				$body = $response->getBody();
 				if ( !empty($body) ) {
 					$response = unserialize($body);
-					if ( $this->isValid($response) ) {
-						$transient = $response;
-					}
+					$this->setTransient('check-update', $response, 1800);
 				}
 			}
 		}
 
+		// Update transient
+		if ( $this->isValidResponse($response) ) {
+			$transient->response[$this->getMainFile()] = $response;
+		}
+
 		return $transient;
+	}
+
+	/**
+	 * @access public
+	 * @param object $transient
+	 * @return mixed
+	 */
+	public function checkTranslation($transient)
+	{
+		// Check WordPress update
+		if ( wp_installing() ) {
+			return $transient;
+		}
+
+		// Check translation option
+		if ( !$this->translationUrl ) {
+			return $transient;
+		}
+
+		// Get response from cache
+		$response = $this->getTransient('check-translation');
+		if ( !$response ) {
+
+			// Get plugin version
+			$version = isset($transient->checked[$this->getMainFile()])
+			? $transient->checked[$this->getMainFile()] : '0.0.0';
+
+			// Build query
+			$params = [
+				'slug'      => $this->getNameSpace(),
+				'version'   => $version,
+				'wpversion' => $this->wpVerion
+			];
+			$query = [
+				'headers' => $this->headers,
+				'body' => [
+					'action'  => "{$this->getNameSpace()}-check-translation", 
+					'request' => serialize($params),
+					'params'  => $this->params
+				],
+				'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
+			];
+
+			// Add licence
+			$query = $this->setLicense($query);
+
+			// Get response
+			$client = new Request();
+			$response = $client->post($this->translationUrl, $query);
+
+			// Cache on success
+			if ( $response->getStatusCode() == 200 ) {
+				$body = $response->getBody();
+				if ( !empty($body) ) {
+					$response = unserialize($body);
+					$this->setTransient('check-translation', $response, 1800);
+				}
+			}
+		}
+
+		// Update transient
+		if ( $this->isValidResponse($response) ) {
+			if ( isset($response->translations) ) {
+				$installed = $this->getInstalledTranslations();
+				foreach ($response->translations as $key => $translation) {
+					$language = $translation['language'];
+					if ( isset($installed[$this->getNameSpace()][$language]) ) {
+						unset($response->translations[$key]);
+					}
+				}
+				$transient->translations[] = $response->translations;
+			}
+		}
+
+		return $transient;
+	}
+
+	/**
+	 * @access public
+	 * @param object $upgrader
+	 * @param array $options
+	 * @return mixed
+	 */
+	public function clearUpdateCache($upgrader, $options)
+	{
+		if ( $options['action'] == 'update' && $options['type'] === 'plugin' )  {
+			$this->deleteTransient('get-info');
+			$this->deleteTransient('check-update');
+			$this->deleteTransient('check-translation');
+		}
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return array
+	 */
+	public function getInstalledTranslations()
+	{
+		return wp_get_installed_translations('plugins');
 	}
 
 	/**
@@ -209,7 +370,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param object $response
 	 * @return boolean
 	 */
-	private function isValid($response)
+	private function isValidResponse($response)
 	{
 		if ( is_object($response) && !empty($response) ) {
 			return true;

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.8
+ * @version   : 0.3.9
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -70,11 +70,12 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $option
 	 * @param string $type
+	 * @param boolean $default
 	 * @return mixed
 	 */
-	protected function getPluginOption($option, $type = 'array')
+	protected function getPluginOption($option, $type = 'array', $default = false)
 	{
-		$value = $this->getOption("{$this->getPrefix()}{$option}", false);
+		$value = $this->getOption("{$this->getPrefix()}{$option}", $default);
 		switch ($type) {
 			case 'integer':
 				return intval($value);
@@ -596,8 +597,21 @@ class PluginOptions extends WordPress
 		if ( !$nonce ) {
 			$nonce = Get::isSetted('nonce') ? Get::get('nonce') : false;
 		}
-		if ( !wp_verify_nonce($nonce, $action) ) {
-			die($this->translateString('Invalid token'));
-		}
+	    if ( !$this->checkNonce($nonce,$action) ) {
+	      die($this->translateString('Invalid token'));
+	    }
+	}
+
+	/**
+	 * Check nonce
+	 *
+	 * @access public
+	 * @param string $nonce
+	 * @param int|string $action
+	 * @return boolean
+	 */
+	public function checkNonce($nonce = '', $action = -1)
+	{
+	  return wp_verify_nonce($nonce,$action);
 	}
 }

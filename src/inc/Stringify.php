@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.8
+ * @version   : 0.3.9
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -118,17 +118,17 @@ final class Stringify
 	 * Search string
 	 *
 	 * @access public
-	 * @param string $string
-	 * @param mixed $search
+	 * @param string|array $string
+	 * @param string $search
 	 * @return boolean
 	 */
 	public static function contains($string, $search)
 	{
-		if ( is_array($search) ) {
-			return in_array($string, $search);
+		if ( is_array($string) ) {
+			return in_array($search, $string);
 		}
 		if ( strpos($string, $search) !== false ) {
-		    return true;
+			return true;
 		}
 		return false;
 	}
@@ -312,5 +312,46 @@ final class Stringify
 	public static function toMoney($number, $decimals = 2, $dSep = '.', $tSep = ' ')
 	{
 		return number_format((float)$number,$decimals,$dSep,$tSep);
+	}
+
+	/**
+	 * @access public
+	 * @param string $regex
+	 * @param string $string
+	 * @return boolean
+	 */
+	public static function match($regex, $string)
+	{
+		return preg_match($regex,$string);
+	}
+
+	/**
+	 * @access public
+	 * @param string $regex
+	 * @param string $string
+	 * @param int $index
+	 * @return mixed
+	 */
+	public static function matchAll($regex, $string, $index = 0)
+	{
+		preg_match_all($regex,$string,$matches);
+		if ( $index == -1 ) {
+			return $matches;
+		}
+		return isset($matches[$index]) ? $matches[$index] : false;
+	}
+
+	/**
+	 * @access public
+	 * @param string $data
+	 * @param boolean $convert
+	 * @return boolean
+	 */
+	public static function isString($data, $convert = false)
+	{
+		if ( $convert ) {
+			$data = (string)$data;
+		}
+		return is_string($data);
 	}
 }

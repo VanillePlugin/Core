@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.8
+ * @version   : 0.3.9
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -24,15 +24,21 @@ interface UpdaterInterface
 
     /**
      * @param object $transient
-     * @return mixed
-     */
-    function check($transient);
-
-    /**
-     * @param object $transient
      * @param string $action
      * @param array $args
      * @return mixed
      */
-    function infos($transient, $action, $args);
+    function getInfo($transient, $action, $args);
+    
+    /**
+     * @param object $transient
+     * @return mixed
+     */
+    function checkUpdate($transient);
+
+    /**
+     * @param object $transient
+     * @return mixed
+     */
+    function checkTranslation($transient);
 }
