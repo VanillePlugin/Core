@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.7
+ * @version   : 0.3.8
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -33,7 +33,7 @@ final class Cache
 	 * @param void
 	 * @return void
 	 */
-	static public function purge()
+	public static function purge()
 	{
 		if ( !self::isActive() ) {
 			return;
@@ -47,6 +47,14 @@ final class Cache
 			opcache_reset();
 		}
  
+		/**
+		 * Clear APCu cache
+		 * @see https://www.php.net/manual/fr/function.apcu-clear-cache.php
+		 */
+		if ( function_exists('apcu_clear_cache') ) {
+			apcu_clear_cache();
+		}
+
 		/**
 		 * Purge WP Rocket
 		 * @see https://github.com/wp-media/wp-rocket
@@ -67,8 +75,8 @@ final class Cache
 		 * Purge LiteSpeed
 		 * @see https://github.com/litespeedtech/lscache_wp
 		 */
-		if ( class_exists('LiteSpeed_Cache') ) {
-			\LiteSpeed_Cache_API::purge_all();
+		if ( class_exists('\LiteSpeed\Purge') ) {
+			\LiteSpeed\Purge::purge_all();
 		}
 
 		/**
