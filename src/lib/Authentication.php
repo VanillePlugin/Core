@@ -68,7 +68,7 @@ final class Authentication extends PluginOptions
 				if ( $authenticated ) {
 					// check role
 					$role = isset($args['role']) ? $args['role'] : 'administrator';
-					if ( Stringify::contains($role,$authenticated->caps) ) {
+					if ( Stringify::contains($authenticated->caps,$role) ) {
 						return true;
 					}
 				}
@@ -136,7 +136,7 @@ final class Authentication extends PluginOptions
 	{
 	    $headers = Server::getAuthorizationHeaders();
 	    if ( !empty($headers) ) {
-	        return match('/Bearer\s(\S+)/',$headers,1);
+	        return Stringify::match('/Bearer\s(\S+)/',$headers);
 	    }
 	    return false;
 	}
