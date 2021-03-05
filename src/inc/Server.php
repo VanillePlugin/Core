@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -12,7 +12,7 @@
 
 namespace VanillePlugin\inc;
 
-class Server
+final class Server
 {
 	/**
 	 * @access public
@@ -42,7 +42,7 @@ class Server
 	/**
 	 * @access public
 	 * @param string $item null
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function isSetted($item = null)
 	{
@@ -56,7 +56,7 @@ class Server
 	/**
 	 * @access public
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function isHttps()
 	{

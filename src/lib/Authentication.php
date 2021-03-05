@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -10,7 +10,7 @@
  * This file if a part of VanillePlugin Framework
  */
 
-namespace VanillePlugin\inc;
+namespace VanillePlugin\lib;
 
 use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\inc\Encryption;
@@ -18,7 +18,7 @@ use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Server;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
-class Authentication extends PluginOptions
+final class Authentication extends PluginOptions
 {
 	/**
 	 * @access private
@@ -44,7 +44,7 @@ class Authentication extends PluginOptions
 	/**
 	 * @access public
 	 * @param array $args
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isAllowed($args = [])
 	{
@@ -137,11 +137,9 @@ class Authentication extends PluginOptions
 	{
 	    $headers = Server::getAuthorizationHeaders();
 	    if ( !empty($headers) ) {
-	        if ( preg_match('/Bearer\s(\S+)/',$headers,$matches) ) {
-	            return $matches[1];
-	        }
+	        return match('/Bearer\s(\S+)/',$headers,1);
 	    }
-	    return null;
+	    return false;
 	}
 
 	/**
@@ -149,7 +147,7 @@ class Authentication extends PluginOptions
 	 * @param string $password
 	 * @param string $hash
 	 * @param int $user
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function isValidPassword($password, $hash, $user = null)
 	{

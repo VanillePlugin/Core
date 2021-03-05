@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -10,10 +10,13 @@
  * This file if a part of VanillePlugin Framework
  */
 
-namespace VanillePlugin\inc;
+namespace VanillePlugin\lib;
 
 use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\inc\Exception;
+use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\File;
 
 class Logger extends PluginOptions
 {
@@ -43,7 +46,8 @@ class Logger extends PluginOptions
             $type = isset($args['type']) ? $args['type'] : 0;
             $path = isset($args['path']) ? $args['path'] : null;
             $headers = isset($args['headers']) ? $args['headers'] : null;
-            error_log("{$this->getPluginName()} : {$message}", $type, $path, $headers);
+            $exception = new Exception();
+            $exception->log("[{$this->getPluginName()}] : {$message}",$type,$path,$headers);
             return;
         }
         $this->write($message, $type);

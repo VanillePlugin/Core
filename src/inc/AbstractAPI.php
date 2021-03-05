@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -40,7 +40,7 @@ abstract class AbstractAPI extends PluginOptions
 
 	/**
 	 * @access public
-	 * @param boolean $array
+	 * @param bool $array
 	 * @return string
 	 */
 	public function getResponse($array = false)
@@ -61,7 +61,7 @@ abstract class AbstractAPI extends PluginOptions
 	/**
 	 * @access public
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isDown()
 	{

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,18 +16,17 @@ use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Json;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\GlobalConst;
 
-trait VanilleConfig
+trait VanillePluginConfig
 {
 	/**
 	 * @access private
 	 * @var string $path
-	 * @var object $default
 	 * @var object $global
 	 * @var string $namespace
 	 */
 	private $path = '/core/storage/config/global.json';
-	private $default = false;
 	private $global = false;
 	private $namespace = false;
 
@@ -53,20 +52,25 @@ trait VanilleConfig
 	 */
 	protected function initConfig(PluginNameSpaceInterface $plugin)
 	{
+		// Check Namespace
+		VanillePluginValidator::checkNamespace($plugin);
+
 		// Define Plugin Internal Namespace
 		$this->namespace = $plugin->getNameSpace();
 
-		// Parse VanillePLugin Default Config file
-		$json = new Json(dirname(__FILE__).'/config.json');
-		$this->default = $json->parse();
-
-		// Parse Plugin Config file
+		// Parse Plugin Config
 		$config = "{$this->getRoot()}{$this->path}";
 		if ( File::exists($config) ) {
+
 			$json = new Json($config);
+			VanillePluginValidator::checkConfig($json);
 			$this->global = $json->parse();
+
 		} else {
-			$this->global = $this->default;
+
+			// Parse VanillePLugin Default Config
+			$json = new Json(dirname(__FILE__).'/config.default.json');
+			$this->global = $json->parse();
 		}
 	}
 
@@ -80,15 +84,15 @@ trait VanilleConfig
 	 */
 	protected function updateConfig($options = [], $args = 64|128|256)
 	{
-		$json = new Json("{$this->getRoot()}{$this->path}");
-		$config = $json->parse(true);
+		$config = new Json("{$this->getRoot()}{$this->path}");
+		$update = $config->parse(true);
 		foreach ($options as $option => $value) {
-			if ( isset($config['options'][$option]) ) {
-				$config['options'][$option] = $value;
+			if ( isset($update['options'][$option]) ) {
+				$update['options'][$option] = $value;
 			}
 		}
-		$config = Json::format($config, $args);
-		File::w("{$this->getRoot()}{$this->path}",$config);
+		$update = Json::format($update,$args);
+		File::w("{$this->getRoot()}{$this->path}",$update);
 	}
 
 	/**
@@ -309,7 +313,7 @@ trait VanilleConfig
 	 */
 	protected function getRoot()
 	{
-		return Stringify::formatPath( WP_PLUGIN_DIR . "/{$this->getNameSpace()}" );
+		return GlobalConst::pluginDir("{$this->getNameSpace()}");
 	}
 
 	/**
@@ -345,7 +349,7 @@ trait VanilleConfig
 	 */
 	protected function getBaseUrl()
 	{
-		return WP_PLUGIN_URL . "/{$this->getNameSpace()}";
+		return GlobalConst::pluginUrl("{$this->getNameSpace()}");
 	}
 
 	/**
@@ -410,14 +414,31 @@ trait VanilleConfig
 	}
 
 	/**
-	 * Get debug status
+	 * Get static expire
 	 *
 	 * @access protected
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
-	protected function isDebug()
+	protected function hasTranslator()
 	{
+		return $this->global->options->translate;
+	}
+
+	/**
+	 * Get debug status
+	 *
+	 * @access protected
+	 * @param bool $global
+	 * @return bool
+	 */
+	protected function isDebug($global = false)
+	{
+		if ( $global ) {
+			if ( $this->global->options->debug || GlobalConst::debug() ) {
+				return true;
+			}
+		}
 		return $this->global->options->debug;
 	}
 }

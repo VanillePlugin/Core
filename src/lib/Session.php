@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,7 +15,7 @@ namespace VanillePlugin\lib;
 use VanillePlugin\int\NameSpaceInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
-class Session extends PluginOptions implements NameSpaceInterface
+final class Session extends PluginOptions implements NameSpaceInterface
 {
 	/**
 	 * @param PluginNameSpaceInterface $plugin
@@ -49,7 +49,7 @@ class Session extends PluginOptions implements NameSpaceInterface
      *
      * @access public
      * @param void
-     * @return boolean
+     * @return bool
      */
     public function isRegistered()
     {
@@ -91,7 +91,7 @@ class Session extends PluginOptions implements NameSpaceInterface
      *
      * @access public
      * @param string $key null
-     * @return boolean
+     * @return bool
      */
     public function isSetted($key = null)
     {
@@ -131,7 +131,7 @@ class Session extends PluginOptions implements NameSpaceInterface
      *
      * @access public
      * @param void
-     * @return boolean
+     * @return bool
      */
     public function isExpired()
     {

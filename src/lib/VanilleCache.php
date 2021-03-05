@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -22,6 +22,7 @@ use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 /**
  * Wrapper Class for External Filecache & Templates
  * Includes Third-Party Cache Helper
+ * Cache WordPress Transient
  */
 class VanilleCache extends PluginOptions implements VanilleCacheInterface
 {
@@ -80,7 +81,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function get($key)
 	{
-		$key = Stringify::formatKey($key);
+		$key = Stringify::slugify($key);
 		$this->cache = $this->adapter->getItem($key);
 		return $this->isCached = $this->cache->get();
 	}
@@ -96,7 +97,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 		$this->cache->set($data)
 		->expiresAfter(self::$ttl);
 		if ($tag) {
-			$tag = Stringify::formatKey($tag);
+			$tag = Stringify::slugify($tag);
 			$this->cache->addTag($tag);
 		}
 		$this->adapter->save($this->cache);
@@ -110,7 +111,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function update($key, $data)
 	{
-		$key = Stringify::formatKey($key);
+		$key = Stringify::slugify($key);
 		$this->cache = $this->adapter->getItem($key);
 		$this->cache->set($data)
 		->expiresAfter(self::$ttl);
@@ -124,7 +125,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function delete($key)
 	{
-		$key = Stringify::formatKey($key);
+		$key = Stringify::slugify($key);
 		$this->adapter->deleteItem($key);
 	}
 
@@ -135,13 +136,14 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function deleteByTag($tag)
 	{
+		$tag = Stringify::slugify($tag);
 		$this->adapter->deleteItemsByTag($tag);
 	}
 
 	/**
 	 * @access public
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isCached()
 	{
@@ -155,20 +157,15 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function clear()
 	{
-		// Secured removing
-		$root = $this->getRoot();
-		$temp = $this->getTempPath();
-
-		// Clear filecache
-		if ( Stringify::contains($temp, $root) ) {
-			File::clearDir($temp);
+		// Secured removing : filecache
+		if ( Stringify::contains($this->getTempPath(), $this->getRoot()) ) {
+			File::clearDir($this->getTempPath());
 		}
 
-		// Clear template cache on debug
+		// Secured removing : template cache on debug
 		if ( $this->isDebug() ) {
-			$cache = $this->getCachePath();
-			if ( Stringify::contains($cache, $root) ) {
-				File::clearDir($cache);
+			if ( Stringify::contains($this->getCachePath(), $this->getRoot()) ) {
+				File::clearDir($this->getCachePath());
 			}
 		}
 	}

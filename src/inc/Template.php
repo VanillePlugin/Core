@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -12,11 +12,11 @@
 
 namespace VanillePlugin\inc;
 
-use Twig_Loader_Filesystem as Loader;
-use Twig_Environment as Environment;
-use Twig_SimpleFunction as WPFunction;
+use Twig\Loader\FilesystemLoader as Loader;
+use Twig\Environment as Environment;
+use Twig\TwigFunction as WPFunction;
 
-class Template
+final class Template
 {
     /**
      * @param string $path

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -107,7 +107,7 @@ class Cron extends PluginOptions implements CronInterface
 			if ( !$this->next("{$this->getNameSpace()}-{$action['name']}") ) {
 				$this->schedule($action['schedule'],"{$this->getNameSpace()}-{$action['name']}");
 			}
-			$this->addAction("{$this->getNameSpace()}-{$action['name']}", $action['callable']);
+			$this->addAction("{$this->getNameSpace()}-{$action['name']}",$action['callable']);
 		}
 	}
 
@@ -116,7 +116,7 @@ class Cron extends PluginOptions implements CronInterface
 	 *
 	 * @access public
 	 * @param string $name
-	 * @return boolean
+	 * @return bool
 	 */
 	public function next($name)
 	{
@@ -133,7 +133,7 @@ class Cron extends PluginOptions implements CronInterface
 	 */
 	public function schedule($interval,$hook)
 	{
-		wp_schedule_event(time(), $interval, $hook);
+		wp_schedule_event(time(),$interval,$hook);
 	}
 
 	/**

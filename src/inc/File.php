@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -20,6 +20,7 @@ class File
 	 * @var string $name
 	 * @var int $size
 	 * @var string $extension
+	 * @var string $permissions
 	 * @var string $content
 	 * @var string $parentDir
 	 */
@@ -27,6 +28,7 @@ class File
 	protected $name = null;
 	protected $size = null;
 	protected $extension = null;
+	protected $permissions = null;
 	protected $content = null;
 	protected $parentDir = null;
 
@@ -83,7 +85,7 @@ class File
 	 *
 	 * @access protected
 	 * @param string $mode
-	 * @param boolean $include
+	 * @param bool $include
 	 * @return mixed
 	 */
 	protected function open($mode = 'c+', $include = false)
@@ -244,10 +246,23 @@ class File
 	}
 
 	/**
+	 * Get file permissions
+	 *
+	 * @access public
+	 * @param bool $convert
+	 * @return mixed
+	 */
+	public function getPermissions($convert = false)
+	{
+		$permissions = substr(sprintf('%o',fileperms($this->path)),-4);
+		return ($convert) ? intval($permissions) : $permissions;
+	}
+
+	/**
 	 * Read file & get content
 	 *
 	 * @access public
-	 * @param boolean $return
+	 * @param bool $return
 	 * @return mixed
 	 */
 	public function read($return = false)
@@ -324,7 +339,7 @@ class File
 	 *
 	 * @access public
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
 	public function remove()
 	{
@@ -342,7 +357,7 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @return boolean
+	 * @return bool
 	 */
     public function copy($path)
     {
@@ -360,7 +375,7 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @return boolean
+	 * @return bool
 	 */
     public function move($path)
     {
@@ -378,11 +393,11 @@ class File
 	 *
 	 * @access public
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isExists()
 	{
-		if ( file_exists($this->path) && is_file($this->path) ) {
+		if ( self::exists($this->path) && is_file($this->path) ) {
 			return true;
 		}
 		return false;
@@ -453,14 +468,14 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @param int $mode
-	 * @param boolean $recursive
-	 * @return boolean
+	 * @param int $permissions
+	 * @param bool $recursive
+	 * @return bool
 	 */
-    public static function addDir($path = null, $mode = 0755, $recursive = true)
+    public static function addDir($path = null, $permissions = 0755, $recursive = true)
     {
     	if ( !is_file($path) && !self::isDir($path) ) {
-    		if ( @mkdir($path,$mode,$recursive) ) {
+    		if ( @mkdir($path,$permissions,$recursive) ) {
             	return true;
         	}
     	}
@@ -472,11 +487,11 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @return boolean
+	 * @return bool
 	 */
     public static function isDir($path = null)
     {
-    	if ( file_exists($path) && is_dir($path) ) {
+    	if ( self::exists($path) && is_dir($path) ) {
     		return true;
     	}
         return false;
@@ -487,7 +502,7 @@ class File
 	 *
 	 * @access public
 	 * @param string $dir
-	 * @return boolean
+	 * @return bool
 	 */
     public static function removeDir($path)
     {
@@ -504,7 +519,7 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @return boolean
+	 * @return bool
 	 */
     public static function clearDir($path)
     {
@@ -567,7 +582,7 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function exists($path)
 	{

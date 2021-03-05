@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,8 +15,9 @@ namespace VanillePlugin\lib;
 use VanillePlugin\int\RequirementInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
+use VanillePlugin\inc\Stringify;
 
-class Requirement extends Notice implements RequirementInterface
+final class Requirement extends Notice implements RequirementInterface
 {
 	/**
 	 * @param PluginNameSpaceInterface $plugin
@@ -28,7 +29,7 @@ class Requirement extends Notice implements RequirementInterface
 		$this->initConfig($plugin);
 		$this->init([$this,'requirePlugins']);
 		$this->init([$this,'requireOptions']);
-		$this->init([$this,'requireTemplate']);
+		$this->init([$this,'requireTemplates']);
 		$this->init([$this,'requireModules']);
 		$this->init([$this,'php']);
 	}
@@ -48,18 +49,20 @@ class Requirement extends Notice implements RequirementInterface
 		// Requires plugins
 		foreach ($plugins as $plugin) {
 
+			$name = isset($plugin->name) ? $plugin->name : $plugin->slug;
 			if ( !$this->isInstalled($plugin->slug) ) {
+				
 				$this->render([
-					'item'   => $plugin->name,
-					'notice' => $this->translateString('Required, Please install it.')
+					'item'   => $name,
+					'notice' => $this->translateString('Required, Please install it')
 				],'admin/notice/requirement');
 
 			} else {
 
 				if ( !$this->isActivated($plugin->callable) ) {
 					$this->render([
-						'item'   => $plugin->name,
-						'notice' => $this->translateString('Required, Please activate it.')
+						'item'   => $name,
+						'notice' => $this->translateString('Required, Please activate it')
 					],'admin/notice/requirement');
 				}
 			}
@@ -80,16 +83,17 @@ class Requirement extends Notice implements RequirementInterface
 
 		// Requires options
 		foreach ($options as $option) {
+			$name = isset($option->name) ? $option->name : $option->slug;
 			if ( $this->getOption($option->slug) !== $option->value ) {
 				$this->render([
-					'item'   => $option->name,
-					'notice' => $this->translateString('Option Required.')
+					'item'   => $name,
+					'notice' => $this->translateString('Option Required')
 				],'admin/notice/requirement');
 
 			} else if ( empty($this->getOption($option->slug)) ) {
 				$this->render([
-					'item'   => $option->name,
-					'notice' => $this->translateString('Option Not Defined.')
+					'item'   => $name,
+					'notice' => $this->translateString('Option Not Defined')
 				],'admin/notice/requirement');
 			}
 		}
@@ -100,18 +104,32 @@ class Requirement extends Notice implements RequirementInterface
 	 * @param void
 	 * @return void
 	 */
-	public function requireTemplate()
+	public function requireTemplates()
 	{
-		// Check template
-		if ( !($template = $this->getConfig()->requirement->template) ) {
+		// Check templates
+		if ( !($templates = $this->getConfig()->requirement->templates) ) {
 			return;
 		}
 
-		// Requires template
-		if ( $this->getOption('template') !== $template->slug ) {
+		// Requires templates
+		$slugs = [];
+		$names = [];
+		foreach ($templates as $template) {
+			$slugs[] = $template->slug;
+			$names[] = isset($template->name) ? $template->name : $template->slug;
+		}
+
+		if ( !Stringify::contains($slugs, $this->getOption('template')) ) {
+			if ( count($slugs) > 1 ) {
+				$item = implode(', ', $names);
+				$notice = $this->translateString('One Of Templates Required');
+			} else {
+				$item = trim(implode('', $names));
+				$notice = $this->translateString('Template Required');
+			}
 			$this->render([
-				'item'   => $template->name,
-				'notice' => $this->translateString('Template Required.')
+				'item'   => $item,
+				'notice' => $notice,
 			],'admin/notice/requirement');
 		}
 	}
@@ -133,7 +151,7 @@ class Requirement extends Notice implements RequirementInterface
 			if ( !$this->isActivated($module->callable) ) {
 				$this->render([
 					'item'   => $module->name,
-					'notice' => $this->translateString('Required, Please activate it.')
+					'notice' => $this->translateString('Required, Please activate it')
 				],'admin/notice/requirement');
 			}
 		}
@@ -150,10 +168,11 @@ class Requirement extends Notice implements RequirementInterface
 		if ( !($version = $this->getConfig()->requirement->php) ) {
 			return;
 		}
-		if ( version_compare(phpversion(),$version,'<') ){
+
+		if ( $this->versionCompare(phpversion(),$version,'<') ){
 			$this->render([
-				'item'   => 'PHP',
-				'notice' => $this->translateString('Update Required')
+				'item'   => "PHP {$version}",
+				'notice' => $this->translateString('Required')
 			],'admin/notice/requirement');
 		};
 	}
@@ -161,7 +180,7 @@ class Requirement extends Notice implements RequirementInterface
 	/**
 	 * @access protected
 	 * @param string $slug
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isInstalled($slug)
 	{
@@ -173,7 +192,7 @@ class Requirement extends Notice implements RequirementInterface
 	/**
 	 * @access protected
 	 * @param string $callable
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isActivated($callable)
 	{

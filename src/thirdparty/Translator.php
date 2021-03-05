@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -12,14 +12,16 @@
 
 namespace VanillePlugin\thirdparty;
 
-final class Translate
+use VanillePlugin\inc\TypeCheck;
+
+final class Translator
 {
 	/**
 	 * @access public
 	 * @param void
 	 * @return mixed
 	 */
-	public static function hasTranslator()
+	public static function isActive()
 	{
 		// Check WordPress Translator
 		global $sitepress, $q_config, $polylang;
@@ -28,7 +30,7 @@ final class Translate
 		 * Check WPML
 		 * @see https://github.com/wp-premium/wpml-media
 		 */
-		if ( !empty($sitepress) && is_object($sitepress) ) {
+		if ( !empty($sitepress) && TypeCheck::isObject($sitepress) ) {
 			if ( method_exists($sitepress,'get_active_languages') ) {
 				return 'wpml';
 			}
@@ -50,7 +52,7 @@ final class Translate
 		 * Check qTranslate
 		 * @see https://github.com/qtranslate/qtranslate-xt
 		 */
-		if ( !empty($q_config) && is_array($q_config) ) {
+		if ( !empty($q_config) && TypeCheck::isArray($q_config) ) {
 			if ( function_exists('qtranxf_convertURL') ) {
 				return 'qtranslate-x';
 			}
@@ -69,7 +71,7 @@ final class Translate
 	 */
 	public static function getActiveLanguages()
 	{
-		if ( ($code = self::hasTranslator()) ) {
+		if ( ($code = self::isActive()) ) {
 			if ( $code == 'wpml' ) {
 				return array_keys($GLOBALS['sitepress']->get_active_languages());
 			}
@@ -91,7 +93,7 @@ final class Translate
 	 */
 	public static function getCurrentLanguage()
 	{
-		if ( ($code = self::hasTranslator()) ) {
+		if ( ($code = self::isActive()) ) {
 			if ( $code == 'wpml' ) {
 				return apply_filters('wpml_current_language',null);
 			}
@@ -102,5 +104,15 @@ final class Translate
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return mixed
+	 */
+	public static function parseLanguage()
+	{
+		
 	}
 }

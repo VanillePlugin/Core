@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -14,8 +14,8 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\Authentication;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\int\RestApiInterface;
-use VanillePlugin\lib\PluginOptions;
 use \WP_REST_Server as WPRestServer;
 
 abstract class AbstractRestAPI extends PluginOptions implements RestApiInterface
@@ -60,7 +60,7 @@ abstract class AbstractRestAPI extends PluginOptions implements RestApiInterface
 
 	/**
 	 * @access public
-	 * @param boolean $override
+	 * @param bool $override
 	 * @return void
 	 */
 	public function setOverride($override = false)
@@ -95,7 +95,7 @@ abstract class AbstractRestAPI extends PluginOptions implements RestApiInterface
 	 */
 	public function addParameters($args = false)
 	{
-		$this->args = is_array($args)
+		$this->args = TypeCheck::isArray($args)
 		? Stringify::toObject($args) : $args;
 	}
 
@@ -146,7 +146,7 @@ abstract class AbstractRestAPI extends PluginOptions implements RestApiInterface
 	/**
 	 * @access protected
 	 * @param array $args
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isPermitted($args = [])
 	{

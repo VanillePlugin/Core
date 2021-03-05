@@ -1,0 +1,168 @@
+{
+  "$id": "plugin.config.schema.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "path": {
+      "type": "object",
+      "required": ["asset","view","migrate","logs","temp","cache"],
+      "properties":{
+        "asset":{
+          "type": "string"
+        },
+        "view":{
+          "type": "string"
+        },
+        "migrate":{
+          "type": "string"
+        },
+        "logs":{
+          "type": "string"
+        },
+        "temp":{
+          "type": "string"
+        },
+        "cache":{
+          "type": "string"
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "required": ["ttl","translate","footprint","debug","view"],
+      "properties":{
+        "ttl":{
+          "type": "integer"
+        },
+        "translate":{
+          "type": "boolean"
+        },
+        "footprint":{
+          "type": "boolean"
+        },
+        "debug":{
+          "type": "boolean"
+        },
+        "view":{
+          "type": "object",
+          "properties":{
+            "extension":{
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "ajax": {
+      "type": "array"
+    },
+    "requirement": {
+      "type": "object",
+      "required": ["plugins","options","templates","modules","php"],
+      "properties":{
+        "plugins":{
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "required": ["slug","callable"],
+              "properties":{
+                "slug":{
+                  "type": "string"
+                },
+                "callable":{
+                  "type": "string"
+                },
+                "name":{
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "options":{
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "required": ["slug","value"],
+              "properties":{
+                "slug":{
+                  "type": "string"
+                },
+                "value":{
+                  "type": "string"
+                },
+                "name":{
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "templates":{
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "required": ["slug"],
+              "properties":{
+                "slug":{
+                  "type": "string"
+                },
+                "name":{
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "modules":{
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "required": ["name","callable"],
+              "properties":{
+                "name":{
+                  "type": "string"
+                },
+                "callable":{
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "php":{
+          "type": "string"
+        }
+      }
+    },
+    "routes": {
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "author",
+    "description",
+    "path",
+    "options",
+    "ajax",
+    "requirement",
+    "routes"
+  ]
+}

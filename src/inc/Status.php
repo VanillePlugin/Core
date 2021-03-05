@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -19,7 +19,8 @@ class Status
 	 * @param int $code
 	 * @return string
 	 */
-	public static function getMessage($code){
+	public static function getMessage($code)
+	{
 		$status = [
 			100 => 'Continue',  
 			101 => 'Switching Protocols',  

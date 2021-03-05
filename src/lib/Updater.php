@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -14,8 +14,9 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\int\UpdaterInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\inc\TypeCheck;
 
-class Updater extends PluginOptions implements UpdaterInterface
+final class Updater extends PluginOptions implements UpdaterInterface
 {
 	/**
 	 * @access private
@@ -45,13 +46,18 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin, $host, $params = [])
 	{
+		// Init plugin config
+		$this->initConfig($plugin);
+
 		// Check update capability
-		if ( !current_user_can('update_plugins') ) {
+		if ( !$this->hadCapability('update_plugins') ) {
 		    return;
 		}
 
-		// Init plugin config
-		$this->initConfig($plugin);
+		// Check WordPress update
+		if ( wp_installing() ) {
+			return $transient;
+		}
 
 		// Init updater config
 		global $wp_version;
@@ -76,10 +82,10 @@ class Updater extends PluginOptions implements UpdaterInterface
 		 * Filter : plugins_api
 		 *
 		 * @see getInfo@self
-		 * @property priority 20
+		 * @property priority 10
 		 * @property count 3
 		 */
-		$this->addFilter('plugins_api', [$this,'getInfo'], 20, 3);
+		$this->addFilter('plugins_api', [$this,'getInfo'], 10, 3);
 
 		/**
 		 * Check plugin update
@@ -87,10 +93,10 @@ class Updater extends PluginOptions implements UpdaterInterface
 		 * Filter : site_transient_update_{$transient}
 		 *
 		 * @see checkUpdate@self
-		 * @property priority 20
+		 * @property priority 10
 		 * @property count 1
 		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkUpdate'], 20);
+		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkUpdate'], 10);
 
 		/**
 		 * Check plugin translation update
@@ -108,10 +114,10 @@ class Updater extends PluginOptions implements UpdaterInterface
 		 * Filter : upgrader_process_complete
 		 *
 		 * @see clearUpdateCache@self
-		 * @property priority 20
+		 * @property priority 10
 		 * @property count 2
 		 */
-		$this->addFilter('upgrader_process_complete', [$this,'clearUpdateCache'], 20, 2);
+		$this->addFilter('upgrader_process_complete', [$this,'clearUpdateCache'], 10, 2);
 	}
 
 	/**
@@ -140,37 +146,38 @@ class Updater extends PluginOptions implements UpdaterInterface
 			if ( !$response ) {
 
 				// Prepare response
-				$pluginInfos = $this->getPluginInfo($this->getMainFilePath());
+				$info = $this->getPluginInfo($this->getMainFilePath());
 
 				// Build query
 				$params = [
 					'slug'      => $this->getNameSpace(),
-					'version'   => $pluginInfos['Version'],
+					'version'   => $info['Version'],
 					'wpversion' => $this->wpVerion
 				];
 				$query = [
 					'headers' => $this->headers,
 					'body' => [
-						'action'  => "{$this->getNameSpace()}-get-info", 
+						'action'  => "{$this->getNameSpace()}-get-info",
 						'request' => serialize($params),
 						'params'  => $this->params
 					],
-					'user-agent' => "{$this->getNameSpace()}-wordpress/{$pluginInfos['Version']};"
+					'user-agent' => "{$this->getNameSpace()}-wordpress/{$info['Version']};"
 				];
 
 				// Add licence
 				$query = $this->setLicense($query);
 
-				// Get response
+				// Get temp response
 				$client = new Request();
-				$response = $client->post($this->infoUrl, $query);
+				$temp = $client->post($this->infoUrl,$query);
 
 				// Cache on success
-				if ( $response->getStatusCode() == 200 ) {
-					$body = $response->getBody();
-					if ( !empty($body) ) {
+				if ( $temp->getStatusCode() == 200 ) {
+					if ( !empty($body = $temp->getBody()) ) {
 						$response = unserialize($body);
-						$this->setTransient('get-info', $response, 1800);
+						$this->setTransient('get-info',$response,1800);
+					} else {
+						$this->deleteTransient('get-info');
 					}
 				}
 			}
@@ -191,11 +198,6 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	public function checkUpdate($transient)
 	{
-		// Check WordPress update
-		if ( wp_installing() ) {
-			return $transient;
-		}
-
 		// Check transient
 		if ( empty($transient->checked) ) {
 			return $transient;
@@ -203,6 +205,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 
 		// Get response from cache
 		$response = $this->getTransient('check-update');
+		
 		if ( !$response ) {
 
 			// Get plugin version
@@ -228,16 +231,17 @@ class Updater extends PluginOptions implements UpdaterInterface
 			// Add licence
 			$query = $this->setLicense($query);
 
-			// Get response & Update transient
+			// Get temp response & Update transient
 			$client = new Request();
-			$response = $client->post($this->updateUrl, $query);
+			$temp = $client->post($this->updateUrl,$query);
 
 			// Cache on success
-			if ( $response->getStatusCode() == 200 ) {
-				$body = $response->getBody();
-				if ( !empty($body) ) {
+			if ( $temp->getStatusCode() == 200 ) {
+				if ( !empty($body = $temp->getBody()) ) {
 					$response = unserialize($body);
-					$this->setTransient('check-update', $response, 1800);
+					$this->setTransient('check-update',$response,1800);
+				} else {
+					$this->deleteTransient('check-update');
 				}
 			}
 		}
@@ -257,11 +261,6 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	public function checkTranslation($transient)
 	{
-		// Check WordPress update
-		if ( wp_installing() ) {
-			return $transient;
-		}
-
 		// Check translation option
 		if ( !$this->translationUrl ) {
 			return $transient;
@@ -294,16 +293,17 @@ class Updater extends PluginOptions implements UpdaterInterface
 			// Add licence
 			$query = $this->setLicense($query);
 
-			// Get response
+			// Get temp response
 			$client = new Request();
-			$response = $client->post($this->translationUrl, $query);
+			$temp = $client->post($this->translationUrl,$query);
 
 			// Cache on success
-			if ( $response->getStatusCode() == 200 ) {
-				$body = $response->getBody();
-				if ( !empty($body) ) {
+			if ( $temp->getStatusCode() == 200 ) {
+				if ( !empty($body = $temp->getBody()) ) {
 					$response = unserialize($body);
-					$this->setTransient('check-translation', $response, 1800);
+					$this->setTransient('check-translation',$response,1800);
+				} else {
+					$this->deleteTransient('check-translation');
 				}
 			}
 		}
@@ -316,9 +316,12 @@ class Updater extends PluginOptions implements UpdaterInterface
 					$language = $translation['language'];
 					if ( isset($installed[$this->getNameSpace()][$language]) ) {
 						unset($response->translations[$key]);
+					} elseif ( $language !== $this->getLanguage(true) ) {
+						unset($response->translations[$key]);
+					} else {
+						$transient->translations[] = $translation;
 					}
 				}
-				$transient->translations[] = $response->translations;
 			}
 		}
 
@@ -357,7 +360,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	private function setLicense($query)
 	{
-		if ( is_array($this->license) ) {
+		if ( TypeCheck::isArray($this->license) ) {
 			foreach ($this->license as $param => $value) {
 				$query['body'][$param] = $value;
 			}
@@ -368,12 +371,14 @@ class Updater extends PluginOptions implements UpdaterInterface
 	/**
 	 * @access private
 	 * @param object $response
-	 * @return boolean
+	 * @return bool
 	 */
 	private function isValidResponse($response)
 	{
-		if ( is_object($response) && !empty($response) ) {
-			return true;
+		if ( TypeCheck::isObject($response) && isset($response->plugin) ) {
+			if ( $response->plugin == $this->getMainFile() ) {
+				return true;
+			}
 		}
 		return false;
 	}

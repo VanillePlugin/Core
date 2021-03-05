@@ -13,6 +13,7 @@
     },
     "options": {
         "ttl": 30,
+        "translate": false,
         "footprint": true,
         "debug": true,
         "view": {
@@ -20,10 +21,10 @@
         }
     },
     "requirement": {
-        "plugins": false,
-        "options": false,
-        "template": false,
-        "modules": false,
+        "plugins": [],
+        "options": [],
+        "templates": [],
+        "modules": [],
         "php": "5.6.30"
     },
     "ajax": [],

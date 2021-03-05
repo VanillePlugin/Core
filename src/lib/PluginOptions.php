@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -12,17 +12,19 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\VanilleConfig;
+use VanillePlugin\VanillePluginConfig;
 use VanillePlugin\lib\WordPress;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\inc\Post;
 use VanillePlugin\inc\Get;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Server;
+use VanillePlugin\thirdparty\Translator;
 
 class PluginOptions extends WordPress
 {
-	use VanilleConfig;
+	use VanillePluginConfig;
 
 	/**
 	 * Register a settings and its data
@@ -38,44 +40,62 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Register Plugin Settings
+	 * Register plugin multilingual settings
 	 *
 	 * @access protected
 	 * @param string $group
 	 * @param mixed $option
 	 * @param array $args null
+	 * @param string $lang
 	 * @return void
 	 */
-	protected function registerPluginOption($group, $option, $args = null)
+	protected function registerPluginOption($group, $option, $args = null, $lang = null)
 	{
-		$this->registerOption("{$this->getPrefix()}{$group}","{$this->getPrefix()}{$option}",$args);
+		if ( $this->hasTranslator() ) {
+			if ( !$lang === false ) {
+				$lang = ($lang) ? "-{$lang}" : "-{$this->getLanguage()}";
+			}
+		}
+		$this->registerOption("{$this->getPrefix()}{$group}","{$this->getPrefix()}{$option}{$lang}",$args);
 	}
 
 	/**
-	 * Addd Plugin Option
+	 * Addd plugin multilingual option
 	 *
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
+	 * @param string $lang
 	 * @return mixed
 	 */
-	protected function addPluginOption($option, $value)
+	protected function addPluginOption($option, $value, $lang = null)
 	{
-		return $this->addOption("{$this->getPrefix()}{$option}",$value);
+		if ( $this->hasTranslator() ) {
+			if ( !$lang === false ) {
+				$lang = ($lang) ? "-{$lang}" : "-{$this->getLanguage()}";
+			}
+		}
+		return $this->addOption("{$this->getPrefix()}{$option}{$lang}",$value);
 	}
 
 	/**
-	 * Retrieves an option value based on an option name
+	 * Get plugin multilingual option
 	 *
 	 * @access protected
 	 * @param string $option
 	 * @param string $type
-	 * @param boolean $default
+	 * @param bool $default
+	 * @param string $lang
 	 * @return mixed
 	 */
-	protected function getPluginOption($option, $type = 'array', $default = false)
+	protected function getPluginOption($option, $type = 'array', $default = false, $lang = null)
 	{
-		$value = $this->getOption("{$this->getPrefix()}{$option}", $default);
+		if ( $this->hasTranslator() ) {
+			if ( !$lang === false ) {
+				$lang = ($lang) ? "-{$lang}" : "-{$this->getLanguage()}";
+			}
+		}
+		$value = $this->getOption("{$this->getPrefix()}{$option}{$lang}", $default);
 		switch ($type) {
 			case 'integer':
 				return intval($value);
@@ -93,32 +113,44 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Update plugin multilingual option
 	 *
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
-	 * @return boolean
+	 * @param string $lang
+	 * @return bool
 	 */
-	protected function updatePluginOption($option, $value)
+	protected function updatePluginOption($option, $value, $lang = null)
 	{
-		return $this->updateOption("{$this->getPrefix()}{$option}",$value);
+		if ( $this->hasTranslator() ) {
+			if ( !$lang === false ) {
+				$lang = ($lang) ? "-{$lang}" : "-{$this->getLanguage()}";
+			}
+		}
+		return $this->updateOption("{$this->getPrefix()}{$option}{$lang}",$value);
 	}
 
 	/**
-	 * Remove Plugin Option
+	 * Remove plugin multilingual option
 	 *
 	 * @access protected
 	 * @param string $option
-	 * @return boolean
+	 * @param string $lang
+	 * @return bool
 	 */
-	protected function removePluginOption($option)
+	protected function removePluginOption($option, $lang = null)
 	{
-		return $this->removeOption("{$this->getPrefix()}{$option}");
+		if ( $this->hasTranslator() ) {
+			if ( !$lang === false ) {
+				$lang = ($lang) ? "-{$lang}" : "-{$this->getLanguage()}";
+			}
+		}
+		return $this->removeOption("{$this->getPrefix()}{$option}{$lang}");
 	}
 
 	/**
-	 * Retrieves an option value based on an option name as object
+	 * Retrieves plugin multilingual option as object
 	 *
 	 * @access protected
 	 * @param string $option
@@ -126,7 +158,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function getPluginObject($option)
 	{
-		return Stringify::toObject( $this->getPluginOption($option) );
+		return Stringify::toObject($this->getPluginOption($option));
 	}
 
 	/**
@@ -306,44 +338,47 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Retrieves an option value based on an option name
+	 * Retrieves the value of a transient
 	 *
 	 * @see /reference/functions/get_transient/
 	 * @access protected
-	 * @param string $name
+	 * @param string $key
 	 * @return mixed
 	 */
-	protected function getTransient($name)
+	protected function getTransient($key)
 	{
-		return get_transient("{$this->getNameSpace()}-{$name}");
+		$key = Stringify::slugify("{$this->getNameSpace()}-{$key}");
+		return get_transient($key);
 	}
 
 	/**
-	 * Retrieves an option value based on an option name
+	 * Set the value of a transient
 	 *
 	 * @see /reference/functions/set_transient/
 	 * @access protected
-	 * @param string $name
+	 * @param string $key
 	 * @param mixed $value
 	 * @param int $expiration
-	 * @return boolean
+	 * @return bool
 	 */
-	protected function setTransient($name, $value, $expiration = 300)
+	protected function setTransient($key, $value = 1, $expiration = 300)
 	{
-		return set_transient("{$this->getNameSpace()}-{$name}",$value,$expiration);
+		$key = Stringify::slugify("{$this->getNameSpace()}-{$key}");
+		return set_transient($key,$value,$expiration);
 	}
 
 	/**
-	 * Retrieves an option value based on an option name
+	 * Deletes a transient
 	 *
-	 * @see /reference/functions/set_transient/
+	 * @see /reference/functions/delete_transient/
 	 * @access protected
-	 * @param string $name
+	 * @param string $key
 	 * @return void
 	 */
-	protected function deleteTransient($name)
+	protected function deleteTransient($key)
 	{
-		delete_transient("{$this->getNameSpace()}-{$name}");
+		$key = Stringify::slugify("{$this->getNameSpace()}-{$key}");
+		delete_transient($key);
 	}
 
 	/**
@@ -351,7 +386,7 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $slug null
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isPluginAdmin($slug = null)
 	{
@@ -370,7 +405,7 @@ class PluginOptions extends WordPress
 	 * Get current used lang
 	 *
 	 * @access protected
-	 * @param boolean $local
+	 * @param bool $local
 	 * @return string
 	 */
 	protected function getLanguage($local = false)
@@ -400,7 +435,7 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $file {pluginDir}/{pluginMain}.php
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isPlugin($file)
 	{
@@ -418,13 +453,13 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $callable
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isClass($callable)
 	{
 		$callable = Stringify::replace('/', '\\', $callable);
 		if ( Stringify::contains($callable, '\\') ) {
-			if ( !File::exists( Stringify::formatPath(WP_PLUGIN_DIR."{$callable}.php") ) ) {
+			if ( !File::exists($this->getPluginDir("{$callable}.php")) ) {
 				return false;
 			}
 		}
@@ -436,7 +471,7 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $callable
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isFunction($callable)
 	{
@@ -444,7 +479,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add PLugin Cap
+	 * Add Plugin Cap
 	 *
 	 * @access protected
 	 * @param string $role
@@ -458,7 +493,20 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Remove PLugin Cap
+	 * Check Plugin Cap
+	 *
+	 * @access protected
+	 * @param string $cap
+	 * @return void
+	 */
+	protected function hadPluginCapability($cap)
+	{
+		$prefix = Stringify::replace('-', '_', $this->getNameSpace());
+		$this->hadCapability("{$cap}_{$prefix}");
+	}
+
+	/**
+	 * Remove Plugin Cap
 	 *
 	 * @access protected
 	 * @param string $role
@@ -475,7 +523,7 @@ class PluginOptions extends WordPress
 	/**
 	 * @access protected
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isGutenberg()
 	{
@@ -493,18 +541,18 @@ class PluginOptions extends WordPress
 		if ( !$this->isPlugin('classic-editor/classic-editor.php') ) {
 			return true;
 		}
-		return ( get_option('classic-editor-replace') === 'no-replace' );
+		return ( $this->getOption('classic-editor-replace') === 'no-replace' );
 	}
 
 	/**
 	 * @access protected
 	 * @param string $haystack
 	 * @param mixed $needle
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function hasScript($haystack, $needle)
 	{
-	    if ( !is_array($needle) ) {
+	    if ( !TypeCheck::isArray($needle) ) {
 	    	$needle = [$needle];
 	    }
 	    foreach ($needle as $search) {
@@ -520,7 +568,7 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function saved()
 	{
@@ -537,7 +585,7 @@ class PluginOptions extends WordPress
 	 * @param string $version1
 	 * @param string $version2
 	 * @param string $operator
-	 * @return boolean
+	 * @return bool
 	 */
 	public function versionCompare($version1, $version2, $operator = '==')
 	{
@@ -545,7 +593,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Loads a plugin’s translated strings
+	 * Load plugin translated strings
 	 *
 	 * @access public
 	 * @param void
@@ -555,7 +603,15 @@ class PluginOptions extends WordPress
 	 */
 	public function translate()
 	{
-		load_plugin_textdomain($this->getNameSpace(), false, "{$this->getNameSpace()}/languages");
+		// Set overriding path
+		$override = "{$this->getThemeDir()}/{$this->getNameSpace()}/languages";
+		$override = $this->applyFilter("{$this->getNameSpace()}-override-translate-path", $override);
+        if ( File::isDir($override) ) {
+        	$override .= sprintf('/%1$s-%2$s.mo',$this->getNameSpace(),$this->getLanguage(true));
+            load_textdomain($this->getNameSpace(),$override);
+        } else {
+        	load_plugin_textdomain($this->getNameSpace(), false, "{$this->getNameSpace()}/languages");
+        }
 	}
 
 	/**
@@ -589,7 +645,7 @@ class PluginOptions extends WordPress
 	 *
 	 * @access public
 	 * @param int|string $action
-	 * @return boolean
+	 * @return bool
 	 */
 	public function checkToken($action = -1)
 	{
@@ -608,7 +664,7 @@ class PluginOptions extends WordPress
 	 * @access public
 	 * @param string $nonce
 	 * @param int|string $action
-	 * @return boolean
+	 * @return bool
 	 */
 	public function checkNonce($nonce = '', $action = -1)
 	{

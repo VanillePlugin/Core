@@ -5,7 +5,7 @@
  *
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,6 +16,7 @@
 namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\GlobalConst;
 
 /**
  * WordPress Class Wrap Global Functions
@@ -86,7 +87,7 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $content
-	 * @param boolean $ignore, Ignore HTML false
+	 * @param bool $ignore, Ignore HTML false
 	 * @return void
 	 */
 	protected function renderShortcode($content, $ignore = false)
@@ -101,7 +102,7 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $content
-	 * @param boolean $ignore, Ignore HTML false
+	 * @param bool $ignore, Ignore HTML false
 	 * @return string
 	 */
 	protected function doShortcode($content, $ignore = false)
@@ -128,7 +129,7 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $tag
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function shortcodeExists($tag)
 	{
@@ -142,7 +143,7 @@ class WordPress
 	 * @access protected
 	 * @param string $content
 	 * @param string $tag
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function shortcodeIn($content, $tag)
 	{
@@ -340,7 +341,7 @@ class WordPress
 	 * @access protected
 	 * @param string $id
 	 * @param string $list
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isJS($id, $list = 'enqueued')
 	{
@@ -389,7 +390,7 @@ class WordPress
 	 * @param string $id
 	 * @param object $object
 	 * @param array $content
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function localizeJS($id, $object, $content = [])
 	{
@@ -478,7 +479,7 @@ class WordPress
 	 * @param string $slug
 	 * @param callable $callable
 	 * @param string $icon
-	 * @param boolean $customIcon false
+	 * @param bool $customIcon false
 	 * @param int $position 20
 	 * @return inherit
 	 */
@@ -561,7 +562,7 @@ class WordPress
 	}
 
 	/**
-	 * Retrieves a URL within the plugins or mu-plugins directory
+	 * Retrieves plugin directory
 	 *
 	 * @access protected
 	 * @param string $plugin
@@ -569,8 +570,7 @@ class WordPress
 	 */
 	protected function getPluginDir($plugin = null)
 	{
-		return isset($plugin) 
-		? Stringify::formatPath( WP_PLUGIN_DIR . $plugin ) : WP_PLUGIN_DIR;
+		return GlobalConst::pluginDir($plugin);
 	}
 
 	/**
@@ -594,7 +594,7 @@ class WordPress
 	 */
 	protected function getThemeDir()
 	{
-		return Stringify::formatPath( get_stylesheet_directory() );
+		return Stringify::formatPath(get_stylesheet_directory());
 	}
 
 	/**
@@ -602,7 +602,7 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function isAdmin()
 	{
@@ -720,13 +720,26 @@ class WordPress
 	 * @access protected
 	 * @param string $role
 	 * @param string $capability
-	 * @param boolean $grant true
+	 * @param bool $grant true
 	 * @return void
 	 */
 	protected function addCapability($role, $capability, $grant = true)
 	{
 		$role = get_role($role);
 		$role->add_cap($capability,$grant);
+	}
+
+	/**
+	 * Check capability
+	 *
+	 * @access public
+	 * @param string $capability
+	 * @param mixed $args
+	 * @return bool
+	 */
+	public function hadCapability($capability = 'edit_posts', $args = null)
+	{
+		return current_user_can($capability,$args);
 	}
 
 	/**

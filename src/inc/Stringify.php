@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -34,12 +34,24 @@ final class Stringify
 	 */
 	public static function replaceArray($replace = [], $subject)
 	{
-		if ( is_array($replace) ) {
+		if ( TypeCheck::isArray($replace) ) {
 			foreach ($replace as $key => $value) {
 				$subject = self::replace($key,$value,$subject);
 			}
 		}
 		return $subject;
+	}
+
+	/**
+	 * @access public
+	 * @param string $regex
+	 * @param string $replace
+	 * @param string $subject
+	 * @return string
+	 */
+	public static function replaceRegex($regex = '', $replace = '', $subject)
+	{
+		return preg_replace($regex,$replace,$subject);
 	}
 
 	/**
@@ -79,7 +91,7 @@ final class Stringify
 	 */
 	public static function toObject($array = [])
 	{
-	    if ( empty($array) || !is_array($array) ) {
+	    if ( empty($array) || !TypeCheck::isArray($array) ) {
 	    	return false;
 	    }
 	    $obj = new \stdClass;
@@ -97,19 +109,19 @@ final class Stringify
 	public static function slugify($string)
 	{
 	  	// Replace non letter or digits by -
-	  	$slug = preg_replace('~[^\pL\d]+~u', '-', $string);
+	  	$slug = self::replaceRegex('~[^\pL\d]+~u','-',$string);
 	  	// Transliterate
 		$json = new Json(dirname(__FILE__).'/bin/accents.json');
 		$accents = $json->parse(true);
 	  	$slug = strtr($slug, $accents);
-	  	$slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $slug);
+	  	$slug = self::encode($slug, 'ASCII//TRANSLIT//IGNORE');
 	  	// Temove unwanted characters
-	  	$slug = preg_replace('~[^-\w]+~', '', $slug);
-	  	// trim
+	  	$slug = self::replaceRegex('~[^-\w]+~','',$slug);
+	  	// Trim
 	  	$slug = trim($slug, '-');
-	  	// remove duplicate -
-	  	$slug = preg_replace('~-+~', '-', $slug);
-	  	// lowercase
+	  	// Remove duplicate -
+	  	$slug = self::replaceRegex('~-+~','-',$slug);
+	  	// Lowercase
 	  	$slug = strtolower($slug);
 	  	return !empty($slug) ? $slug : sanitize_title($string);
 	}
@@ -120,11 +132,11 @@ final class Stringify
 	 * @access public
 	 * @param string|array $string
 	 * @param string $search
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function contains($string, $search)
 	{
-		if ( is_array($string) ) {
+		if ( TypeCheck::isArray($string) ) {
 			return in_array($search, $string);
 		}
 		if ( strpos($string, $search) !== false ) {
@@ -166,28 +178,59 @@ final class Stringify
 	}
 
 	/**
+	 * Format URL
+	 *
+	 * @access public
+	 * @param string $url
+	 * @return string
+	 */
+	public static function formatUrl($url)
+	{
+		return esc_url($url);
+	}
+
+	/**
 	 * @access public
 	 * @param string $key
 	 * @return string
 	 */
 	public static function formatKey($key)
 	{
-	    $chars = [
-	        "{"  => "rcb",
-	        "}"  => "lcb",
-	        "("  => "rpn",
-	        ")"  => "lpn",
-	        "/"  => "fsl",
-	        "\\" => "bsl",
-	        "@"  => "ats",
-	        ":"  => "cln"
-	    ];
-	    foreach ($chars as $character => $replacement) {
-	        if (strpos($key, $character)) {
-	            $key = self::replace($character, "~{$replacement}~", $key);
-	        }
-	    }
-	    return $key;
+	    return sanitize_key($key);
+	}
+
+	/**
+	 * Encode string UTF-8
+	 *
+	 * @access public
+	 * @param string $string
+	 * @param string $to
+	 * @param string $from
+	 * @return string
+	 */
+	public static function encode($string, $from = 'ISO-8859-1', $to = 'UTF-8')
+	{
+		if ( self::lowercase($to) == 'utf-8' && self::lowercase($from) == 'iso-8859-1' ) {
+			return utf8_encode($string);
+		}
+		return @iconv(self::uppercase($to), self::uppercase($from), $string);
+	}
+
+	/**
+	 * Decode string ISO-8859-1
+	 *
+	 * @access public
+	 * @param string $string
+	 * @param string $to
+	 * @param string $from
+	 * @return string
+	 */
+	public static function decode($string, $from = 'UTF-8', $to = 'ISO-8859-1')
+	{
+		if ( self::lowercase($from) == 'utf-8' && self::lowercase($to) == 'iso-8859-1' ) {
+			return utf8_decode($string);
+		}
+		return @iconv(self::uppercase($from), self::uppercase($to), $string);
 	}
 
 	/**
@@ -210,7 +253,7 @@ final class Stringify
 	 */
 	public static function numberStrip($string)
 	{
-		return preg_replace('/[0-9]+/', '', $string);
+		return self::replaceRegex('/[0-9]+/','',$string);
 	}
 
 	/**
@@ -220,7 +263,7 @@ final class Stringify
 	 */
 	public static function charStrip($string)
 	{
-		return preg_replace('/[^a-zA-Z0-9\s]/', '', $string);
+		return self::replaceRegex('/[^a-zA-Z0-9\s]/','',$string);
 	}
 
 	/**
@@ -230,7 +273,18 @@ final class Stringify
 	 */
 	public static function spaceStrip($string)
 	{
-		return preg_replace('/\s+/', '', trim($string));
+		return self::replaceRegex('/\s+/','',trim($string));
+	}
+
+	/**
+	 * @access public
+	 * @param string $string
+	 * @param bool $break
+	 * @return string
+	 */
+	public static function tagStrip($string, $break = false)
+	{
+		return wp_strip_all_tags($string,$break);
 	}
 
 	/**
@@ -251,6 +305,46 @@ final class Stringify
 	public static function sanitizeText($string)
 	{
 		return sanitize_text_field($string);
+	}
+
+	/**
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function escapeHTML($string)
+	{
+		return esc_html($string);
+	}
+
+	/**
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function escapeJS($string)
+	{
+		return esc_js($string);
+	}
+
+	/**
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function escapeAttr($string)
+	{
+		return esc_attr($string);
+	}
+
+	/**
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function escapeSQL($string)
+	{
+		return esc_sql($string);
 	}
 
 	/**
@@ -318,24 +412,15 @@ final class Stringify
 	 * @access public
 	 * @param string $regex
 	 * @param string $string
-	 * @return boolean
-	 */
-	public static function match($regex, $string)
-	{
-		return preg_match($regex,$string);
-	}
-
-	/**
-	 * @access public
-	 * @param string $regex
-	 * @param string $string
 	 * @param int $index
+	 * @param int $flags
+	 * @param int $offset
 	 * @return mixed
 	 */
-	public static function matchAll($regex, $string, $index = 0)
+	public static function match($regex, $string, $index = 1, $flags = 0, $offset = 0)
 	{
-		preg_match_all($regex,$string,$matches);
-		if ( $index == -1 ) {
+		preg_match($regex,$string,$matches,$flags,$offset);
+		if ( $index === -1 ) {
 			return $matches;
 		}
 		return isset($matches[$index]) ? $matches[$index] : false;
@@ -343,15 +428,19 @@ final class Stringify
 
 	/**
 	 * @access public
-	 * @param string $data
-	 * @param boolean $convert
-	 * @return boolean
+	 * @param string $regex
+	 * @param string $string
+	 * @param int $index
+	 * @param int $flags
+	 * @param int $offset
+	 * @return mixed
 	 */
-	public static function isString($data, $convert = false)
+	public static function matchAll($regex, $string, $index = 0, $flags = 0, $offset = 0)
 	{
-		if ( $convert ) {
-			$data = (string)$data;
+		preg_match_all($regex,$string,$matches,$flags,$offset);
+		if ( $index === -1 ) {
+			return $matches;
 		}
-		return is_string($data);
+		return isset($matches[$index]) ? $matches[$index] : false;
 	}
 }

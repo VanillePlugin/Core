@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -48,7 +48,7 @@ final class Response extends Status
 
 	/**
 	 * @param string $reponse
-	 * @param boolean $isArray false
+	 * @param bool $isArray false
 	 * @return mixed
 	 */
 	public static function get($reponse, $isArray = false)

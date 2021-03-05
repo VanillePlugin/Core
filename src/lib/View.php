@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,6 +16,7 @@ use VanillePlugin\inc\Template;
 use VanillePlugin\inc\Json;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Date;
+use VanillePlugin\inc\File;
 use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\int\ViewInterface;
 
@@ -90,8 +91,8 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('isLoggedIn', function (){
             return $this->isLoggedIn();
         }));
-        $env->addFunction(Template::extend('isDebug', function (){
-            return $this->isDebug();
+        $env->addFunction(Template::extend('isDebug', function ($global = false){
+            return $this->isDebug($global);
         }));
         $env->addFunction(Template::extend('getConfig', function ($config){
             return $this->getConfig($config);
@@ -158,7 +159,8 @@ class View extends PluginOptions implements ViewInterface
     {
         // Set overriding path
         $override = "{$this->getThemeDir()}/{$this->getNameSpace()}/";
-        if ( file_exists("{$override}{$template}{$this->getViewExtension()}") ) {
+        $override = $this->applyFilter("{$this->getNameSpace()}-override-template-path", $override);
+        if ( File::exists("{$override}{$template}{$this->getViewExtension()}") ) {
             return $override;
         }
         return $this->getViewPath();

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.3.9
+ * @version   : 0.4.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -29,7 +29,7 @@ class Mailer
 	private $attachments = [];
 
 	/**
-	 * @param mixed $email null
+	 * @param mixed $email
 	 * @return void
 	 */
 	public function __construct($email = null)
@@ -128,7 +128,7 @@ class Mailer
 	/**
 	 * @access public
 	 * @param void
-	 * @return boolean
+	 * @return bool
 	 */
 	public function send()
 	{
