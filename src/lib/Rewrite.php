@@ -12,6 +12,9 @@
 
 namespace VanillePlugin\lib;
 
+use VanillePlugin\inc\File;
+use VanillePlugin\inc\Stringify;
+
 final class Rewrite extends WordPress
 {
     /**
