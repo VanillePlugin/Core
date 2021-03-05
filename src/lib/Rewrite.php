@@ -12,8 +12,6 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\lib\WordPress;
-
 final class Rewrite extends WordPress
 {
     /**

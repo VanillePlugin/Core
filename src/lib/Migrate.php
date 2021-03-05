@@ -12,7 +12,6 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\lib\Orm;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\int\PluginNameSpaceInterface;

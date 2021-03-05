@@ -12,7 +12,6 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\Authentication;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\int\RestApiInterface;

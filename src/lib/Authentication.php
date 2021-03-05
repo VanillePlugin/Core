@@ -12,7 +12,6 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\inc\Encryption;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Server;

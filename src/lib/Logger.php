@@ -12,7 +12,6 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\Exception;
 use VanillePlugin\inc\Stringify;

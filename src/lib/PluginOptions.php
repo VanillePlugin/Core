@@ -13,7 +13,6 @@
 namespace VanillePlugin\lib;
 
 use VanillePlugin\VanillePluginConfig;
-use VanillePlugin\lib\WordPress;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\inc\Post;

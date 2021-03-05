@@ -12,10 +12,7 @@
 
 namespace VanillePlugin\int;
 
-use VanillePlugin\int\PluginNameSpaceInterface;
-use \WP_REST_Server as WpRestServer;
-
-interface RestApiInterface 
+interface RestApiInterface
 {
 	/**
 	 * @param PluginNameSpaceInterface $plugin

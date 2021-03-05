@@ -12,7 +12,6 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\inc\Post;
 use VanillePlugin\inc\Get;
 use VanillePlugin\int\AjaxInterface;

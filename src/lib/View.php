@@ -17,7 +17,6 @@ use VanillePlugin\inc\Json;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Date;
 use VanillePlugin\inc\File;
-use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\int\ViewInterface;
 
 class View extends PluginOptions implements ViewInterface

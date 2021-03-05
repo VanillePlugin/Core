@@ -13,7 +13,6 @@
 namespace VanillePlugin\inc;
 
 use VanillePlugin\lib\PluginOptions;
-use VanillePlugin\inc\Response;
 
 abstract class AbstractAPI extends PluginOptions
 {
