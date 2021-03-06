@@ -294,6 +294,16 @@ final class Stringify
 	 */
 	public static function breakStrip($string)
 	{
+		return self::replace("\n",' ',$string);
+	}
+
+	/**
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function normalizeSpace($string)
+	{
 		return normalize_whitespace($string);
 	}
 
