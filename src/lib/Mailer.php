@@ -94,12 +94,12 @@ class Mailer
 
 	/**
 	 * @access public
-	 * @param array $headers
+	 * @param string $header
 	 * @return object
 	 */
-	public function addHeaders($headers = [])
+	public function addHeaders($header)
 	{
-		$this->headers[] = $headers;
+		$this->headers[] = $header;
 		return $this;
 	}
 
@@ -116,12 +116,23 @@ class Mailer
 
 	/**
 	 * @access public
-	 * @param array $attachments
+	 * @param string $attachments
 	 * @return object
 	 */
-	public function addAttachments($attachments = [])
+	public function addAttachments($attachment)
 	{
-		$this->attachments[] = $attachments;
+		$this->attachments[] = $attachment;
+		return $this;
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return object
+	 */
+	public function asHTML()
+	{
+		$this->addHeaders('Content-Type: text/html; charset=UTF-8');
 		return $this;
 	}
 
