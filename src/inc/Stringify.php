@@ -44,12 +44,12 @@ final class Stringify
 
 	/**
 	 * @access public
-	 * @param string $regex
-	 * @param string $replace
-	 * @param string $subject
-	 * @return string
+	 * @param string|array $regex
+	 * @param string|array $replace
+	 * @param string|array $subject
+	 * @return mixed
 	 */
-	public static function replaceRegex($regex = '', $replace = '', $subject)
+	public static function replaceRegex($regex = '', $replace, $subject)
 	{
 		return preg_replace($regex,$replace,$subject);
 	}
