@@ -27,7 +27,6 @@ final class Authentication extends PluginOptions
 
     /**
      * @param PluginNameSpaceInterface $plugin
-     * @return void
      */
     public function __construct(PluginNameSpaceInterface $plugin)
     {

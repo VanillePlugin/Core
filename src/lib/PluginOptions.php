@@ -346,7 +346,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function getTransient($key)
 	{
-		$key = Stringify::slugify("{$this->getNameSpace()}-{$key}");
+		$key = substr(Stringify::slugify("{$this->getNameSpace()}-{$key}"), 0, 172);
 		return get_transient($key);
 	}
 
@@ -362,7 +362,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function setTransient($key, $value = 1, $expiration = 300)
 	{
-		$key = Stringify::slugify("{$this->getNameSpace()}-{$key}");
+		$key = substr(Stringify::slugify("{$this->getNameSpace()}-{$key}"), 0, 172);
 		return set_transient($key,$value,$expiration);
 	}
 
@@ -376,7 +376,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function deleteTransient($key)
 	{
-		$key = Stringify::slugify("{$this->getNameSpace()}-{$key}");
+		$key = substr(Stringify::slugify("{$this->getNameSpace()}-{$key}"), 0, 172);
 		delete_transient($key);
 	}
 

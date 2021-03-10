@@ -16,7 +16,6 @@ final class Json extends File
 {
 	/**
 	 * @param string $path
-	 * @return void
 	 */
 	public function __construct($path)
 	{

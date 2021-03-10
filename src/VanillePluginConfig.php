@@ -91,6 +91,7 @@ trait VanillePluginConfig
 				$update['options'][$option] = $value;
 			}
 		}
+		$update['routes'] = (object)$update['routes'];
 		$update = Json::format($update,$args);
 		File::w("{$this->getRoot()}{$this->path}",$update);
 	}

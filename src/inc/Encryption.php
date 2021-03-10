@@ -100,7 +100,7 @@ class Encryption
 	 */
 	public function decrypt()
 	{
-		$decrypted = Stringify::replace($this->prefix, '', $this->password);
+		$decrypted = Stringify::replace($this->prefix,'',$this->password);
 		return openssl_decrypt(
 			base64_decode($decrypted),$this->method,$this->secretKey,0,$this->initVector
 		);

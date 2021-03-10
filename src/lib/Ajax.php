@@ -33,7 +33,6 @@ class Ajax extends PluginOptions implements AjaxInterface
 	 *
 	 * @param object $callable
 	 * @param PluginNameSpaceInterface $plugin
-	 * @return void
 	 *
 	 * action : wp_ajax_{namespace}-{action}
 	 * action : wp_ajax_nopriv_{namespace}-{action}

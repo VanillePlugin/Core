@@ -40,7 +40,6 @@ class File
 
 	/**
 	 * @param string $path
-	 * @return void
 	 */
 	public function __construct($path = null)
 	{
