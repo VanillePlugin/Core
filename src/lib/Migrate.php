@@ -23,7 +23,6 @@ final class Migrate extends Orm
 	 * Init Config object
 	 *
 	 * @param PluginNameSpaceInterface $plugin
-	 * @return void
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin)
 	{

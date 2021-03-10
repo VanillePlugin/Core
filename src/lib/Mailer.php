@@ -30,7 +30,6 @@ class Mailer
 
 	/**
 	 * @param mixed $email
-	 * @return void
 	 */
 	public function __construct($email = null)
 	{

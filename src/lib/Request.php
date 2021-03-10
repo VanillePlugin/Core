@@ -31,7 +31,6 @@ final class Request extends WordPress implements RequestInterface
 	 * @param string $method
 	 * @param array $params
 	 * @param string $baseUrl null
-	 * @return void
 	 */
 	public function __construct($method = 'GET', $params = [], $baseUrl = null)
 	{

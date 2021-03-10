@@ -19,7 +19,6 @@ final class Session extends PluginOptions implements NameSpaceInterface
 {
 	/**
 	 * @param PluginNameSpaceInterface $plugin
-	 * @return void
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin)
 	{

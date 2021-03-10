@@ -24,9 +24,18 @@ final class OrmQuery implements OrmQueryInterface
 
 	/**
 	 * @param array $query
-	 * @return void
 	 */
 	public function __construct($query = [])
+	{
+		$this->query = $this->setDefault($query);
+	}
+
+	/**
+	 * @access public
+	 * @param array $query
+	 * @return varray
+	 */
+	private function setDefault($query = [])
 	{
 		$query = array_merge([
 
@@ -51,7 +60,6 @@ final class OrmQuery implements OrmQueryInterface
 		$query['orderby'] = !empty($query['orderby'])
 		? "ORDER BY {$query['orderby']}" : '';
 
-		$this->query = $query;
-		return $this->query;
+		return $query;
 	}
 }

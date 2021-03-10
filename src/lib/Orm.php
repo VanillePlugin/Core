@@ -22,7 +22,6 @@ class Orm extends Db implements OrmInterface
 	 * Init Db object
 	 *
 	 * @param void
-	 * @return void
 	 */
 	public function __construct()
 	{

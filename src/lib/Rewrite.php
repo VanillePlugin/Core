@@ -27,7 +27,6 @@ final class Rewrite extends WordPress
 
     /**
      * @param string $rules
-     * @return void
      */
     public function __construct($rules = '')
     {

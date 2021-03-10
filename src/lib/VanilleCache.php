@@ -40,7 +40,6 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 
 	/**
 	 * @param PluginNameSpaceInterface $plugin
-	 * @return void
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin)
 	{

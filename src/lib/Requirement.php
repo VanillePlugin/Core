@@ -21,7 +21,6 @@ final class Requirement extends Notice implements RequirementInterface
 {
 	/**
 	 * @param PluginNameSpaceInterface $plugin
-	 * @return void
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin)
 	{

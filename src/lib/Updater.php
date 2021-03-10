@@ -40,7 +40,6 @@ final class Updater extends PluginOptions implements UpdaterInterface
 	 * @param PluginNameSpaceInterface $plugin
 	 * @param string $host
 	 * @param array $params
-	 * @return void
 	 *
 	 * action : admin_init
 	 */
