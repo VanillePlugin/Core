@@ -1,11 +1,8 @@
 <?php
 /**
- * WordPress Main Class Wrapper
- * @see https://developer.wordpress.org/
- *
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.1
+ * @version   : 0.4.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -19,6 +16,9 @@ use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\GlobalConst;
 
 /**
+ * WordPress Main Class Wrapper
+ * @see https://developer.wordpress.org/
+ *
  * WordPress Class Wrap Global Functions
  * Defines Only Base Functions Used by Plugin
  */
