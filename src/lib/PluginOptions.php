@@ -40,48 +40,51 @@ class PluginOptions extends WordPress
 
 	/**
 	 * Register plugin settings
-	 * multilingual
 	 *
 	 * @access protected
 	 * @param string $group
 	 * @param mixed $option
-	 * @param array $args null
+	 * @param array $args
+	 * @param mixed $lang
 	 * @return void
 	 */
-	protected function registerPluginOption($group, $option, $args = null)
+	protected function registerPluginOption($group, $option, $args = null, $lang = null)
 	{
-		$lang = $this->setLanguage();
+		// Define multilingual
+		$lang = $this->setLanguage($lang);
 		$this->registerOption("{$this->getPrefix()}{$group}","{$this->getPrefix()}{$option}{$lang}",$args);
 	}
 
 	/**
 	 * Addd plugin option
-	 * multilingual
 	 *
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
+	 * @param mixed $lang
 	 * @return mixed
 	 */
-	protected function addPluginOption($option, $value)
+	protected function addPluginOption($option, $value, $lang = null)
 	{
-		$lang = $this->setLanguage();
+		// Define multilingual
+		$lang = $this->setLanguage($lang);
 		return $this->addOption("{$this->getPrefix()}{$option}{$lang}",$value);
 	}
 
 	/**
 	 * Get plugin option
-	 * multilingual
 	 *
 	 * @access protected
 	 * @param string $option
 	 * @param string $type
 	 * @param bool $default
+	 * @param mixed $lang
 	 * @return mixed
 	 */
-	protected function getPluginOption($option, $type = 'array', $default = false)
+	protected function getPluginOption($option, $type = 'array', $default = false, $lang = null)
 	{
-		$lang = $this->setLanguage();
+		// Define multilingual
+		$lang = $this->setLanguage($lang);
 		$value = $this->getOption("{$this->getPrefix()}{$option}{$lang}",$default);
 		switch ($type) {
 			case 'integer':
@@ -101,44 +104,60 @@ class PluginOptions extends WordPress
 
 	/**
 	 * Update plugin option
-	 * multilingual
 	 *
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
+	 * @param mixed $lang
 	 * @return bool
 	 */
-	protected function updatePluginOption($option, $value)
+	protected function updatePluginOption($option, $value, $lang = null)
 	{
-		$lang = $this->setLanguage();
+		// Define multilingual
+		$lang = $this->setLanguage($lang);
 		return $this->updateOption("{$this->getPrefix()}{$option}{$lang}",$value);
 	}
 
 	/**
 	 * Remove plugin option
-	 * multilingual
 	 *
 	 * @access protected
 	 * @param string $option
+	 * @param mixed $lang
 	 * @return bool
 	 */
-	protected function removePluginOption($option)
+	protected function removePluginOption($option, $lang = null)
 	{
-		$lang = $this->setLanguage();
+		// Define multilingual
+		$lang = $this->setLanguage($lang);
 		return $this->removeOption("{$this->getPrefix()}{$option}{$lang}");
 	}
 
 	/**
+	 * Remove plugin options
+	 *
+	 * @access protected
+	 * @param string $option
+	 * @param mixed $lang
+	 * @return bool
+	 */
+	protected function removePluginOptions()
+	{
+		// ...
+	}
+
+	/**
 	 * Retrieves plugin option as object
-	 * multilingual
 	 *
 	 * @access protected
 	 * @param string $option
 	 * @return object
 	 */
-	protected function getPluginObject($option)
+	protected function getPluginObject($option, $lang = null)
 	{
-		return Stringify::toObject($this->getPluginOption($option));
+		// Define multilingual
+		$lang = $this->setLanguage($lang);
+		return Stringify::toObject($this->getPluginOption($option,'array',$lang));
 	}
 
 	/**
@@ -390,7 +409,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function getLanguage($local = false)
 	{
-		$lang = get_locale();
+		$lang = get_user_locale();
 		if ($local) {
 			return $lang;
 		} else {
@@ -659,17 +678,17 @@ class PluginOptions extends WordPress
 	 * Set options language
 	 *
 	 * @access private
-	 * @param void
+	 * @param mixed $lang
 	 * @return mixed
 	 */
-	private function setLanguage()
+	private function setLanguage($lang = null)
 	{
-		$lang = null;
 		if ( $this->isMultilingual() ) {
-			if ( Translator::isActive() ) {
-				$current = Translator::getCurrentLanguage();
-				if ( $current !== $this->getLanguage() ) {
+			if ( $lang !== false && Translator::isActive() ) {
+				if ( ($current = Translator::getCurrentLanguage()) ) {
 					$lang = $current;
+				} else {
+					$lang = $this->getLanguage();
 				}
 			}
 		}

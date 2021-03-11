@@ -98,7 +98,7 @@ final class Stringify
 	    foreach ( $array as $key => $val ) {
 	        $obj->{$key} = $val;
 	    }
-	    return $obj;
+	    return (object)$obj;
 	}
 
 	/**
