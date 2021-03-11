@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.2
+ * @version   : 0.4.3
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -87,14 +87,17 @@ class PluginOptions extends WordPress
 		$lang = $this->setLanguage($lang);
 		$value = $this->getOption("{$this->getPrefix()}{$option}{$lang}",$default);
 		switch ($type) {
+			case 'int':
 			case 'integer':
 				return intval($value);
 				break;
 
+			case 'double':
 			case 'float':
 				return floatval($value);
 				break;
 
+			case 'bool':
 			case 'boolean':
 				return boolval($value);
 				break;
@@ -134,16 +137,17 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Remove plugin options
+	 * Remove all plugin options
 	 *
 	 * @access protected
-	 * @param string $option
-	 * @param mixed $lang
+	 * @param void
 	 * @return bool
 	 */
 	protected function removePluginOptions()
 	{
-		// ...
+		$db = new Orm();
+		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%{$this->getNameSpace()}_%'";
+		$db->query($query);
 	}
 
 	/**
@@ -157,7 +161,7 @@ class PluginOptions extends WordPress
 	{
 		// Define multilingual
 		$lang = $this->setLanguage($lang);
-		return Stringify::toObject($this->getPluginOption($option,'array',$lang));
+		return Stringify::toObject($this->getPluginOption($option,'array',[],$lang));
 	}
 
 	/**
@@ -381,6 +385,20 @@ class PluginOptions extends WordPress
 	}
 
 	/**
+	 * Deletes all transients
+	 *
+	 * @access protected
+	 * @param void
+	 * @return void
+	 */
+	protected function deleteTransients()
+	{
+		$db = new Orm();
+		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_transient_{$this->getNameSpace()}_%'";
+		$db->query($query);
+	}
+
+	/**
 	 * Check if is plugin namespace
 	 *
 	 * @access protected
@@ -442,7 +460,7 @@ class PluginOptions extends WordPress
 			return is_plugin_active($file);
 		} else {
 			$plugins = $this->applyFilter('active_plugins',$this->getOption('active_plugins'));
-			return in_array($file, $plugins);
+			return in_array($file,$plugins);
 		}
 		return false;
 	}
@@ -686,9 +704,9 @@ class PluginOptions extends WordPress
 		if ( $this->isMultilingual() ) {
 			if ( $lang !== false && Translator::isActive() ) {
 				if ( ($current = Translator::getCurrentLanguage()) ) {
-					$lang = $current;
+					$lang = "-{$current}";
 				} else {
-					$lang = $this->getLanguage();
+					$lang = "-{$this->getLanguage()}";
 				}
 			}
 		}

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.2
+ * @version   : 0.4.3
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -96,8 +96,8 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('getConfig', function ($config){
             return $this->getConfig($config);
         }));
-        $env->addFunction(Template::extend('getPluginOption', function ($option, $type = 'array'){
-            return $this->getPluginOption($option, $type);
+        $env->addFunction(Template::extend('getPluginOption', function ($option, $type = 'array', $default = false, $lang = null){
+            return $this->getPluginOption($option,$type,$default,$lang);
         }));
         $env->addFunction(Template::extend('getRoot', function (){
             return $this->getRoot();
