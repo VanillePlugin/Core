@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.0
+ * @version   : 0.4.1
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -32,7 +32,7 @@ final class Json extends File
 	 */
 	public function parse($isArray = false)
 	{
-		return self::decode($this->getContent(), $isArray);
+		return self::decode($this->getContent(),$isArray);
 	}
 
 	/**
@@ -45,7 +45,7 @@ final class Json extends File
 	 */
 	public static function decode($content, $isArray = false)
 	{
-		return json_decode($content, $isArray);
+		return json_decode($content,$isArray);
 	}
 
 	/**
@@ -74,6 +74,6 @@ final class Json extends File
 	 */
 	public static function format($data, $args = 64|256)
 	{
-		return json_encode($data, $args);
+		return json_encode($data,$args);
 	}
 }

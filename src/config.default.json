@@ -13,9 +13,9 @@
     },
     "options": {
         "ttl": 30,
-        "translate": false,
         "footprint": true,
         "debug": true,
+        "multilingual": false,
         "view": {
             "extension": ".tpl.html"
         }

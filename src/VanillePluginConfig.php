@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.0
+ * @version   : 0.4.1
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -415,15 +415,15 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static expire
+	 * Get multilingual status
 	 *
 	 * @access protected
 	 * @param void
 	 * @return bool
 	 */
-	protected function hasTranslator()
+	protected function isMultilingual()
 	{
-		return $this->global->options->translate;
+		return $this->global->options->multilingual;
 	}
 
 	/**

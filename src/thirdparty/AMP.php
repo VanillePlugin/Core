@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.0
+ * @version   : 0.4.1
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -23,6 +23,8 @@ final class AMP
 	{
 		if ( function_exists('is_amp_endpoint') ) {
 			return is_amp_endpoint();
-		} else return false;
+		} else {
+			return false;
+		}
 	}
 }

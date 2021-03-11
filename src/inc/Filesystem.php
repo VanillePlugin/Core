@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.0
+ * @version   : 0.4.1
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,12 +16,12 @@ final class Filesystem extends File
 {
 	/**
 	 * @access public
-	 * @param array $directories
+	 * @param array $dirs
 	 * @return void
 	 */
-	public static function create($directories = [])
+	public static function create($dirs = [])
 	{
-		foreach ($directories as $dir) {
+		foreach ($dirs as $dir) {
 	        if ( !self::exists($dir) ) {
 	            self::addDir($dir);
 	        }
