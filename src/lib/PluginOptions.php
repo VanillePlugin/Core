@@ -693,6 +693,23 @@ class PluginOptions extends WordPress
 	}
 
 	/**
+	 * Get multilingual status
+	 *
+	 * @access public
+	 * @param void
+	 * @return bool
+	 */
+	public function hasMultilingual()
+	{
+		if ( $this->isMultilingual() ) {
+			if ( Translator::isActive() ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Set options language
 	 *
 	 * @access private
@@ -701,8 +718,8 @@ class PluginOptions extends WordPress
 	 */
 	private function setLanguage($lang = null)
 	{
-		if ( $this->isMultilingual() ) {
-			if ( $lang !== false && Translator::isActive() ) {
+		if ( $this->hasMultilingual() ) {
+			if ( $lang !== false ) {
 				if ( ($current = Translator::getCurrentLanguage()) ) {
 					$lang = "-{$current}";
 				} else {

@@ -308,14 +308,12 @@ final class Updater extends PluginOptions implements UpdaterInterface
 		}
 
 		// Update transient
-		if ( $this->isValidResponse($response) ) {
+		if ( $this->isValidTranslateResponse($response) ) {
 			if ( isset($response->translations) ) {
 				$installed = $this->getInstalledTranslations();
 				foreach ($response->translations as $key => $translation) {
 					$language = $translation['language'];
 					if ( isset($installed[$this->getNameSpace()][$language]) ) {
-						unset($response->translations[$key]);
-					} elseif ( $language !== $this->getLanguage(true) ) {
 						unset($response->translations[$key]);
 					} else {
 						$transient->translations[] = $translation;
@@ -378,6 +376,19 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			if ( $response->plugin == $this->getMainFile() ) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * @access private
+	 * @param object $response
+	 * @return bool
+	 */
+	private function isValidTranslateResponse($response)
+	{
+		if ( TypeCheck::isObject($response) && isset($response->translations) ) {
+			return true;
 		}
 		return false;
 	}
