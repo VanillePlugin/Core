@@ -1,6 +1,6 @@
 {
   "name": "jakiboy/vanilleplugin",
-  "version" : "0.4.3",
+  "version" : "0.4.4",
   "type": "library",
   "description": "Framwork for VanillePlugin",
   "keywords": ["VanillePlugin","WordPress","WordPress-Plugin","WordPress-Plugin-Framework","jakiboy"],
