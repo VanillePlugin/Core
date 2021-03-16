@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.4
+ * @version   : 0.4.5
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -159,4 +159,20 @@ final class Server
 		}
 		return false;
 	}
+
+    /**
+     * @access public
+     * @param void
+     * @return bool
+     */
+    public static function isApache()
+    {
+        if ( function_exists('apache_get_version') ) {
+            $apache = apache_get_version();
+            $apache = Stringify::replace('Apache/','',$apache);
+            $apache = substr($apache,0,3);
+            return (floatval($apache) >= 2.4) ? true : false;
+        }
+        return false;
+    }
 }

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.4
+ * @version   : 0.4.5
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -174,7 +174,8 @@ final class Updater extends PluginOptions implements UpdaterInterface
 				if ( $temp->getStatusCode() == 200 ) {
 					if ( !empty($body = $temp->getBody()) ) {
 						$response = unserialize($body);
-						$this->setTransient('get-info',$response,1800);
+						$ttl = $this->applyPluginFilter('updater-info-ttl',1800);
+						$this->setTransient('get-info',$response,$ttl);
 					} else {
 						$this->deleteTransient('get-info');
 					}
@@ -238,7 +239,8 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			if ( $temp->getStatusCode() == 200 ) {
 				if ( !empty($body = $temp->getBody()) ) {
 					$response = unserialize($body);
-					$this->setTransient('check-update',$response,1800);
+					$ttl = $this->applyPluginFilter('updater-update-ttl',1800);
+					$this->setTransient('check-update',$response,$ttl);
 				} else {
 					$this->deleteTransient('check-update');
 				}
@@ -300,6 +302,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			if ( $temp->getStatusCode() == 200 ) {
 				if ( !empty($body = $temp->getBody()) ) {
 					$response = unserialize($body);
+					$ttl = $this->applyPluginFilter('updater-translation-ttl',1800);
 					$this->setTransient('check-translation',$response,1800);
 				} else {
 					$this->deleteTransient('check-translation');
