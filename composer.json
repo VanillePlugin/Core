@@ -1,6 +1,6 @@
 {
   "name": "jakiboy/vanilleplugin",
-  "version" : "0.4.6",
+  "version" : "0.4.7",
   "type": "library",
   "description": "WordPress Plugin Framework",
   "keywords": ["VanillePlugin","WordPress","WordPress-Plugin","WordPress-Plugin-Framework","jakiboy"],
@@ -29,7 +29,7 @@
       "VanillePlugin\\" : "src/"
     }
   },
-  "require-dev": {
-    "coenjacobs/mozart": "^0.7.1"
+  "suggest": {
+    "humbug/php-scoper": "Prefixes all PHP namespaces to avoid issues in WordPress"
   }
 }
