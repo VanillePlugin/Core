@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.5
+ * @version   : 0.4.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -12,6 +12,7 @@
 
 namespace VanillePlugin\lib;
 
+use VanillePlugin\inc\Stringify;
 use VanillePlugin\int\RequestInterface;
 
 final class Request extends WordPress implements RequestInterface
@@ -179,5 +180,16 @@ final class Request extends WordPress implements RequestInterface
 	public function getBody()
 	{
 		return wp_remote_retrieve_body($this->raw);
+	}
+
+	/**
+	 * @access public
+	 * @param array|string $args
+	 * @param string $url
+	 * @return string
+	 */
+	public static function addQueryArg($args,$url)
+	{
+		return Stringify::formatUrl(add_query_arg($args,$url));
 	}
 }

@@ -1,6 +1,6 @@
 {
   "name": "jakiboy/vanilleplugin",
-  "version" : "0.4.5",
+  "version" : "0.4.6",
   "type": "library",
   "description": "WordPress Plugin Framework",
   "keywords": ["VanillePlugin","WordPress","WordPress-Plugin","WordPress-Plugin-Framework","jakiboy"],
@@ -28,5 +28,8 @@
     "psr-4" : {
       "VanillePlugin\\" : "src/"
     }
+  },
+  "require-dev": {
+    "coenjacobs/mozart": "^0.7.1"
   }
 }
