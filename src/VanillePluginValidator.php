@@ -12,12 +12,12 @@
 
 namespace VanillePlugin;
 
-use \VanillePlugin\inc\Validator;
-use \VanillePlugin\inc\TypeCheck;
-use \VanillePlugin\inc\Exception;
-use \VanillePlugin\inc\File;
-use \VanillePlugin\inc\GlobalConst;
-use \JsonSchema\Validator as JsonValidator;
+use VanillePlugin\inc\Validator;
+use VanillePlugin\inc\TypeCheck;
+use VanillePlugin\inc\Exception;
+use VanillePlugin\inc\File;
+use VanillePlugin\inc\GlobalConst;
+use JsonSchema\Validator as JsonValidator;
 
 final class VanillePluginValidator extends Validator
 {
