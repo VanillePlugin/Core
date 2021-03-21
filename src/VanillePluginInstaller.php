@@ -12,7 +12,7 @@
 
 namespace VanillePlugin;
 
-use ComposerScriptEvent;
+use Composer\Installer\PackageEvent;
 
 class VanillePluginInstaller
 {
@@ -21,9 +21,9 @@ class VanillePluginInstaller
      * @var object $event
      * @return void
      */
-    public static function postPackageInstall(Event $event)
+    public static function postPackageInstall(PackageEvent $event)
     {
-        $installedPackage = $event-getComposer()-getPackage();
+        $installedPackage = $event->getOperation()->getPackage();
         var_dump($installedPackage);die();
     }
 }
