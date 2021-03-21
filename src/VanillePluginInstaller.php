@@ -24,6 +24,8 @@ class VanillePluginInstaller
     public static function postPackageInstall(PackageEvent $event)
     {
         $installedPackage = $event->getOperation()->getPackage();
-        var_dump($installedPackage);die();
+        foreach ($installedPackage as $package) {
+            var_dump($package);die();
+        }
     }
 }
