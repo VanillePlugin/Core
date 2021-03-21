@@ -12,7 +12,7 @@
 
 namespace VanillePlugin;
 
-use \VanillePlugin\inc\Exception;
+use VanillePlugin\inc\Exception;
 
 class VanillePluginException extends Exception
 {
