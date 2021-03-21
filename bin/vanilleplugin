@@ -1,0 +1,134 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @author    : JIHAD SINNAOUR
+ * @package   : VanillePlugin
+ * @version   : 0.4.7
+ * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
+ * @link      : https://jakiboy.github.io/VanillePlugin/
+ * @license   : MIT
+ *
+ * This file if a part of VanillePlugin Framework
+ */
+
+declare(strict_types=1);
+
+// Check CLI
+if (php_sapi_name() !== 'cli') exit();
+
+// Get Args
+$option = parse($argv);
+
+// Prepare command-line
+if ( isset($option['-generate']) ) {
+	if ( $option['-generate'] === true ) {
+		echo generate();
+	} else {
+		echo generate($option['-generate']);
+	}
+} else {
+	showHelp();
+}
+
+// Generate Prefix
+function generate($prefix = ''){
+	$dir = dirname(__DIR__) . '/src';
+	$prefix = !empty($prefix) ? normalize($prefix) : getRandom();
+	foreach (getFiles($dir) as $file) {
+		$tmp = file_get_contents($file);
+		$tmp = prefixNamespace($tmp, $prefix);
+		$tmp = prefixUseFunction($tmp, $prefix);
+		$tmp = prefixUseConst($tmp, $prefix);
+		$tmp = prefixUse($tmp, $prefix);
+		@file_put_contents($file,$tmp);
+	}
+}
+
+// Prefix namespace
+function prefixNamespace($content, $prefix = ''){
+	$regex = '/(\s+)%1$s\\s+(?!(%2$s)|(Composer(\\\\|;)))/';
+    $pattern = sprintf($regex,'namespace',$prefix);
+    $replace = sprintf('%1$s %2$s','${1}namespace',$prefix);
+    return preg_replace($pattern,$replace,$content);
+}
+
+// Prefix use function
+function prefixUseFunction($content, $prefix = ''){
+	$regex = '/%1$s\\s+(?!(%2$s)|(\\\\(?!.*\\\\.*))|(Composer(\\\\|;)|(?!.*\\\\.*)))/';
+    $pattern = sprintf($regex,'use function',$prefix);
+    $replace = sprintf('%1$s %2$s', 'use function', $prefix);
+    return preg_replace($pattern,$replace,$content);
+}
+
+// Prefix use constant
+function prefixUseConst($content, $prefix = ''){
+	$regex = '/%1$s\\s+(?!(%2$s)|(\\\\(?!.*\\\\.*))|(Composer(\\\\|;)|(?!.*\\\\.*)))/';
+    $pattern = sprintf($regex,'use function',$prefix);
+    $replace = sprintf('%1$s %2$s', 'use const', $prefix);
+    return preg_replace($pattern,$replace,$content);
+}
+
+// Prefix use
+function prefixUse($content, $prefix = ''){
+	$regex = '/%1$s\\s+(?!(const)|(function)|(%2$s)|(\\\\(?!.*\\\\.*))|(Composer(\\\\|;)|(?!.*\\\\.*)))/';
+    $pattern = sprintf($regex,'use',$prefix);
+	$replace = sprintf('%1$s %2$s','use',$prefix);
+	return preg_replace($pattern,$replace,$content);
+}
+
+// Normalize Prefix
+function normalize($prefix){
+	return ucfirst(preg_replace('~[^\pL\d]+~u','',$prefix));
+}
+
+// Get Random String
+function getRandom(){
+	$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	return ucfirst(substr(str_shuffle($chars),0,10));
+}
+
+// Get Lib Files
+function getFiles($dir, &$files = []) {
+    $objects = scandir($dir);
+    foreach ($objects as $key => $value) {
+        $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+        if ( filetype($path) == 'file' ) {
+        	if ( pathinfo($path, PATHINFO_EXTENSION) == 'php' ) {
+        		$files[] = $path;
+        	}
+        } elseif ( $value !== '.' && $value !== '..' ) {
+            getFiles($path, $files);
+        }
+    }
+    return $files;
+}
+
+// Parse Args
+function parse($argv){
+	$tmp = [];
+	if ( isset($argv[2]) ) {
+		$tmp[$argv[1]] = $argv[2];
+	} else {
+		if ( isset($argv[1]) ) {
+			$tmp[$argv[1]] = true;
+		}
+	}
+	return $tmp;
+}
+
+// Show Help
+function showHelp(){
+	echo 
+	<<<HLP
+
+	VanillePlugin Prefixer (WordPress Plugin Namespaces Prefixer)
+
+	Usage: vanilleplugin -generate [prefix]
+
+	Options:
+	       -generate [prefix]    Generate namespace prefix
+	       -generate             Generate random namespace prefix
+
+	HLP;
+	exit(1);
+}

@@ -115,7 +115,7 @@ final class Stringify
 		$accents = $json->parse(true);
 	  	$slug = strtr($slug, $accents);
 	  	$slug = self::encode($slug, 'ASCII//TRANSLIT//IGNORE');
-	  	// Temove unwanted characters
+	  	// Remove unwanted characters
 	  	$slug = self::replaceRegex('~[^-\w]+~','',$slug);
 	  	// Trim
 	  	$slug = trim($slug, '-');

@@ -29,7 +29,7 @@
       "VanillePlugin\\" : "src/"
     }
   },
-  "suggest": {
-    "humbug/php-scoper": "Prefixes all PHP namespaces to avoid issues in WordPress"
-  }
+  "bin": [
+    "bin/vanilleplugin"
+  ]
 }
