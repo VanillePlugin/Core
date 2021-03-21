@@ -1,4 +1,5 @@
 # VanillePlugin
+[![Build Status](https://travis-ci.com/Jakiboy/VanillePlugin.svg?branch=master)](https://travis-ci.com/Jakiboy/VanillePlugin)
 
 <img src="https://raw.githubusercontent.com/Jakiboy/VanillePlugin/master/logo.png" width="100" alt="WordPress Plugin Framework">
 
