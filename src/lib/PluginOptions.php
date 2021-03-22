@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.9
+ * @version   : 0.5.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -587,11 +587,10 @@ class PluginOptions extends WordPress
 	 * @param string $cap
 	 * @return void
 	 */
-	protected static function removePluginCapability($role, $cap)
+	protected function removePluginCapability($role, $cap)
 	{
-		$plugin = self::getStatic();
-		$prefix = Stringify::replace('-','_',$plugin->getNameSpace());
-		parent::removeCapability($role,"{$cap}_{$prefix}");
+		$prefix = Stringify::replace('-','_',$this->getNameSpace());
+		$this->removeCapability($role,"{$cap}_{$prefix}");
 	}
 
 	/**

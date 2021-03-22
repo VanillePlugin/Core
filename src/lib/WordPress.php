@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.4.9
+ * @version   : 0.5.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -709,7 +709,7 @@ class WordPress
 	 * @param string $role
 	 * @return void
 	 */
-	protected static function removeRole($role)
+	protected function removeRole($role)
 	{
 		remove_role($role);
 	}
@@ -750,7 +750,7 @@ class WordPress
 	 * @param string $capability
 	 * @return void
 	 */
-	protected static function removeCapability($role, $capability)
+	protected function removeCapability($role, $capability)
 	{
 		$role = get_role($role);
 		$role->remove_cap($capability);
