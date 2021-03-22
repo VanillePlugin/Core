@@ -1,6 +1,6 @@
 {
   "name": "jakiboy/vanilleplugin",
-  "version" : "0.4.8",
+  "version" : "0.4.9",
   "type": "library",
   "description": "WordPress Plugin Framework",
   "keywords": ["VanillePlugin","WordPress","WordPress-Plugin","WordPress-Plugin-Framework","jakiboy"],
@@ -28,5 +28,8 @@
     "psr-4" : {
       "VanillePlugin\\" : "src/"
     }
+  },
+  "suggest": {
+    "jakiboy/vanilleplugin-packager": "Prefixes VanillePlugin namespaces to avoid issues with other plugins"
   }
 }
