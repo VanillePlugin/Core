@@ -48,8 +48,11 @@ class Orm extends Db implements OrmInterface
 	 * @param string $type
 	 * @return mixed
 	 */
-	public function fetchQuery($sql, $type = 'ARRAY_A')
+	public function fetchQuery($sql, $isRow = false, $type = 'ARRAY_A')
 	{
+		if ( $isRow ) {
+			return $this->db->get_row($sql, $type);
+		}
 		return $this->db->get_results($sql, $type);
 	}
 
@@ -64,13 +67,12 @@ class Orm extends Db implements OrmInterface
 	{
 		extract($data->query);
 		$sql = "SELECT {$column} FROM {$this->prefix}{$this->getPrefix()}{$table} {$where} {$orderby} {$limit}";
-		if ($isSingle) {
+		if ( $isSingle ) {
 			return $this->db->get_var($sql);
-		} elseif ($isRow) {
+		} elseif ( $isRow ) {
 			return $this->db->get_row($sql, $type);
-		} else {
-			return $this->db->get_results($sql, $type);
 		}
+		return $this->db->get_results($sql, $type);
 	}
 
 	/**
