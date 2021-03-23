@@ -152,6 +152,9 @@
     },
     "routes": {
       "type": "object"
+    },
+    "assets": {
+      "type": "object"
     }
   },
   "required": [
@@ -163,6 +166,7 @@
     "options",
     "ajax",
     "requirement",
-    "routes"
+    "routes",
+    "assets"
   ]
 }

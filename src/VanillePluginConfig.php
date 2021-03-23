@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.5.0
+ * @version   : 0.5.1
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -383,11 +383,12 @@ trait VanillePluginConfig
 	 *
 	 * @access protected
 	 * @param void
-	 * @return string
+	 * @return object
 	 */
 	protected function getAjax()
 	{
-		return $this->global->ajax;
+		$ajax = $this->loadConfig('ajax');
+		return ($ajax) ? $ajax : $this->global->ajax;
 	}
 
 	/**
@@ -399,7 +400,8 @@ trait VanillePluginConfig
 	 */
 	protected function getRoutes()
 	{
-		return $this->global->routes;
+		$routes = $this->loadConfig('routes');
+		return ($routes) ? $routes : $this->global->routes;
 	}
 
 	/**
@@ -407,11 +409,25 @@ trait VanillePluginConfig
 	 *
 	 * @access protected
 	 * @param void
-	 * @return string
+	 * @return object
 	 */
 	protected function getRequirement()
 	{
-		return $this->global->requirement;
+		$requirement = $this->loadConfig('requirement');
+		return ($requirement) ? $requirement : $this->global->requirement;
+	}
+	
+	/**
+	 * Get remote assets
+	 *
+	 * @access protected
+	 * @param void
+	 * @return array
+	 */
+	protected function getRemoteAsset()
+	{
+		$assets = $this->loadConfig('assets');
+		return ($assets) ? (array)$assets : (array)$this->global->assets;
 	}
 
 	/**
@@ -441,5 +457,21 @@ trait VanillePluginConfig
 			}
 		}
 		return $this->global->options->debug;
+	}
+
+	/**
+	 * Load configuration file
+	 *
+	 * @access private
+	 * @param string $config
+	 * @return mixed
+	 */
+	private function loadConfig($config)
+	{
+		$dir = dirname("{$this->getRoot()}{$this->path}");
+		if ( File::exists( ($json = "{$dir}/{$config}.json") ) ) {
+			return Json::decode(File::r($json));
+		}
+		return false;
 	}
 }
