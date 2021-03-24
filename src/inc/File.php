@@ -253,7 +253,7 @@ class File
 	 */
 	public function getPermissions($convert = false)
 	{
-		$permissions = substr(sprintf('%o',fileperms($this->path)),-4);
+		$permissions = substr(sprintf('%o',@fileperms($this->path)),-4);
 		return ($convert) ? intval($permissions) : $permissions;
 	}
 
