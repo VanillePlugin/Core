@@ -205,49 +205,114 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Add plugin menu page
 	 *
 	 * @access protected
-	 * @param string $icon
+	 * @param array $settings
 	 * @return string
 	 */
-	protected function addPluginMenuPage($icon = 'admin-plugins')
+	protected function addPluginMenuPage($settings = [])
 	{
-		if ( !Stringify::contains($icon,'http') ) {
+		// Set title 
+		$title = isset($settings['title']) ? $settings['title'] : '';
+		if ( empty($title) ) {
+			$title = $this->translateString("{$this->getPluginName()} Dashboard");
+		}
+		// Set menu 
+		$menu = isset($settings['menu']) ? $settings['menu'] : '';
+		if ( empty($menu) ) {
+			$menu = $this->getPluginName();
+		}
+		// Set capability
+		$cap = isset($settings['capability']) ? $settings['capability'] : '';
+		if ( empty($cap) ) {
+			$prefix = Stringify::replace('-','_',$this->getNameSpace());
+			$cap = "manage_{$prefix}";
+		}
+		// Set slug
+		$slug = isset($settings['slug']) ? $settings['slug'] : '';
+		if ( empty($slug) ) {
+			$slug = $this->getNameSpace();
+		}
+		// Set callback 
+		$callback = isset($settings['callback']) ? $settings['callback'] : '';
+		if ( empty($callback) ) {
+			$callback = [$this,'index'];
+		}
+		// Set icon
+		$icon = isset($settings['icon']) ? $settings['icon'] : 'admin-plugins';
+		if ( !empty($icon) && !Stringify::contains($icon,'http') ) {
 			$icon = "dashicons-{$icon}";
 		}
-		$prefix = Stringify::replace('-','_',$this->getNameSpace());
-		return $this->addMenuPage(
-			$this->translateString("{$this->getPluginName()} Dashboard"),
-			$this->getPluginName(),
-			"manage_{$prefix}",
-			$this->getNameSpace(),
-			[$this,'index'],
-			$icon
-		);
+		return $this->addMenuPage($title,$menu,$cap,$slug,$callback,$icon);
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Add plugin submenu page
 	 *
 	 * @access protected
-	 * @param string callable
+	 * @param array $settings
 	 * @return mixed
 	 */
-	protected function addPluginSubMenuPage($callable, $slug, $title = '', $parent = null)
+	protected function addPluginSubMenuPage($settings = [])
 	{
-		$slug = "{$this->getNameSpace()}-{$slug}";
-		$menu = $this->translateString("{$this->getPluginName()} Dashboard");
-		if ( empty($title) ) {
-			$title = $this->getPluginName();
-			$menu = $this->translateString("{$this->getPluginName()} {$title}");
-		}
-		if ( $parent == 'this' ) {
+		// Set parent 
+		$parent = isset($settings['parent']) ? $settings['parent'] : '';
+		if ( empty($parent) ) {
 			$parent = $this->getNameSpace();
 		}
-		$prefix = Stringify::replace('-','_',$this->getNameSpace());
-		$capability = "manage_{$prefix}";
-		return $this->addSubMenuPage($parent,$title,$title,$capability,$slug,[$this,$callable]);
+		// Set title 
+		$title = isset($settings['title']) ? $settings['title'] : '';
+		if ( empty($title) ) {
+			$title = $this->translateString("{$this->getPluginName()} Dashboard");
+		}
+		// Set menu 
+		$menu = isset($settings['menu']) ? $this->translateString($settings['menu']) : '';
+		if ( empty($menu) ) {
+			$menu = $this->getPluginName();
+		}
+		// Set icon
+		if ( isset($settings['icon']) && !empty($settings['icon']) ) {
+			$menu = "{$settings['icon']} {$menu}";
+		}
+		// Set capability
+		$cap = isset($settings['capability']) ? $settings['capability'] : '';
+		if ( empty($cap) ) {
+			$prefix = Stringify::replace('-','_',$this->getNameSpace());
+			$cap = "manage_{$prefix}";
+		}
+		// Set slug
+		$slug = isset($settings['slug']) ? "{$this->getNameSpace()}-{$settings['slug']}" : $this->getNameSpace();
+		// Set callback 
+		$callback = isset($settings['callback']) ? $settings['callback'] : '';
+		if ( empty($callback) ) {
+			$callback = [$this,'index'];
+		}
+		return $this->addSubMenuPage($parent,$title,$menu,$cap,$slug,$callback);
+	}
+
+	/**
+	 * Reset plugin submenu
+	 *
+	 * @access protected
+	 * @param string $title
+	 * @param string $icon
+	 * @return void
+	 */
+	protected function resetPluginSubMenu($title = null, $icon = null)
+	{
+		global $submenu;
+		if ( isset($submenu[$this->getNameSpace()]) ) {
+			if ( $title ) {
+				$title = $this->translateString($title);
+				if ( $icon ) {
+					$title = "{$icon} {$title}";
+				}
+				$submenu[$this->getNameSpace()][0][0] = $title;
+			} else {
+				unset($submenu[$this->getNameSpace()][0]);
+			}
+		}
 	}
 
 	/**
@@ -715,6 +780,72 @@ class PluginOptions extends WordPress
 			$var = Stringify::replaceRegex('/\s+/', $this->translateString('{Empty}'), $var);
 			return sprintf($this->translateString(Stringify::replace($var,'%s',$string)), $var);
 		}
+	}
+
+	/**
+	 * Get current screen
+	 *
+	 * @access public
+	 * @param void
+	 * @return object
+	 */
+	public function getCurrentScreen()
+	{
+		return get_current_screen();
+	}
+
+	/**
+	 * Check is current screen
+	 *
+	 * @access public
+	 * @param string $screen
+	 * @return bool
+	 */
+	public function isCurrentScreen($screen = null)
+	{
+		$screen = ($screen) ? $screen : "toplevel_page_{$this->getNameSpace()}";
+		$current = $this->getCurrentScreen();
+		if ( $current->base == $screen ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Add help tab
+	 *
+	 * @access public
+	 * @param array $settings
+	 * @return void
+	 */
+	public function addHelpTab($settings)
+	{
+		$this->getCurrentScreen()->add_help_tab($settings);
+	}
+
+	/**
+	 * Set help sidebar
+	 *
+	 * @access public
+	 * @param string $html
+	 * @return void
+	 */
+	public function setHelpSidebar($html)
+	{
+		$this->getCurrentScreen()->set_help_sidebar($html);
+	}
+
+	/**
+	 * Set help sidebar
+	 *
+	 * @access public
+	 * @param object $bar
+	 * @param array $settings
+	 * @return void
+	 */
+	public function addMenu($bar, $settings = [])
+	{
+		$bar->add_menu($settings);
 	}
 
 	/**

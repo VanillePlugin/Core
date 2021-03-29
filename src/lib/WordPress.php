@@ -475,7 +475,7 @@ class WordPress
 	 * @access protected
 	 * @param string $title
 	 * @param string $menu
-	 * @param string $capability
+	 * @param string $cap
 	 * @param string $slug
 	 * @param callable $callable
 	 * @param string $icon
@@ -483,12 +483,12 @@ class WordPress
 	 * @param int $position 20
 	 * @return inherit
 	 */
-	protected function addMenuPage($title, $menu, $capability, $slug, $callable, $icon = 'admin-plugins', $customIcon = false, $position = 20)
+	protected function addMenuPage($title, $menu, $cap, $slug, $callable, $icon = 'admin-plugins', $customIcon = false, $position = 20)
 	{
-		if ($customIcon) {
+		if ( $customIcon ) {
 			$icon = "dashicons-{$icon}";
 		}
-		return add_menu_page($title,$menu,$capability,$slug,$callable,$icon,$position);
+		return add_menu_page($title,$menu,$cap,$slug,$callable,$icon,$position);
 	}
 
 	/**
@@ -499,14 +499,14 @@ class WordPress
 	 * @param string $parent
 	 * @param string $title
 	 * @param string $menu
-	 * @param string $capability
+	 * @param string $cap
 	 * @param string $slug
 	 * @param callable $callable
 	 * @return inherit
 	 */
-	protected function addSubMenuPage($parent, $title, $menu, $capability, $slug, $callable)
+	protected function addSubMenuPage($parent, $title, $menu, $cap, $slug, $callable)
 	{
-		return add_submenu_page($parent,$title,$menu,$capability,$slug,$callable);
+		return add_submenu_page($parent,$title,$menu,$cap,$slug,$callable);
 	}
 
 	/**
@@ -516,14 +516,14 @@ class WordPress
 	 * @access protected
 	 * @param string $title
 	 * @param string $menu
-	 * @param string $capability
+	 * @param string $cap
 	 * @param string $slug
 	 * @param callable $callable
 	 * @return inherit
 	 */
-	protected function addOptionPage($title, $menu, $capability, $slug, $method)
+	protected function addOptionPage($title, $menu, $cap, $slug, $method)
 	{
-		return add_options_page($title,$menu,$capability,$slug,$method);
+		return add_options_page($title,$menu,$cap,$slug,$method);
 	}
 
 	/**
@@ -659,14 +659,14 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param mixed $id null
-	 * @param string $capability
+	 * @param string $cap
 	 * @param mixed $args
 	 * @return inherit
 	 */
-	protected function hasPermission($id = null, $capability = 'edit_posts', $args = [])
+	protected function hasPermission($id = null, $cap = 'edit_posts', $args = [])
 	{
 		$id = ($id) ? intval($id) : get_current_user_id();
-		return user_can($id,$capability,$args);
+		return user_can($id,$cap,$args);
 	}
 
 	/**
@@ -691,14 +691,14 @@ class WordPress
 	 * @access protected
 	 * @param string $display
 	 * @param string $role null
-	 * @param array $capability null
+	 * @param array $cap
 	 * @return inherit
 	 */
-	protected function addRole($display, $role = null, $capability = [])
+	protected function addRole($display, $role = null, $cap = [])
 	{
 		$role = ($role) ? $role : Stringify::slugify($display);
 		$role = Stringify::replace('-','_',$role);
-		return add_role($role,$display,$capability);
+		return add_role($role,$display,$cap);
 	}
 
 	/**
@@ -719,27 +719,27 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $role
-	 * @param string $capability
+	 * @param string $cap
 	 * @param bool $grant true
 	 * @return void
 	 */
-	protected function addCapability($role, $capability, $grant = true)
+	protected function addCapability($role, $cap, $grant = true)
 	{
 		$role = get_role($role);
-		$role->add_cap($capability,$grant);
+		$role->add_cap($cap,$grant);
 	}
 
 	/**
 	 * Check capability
 	 *
 	 * @access public
-	 * @param string $capability
+	 * @param string $cap
 	 * @param mixed $args
 	 * @return bool
 	 */
-	public function hadCapability($capability = 'edit_posts', $args = null)
+	public function hadCapability($cap = 'edit_posts', $args = null)
 	{
-		return current_user_can($capability,$args);
+		return current_user_can($cap,$args);
 	}
 
 	/**
@@ -747,13 +747,13 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $role
-	 * @param string $capability
+	 * @param string $cap
 	 * @return void
 	 */
-	protected function removeCapability($role, $capability)
+	protected function removeCapability($role, $cap)
 	{
 		$role = get_role($role);
-		$role->remove_cap($capability);
+		$role->remove_cap($cap);
 	}
 
 	/**
