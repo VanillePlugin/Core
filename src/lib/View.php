@@ -108,8 +108,8 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('getAssetUrl', function (){
             return $this->getAssetUrl();
         }));
-        $env->addFunction(Template::extend('nonce', function ($name = null){
-            return wp_create_nonce($name);
+        $env->addFunction(Template::extend('nonce', function ($action = -1){
+            return $this->createNonce($action);
         }));
         $env->addFunction(Template::extend('translate', function ($string){
             return $this->translateString($string);

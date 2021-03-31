@@ -84,11 +84,11 @@ class Ajax extends PluginOptions implements AjaxInterface
 	public function isAction($action)
 	{
 		if ( Post::isSetted('action') ) {
-			if (Post::get('action') == "{$this->getNameSpace()}-{$action}") {
+			if ( Post::get('action') == "{$this->getNameSpace()}-{$action}" ) {
 				return true;
 			}
 		} elseif ( Get::isSetted('action') ) {
-			if (Get::get('action') == "{$this->getNameSpace()}-{$action}") {
+			if ( Get::get('action') == "{$this->getNameSpace()}-{$action}" ) {
 				return true;
 			}
 		}

@@ -29,7 +29,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Custom SQL Query
+	 * Custom SQL query
 	 *
 	 * @access public
 	 * @param string $sql
@@ -41,7 +41,19 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Fetch SQL Query
+	 * SQL query prepare
+	 *
+	 * @access public
+	 * @param string $sql
+	 * @return mixed
+	 */
+	public function prepare($sql)
+	{
+		return $this->db->prepare($sql);
+	}
+
+	/**
+	 * Fetch SQL query
 	 *
 	 * @access public
 	 * @param string $sql
@@ -51,13 +63,13 @@ class Orm extends Db implements OrmInterface
 	public function fetchQuery($sql, $isRow = false, $type = 'ARRAY_A')
 	{
 		if ( $isRow ) {
-			return $this->db->get_row($sql, $type);
+			return $this->getRow($sql,$type);
 		}
-		return $this->db->get_results($sql, $type);
+		return $this->getResult($sql,$type);
 	}
 
 	/**
-	 * Select Query
+	 * Select query
 	 *
 	 * @access public
 	 * @param OrmQueryInterface $data
@@ -66,17 +78,18 @@ class Orm extends Db implements OrmInterface
 	public function select(OrmQueryInterface $data)
 	{
 		extract($data->query);
-		$sql = "SELECT {$column} FROM {$this->prefix}{$this->getPrefix()}{$table} {$where} {$orderby} {$limit}";
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$sql = "SELECT {$column} FROM {$prefix}{$table} {$where} {$orderby} {$limit}";
 		if ( $isSingle ) {
-			return $this->db->get_var($sql);
+			return $this->getVar($sql);
 		} elseif ( $isRow ) {
-			return $this->db->get_row($sql, $type);
+			return $this->getRow($sql,$type);
 		}
-		return $this->db->get_results($sql, $type);
+		return $this->getResult($sql,$type);
 	}
 
 	/**
-	 * Select Count Query
+	 * Select count query
 	 *
 	 * @access public
 	 * @param OrmQueryInterface $data
@@ -85,27 +98,29 @@ class Orm extends Db implements OrmInterface
 	public function count(OrmQueryInterface $data)
 	{
 		extract($data->query);
-		$sql = "SELECT COUNT(*) FROM {$this->prefix}{$this->getPrefix()}{$table} {$where}";
-		return intval($this->db->get_var($sql));
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$sql = "SELECT COUNT(*) FROM {$prefix}{$table} {$where}";
+		return intval($this->getVar($sql));
 	}
 
 	/**
-	 * Insert Query
+	 * Insert query
 	 *
 	 * @access public
 	 * @param string $table
 	 * @param array $data
 	 * @param mixed $format false
-	 * @return mixed 
+	 * @return mixed
 	 */
 	public function insert($table, $data = [], $format = false)
 	{
-		$this->db->insert("{$this->prefix}{$this->getPrefix()}{$table}", $data, $format);
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$this->db->insert("{$prefix}{$table}",$data,$format);
 		return $this->db->insert_id;
 	}
 
 	/**
-	 * Update Query
+	 * Update query
 	 *
 	 * @access public
 	 * @param string $table
@@ -116,11 +131,12 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function update($table, $data = [], $where = [], $format = false)
 	{
-		return $this->db->update("{$this->prefix}{$this->getPrefix()}{$table}", $data, $where, $format);
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		return $this->db->update("{$prefix}{$table}",$data,$where,$format);
 	}
 
 	/**
-	 * Delete All Query
+	 * Delete all query
 	 *
 	 * @access public
 	 * @param string $table
@@ -128,12 +144,13 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function deleteAll($table)
 	{
-		$sql = "DELETE FROM {$this->prefix}{$this->getPrefix()}{$table}";
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$sql = "DELETE FROM {$prefix}{$table}";
 		return $this->db->query($sql);
 	}
 
 	/**
-	 * Delete Query
+	 * Delete query
 	 *
 	 * @access public
 	 * @param string $table
@@ -143,6 +160,45 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function delete($table, $where = [], $format = null)
 	{
-		return $this->db->delete("{$this->prefix}{$this->getPrefix()}{$table}", $where, $format);
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		return $this->db->delete("{$prefix}{$table}", $where, $format);
+	}
+
+	/**
+	 * Get query var
+	 *
+	 * @access public
+	 * @param string $sql
+	 * @return mixed
+	 */
+	public function getVar($sql)
+	{
+		return $this->db->get_var($sql);
+	}
+
+	/**
+	 * Get query row
+	 *
+	 * @access public
+	 * @param string $sql
+	 * @param string $type
+	 * @return mixed
+	 */
+	public function getRow($sql, $type = 'ARRAY_A')
+	{
+		return $this->db->get_row($sql,$type);
+	}
+
+	/**
+	 * Get query result
+	 *
+	 * @access public
+	 * @param string $sql
+	 * @param string $type
+	 * @return mixed
+	 */
+	public function getResult($sql, $type = 'ARRAY_A')
+	{
+		return $this->db->get_results($sql,$type);
 	}
 }

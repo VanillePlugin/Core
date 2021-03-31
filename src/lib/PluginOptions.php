@@ -880,6 +880,18 @@ class PluginOptions extends WordPress
 	}
 
 	/**
+	 * Create nonce
+	 *
+	 * @access public
+	 * @param int|string $action
+	 * @return string
+	 */
+	public function createNonce($action = -1)
+	{
+	  	return wp_create_nonce($action);
+	}
+
+	/**
 	 * Get multilingual status
 	 *
 	 * @access public

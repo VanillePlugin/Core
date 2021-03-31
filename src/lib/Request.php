@@ -190,6 +190,6 @@ final class Request extends WordPress implements RequestInterface
 	 */
 	public static function addQueryArg($args,$url)
 	{
-		return Stringify::formatUrl(add_query_arg($args,$url));
+		return add_query_arg($args,$url);
 	}
 }
