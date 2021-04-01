@@ -12,7 +12,7 @@
 
 namespace VanillePlugin\inc;
 
-final class HttpPost
+final class HttpRequest
 {
 	/**
 	 * @access public
@@ -22,9 +22,9 @@ final class HttpPost
 	public static function get($item = null)
 	{
 		if ( $item ) {
-			return self::isSetted($item) ? $_POST[$item] : false;
+			return self::isSetted($item) ? $_REQUEST[$item] : false;
 		} else {
-			return $_POST;
+			return $_REQUEST;
 		}
 	}
 
@@ -36,9 +36,9 @@ final class HttpPost
 	 */
 	public static function set($item, $value)
 	{
-		$_POST[$item] = $value;
+		$_REQUEST[$item] = $value;
 	}
-
+	
 	/**
 	 * @access public
 	 * @param string $item null
@@ -47,9 +47,9 @@ final class HttpPost
 	public static function isSetted($item = null)
 	{
 		if ( $item ) {
-			return isset($_POST[$item]);
+			return isset($_REQUEST[$item]);
 		} else {
-			return isset($_POST);
+			return isset($_REQUEST);
 		}
 	}
 }

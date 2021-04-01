@@ -12,8 +12,7 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\HttpPost;
-use VanillePlugin\inc\HttpGet;
+use VanillePlugin\inc\HttpRequest;
 use VanillePlugin\int\AjaxInterface;
 use VanillePlugin\int\AdminAjaxInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
@@ -35,7 +34,7 @@ class Ajax extends PluginOptions implements AjaxInterface
 	 * @param PluginNameSpaceInterface $plugin
 	 *
 	 * action : wp_ajax_{namespace}-{action}
-	 * action : wp_ajax_nopriv_{namespace}-{action}
+	 * action : wp_ajax_nopriv_{namespace}-{action} (public)
 	 */
 	public function __construct(AdminAjaxInterface $callable, PluginNameSpaceInterface $plugin)
 	{
@@ -83,12 +82,8 @@ class Ajax extends PluginOptions implements AjaxInterface
 	 */
 	public function isAction($action)
 	{
-		if ( HttpPost::isSetted('action') ) {
-			if ( HttpPost::get('action') == "{$this->getNameSpace()}-{$action}" ) {
-				return true;
-			}
-		} elseif ( HttpGet::isSetted('action') ) {
-			if ( HttpGet::get('action') == "{$this->getNameSpace()}-{$action}" ) {
+		if ( HttpRequest::isSetted('action') ) {
+			if ( HttpRequest::get('action') == "{$this->getNameSpace()}-{$action}" ) {
 				return true;
 			}
 		}

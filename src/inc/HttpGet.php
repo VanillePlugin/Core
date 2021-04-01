@@ -21,7 +21,7 @@ final class HttpGet
 	 */
 	public static function get($item = null)
 	{
-		if ($item) {
+		if ( $item ) {
 			return self::isSetted($item) ? $_GET[$item] : false;
 		} else {
 			return $_GET;
@@ -46,7 +46,7 @@ final class HttpGet
 	 */
 	public static function isSetted($item = null)
 	{
-		if ($item) {
+		if ( $item ) {
 			return isset($_GET[$item]);
 		} else {
 			return isset($_GET);

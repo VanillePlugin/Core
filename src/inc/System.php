@@ -17,13 +17,13 @@ final class System
 	/**
 	 * Memory exceeded
 	 *
-	 * @param void
+	 * @param float $percent
 	 * @return bool
 	 */
-	public static function isMemoryOut()
+	public static function isMemoryOut($percent = 0.9)
 	{
-		$limit = self::getMemoryLimit() * 0.9;
-		$current = memory_get_usage(true);
+		$limit = self::getMemoryLimit() * $percent;
+		$current = self::getMemoryUsage();
 		if ( $current >= $limit ) {
 			return true;
 		}
@@ -47,5 +47,16 @@ final class System
 			$limit = '32000M';
 		}
 		return intval($limit) * 1024 * 1024;
+	}
+
+	/**
+	 * Get memory usage
+	 *
+	 * @param void
+	 * @return int
+	 */
+	public static function getMemoryUsage($real = true)
+	{
+		return memory_get_usage($real);
 	}
 }

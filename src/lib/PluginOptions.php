@@ -15,7 +15,7 @@ namespace VanillePlugin\lib;
 use VanillePlugin\VanillePluginConfig;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\inc\HttpPost;
+use VanillePlugin\inc\HttpRequest;
 use VanillePlugin\inc\HttpGet;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Server;
@@ -857,12 +857,9 @@ class PluginOptions extends WordPress
 	 */
 	public function checkToken($action = -1)
 	{
-		$nonce = HttpPost::isSetted('nonce') ? HttpPost::get('nonce') : false;
-		if ( !$nonce ) {
-			$nonce = HttpGet::isSetted('nonce') ? HttpGet::get('nonce') : false;
-		}
+		$nonce = HttpRequest::isSetted('nonce') ? HttpRequest::get('nonce') : false;
 	    if ( !$this->checkNonce($nonce,$action) ) {
-	      die($this->translateString('Invalid token'));
+	    	die($this->translateString('Invalid token'));
 	    }
 	}
 
@@ -889,6 +886,20 @@ class PluginOptions extends WordPress
 	public function createNonce($action = -1)
 	{
 	  	return wp_create_nonce($action);
+	}
+
+	/**
+	 * Check Ajax Referer
+	 *
+	 * @access public
+	 * @param int|string $action
+	 * @param false|string $args
+	 * @param bool $die
+	 * @return int|false
+	 */
+	public function checkAjaxReferer($action = -1, $args = false, $die = true)
+	{
+	  	return check_ajax_referer($action,$args,$die);
 	}
 
 	/**
