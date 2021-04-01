@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.5.6
+ * @version   : 0.5.7
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,8 +15,8 @@ namespace VanillePlugin\lib;
 use VanillePlugin\VanillePluginConfig;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\inc\Post;
-use VanillePlugin\inc\Get;
+use VanillePlugin\inc\HttpPost;
+use VanillePlugin\inc\HttpGet;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Server;
 use VanillePlugin\thirdparty\Translator;
@@ -710,8 +710,8 @@ class PluginOptions extends WordPress
 	 */
 	protected function saved()
 	{
-		if ( Get::isSetted('settings-updated') 
-		&& Get::get('settings-updated') == 'true' ) {
+		if ( HttpGet::isSetted('settings-updated') 
+		&& HttpGet::get('settings-updated') == 'true' ) {
 			return true;
 		}
 	}
@@ -857,9 +857,9 @@ class PluginOptions extends WordPress
 	 */
 	public function checkToken($action = -1)
 	{
-		$nonce = Post::isSetted('nonce') ? Post::get('nonce') : false;
+		$nonce = HttpPost::isSetted('nonce') ? HttpPost::get('nonce') : false;
 		if ( !$nonce ) {
-			$nonce = Get::isSetted('nonce') ? Get::get('nonce') : false;
+			$nonce = HttpGet::isSetted('nonce') ? HttpGet::get('nonce') : false;
 		}
 	    if ( !$this->checkNonce($nonce,$action) ) {
 	      die($this->translateString('Invalid token'));

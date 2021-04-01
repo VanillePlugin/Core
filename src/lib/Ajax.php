@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.5.6
+ * @version   : 0.5.7
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -12,8 +12,8 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\Post;
-use VanillePlugin\inc\Get;
+use VanillePlugin\inc\HttpPost;
+use VanillePlugin\inc\HttpGet;
 use VanillePlugin\int\AjaxInterface;
 use VanillePlugin\int\AdminAjaxInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
@@ -83,12 +83,12 @@ class Ajax extends PluginOptions implements AjaxInterface
 	 */
 	public function isAction($action)
 	{
-		if ( Post::isSetted('action') ) {
-			if ( Post::get('action') == "{$this->getNameSpace()}-{$action}" ) {
+		if ( HttpPost::isSetted('action') ) {
+			if ( HttpPost::get('action') == "{$this->getNameSpace()}-{$action}" ) {
 				return true;
 			}
-		} elseif ( Get::isSetted('action') ) {
-			if ( Get::get('action') == "{$this->getNameSpace()}-{$action}" ) {
+		} elseif ( HttpGet::isSetted('action') ) {
+			if ( HttpGet::get('action') == "{$this->getNameSpace()}-{$action}" ) {
 				return true;
 			}
 		}

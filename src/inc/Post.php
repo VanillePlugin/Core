@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.5.6
+ * @version   : 0.5.7
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,40 +16,62 @@ final class Post
 {
 	/**
 	 * @access public
-	 * @param string $item null
+	 * @param void
+	 * @return object
+	 */
+	public static function get()
+	{
+		global $post;
+		return $post;
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return int
+	 */
+	public static function getId()
+	{
+		global $post;
+		return isset($post->ID) ? $post->ID : false;
+	}
+
+	/**
+	 * @access public
+	 * @param string $key
+	 * @param int $id
+	 * @param bool $single
 	 * @return mixed
 	 */
-	public static function get($item = null)
+	public static function getMeta($key = '', $id = false, $single = true)
 	{
-		if ($item) {
-			return self::isSetted($item) ? $_POST[$item] : false;
-		} else {
-			return $_POST;
-		}
+		$id = ($id) ? $id : self::getId();
+		return get_post_meta($id,$key,$single);
 	}
 
 	/**
 	 * @access public
-	 * @param string $item
-	 * @param mixed $value
-	 * @return void
-	 */
-	public static function set($item, $value)
-	{
-		$_POST[$item] = $value;
-	}
-
-	/**
-	 * @access public
-	 * @param string $item null
+	 * @param string $key
+	 * @param string $value
+	 * @param int $id
 	 * @return bool
 	 */
-	public static function isSetted($item = null)
+	public static function updateMeta($key, $value, $id = false)
 	{
-		if ($item) {
-			return isset($_POST[$item]);
-		} else {
-			return isset($_POST);
-		}
+		$id = ($id) ? $id : self::getId();
+		return update_post_meta($id,$key,$value);
+	}
+
+	/**
+	 * @access public
+	 * @param string $key
+	 * @param string $value
+	 * @param int $id
+	 * @return bool
+	 */
+	public static function deleteMeta($key, $value = '', $id = false)
+	{
+		$id = ($id) ? $id : self::getId();
+		return delete_post_meta($id,$key,$value);
 	}
 }

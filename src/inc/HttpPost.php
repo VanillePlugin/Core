@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.5.6
+ * @version   : 0.5.7
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -12,7 +12,7 @@
 
 namespace VanillePlugin\inc;
 
-final class Get
+final class HttpPost
 {
 	/**
 	 * @access public
@@ -22,9 +22,9 @@ final class Get
 	public static function get($item = null)
 	{
 		if ($item) {
-			return self::isSetted($item) ? $_GET[$item] : false;
+			return self::isSetted($item) ? $_POST[$item] : false;
 		} else {
-			return $_GET;
+			return $_POST;
 		}
 	}
 
@@ -36,9 +36,9 @@ final class Get
 	 */
 	public static function set($item, $value)
 	{
-		$_GET[$item] = $value;
+		$_POST[$item] = $value;
 	}
-	
+
 	/**
 	 * @access public
 	 * @param string $item null
@@ -47,9 +47,9 @@ final class Get
 	public static function isSetted($item = null)
 	{
 		if ($item) {
-			return isset($_GET[$item]);
+			return isset($_POST[$item]);
 		} else {
-			return isset($_GET);
+			return isset($_POST);
 		}
 	}
 }

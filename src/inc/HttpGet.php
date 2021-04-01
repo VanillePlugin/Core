@@ -12,7 +12,7 @@
 
 namespace VanillePlugin\inc;
 
-final class Upload
+final class HttpGet
 {
 	/**
 	 * @access public
@@ -22,9 +22,9 @@ final class Upload
 	public static function get($item = null)
 	{
 		if ($item) {
-			return self::isSetted($item) ? $_FILES[$item] : false;
+			return self::isSetted($item) ? $_GET[$item] : false;
 		} else {
-			return $_FILES;
+			return $_GET;
 		}
 	}
 
@@ -36,7 +36,7 @@ final class Upload
 	 */
 	public static function set($item, $value)
 	{
-		$_FILES[$item] = $value;
+		$_GET[$item] = $value;
 	}
 	
 	/**
@@ -47,25 +47,9 @@ final class Upload
 	public static function isSetted($item = null)
 	{
 		if ($item) {
-			return isset($_FILES[$item]);
+			return isset($_GET[$item]);
 		} else {
-			return isset($_FILES);
+			return isset($_GET);
 		}
-	}
-
-	/**
-	 * @access public
-	 * @param string $upload
-	 * @param string $file null
-	 * @return mixed
-	 */
-	public static function doUpload($upload, $file = null)
-	{
-		if ( isset($_FILES) && !$_FILES['file']['error'] ) {
-			$tmp = ($file) ? $file : $_FILES['file']['tmp_name'];
-			$name = ($file) ? basename($file) : $_FILES['file']['name'];
-			move_uploaded_file($tmp, "{$upload}/{$name}");
-			return "{$upload}/{$name}";
-		} else return false;
 	}
 }
