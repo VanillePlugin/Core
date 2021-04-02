@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.5.9
+ * @version   : 0.6.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -21,7 +21,7 @@ final class Upload
 	 */
 	public static function get($item = null)
 	{
-		if ($item) {
+		if ( $item ) {
 			return self::isSetted($item) ? $_FILES[$item] : false;
 		} else {
 			return $_FILES;
@@ -46,7 +46,7 @@ final class Upload
 	 */
 	public static function isSetted($item = null)
 	{
-		if ($item) {
+		if ( $item ) {
 			return isset($_FILES[$item]);
 		} else {
 			return isset($_FILES);

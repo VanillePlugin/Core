@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.5.9
+ * @version   : 0.6.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -21,7 +21,7 @@ final class GlobalConst
 	 */
 	public static function pluginDir($path = null)
 	{
-		if ($path) {
+		if ( $path ) {
 			return Stringify::formatPath(WP_PLUGIN_DIR .'/'. $path);
 		}
 		return WP_PLUGIN_DIR;
@@ -34,7 +34,7 @@ final class GlobalConst
 	 */
 	public static function pluginMuDir($path = null)
 	{
-		if ($path) {
+		if ( $path ) {
 			return Stringify::formatPath(WPMU_PLUGIN_DIR .'/'. $path);
 		}
 		return WPMU_PLUGIN_DIR;
@@ -47,7 +47,7 @@ final class GlobalConst
 	 */
 	public static function pluginUrl($url = null)
 	{
-		if ($url) {
+		if ( $url ) {
 			return Stringify::formatUrl(WP_PLUGIN_URL .'/'. $url);
 		}
 		return WP_PLUGIN_URL;
@@ -60,7 +60,7 @@ final class GlobalConst
 	 */
 	public static function contentDir($path = null)
 	{
-		if ($path) {
+		if ( $path ) {
 			return Stringify::formatPath(WP_CONTENT_DIR .'/'. $path);
 		}
 		return WP_CONTENT_DIR;

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.5.9
+ * @version   : 0.6.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -38,8 +38,10 @@ final class Migrate extends Orm
 	 */
 	public function table()
 	{
-		$tables = array_diff(scandir($this->getMigrate()),['.','..','uninstall.sql','upgrade.sql']);
-		if (!$tables) return;
+		$tables = array_diff(scandir($this->getMigrate()),['.','..','asset.lock','uninstall.sql','upgrade.sql']);
+		if ( !$tables ) {
+			return;
+		}
 		foreach ($tables as $table) {
 			$installSql = File::r("{$this->getMigrate()}/{$table}");
 			if ( !empty($installSql) ) {
@@ -59,7 +61,9 @@ final class Migrate extends Orm
 	 */
 	public function upgrade()
 	{
-		if ( !File::exists("{$this->getMigrate()}/upgrade.sql") ) return;
+		if ( !File::exists("{$this->getMigrate()}/upgrade.sql") ) {
+			return;
+		}
 		$upgradeSql = File::r("{$this->getMigrate()}/upgrade.sql");
 		if ( !empty($upgradeSql) ) {
 			$upgradeSql = Stringify::replace('[DBPREFIX]', $this->prefix, $upgradeSql);
@@ -76,12 +80,25 @@ final class Migrate extends Orm
 	 */
 	public function rollback()
 	{
-		if ( !File::exists("{$this->getMigrate()}/uninstall.sql") ) return;
+		if ( !File::exists("{$this->getMigrate()}/uninstall.sql") ) {
+			return;
+		}
 		$uninstallSql = File::r("{$this->getMigrate()}/uninstall.sql");
 		if ( !empty($uninstallSql) ) {
 			$uninstallSql = Stringify::replace('[DBPREFIX]', $this->prefix, $uninstallSql);
 			$uninstallSql = Stringify::replace('[PREFIX]', $this->getPrefix(), $uninstallSql);
 			$this->query($uninstallSql);
 		}
+	}
+
+	/**
+	 * Has table lock
+	 *
+	 * @param void
+	 * @return bool
+	 */
+	public function hasTable()
+	{
+		return File::exists("{$this->getMigrate()}/asset.lock");
 	}
 }
