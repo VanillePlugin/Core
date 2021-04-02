@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.5.8
+ * @version   : 0.5.9
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -45,11 +45,12 @@ class Orm extends Db implements OrmInterface
 	 *
 	 * @access public
 	 * @param string $sql
+	 * @param mixed $args
 	 * @return mixed
 	 */
-	public function prepare($sql)
+	public function prepare($sql, $args)
 	{
-		return $this->db->prepare($sql);
+		return $this->db->prepare($sql,$args);
 	}
 
 	/**
