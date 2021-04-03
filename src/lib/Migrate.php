@@ -33,12 +33,13 @@ final class Migrate extends Orm
 	/**
 	 * Create Plugin Tables
 	 *
+	 * @access public
 	 * @param void
 	 * @return void
 	 */
 	public function table()
 	{
-		$tables = array_diff(scandir($this->getMigrate()),['.','..','asset.lock','uninstall.sql','upgrade.sql']);
+		$tables = array_diff(scandir($this->getMigrate()),['.','..','migrate.lock','uninstall.sql','upgrade.sql']);
 		if ( !$tables ) {
 			return;
 		}
@@ -51,11 +52,13 @@ final class Migrate extends Orm
 				$this->query($installSql);
 			}
 		}
+		$this->lock();
 	}
 
 	/**
 	 * Upgrade Plugin Tables
 	 *
+	 * @access public
 	 * @param void
 	 * @return void
 	 */
@@ -75,6 +78,7 @@ final class Migrate extends Orm
 	/**
 	 * Remove Plugin Tables
 	 *
+	 * @access public
 	 * @param void
 	 * @return void
 	 */
@@ -94,11 +98,24 @@ final class Migrate extends Orm
 	/**
 	 * Has table lock
 	 *
+	 * @access public
 	 * @param void
 	 * @return bool
 	 */
-	public function hasTable()
+	public function isMigrated()
 	{
-		return File::exists("{$this->getMigrate()}/asset.lock");
+		return File::exists("{$this->getMigrate()}/migrate.lock");
+	}
+
+	/**
+	 * Create lock file
+	 *
+	 * @access private
+	 * @param void
+	 * @return void
+	 */
+	private function lock()
+	{
+		File::w("{$this->getMigrate()}/migrate.lock");
 	}
 }

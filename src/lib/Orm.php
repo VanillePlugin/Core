@@ -202,4 +202,18 @@ class Orm extends Db implements OrmInterface
 	{
 		return $this->db->get_results($sql,$type);
 	}
+
+	/**
+	 * Check table
+	 *
+	 * @access public
+	 * @param string $table
+	 * @return int
+	 */
+	public function hasTable($table = '')
+	{
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$sql = "SHOW TABLES LIKE '{$prefix}{$table}'";
+		return $this->db->query($sql);
+	}
 }
