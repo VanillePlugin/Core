@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.1
+ * @version   : 0.6.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -58,6 +58,18 @@ final class Asset extends PluginOptions
 	public function hasAsset()
 	{
 		return File::exists("{$this->dir}/asset.lock");
+	}
+
+	/**
+	 * Lock asset
+	 *
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public function lock()
+	{
+		File::w("{$this->dir}/asset.lock");
 	}
 
 	/**
@@ -117,7 +129,7 @@ final class Asset extends PluginOptions
 					if ( File::w("{$this->dir}/{$archive}", $response->getBody()) ) {
 						if ( $this->extract("{$this->dir}/{$archive}") && $this->check() ) {
 							$cdn = false;
-							File::w("{$this->dir}/asset.lock");
+							$this->lock();
 						}
 					}
 				}
@@ -151,7 +163,7 @@ final class Asset extends PluginOptions
 			}
 		}
 		if ( $this->check() ) {
-			File::w("{$this->dir}/asset.lock");
+			$this->lock();
 		}
 	}
 

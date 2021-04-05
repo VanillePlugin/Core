@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.1
+ * @version   : 0.6.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -141,13 +141,21 @@ class Orm extends Db implements OrmInterface
 	 *
 	 * @access public
 	 * @param string $table
-	 * @return int
+	 * @param bool $resetId
+	 * @return mixed
 	 */
-	public function deleteAll($table)
+	public function deleteAll($table, $resetId = true)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "DELETE FROM {$prefix}{$table}";
-		return $this->db->query($sql);
+		if ( ($result = $this->db->query($sql)) ) {
+			if ( $resetId ) {
+				$sql = "ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = 1";
+				$this->db->query($sql);
+			}
+			return $result;
+		}
+		return false;
 	}
 
 	/**
