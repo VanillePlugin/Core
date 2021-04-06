@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.2
+ * @version   : 0.6.3
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -38,16 +38,14 @@ class Queue extends Logger
 	 * @param string $name
 	 * @return void
 	 */
-	public function add($item, $name = 'in')
+	public function add($item = '', $name = 'in')
 	{
-		if ( $item ) {
-			if ( $this->isDebug(true) ) {
-				$this->log("Add {$item} to queue");
-			}
-			$queue = $this->get("{$name}-queue");
-			$queue[] = $item;
-			$this->setTransient("{$name}-queue",$queue);
+		$queue = $this->get($name);
+		$queue[] = $item;
+		if ( $this->isDebug(true) ) {
+			$this->log("Add {$item} to queue");
 		}
+		$this->set($queue,$name);
 	}
 
 	/**
@@ -58,9 +56,9 @@ class Queue extends Logger
 	 * @param string $name
 	 * @return bool
 	 */
-	public function has($item, $name = 'in')
+	public function has($item = '', $name = 'in')
 	{
-		if ( Stringify::contains($this->get("{$name}-queue"), $item) ) {
+		if ( Stringify::contains($this->get($name), $item) ) {
 			if ( $this->isDebug(true) ) {
 				$this->log("{$item} in queue");
 			}
@@ -70,46 +68,43 @@ class Queue extends Logger
 	}
 
 	/**
-	 * Get queue
-	 * 
-	 * @access public
-	 * @param string $name
-	 * @return mixed
-	 */
-	public function get($name = 'in')
-	{
-		$queue = $this->getTransient("{$name}-queue");
-		return ($queue) ? $queue : [];
-	}
-
-	/**
-	 * Delete queue 
-	 * 
-	 * @access public
-	 * @param string $item
-	 * @param string $name
-	 * @return void
-	 */
-	public function delete($item = false, $name = 'in')
-	{
-		$queue = $this->get("{$name}-queue");
-		if ( $item && isset($queue[$item]) ) {
-			unset($queue[$item]);
-		} else {
-			array_pop($queue);
-		}
-		$this->setTransient('in-queue',$queue);
-	}
-
-	/**
 	 * Clear queue
 	 * 
 	 * @access public
-	 * @param void
+	 * @param string $name
 	 * @return void
 	 */
-	public function clear()
+	public function delete($name = 'in')
 	{
-		$this->setTransient('in-queue',[]);
+		$this->setTransient("{$name}-queue",[]);
+	}
+
+	/**
+	 * Get queue
+	 * 
+	 * @access private
+	 * @param string $name
+	 * @return array
+	 */
+	private function get($name = 'in')
+	{
+		if ( !($queue = $this->getTransient("{$name}-queue")) ) {
+			$queue = [];
+			$this->set($queue,$name);
+		}
+		return $queue;
+	}
+
+	/**
+	 * Set queue
+	 * 
+	 * @access private
+	 * @param array $value
+	 * @param string $name
+	 * @return array
+	 */
+	private function set($value = [], $name = 'in')
+	{
+		$this->setTransient("{$name}-queue",$value);
 	}
 }

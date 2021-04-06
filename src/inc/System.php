@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.2
+ * @version   : 0.6.3
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -38,15 +38,7 @@ final class System
 	 */
 	public static function getMemoryLimit()
 	{
-		if ( function_exists('ini_get') ) {
-			$limit = ini_get('memory_limit');
-		} else {
-			$limit = '128M';
-		}
-		if ( !$limit || $limit === -1 ) {
-			$limit = '32000M';
-		}
-		return intval($limit) * 1024 * 1024;
+		return memory_get_peak_usage();
 	}
 
 	/**

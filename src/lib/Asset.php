@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.2
+ * @version   : 0.6.3
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -55,7 +55,7 @@ final class Asset extends PluginOptions
 	 * @param void
 	 * @return bool
 	 */
-	public function hasAsset()
+	public function hasAssets()
 	{
 		return File::exists("{$this->dir}/asset.lock");
 	}
