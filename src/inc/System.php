@@ -38,7 +38,21 @@ final class System
 	 */
 	public static function getMemoryLimit()
 	{
-		return memory_get_peak_usage();
+		if ( function_exists('ini_get') ) {
+			$limit = ini_get('memory_limit');
+			if ( Stringify::contains(Stringify::lowercase($limit), 'g') ) {
+				$limit = intval($limit) * 1024;
+				$limit = "{$limit}M";
+			}
+		} else {
+			// Default
+			$limit = '128M';
+		}
+		if ( !$limit || $limit === -1 ) {
+			// Unlimited
+			$limit = '32000M';
+		}
+		return intval($limit) * 1024 * 1024;
 	}
 
 	/**
