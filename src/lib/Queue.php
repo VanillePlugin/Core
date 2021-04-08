@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.4
+ * @version   : 0.6.5
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -13,7 +13,6 @@
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\PluginNameSpaceInterface;
-use VanillePlugin\inc\System;
 use VanillePlugin\inc\Stringify;
 
 class Queue extends Logger
@@ -25,9 +24,6 @@ class Queue extends Logger
 	{
         // Init plugin config
         $this->initConfig($plugin);
-        if ( System::isMemoryOut() ) {
-        	die();
-        }
 	}
 
 	/**
