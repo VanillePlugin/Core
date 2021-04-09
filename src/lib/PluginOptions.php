@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.5
+ * @version   : 0.6.6
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -31,7 +31,7 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param array $args null
-	 * @return void
+	 * @return mixed
 	 */
 	protected function doPluginAction($hook, $args = null)
 	{
@@ -44,7 +44,7 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param array $args null
-	 * @return void
+	 * @return mixed
 	 */
 	protected function addPluginAction($hook, $args = null)
 	{
@@ -57,7 +57,7 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param array $args null
-	 * @return void
+	 * @return mixed
 	 */
 	protected function addPluginFilter($hook, $args = null)
 	{
@@ -71,11 +71,24 @@ class PluginOptions extends WordPress
 	 * @param string $hook
 	 * @param mixed $value
 	 * @param array $args null
-	 * @return void
+	 * @return mixed
 	 */
 	protected function applyPluginFilter($hook, $value, $args = null)
 	{
 		return $this->applyFilter("{$this->getNameSpace()}-{$hook}",$value,$args);
+	}
+
+	/**
+	 * Has plugin filter
+	 *
+	 * @access protected
+	 * @param string $hook
+	 * @param mixed $method
+	 * @return mixed
+	 */
+	protected function hasPluginFilter($hook, $method)
+	{
+		return $this->hasFilter("{$this->getNameSpace()}-{$hook}",$method);
 	}
 
 	/**
