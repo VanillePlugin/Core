@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.7
+ * @version   : 0.6.8
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -30,8 +30,8 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param array $args null
-	 * @return mixed
+	 * @param array $args
+	 * @return void
 	 */
 	protected function doPluginAction($hook, $args = null)
 	{
@@ -43,12 +43,28 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param array $args null
-	 * @return mixed
+	 * @param callable $method
+	 * @param int $priority
+	 * @param int $args
+	 * @return true
 	 */
-	protected function addPluginAction($hook, $args = null)
+	protected function addPluginAction($hook, $method, $priority = 10, $args = 1)
 	{
-		return $this->addAction("{$this->getNameSpace()}-{$hook}",$args);
+		return $this->addAction("{$this->getNameSpace()}-{$hook}",$method,$priority,$args);
+	}
+
+	/**
+	 * Remove plugin action
+	 *
+	 * @access protected
+	 * @param string $hook
+	 * @param callable $method
+	 * @param int $priority
+	 * @return bool
+	 */
+	protected function removePluginAction($hook, $method, $priority = 10)
+	{
+		return $this->removeAction("{$this->getNameSpace()}-{$hook}",$hook,$method,$priority);
 	}
 
 	/**
@@ -56,12 +72,28 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param array $args null
-	 * @return mixed
+	 * @param callable $method
+	 * @param int $priority
+	 * @param int $args
+	 * @return true
 	 */
-	protected function addPluginFilter($hook, $args = null)
+	protected function addPluginFilter($hook, $method, $priority = 10, $args = 1)
 	{
-		return $this->addFilter("{$this->getNameSpace()}-{$hook}",$args);
+		return $this->addFilter("{$this->getNameSpace()}-{$hook}",$method,$priority,$args);
+	}
+
+	/**
+	 * Remove plugin filter
+	 *
+	 * @access protected
+	 * @param string $hook
+	 * @param callable $method
+	 * @param int $priority
+	 * @return bool
+	 */
+	protected function removePluginFilter($hook, $method, $priority = 10)
+	{
+		return $this->removeFilter("{$this->getNameSpace()}-{$hook}",$method,$priority);
 	}
 
 	/**
@@ -70,7 +102,7 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param mixed $value
-	 * @param array $args null
+	 * @param mixed $args
 	 * @return mixed
 	 */
 	protected function applyPluginFilter($hook, $value, $args = null)
@@ -84,7 +116,7 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param mixed $method
-	 * @return mixed
+	 * @return bool
 	 */
 	protected function hasPluginFilter($hook, $method = false)
 	{

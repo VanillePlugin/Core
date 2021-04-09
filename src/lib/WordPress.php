@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.7
+ * @version   : 0.6.8
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -157,9 +157,9 @@ class WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
-	 * @param int $priority 10
-	 * @param int $args 1
-	 * @return inherit
+	 * @param int $priority
+	 * @param int $args
+	 * @return true
 	 */
 	protected function addAction($hook, $method, $priority = 10, $args = 1)
 	{
@@ -184,8 +184,8 @@ class WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
-	 * @param int $priority 10
-	 * @return inherit
+	 * @param int $priority
+	 * @return bool
 	 */
 	protected function removeAction($hook, $method, $priority = 10)
 	{
@@ -224,9 +224,9 @@ class WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
-	 * @param int $priority 10
-	 * @param int $args 1
-	 * @return inherit
+	 * @param int $priority
+	 * @param int $args
+	 * @return true
 	 */
 	protected function addFilter($hook, $method, $priority = 10, $args = 1)
 	{
@@ -251,8 +251,8 @@ class WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param callable $method
-	 * @param int $priority 10
-	 * @return inherit
+	 * @param int $priority
+	 * @return bool
 	 */
 	protected function removeFilter($hook, $method, $priority = 10)
 	{
@@ -267,8 +267,8 @@ class WordPress
 	 * @access protected
 	 * @param string $hook
 	 * @param mixed $value
-	 * @param mixed $args null
-	 * @return inherit
+	 * @param mixed $args
+	 * @return mixed
 	 */
 	protected function applyFilter($hook, $value, $args = null)
 	{
@@ -280,13 +280,13 @@ class WordPress
 	 * @see /reference/functions/has_filter/
 	 *
 	 * @access protected
-	 * @param string $tag
+	 * @param string $hook
 	 * @param callable $method
-	 * @return inherit
+	 * @return bool
 	 */
-	protected function hasFilter($tag, $method = false)
+	protected function hasFilter($hook, $method = false)
 	{
-		return has_filter($tag,$method);
+		return has_filter($hook,$method);
 	}
 
 	/**
@@ -618,7 +618,7 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param void
-	 * @return inherit
+	 * @return bool
 	 */
 	protected function isLoggedIn()
 	{
@@ -633,7 +633,7 @@ class WordPress
 	 * @access protected
 	 * @param mixed $user
 	 * @param string $property
-	 * @return inherit
+	 * @return bool
 	 */
 	protected function isUser($user, $property = 'username')
 	{
@@ -661,7 +661,7 @@ class WordPress
 	 * @param mixed $id null
 	 * @param string $cap
 	 * @param mixed $args
-	 * @return inherit
+	 * @return bool
 	 */
 	protected function hasPermission($id = null, $cap = 'edit_posts', $args = [])
 	{
