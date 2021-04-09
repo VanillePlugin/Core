@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.6
+ * @version   : 0.6.7
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -281,7 +281,7 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $tag
-	 * @param callable $method false
+	 * @param callable $method
 	 * @return inherit
 	 */
 	protected function hasFilter($tag, $method = false)
@@ -298,7 +298,7 @@ class WordPress
 	 * @param string $id
 	 * @param string $path
 	 * @param mixed $deps
-	 * @param mixed $version false
+	 * @param mixed $version
 	 * @param string $media
 	 * @return void
 	 */
@@ -320,8 +320,8 @@ class WordPress
 	 * @param string $id
 	 * @param string $path
 	 * @param mixed $deps
-	 * @param mixed $version false
-	 * @param string $footer false
+	 * @param mixed $version
+	 * @param string $footer
 	 * @return void
 	 */
 	protected function addJS($id, $path, $deps = [], $version = false, $footer = false)
