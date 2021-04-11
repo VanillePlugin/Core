@@ -76,7 +76,7 @@
           "items": [
             {
               "type": "object",
-              "required": ["slug","callable"],
+              "required": ["slug"],
               "properties":{
                 "slug":{
                   "type": "string"

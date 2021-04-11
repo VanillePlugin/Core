@@ -91,7 +91,8 @@ final class Requirement extends Notice implements RequirementInterface
 
 			} else {
 
-				if ( !$this->isActivated($plugin->callable) ) {
+				$callable = isset($plugin->callable) ? $plugin->callable : $plugin->slug;
+				if ( !$this->isActivated($callable) ) {
 					$this->render([
 						'item'   => $name,
 						'notice' => $this->translateString($this->strings['plugin']['activate'])
