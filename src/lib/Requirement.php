@@ -46,22 +46,22 @@ final class Requirement extends Notice implements RequirementInterface
 		// Set strings
 		$this->strings = $this->applyPluginFilter('requirement-strings',[
 			'plugin' => [
-				'install'  => $this->translateString('Required, Please install it'),
-				'activate' => $this->translateString('Required, Please activate it')
+				'install'  => 'Required, Please install it',
+				'activate' => 'Required, Please activate it'
 			],
 			'option' => [
-				'missing' => $this->translateString('Option Required'),
-				'empty'   => $this->translateString('Option Not Defined')
+				'missing' => 'Option Required',
+				'empty'   => 'Option Not Defined'
 			],
 			'template' => [
-				'single'   => $this->translateString('Template Required'),
-				'multiple' => $this->translateString('One Of Templates Required')
+				'single'   => 'Template Required',
+				'multiple' => 'One Of Templates Required'
 			],
 			'module' => [
-				'required' => $this->translateString('Required on server, Please activate it')
+				'required' => 'Required on server, Please activate it'
 			],
 			'php' => [
-				'required' => $this->translateString('Required')
+				'required' => 'Required'
 			]
 		]);
 	}
@@ -86,7 +86,7 @@ final class Requirement extends Notice implements RequirementInterface
 				
 				$this->render([
 					'item'   => $name,
-					'notice' => $this->strings['plugin']['install']
+					'notice' => $this->translateString($this->strings['plugin']['install'])
 				],$this->tpl);
 
 			} else {
@@ -94,7 +94,7 @@ final class Requirement extends Notice implements RequirementInterface
 				if ( !$this->isActivated($plugin->callable) ) {
 					$this->render([
 						'item'   => $name,
-						'notice' => $this->strings['plugin']['activate']
+						'notice' => $this->translateString($this->strings['plugin']['activate'])
 					],$this->tpl);
 				}
 			}
@@ -119,13 +119,13 @@ final class Requirement extends Notice implements RequirementInterface
 			if ( $this->getOption($option->slug) !== $option->value ) {
 				$this->render([
 					'item'   => $name,
-					'notice' => $this->strings['option']['missing']
+					'notice' => $this->translateString($this->strings['option']['missing'])
 				],$this->tpl);
 
 			} else if ( empty($this->getOption($option->slug)) ) {
 				$this->render([
 					'item'   => $name,
-					'notice' => $this->strings['option']['empty']
+					'notice' => $this->translateString($this->strings['option']['empty'])
 				],$this->tpl);
 			}
 		}
@@ -154,10 +154,10 @@ final class Requirement extends Notice implements RequirementInterface
 		if ( !Stringify::contains($slugs, $this->getOption('template')) ) {
 			if ( count($slugs) > 1 ) {
 				$item = implode(', ', $names);
-				$notice = $this->strings['template']['multiple'];
+				$notice = $this->translateString($this->strings['template']['multiple']);
 			} else {
 				$item = trim(implode('', $names));
-				$notice = $this->strings['template']['single'];
+				$notice = $this->translateString($this->strings['template']['single']);
 			}
 			$this->render([
 				'item'   => $item,
@@ -183,7 +183,7 @@ final class Requirement extends Notice implements RequirementInterface
 			if ( !$this->isActivated($module->callable) ) {
 				$this->render([
 					'item'   => $module->name,
-					'notice' => $this->strings['module']['required']
+					'notice' => $this->translateString($this->strings['module']['required'])
 				],$this->tpl);
 			}
 		}
@@ -204,7 +204,7 @@ final class Requirement extends Notice implements RequirementInterface
 		if ( $this->versionCompare(phpversion(),$version,'<') ){
 			$this->render([
 				'item'   => "PHP {$version}",
-				'notice' => $this->strings['php']['required']
+				'notice' => $this->translateString($this->strings['php']['required'])
 			],$this->tpl);
 		};
 	}
