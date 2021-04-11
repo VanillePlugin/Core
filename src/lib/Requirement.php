@@ -20,6 +20,14 @@ use VanillePlugin\inc\Stringify;
 final class Requirement extends Notice implements RequirementInterface
 {
 	/**
+	 * @access private
+	 * @var string $tpl
+	 * @var array $strings
+	 */
+	private $tpl;
+	private $strings;
+
+	/**
 	 * @param PluginNameSpaceInterface $plugin
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin)
@@ -31,6 +39,30 @@ final class Requirement extends Notice implements RequirementInterface
 		$this->init([$this,'requireTemplates']);
 		$this->init([$this,'requireModules']);
 		$this->init([$this,'php']);
+
+		// Set template
+		$this->tpl = $this->applyPluginFilter('requirement-template','admin/inc/notice/requirement');
+		// Set strings
+		$this->strings = $this->applyPluginFilter('requirement-template',[
+			'plugin' => [
+				'install'  => $this->translateString('Required, Please install it'),
+				'activate' => $this->translateString('Required, Please activate it')
+			],
+			'option' => [
+				'missing' => $this->translateString('Option Required'),
+				'empty'   => $this->translateString('Option Not Defined')
+			],
+			'template' => [
+				'single'   => $this->translateString('Template Required'),
+				'multiple' => $this->translateString('One Of Templates Required')
+			],
+			'module' => [
+				'required' => $this->translateString('Required on server, Please activate it')
+			],
+			'php' => [
+				'required' => $this->translateString('Required')
+			]
+		]);
 	}
 
 	/**
@@ -53,16 +85,16 @@ final class Requirement extends Notice implements RequirementInterface
 				
 				$this->render([
 					'item'   => $name,
-					'notice' => $this->translateString('Required, Please install it')
-				],'admin/notice/requirement');
+					'notice' => $this->strings['plugin']['install']
+				],$this->tpl);
 
 			} else {
 
 				if ( !$this->isActivated($plugin->callable) ) {
 					$this->render([
 						'item'   => $name,
-						'notice' => $this->translateString('Required, Please activate it')
-					],'admin/notice/requirement');
+						'notice' => $this->strings['plugin']['activate']
+					],$this->tpl);
 				}
 			}
 		}
@@ -86,14 +118,14 @@ final class Requirement extends Notice implements RequirementInterface
 			if ( $this->getOption($option->slug) !== $option->value ) {
 				$this->render([
 					'item'   => $name,
-					'notice' => $this->translateString('Option Required')
-				],'admin/notice/requirement');
+					'notice' => $this->strings['option']['missing']
+				],$this->tpl);
 
 			} else if ( empty($this->getOption($option->slug)) ) {
 				$this->render([
 					'item'   => $name,
-					'notice' => $this->translateString('Option Not Defined')
-				],'admin/notice/requirement');
+					'notice' => $this->strings['option']['empty']
+				],$this->tpl);
 			}
 		}
 	}
@@ -121,15 +153,15 @@ final class Requirement extends Notice implements RequirementInterface
 		if ( !Stringify::contains($slugs, $this->getOption('template')) ) {
 			if ( count($slugs) > 1 ) {
 				$item = implode(', ', $names);
-				$notice = $this->translateString('One Of Templates Required');
+				$notice = $this->strings['template']['multiple'];
 			} else {
 				$item = trim(implode('', $names));
-				$notice = $this->translateString('Template Required');
+				$notice = $this->strings['template']['single'];
 			}
 			$this->render([
 				'item'   => $item,
 				'notice' => $notice,
-			],'admin/notice/requirement');
+			],$this->tpl);
 		}
 	}
 
@@ -150,8 +182,8 @@ final class Requirement extends Notice implements RequirementInterface
 			if ( !$this->isActivated($module->callable) ) {
 				$this->render([
 					'item'   => $module->name,
-					'notice' => $this->translateString('Required, Please activate it')
-				],'admin/notice/requirement');
+					'notice' => $this->strings['module']['required']
+				],$this->tpl);
 			}
 		}
 	}
@@ -171,8 +203,8 @@ final class Requirement extends Notice implements RequirementInterface
 		if ( $this->versionCompare(phpversion(),$version,'<') ){
 			$this->render([
 				'item'   => "PHP {$version}",
-				'notice' => $this->translateString('Required')
-			],'admin/notice/requirement');
+				'notice' => $this->strings['php']['required']
+			],$this->tpl);
 		};
 	}
 
@@ -186,6 +218,7 @@ final class Requirement extends Notice implements RequirementInterface
 		if ( File::exists($this->getPluginDir("/{$slug}/{$slug}.php")) ) {
 			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -195,8 +228,12 @@ final class Requirement extends Notice implements RequirementInterface
 	 */
 	protected function isActivated($callable)
 	{
-		if ( $this->isClass($callable) || $this->isFunction($callable) ) {
+		if ( $this->isPlugin("{$callable}/{$callable}.php") ) {
+			return true;
+			
+		} elseif ( $this->isClass($callable) || $this->isFunction($callable) ) {
 			return true;
 		}
+		return false;
 	}
 }
