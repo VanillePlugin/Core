@@ -42,8 +42,9 @@ final class Requirement extends Notice implements RequirementInterface
 
 		// Set template
 		$this->tpl = $this->applyPluginFilter('requirement-template','admin/inc/notice/requirement');
+		
 		// Set strings
-		$this->strings = $this->applyPluginFilter('requirement-template',[
+		$this->strings = $this->applyPluginFilter('requirement-strings',[
 			'plugin' => [
 				'install'  => $this->translateString('Required, Please install it'),
 				'activate' => $this->translateString('Required, Please activate it')
