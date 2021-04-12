@@ -258,6 +258,18 @@ class File
 	}
 
 	/**
+	 * Get file lines
+	 *
+	 * @access public
+	 * @param int $length
+	 * @return mixed
+	 */
+	public function getLines($length = null)
+	{
+		return fgets($this->handler, $length);
+	}
+
+	/**
 	 * Read file & get content
 	 *
 	 * @access public

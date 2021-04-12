@@ -39,17 +39,16 @@ final class Migrate extends Orm
 	 */
 	public function table()
 	{
-		$tables = array_diff(scandir($this->getMigrate()),['.','..','migrate.lock','uninstall.sql','upgrade.sql']);
-		if ( !$tables ) {
+		if ( !($tables = $this->load()) ) {
 			return;
 		}
 		foreach ($tables as $table) {
-			$installSql = File::r("{$this->getMigrate()}/{$table}");
-			if ( !empty($installSql) ) {
-				$installSql = Stringify::replace('[DBPREFIX]', $this->prefix, $installSql);
-				$installSql = Stringify::replace('[PREFIX]', $this->getPrefix(), $installSql);
-				$installSql = Stringify::replace('[COLLATE]', $this->collate, $installSql);
-				$this->query($installSql);
+			$sql = File::r("{$this->getMigrate()}/{$table}");
+			if ( !empty($sql) ) {
+				$sql = Stringify::replace('[DBPREFIX]', $this->prefix, $sql);
+				$sql = Stringify::replace('[PREFIX]', $this->getPrefix(), $sql);
+				$sql = Stringify::replace('[COLLATE]', $this->collate, $sql);
+				$this->query($sql);
 			}
 		}
 		$this->lock();
@@ -64,14 +63,27 @@ final class Migrate extends Orm
 	 */
 	public function upgrade()
 	{
-		if ( !File::exists("{$this->getMigrate()}/upgrade.sql") ) {
+		if ( !File::exists($file = "{$this->getMigrate()}/upgrade.sql") ) {
 			return;
 		}
-		$upgradeSql = File::r("{$this->getMigrate()}/upgrade.sql");
-		if ( !empty($upgradeSql) ) {
-			$upgradeSql = Stringify::replace('[DBPREFIX]', $this->prefix, $upgradeSql);
-			$upgradeSql = Stringify::replace('[PREFIX]', $this->getPrefix(), $upgradeSql);
-			$this->query($upgradeSql);
+		if ( File::r($file) ) {
+			$handle = fopen($file,'r');
+			if ( $handle ) {
+			    while ( ($line = fgets($handle)) !== false ) {
+					$sql = Stringify::replace('[DBPREFIX]', $this->prefix, $line);
+					$sql = Stringify::replace('[PREFIX]', $this->getPrefix(), $sql);
+			    	if ( Stringify::contains($sql,'ADD') ) {
+			    		$column = $this->parseColumn($sql);
+			    		$table = $this->parseTable($sql);
+			    		if ( !$this->query("SHOW COLUMNS FROM `{$table}` LIKE '{$column}';") ) {
+			    			$this->query($sql);
+			    		}
+			    	} else {
+			    		$this->query($sql);
+			    	}
+			    }
+			    fclose($handle);
+			}
 		}
 	}
 
@@ -84,14 +96,13 @@ final class Migrate extends Orm
 	 */
 	public function rollback()
 	{
-		if ( !File::exists("{$this->getMigrate()}/uninstall.sql") ) {
+		if ( !File::exists($file = "{$this->getMigrate()}/uninstall.sql") ) {
 			return;
 		}
-		$uninstallSql = File::r("{$this->getMigrate()}/uninstall.sql");
-		if ( !empty($uninstallSql) ) {
-			$uninstallSql = Stringify::replace('[DBPREFIX]', $this->prefix, $uninstallSql);
-			$uninstallSql = Stringify::replace('[PREFIX]', $this->getPrefix(), $uninstallSql);
-			$this->query($uninstallSql);
+		if ( !empty(($sql = File::r($file))) ) {
+			$sql = Stringify::replace('[DBPREFIX]', $this->prefix, $sql);
+			$sql = Stringify::replace('[PREFIX]', $this->getPrefix(), $sql);
+			$this->query($sql);
 		}
 	}
 
@@ -108,6 +119,30 @@ final class Migrate extends Orm
 	}
 
 	/**
+	 * Parse table name for Upgrade
+	 *
+	 * @access private
+	 * @param string $query
+	 * @return string
+	 */
+	private function parseTable($query)
+	{
+		return Stringify::match('/ALTER\sTABLE\s`(.*)`\sADD/s',$query);
+	}
+
+	/**
+	 * Parse column name for Upgrade
+	 *
+	 * @access private
+	 * @param string $query
+	 * @return string
+	 */
+	private function parseColumn($query)
+	{
+		return Stringify::match('/ADD\s`(.*)`\s/s',$query);
+	}
+
+	/**
 	 * Create lock file
 	 *
 	 * @access private
@@ -117,5 +152,23 @@ final class Migrate extends Orm
 	private function lock()
 	{
 		File::w("{$this->getMigrate()}/migrate.lock");
+	}
+
+	/**
+	 * Load SQL files
+	 *
+	 * @access private
+	 * @param void
+	 * @return array
+	 */
+	private function load()
+	{
+		return array_diff(scandir($this->getMigrate()),[
+			'.',
+			'..',
+			'migrate.lock',
+			'uninstall.sql',
+			'upgrade.sql'
+		]);
 	}
 }
