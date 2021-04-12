@@ -133,11 +133,9 @@ final class Rewrite extends PluginOptions
      */
     public function getRules($rules)
     {
-        if ( Server::isApache() ) {
-            $this->rules = Stringify::replaceArray($this->vars,$this->rules);
-            $this->rules = Stringify::replace('{root}',site_url('','relative'),$this->rules);
-            $rules = "{$rules}{$this->rules}";
-        }
+        $this->rules = Stringify::replaceArray($this->vars,$this->rules);
+        $this->rules = Stringify::replace('{root}',site_url('','relative'),$this->rules);
+        $rules = "{$rules}{$this->rules}";
         return $rules;
     }
 

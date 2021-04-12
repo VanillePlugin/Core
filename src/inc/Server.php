@@ -159,20 +159,4 @@ final class Server
 		}
 		return false;
 	}
-
-    /**
-     * @access public
-     * @param void
-     * @return bool
-     */
-    public static function isApache()
-    {
-        if ( function_exists('apache_get_version') ) {
-            $apache = apache_get_version();
-            $apache = Stringify::replace('Apache/','',$apache);
-            $apache = substr($apache,0,3);
-            return (floatval($apache) >= 2.4) ? true : false;
-        }
-        return false;
-    }
 }
