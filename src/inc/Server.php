@@ -21,7 +21,7 @@ final class Server
 	 */
 	public static function get($item = null)
 	{
-		if ($item) {
+		if ( $item ) {
 			return self::isSetted($item) ? $_SERVER[$item] : false;
 		} else {
 			return $_SERVER;
@@ -46,7 +46,7 @@ final class Server
 	 */
 	public static function isSetted($item = null)
 	{
-		if ($item) {
+		if ( $item ) {
 			return isset($_SERVER[$item]);
 		} else {
 			return isset($_SERVER);

@@ -183,6 +183,18 @@ class File
 	}
 
 	/**
+	 * Get file stream
+	 *
+	 * @access public
+	 * @param void
+	 * @return stream
+	 */
+	public function getStream()
+	{
+		return $this->handler;
+	}
+
+	/**
 	 * Get file last access
 	 *
 	 * @access public
@@ -627,9 +639,27 @@ class File
 	public static function w($path, $input = '', $append = false)
 	{
 		$flag = 0;
-		if ($append) {
+		if ( $append ) {
 			$flag = FILE_APPEND;
 		}
 		return @file_put_contents($path,$input,$flag);
+	}
+
+	/**
+	 * Download file
+	 *
+	 * @access public
+	 * @param string $path
+	 * @param bool $unlink
+	 * @param string $timeout
+	 * @param bool $verify
+	 * @return void
+	 */
+	public static function download($path, $unlink = true, $timeout = 300, $verify = false)
+	{
+		download_url($path,$timeout,$verify);
+		if ( $unlink ) {
+			@unlink($path);
+		}
 	}
 }
