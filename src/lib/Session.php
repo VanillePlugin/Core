@@ -12,10 +12,9 @@
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\NameSpaceInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
-final class Session extends PluginOptions implements NameSpaceInterface
+final class Session extends PluginOptions
 {
 	/**
 	 * @param PluginNameSpaceInterface $plugin
@@ -94,7 +93,7 @@ final class Session extends PluginOptions implements NameSpaceInterface
      */
     public function isSetted($key = null)
     {
-        if ($key) {
+        if ( $key ) {
             return isset($_SESSION[$this->getNameSpace()][$key]);
         } else {
             return isset($_SESSION);
