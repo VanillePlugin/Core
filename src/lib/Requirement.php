@@ -219,6 +219,9 @@ final class Requirement extends Notice implements RequirementInterface
 	{
 		if ( File::exists($this->getPluginDir("/{$slug}/{$slug}.php")) ) {
 			return true;
+
+		} elseif ( File::exists($this->getPluginDir("/{$slug}.php")) ) {
+			return true;
 		}
 		return false;
 	}
@@ -234,6 +237,9 @@ final class Requirement extends Notice implements RequirementInterface
 			return true;
 			
 		} elseif ( $this->isClass($callable) || $this->isFunction($callable) ) {
+			return true;
+
+		} elseif ( defined($callable) ) {
 			return true;
 		}
 		return false;
