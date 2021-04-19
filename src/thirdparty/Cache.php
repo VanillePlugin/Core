@@ -104,10 +104,8 @@ final class Cache
 		 * @see https://github.com/emrevona/wp-fastest-cache
 		 */
 		if ( method_exists('WpFastestCache','deleteCache') ) {
-			global $wp_fastest_cache;
-            if ( !empty($wp_fastest_cache) ) {
-            	$wp_fastest_cache->deleteCache();
-            }
+			$cache = new \WpFastestCache();
+			$cache->deleteCache();
 		}
 
 		/**
