@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.8
+ * @version   : 0.6.9
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -19,6 +19,7 @@ use VanillePlugin\inc\HttpRequest;
 use VanillePlugin\inc\HttpGet;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Server;
+use VanillePlugin\inc\GlobalConst;
 use VanillePlugin\thirdparty\Translator;
 
 class PluginOptions extends WordPress
@@ -603,31 +604,73 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Return plugin infos via absolute path
+	 * Return plugin info via absolute path,
+	 * {pluginDir}/{pluginMain}.php.
 	 *
 	 * @access protected
 	 * @param string $file
-	 * @return array
+	 * @return mixed
 	 */
-	protected function getPluginInfo($file)
+	protected function getPluginInfo($file = '')
 	{
-		return get_plugin_data($file);
+		if ( function_exists('get_plugin_data') ) {
+			return get_plugin_data($file);
+		}
+		return false;
 	}
 
 	/**
-	 * Return plugin active
+	 * Return plugin data via absolute path,
+	 * {pluginDir}/{pluginMain}.php.
+	 *
+	 * @access protected
+	 * @param string $file
+	 * @param array $header
+	 * @param bool $context
+	 * @return array
+	 */
+	protected function getPluginData($file = '', $header = [], $context = false)
+	{
+		if ( empty($header) ) {
+			$header['version'] = 'Version';
+		}
+		$file = GlobalConst::pluginDir($file);
+		return get_file_data($file,$header,$context);
+	}
+
+	/**
+	 * Return plugin status,
+	 * {pluginDir}/{pluginMain}.php.
 	 *
 	 * @access protected
 	 * @param string $file {pluginDir}/{pluginMain}.php
 	 * @return bool
 	 */
-	protected function isPlugin($file)
+	protected function isPlugin($file = '')
 	{
 		if ( function_exists('is_plugin_active') ) {
 			return is_plugin_active($file);
 		} else {
 			$plugins = $this->applyFilter('active_plugins',$this->getOption('active_plugins'));
 			return in_array($file,$plugins);
+		}
+		return false;
+	}
+
+	/**
+	 * Return plugin version status,
+	 * {pluginDir}/{pluginMain}.php.
+	 *
+	 * @access protected
+	 * @param string $file {pluginDir}/{pluginMain}.php
+	 * @param string $version
+	 * @return bool
+	 */
+	protected function isPluginVersion($file = '', $version = '')
+	{
+		if ( $this->isPlugin($file) ) {
+			$data = $this->getPluginData($file);
+			return $this->versionCompare($data['version'],$version,'>=');
 		}
 		return false;
 	}

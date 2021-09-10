@@ -1,6 +1,6 @@
 {
   "name": "jakiboy/vanilleplugin",
-  "version" : "0.6.8",
+  "version" : "0.6.9",
   "type": "library",
   "description": "WordPress Plugin Framework",
   "keywords": ["VanillePlugin","WordPress","WordPress-Plugin","WordPress-Plugin-Framework","jakiboy"],
@@ -21,8 +21,8 @@
   "require": {
     "php": ">=5.6.30",
     "twig/twig": "1.42.5",
-    "phpfastcache/phpfastcache": "6.1.4",
-    "justinrainbow/json-schema": "5.2.10"
+    "phpfastcache/phpfastcache": "6.1.5",
+    "justinrainbow/json-schema": "5.2.11"
   },
   "autoload": {
     "psr-4" : {
