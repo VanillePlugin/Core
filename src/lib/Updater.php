@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -55,7 +55,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 
 		// Check WordPress update
 		if ( wp_installing() ) {
-			return $transient;
+			return;
 		}
 
 		// Init updater config
@@ -123,7 +123,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 	 * @access public
 	 * @param object $transient
 	 * @param string $action
-	 * @param array $args
+	 * @param object $args
 	 * @return mixed
 	 */
 	public function getInfo($transient, $action, $args)

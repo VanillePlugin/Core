@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -75,70 +75,79 @@ class View extends PluginOptions implements ViewInterface
         }
     
 		// Add view global functions
-        $env->addFunction(Template::extend('dump', function ($var){
+        $env->addFunction(Template::extend('dump', function($var){
             var_dump($var);
         }));
-        $env->addFunction(Template::extend('settingsFields', function ($group){
-            settings_fields($group);
-        }));
-        $env->addFunction(Template::extend('settingsSections', function ($group){
-            do_settings_sections($group);
-        }));
-        $env->addFunction(Template::extend('submitButton', function (){
-            submit_button();
-        }));
-        $env->addFunction(Template::extend('isLoggedIn', function (){
-            return $this->isLoggedIn();
-        }));
-        $env->addFunction(Template::extend('isDebug', function ($global = false){
-            return $this->isDebug($global);
-        }));
-        $env->addFunction(Template::extend('getConfig', function ($config){
-            return $this->getConfig($config);
-        }));
-        $env->addFunction(Template::extend('getPluginOption', function ($option, $type = 'array', $default = false, $lang = null){
-            return $this->getPluginOption($option,$type,$default,$lang);
-        }));
-        $env->addFunction(Template::extend('getRoot', function (){
-            return $this->getRoot();
-        }));
-        $env->addFunction(Template::extend('getBaseUrl', function (){
-            return $this->getBaseUrl();
-        }));
-        $env->addFunction(Template::extend('getAssetUrl', function (){
-            return $this->getAssetUrl();
-        }));
-        $env->addFunction(Template::extend('nonce', function ($action = -1){
-            return $this->createNonce($action);
-        }));
-        $env->addFunction(Template::extend('translate', function ($string){
-            return $this->translateString($string);
-        }));
-        $env->addFunction(Template::extend('JSONdecode', function ($json){
-            return Json::decode($json);
-        }));
-        $env->addFunction(Template::extend('JSONencode', function ($array){
-            return Json::encode($array);
-        }));
-        $env->addFunction(Template::extend('exit', function (){
+        $env->addFunction(Template::extend('exit', function(){
             exit;
         }));
-        $env->addFunction(Template::extend('serialize', function ($data){
+        $env->addFunction(Template::extend('exit', function($status = null){
+            exit($status);
+        }));
+        $env->addFunction(Template::extend('getSession', function($var = null){
+            return Session::get($var);
+        }));
+        $env->addFunction(Template::extend('settingsFields', function($group){
+            settings_fields($group);
+        }));
+        $env->addFunction(Template::extend('settingsSections', function($group){
+            do_settings_sections($group);
+        }));
+        $env->addFunction(Template::extend('submitButton', function(){
+            submit_button();
+        }));
+        $env->addFunction(Template::extend('isLoggedIn', function(){
+            return $this->isLoggedIn();
+        }));
+        $env->addFunction(Template::extend('isDebug', function($global = false){
+            return $this->isDebug($global);
+        }));
+        $env->addFunction(Template::extend('getConfig', function($config){
+            return $this->getConfig($config);
+        }));
+        $env->addFunction(Template::extend('getPluginOption', function($option, $type = 'array', $default = false, $lang = null){
+            return $this->getPluginOption($option,$type,$default,$lang);
+        }));
+        $env->addFunction(Template::extend('getOption', function($option){
+            return $this->getOption($option);
+        }));
+        $env->addFunction(Template::extend('getRoot', function(){
+            return $this->getRoot();
+        }));
+        $env->addFunction(Template::extend('getBaseUrl', function(){
+            return $this->getBaseUrl();
+        }));
+        $env->addFunction(Template::extend('getAssetUrl', function(){
+            return $this->getAssetUrl();
+        }));
+        $env->addFunction(Template::extend('nonce', function($action = -1){
+            return $this->createNonce($action);
+        }));
+        $env->addFunction(Template::extend('translate', function($string){
+            return $this->translateString($string);
+        }));
+        $env->addFunction(Template::extend('decodeJSON', function($json = ''){
+            return Json::decode($json);
+        }));
+        $env->addFunction(Template::extend('encodeJSON', function($array = []){
+            return Json::encode($array);
+        }));
+        $env->addFunction(Template::extend('serialize', function($data){
             return Stringify::serialize($data);
         }));
-        $env->addFunction(Template::extend('unserialize', function ($string){
+        $env->addFunction(Template::extend('unserialize', function($string){
             return Stringify::unserialize($string);
         }));
-        $env->addFunction(Template::extend('formatDate', function ($date, $format = 'm/d/Y H:i:s', $to = 'd/m/Y H:i:s'){
-            return Date::toString($date, $format, $to);
+        $env->addFunction(Template::extend('formatDate', function($date, $format = 'm/d/Y H:i', $to = 'd/m/Y H:i'){
+            return Date::toString($date,$format,$to);
         }));
-        $env->addFunction(Template::extend('hasFilter', function ($hook){
+        $env->addFunction(Template::extend('hasFilter', function($hook){
             return $this->hasFilter($hook);
         }));
-        $env->addFunction(Template::extend('applyFilter', function ($hook, $value){
+        $env->addFunction(Template::extend('applyFilter', function($hook, $value){
             return $this->applyFilter($hook,$value);
         }));
-        $env->addFunction(Template::extend('doAction', function ($hook, $args = null){
+        $env->addFunction(Template::extend('doAction', function($hook, $args = null){
             $this->doPluginAction($hook,$args);
         }));
 

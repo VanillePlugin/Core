@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -64,6 +64,19 @@ final class GlobalConst
 			return Stringify::formatPath(WP_CONTENT_DIR .'/'. $path);
 		}
 		return WP_CONTENT_DIR;
+	}
+
+	/**
+	 * @access public
+	 * @param string $path
+	 * @return string
+	 */
+	public static function rootDir($path = null)
+	{
+		if ( $path ) {
+			return Stringify::formatPath(ABSPATH .'/'. $path);
+		}
+		return ABSPATH;
 	}
 
 	/**

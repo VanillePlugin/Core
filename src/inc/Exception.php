@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -13,23 +13,24 @@
 namespace VanillePlugin\inc;
 
 use \Exception as MainException;
+use \WP_Error;
 
 class Exception extends MainException
 {
 	/**
-	 * Handle shutdown exception
+	 * Handle shutdown exception.
 	 *
-	 * @access protected
+	 * @access public
 	 * @var array $callable
 	 * @return void
 	 */
-	protected function shutdown($callable)
+	public function handle($callable)
 	{
 		register_shutdown_function($callable);
 	}
 
 	/**
-	 * Get last error
+	 * Get last error.
 	 *
 	 * @access public
 	 * @var void
@@ -41,7 +42,7 @@ class Exception extends MainException
 	}
 
 	/**
-	 * Clear last error
+	 * Clear last error.
 	 *
 	 * @access public
 	 * @var void
@@ -53,7 +54,7 @@ class Exception extends MainException
 	}
 
 	/**
-	 * Trigger user error
+	 * Trigger user error.
 	 *
 	 * @access public
 	 * @var string $message
@@ -65,18 +66,31 @@ class Exception extends MainException
 		return trigger_error($message,$type);
 	}
 
-    /**
-	 * Log user error
+	/**
+	 * Return WordPress error object.
 	 *
-     * @access public
-     * @param string $message
-     * @param string $type
-     * @param string $path
-     * @param array $headers
-     * @return bool
-     */
-    public function log($message = '', $type = 0, $path = null, $headers = null)
-    {
-        return error_log($message,$type,$path,$headers);
-    }
+	 * @access public
+	 * @param string $code
+	 * @param string $message
+	 * @param array $args
+	 * @return object
+	 */
+	public function error($code = '', $message = '', $args = [])
+	{
+	    return new WP_Error($code,$message,$args);
+	}
+
+	/**
+	 * Kill WordPress execution and display HTML message with error message.
+	 *
+	 * @access public
+	 * @param string $message
+	 * @param string $title
+	 * @param array $args
+	 * @return void
+	 */
+	public function except($message = '', $title = '', $args = [])
+	{
+		wp_die($message,$title,$args);
+	}
 }

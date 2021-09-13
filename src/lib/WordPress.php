@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,17 +16,16 @@ use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\GlobalConst;
 
 /**
- * WordPress Main Class Wrapper
+ * WordPress Main Class Wrapper.
  * @see https://developer.wordpress.org/
  *
- * WordPress Class Wrap Global Functions
- * Defines Only Base Functions Used by Plugin
+ * WordPress Class Wrap Global Functions,
+ * Defines Only Base Functions Used by Plugin.
  */
 class WordPress
 {
 	/**
-	 * Set the activation hook for a plugin
-	 * @see /reference/functions/register_activation_hook/
+	 * Set the activation hook for a plugin.
 	 *
 	 * @access protected
 	 * @param string $file
@@ -39,8 +38,7 @@ class WordPress
 	}
 
 	/**
-	 * Set the deactivation hook for a plugin
-	 * @see /reference/functions/register_deactivation_hook/
+	 * Set the deactivation hook for a plugin.
 	 *
 	 * @access protected
 	 * @param string $file
@@ -53,9 +51,8 @@ class WordPress
 	}
 
 	/**
-	 * Set the uninstallation hook for a plugin
-	 * use class name instead of $this
-	 * @see /reference/functions/register_uninstall_hook/
+	 * Set the uninstallation hook for a plugin,
+	 * use class name instead of $this.
 	 *
 	 * @access protected
 	 * @param string $file
@@ -68,8 +65,7 @@ class WordPress
 	}
 	
 	/**
-	 * Register a shortcode handler
-	 * @see /reference/functions/add_shortcode/
+	 * Register a shortcode handler.
 	 *
 	 * @access protected
 	 * @param string $tag
@@ -82,8 +78,8 @@ class WordPress
 	}
 
 	/**
-	 * Search content for shortcodes 
-	 * and filter shortcodes through their hooks
+	 * Search content for shortcodes,
+	 * and filter shortcodes through their hooks.
 	 *
 	 * @access protected
 	 * @param string $content
@@ -96,9 +92,8 @@ class WordPress
 	}
 
 	/**
-	 * Search content for shortcodes 
-	 * and filter shortcodes through their hooks
-	 * @see /reference/functions/do_shortcode/
+	 * Search content for shortcodes,
+	 * and filter shortcodes through their hooks.
 	 *
 	 * @access protected
 	 * @param string $content
@@ -111,8 +106,7 @@ class WordPress
 	}
 
 	/**
-	 * Removes hook for shortcode
-	 * @see /reference/functions/remove_shortcode/
+	 * Removes hook for shortcode.
 	 *
 	 * @access protected
 	 * @param string $tag
@@ -124,8 +118,7 @@ class WordPress
 	}
 
 	/**
-	 * Checks Whether a registered shortcode exists named $tag
-	 * @see /reference/functions/shortcode_exists/
+	 * Checks Whether a registered shortcode exists named $tag.
 	 *
 	 * @access protected
 	 * @param string $tag
@@ -137,8 +130,7 @@ class WordPress
 	}
 
 	/**
-	 * Checks whether content contains shortcode
-	 * @see /reference/functions/has_shortcode/
+	 * Checks whether content contains shortcode.
 	 *
 	 * @access protected
 	 * @param string $content
@@ -151,8 +143,7 @@ class WordPress
 	}
 
 	/**
-	 * Hook a method on a specific action
-	 * @see /reference/functions/add_action/
+	 * Hook a method on a specific action.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -178,8 +169,7 @@ class WordPress
 	}
 
 	/**
-	 * Remove a method from a specified action hook
-	 * @see /reference/functions/remove_action/
+	 * Remove a method from a specified action hook.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -204,8 +194,7 @@ class WordPress
 	}
 
 	/**
-	 * Add a method from a specified action hook
-	 * @see /reference/functions/do_action/
+	 * Add a method from a specified action hook.
 	 *
 	 * @access protected
 	 * @param string $tag
@@ -218,8 +207,7 @@ class WordPress
 	}
 
 	/**
-	 * Hook a function or method to a specific filter action
-	 * @see /reference/functions/add_filter/
+	 * Hook a function or method to a specific filter action.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -245,8 +233,7 @@ class WordPress
 	}
 
 	/**
-	 * Remove a function from a specified filter hook
-	 * @see /reference/functions/remove_filter/
+	 * Remove a function from a specified filter hook.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -260,9 +247,8 @@ class WordPress
 	}
 
 	/**
-	 * Calls the callback functions 
-	 * that have been added to a filter hook
-	 * @see /reference/functions/apply_filters/
+	 * Calls the callback functions,
+	 * that have been added to a filter hook.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -276,8 +262,7 @@ class WordPress
 	}
 
 	/**
-	 * Check if any filter has been registered for a hook
-	 * @see /reference/functions/has_filter/
+	 * Check if any filter has been registered for a hook.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -290,9 +275,7 @@ class WordPress
 	}
 
 	/**
-	 * Register and Enqueue a CSS stylesheet
-	 * @see /reference/functions/wp_register_style/
-	 * @see /reference/functions/wp_enqueue_style/
+	 * Register and Enqueue a CSS stylesheet.
 	 *
 	 * @access protected
 	 * @param string $id
@@ -312,9 +295,7 @@ class WordPress
 	}
 
 	/**
-	 * Register and Enqueue a new script
-	 * @see /reference/functions/wp_register_script/
-	 * @see /reference/functions/wp_enqueue_script/
+	 * Register and Enqueue a new script.
 	 *
 	 * @access protected
 	 * @param string $id
@@ -334,9 +315,7 @@ class WordPress
 	}
 
 	/**
-	 * Determines whether a script has been added to the queue
-	 * @see /reference/functions/wp_register_script/
-	 * @see /reference/functions/wp_enqueue_script/
+	 * Determines whether a script has been added to the queue.
 	 *
 	 * @access protected
 	 * @param string $id
@@ -352,9 +331,7 @@ class WordPress
 	}
 
 	/**
-	 * Remove a previously enqueued and registered CSS stylesheet
-	 * @see /reference/functions/wp_dequeue_style/
-	 * @see /reference/functions/wp_deregister_style/
+	 * Remove a previously enqueued and registered CSS stylesheet.
 	 *
 	 * @access protected
 	 * @param string $id 
@@ -367,9 +344,7 @@ class WordPress
 	}
 
 	/**
-	 * Remove a previously enqueued and registered script
-	 * @see /reference/functions/wp_dequeue_script/
-	 * @see /reference/functions/wp_deregister_script/
+	 * Remove a previously enqueued and registered script.
 	 *
 	 * @access protected
 	 * @param string $id 
@@ -382,9 +357,8 @@ class WordPress
 	}
 
 	/**
-	 * Localize a script
-	 * Works on already added script only
-	 * @see /reference/functions/wp_deregister_script/
+	 * Localize a script,
+	 * Works on already added script only.
 	 *
 	 * @access protected
 	 * @param string $id
@@ -398,8 +372,7 @@ class WordPress
 	}
 
 	/**
-	 * Register a settings and its data
-	 * @see /reference/functions/register_setting/
+	 * Register a settings and its data.
 	 *
 	 * @access protected
 	 * @param string $group
@@ -413,8 +386,7 @@ class WordPress
 	}
 
 	/**
-	 * Register a settings and its data
-	 * @see /reference/functions/register_setting/
+	 * Register a settings and its data.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -427,8 +399,7 @@ class WordPress
 	}
 
 	/**
-	 * Retrieves an option value based on an option name
-	 * @see /reference/functions/get_option/
+	 * Retrieves an option value based on an option name.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -442,8 +413,7 @@ class WordPress
 	}
 
 	/**
-	 * Update the value of an option that was already added
-	 * @see /reference/functions/update_option/
+	 * Update the value of an option that was already added.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -456,8 +426,7 @@ class WordPress
 	}
 
 	/**
-	 * Removes option by name
-	 * @see /reference/functions/delete_option/
+	 * Removes option by name.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -469,8 +438,7 @@ class WordPress
 	}
 
 	/**
-	 * Add a top-level menu page
-	 * @see /reference/functions/add_menu_page/
+	 * Add a top-level menu page.
 	 *
 	 * @access protected
 	 * @param string $title
@@ -492,8 +460,7 @@ class WordPress
 	}
 
 	/**
-	 * Add a top-level menu page
-	 * @see /reference/functions/add_submenu_page/
+	 * Add a top-level menu page.
 	 *
 	 * @access protected
 	 * @param string $parent
@@ -510,8 +477,7 @@ class WordPress
 	}
 
 	/**
-	 * Add a top-level menu page
-	 * @see /reference/functions/add_options_page/
+	 * Add a top-level menu page.
 	 *
 	 * @access protected
 	 * @param string $title
@@ -527,8 +493,7 @@ class WordPress
 	}
 
 	/**
-	 * Add Metabox
-	 * @see /reference/functions/add_meta_box/
+	 * Add Metabox.
 	 *
 	 * @access protected
 	 * @param string $id
@@ -549,7 +514,7 @@ class WordPress
 	}
 
 	/**
-	 * Retrieves a URL within the plugins or mu-plugins directory
+	 * Retrieves a URL within the plugins or mu-plugins directory.
 	 *
 	 * @access protected
 	 * @param string $path
@@ -562,7 +527,7 @@ class WordPress
 	}
 
 	/**
-	 * Retrieves plugin directory
+	 * Retrieves plugin directory.
 	 *
 	 * @access protected
 	 * @param string $plugin
@@ -574,7 +539,7 @@ class WordPress
 	}
 
 	/**
-	 * Retrieves current theme url
+	 * Retrieves current theme url.
 	 *
 	 * @access protected
 	 * @param void
@@ -586,7 +551,7 @@ class WordPress
 	}
 
 	/**
-	 * Retrieves current theme directory
+	 * Retrieves current theme directory.
 	 *
 	 * @access protected
 	 * @param void
@@ -598,7 +563,7 @@ class WordPress
 	}
 
 	/**
-	 * Check is WordPress Admin
+	 * Check is WordPress Admin.
 	 *
 	 * @access protected
 	 * @param void
@@ -613,8 +578,7 @@ class WordPress
 	}
 
 	/**
-	 * Check user logged in
-	 * @see /reference/functions/is_user_logged_in/
+	 * Check user logged in.
 	 *
 	 * @access protected
 	 * @param void
@@ -626,9 +590,7 @@ class WordPress
 	}
 
 	/**
-	 * Check user exists
-	 * @see /reference/functions/username_exists/
-	 * @see /reference/functions/email_exists/
+	 * Check user exists.
 	 *
 	 * @access protected
 	 * @param mixed $user
@@ -653,9 +615,7 @@ class WordPress
 	}
 
 	/**
-	 * Get user permission
-	 * @see /reference/functions/get_current_user_id/
-	 * @see /reference/functions/user_can/
+	 * Get user permission.
 	 *
 	 * @access protected
 	 * @param mixed $id null
@@ -670,8 +630,7 @@ class WordPress
 	}
 
 	/**
-	 * Get role
-	 * @see /reference/functions/get_current_user_id/
+	 * Get role.
 	 *
 	 * @access protected
 	 * @param mixed $id null
@@ -685,8 +644,7 @@ class WordPress
 	}
 
 	/**
-	 * Add role
-	 * @see /reference/functions/add_role/
+	 * Add role.
 	 *
 	 * @access protected
 	 * @param string $display
@@ -702,8 +660,7 @@ class WordPress
 	}
 
 	/**
-	 * Remove role
-	 * @see /reference/functions/remove_role/
+	 * Remove role.
 	 *
 	 * @access protected
 	 * @param string $role
@@ -715,7 +672,7 @@ class WordPress
 	}
 
 	/**
-	 * Add capability
+	 * Add capability.
 	 *
 	 * @access protected
 	 * @param string $role
@@ -730,7 +687,7 @@ class WordPress
 	}
 
 	/**
-	 * Check capability
+	 * Check capability.
 	 *
 	 * @access public
 	 * @param string $cap
@@ -743,7 +700,7 @@ class WordPress
 	}
 
 	/**
-	 * Remove capability
+	 * Remove capability.
 	 *
 	 * @access protected
 	 * @param string $role
@@ -757,8 +714,7 @@ class WordPress
 	}
 
 	/**
-	 * Redirects to another page
-	 * @see /reference/functions/wp_redirect/
+	 * Redirects to another page.
 	 *
 	 * @access protected
 	 * @param string $location
@@ -772,7 +728,7 @@ class WordPress
 	}
 
 	/**
-	 * WordPress Authentication
+	 * WordPress Authentication.
 	 *
 	 * @access protected
 	 * @param string $username
@@ -782,33 +738,5 @@ class WordPress
 	protected function authenticate($username = '', $password = '')
 	{
 		return wp_authenticate($username,$password);
-	}
-
-	/**
-	 * Return WordPress error object
-	 *
-	 * @access protected
-	 * @param string $code
-	 * @param string $message
-	 * @param array $args
-	 * @return object
-	 */
-	protected function error($code = '', $message = '', $args = [])
-	{
-	    return new \WP_Error($code,$message,$args);
-	}
-
-	/**
-	 * Kill WordPress execution and display HTML message with error message
-	 *
-	 * @access protected
-	 * @param string $message
-	 * @param string $title
-	 * @param array $args
-	 * @return void
-	 */
-	protected function except($message = '', $title = '', $args = [])
-	{
-		wp_die($message,$title,$args);
 	}
 }

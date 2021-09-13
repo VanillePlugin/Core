@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -14,7 +14,6 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\Server;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
 final class Rewrite extends PluginOptions

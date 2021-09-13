@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,7 +16,7 @@ final class HttpGet
 {
 	/**
 	 * @access public
-	 * @param string $item null
+	 * @param string $item
 	 * @return mixed
 	 */
 	public static function get($item = null)
@@ -34,14 +34,14 @@ final class HttpGet
 	 * @param mixed $value
 	 * @return void
 	 */
-	public static function set($item, $value)
+	public static function set($item, $value = null)
 	{
 		$_GET[$item] = $value;
 	}
 	
 	/**
 	 * @access public
-	 * @param string $item null
+	 * @param string $item
 	 * @return bool
 	 */
 	public static function isSetted($item = null)
@@ -49,7 +49,7 @@ final class HttpGet
 		if ( $item ) {
 			return isset($_GET[$item]);
 		} else {
-			return isset($_GET);
+			return isset($_GET) && !empty($_GET);
 		}
 	}
 }

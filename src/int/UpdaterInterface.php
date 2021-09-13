@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -18,7 +18,6 @@ interface UpdaterInterface
      * @param PluginNameSpaceInterface $plugin
      * @param string $host
      * @param array $params
-     * @return void
      */
     function __construct(PluginNameSpaceInterface $plugin, $host, $params = []);
 

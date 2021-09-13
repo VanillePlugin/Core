@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -18,6 +18,8 @@ use VanillePlugin\lib\View;
 abstract class AbstractShortcode extends View implements ShortcodeInterface
 {
 	/**
+	 * Do shortcode main callable.
+	 * 
 	 * @access public
 	 * @param array $atts
 	 * @param string $content
@@ -30,21 +32,23 @@ abstract class AbstractShortcode extends View implements ShortcodeInterface
 	 * @access protected
 	 * @param array $default
 	 * @param array $atts
-	 * @param string $shortcode
+	 * @param string $tag
 	 * @return array
 	 */
-	protected function attributes($default = [], $atts = [], $shortcode = '')
+	protected function attributes($default = [], $atts = [], $tag = '')
 	{
-		return shortcode_atts($default, $atts, $shortcode);
+		return Shortcode::attributes($default,$atts,$tag);
 	}
 
 	/**
+	 * Format shortcode attributes.
+	 * 
 	 * @access protected
 	 * @param array $atts
 	 * @return array
 	 */
 	protected function formatAtts($atts = [])
 	{
-		return array_change_key_case((array)$atts, CASE_LOWER);
+		return Shortcode::formatAtts($atts);
 	}
 }

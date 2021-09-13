@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -35,7 +35,7 @@ final class Authentication extends PluginOptions
 
         // Init plugin tokens
 		if ( !($this->tokens = $this->getPluginOption('tokens')) ) {
-			$this->updatePluginOption('tokens', []);
+			$this->updatePluginOption('tokens',[],false);
 		}
     }
 
@@ -165,7 +165,7 @@ final class Authentication extends PluginOptions
 		]);
 		$user = array_shift($users);
 		if ($user) {
-			return intval($user->data->ID);
+			return (int)$user->data->ID;
 		}
 		return false;
 	}

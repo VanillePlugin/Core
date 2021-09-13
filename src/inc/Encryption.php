@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,57 +15,105 @@ namespace VanillePlugin\inc;
 class Encryption
 {
 	/**
-	 * @access public
+	 * @access private
 	 */
-	const VECTOR = 'ZRfvSPsFQ';
 	const SECRET = 'v8t1pQ92PN';
+	const VECTOR = 'ZRfvSPsFQ';
 
 	/**
 	 * @access private
-	 * @var string $password
+	 * @var string $data
 	 * @var string $initVector
 	 * @var string $secretKey
+	 * @var int $length
+	 * @var int $options
+	 * @var string $algorithm
+	 * @var string $cipher
 	 */
-	private $password;
+	private $data;
 	private $initVector;
 	private $secretKey;
 	private $length;
 	private $prefix = '[vanillecrypt]';
-	private $method = 'AES-256-CBC';
+	private $options = 0;
+	private $algorithm = 'sha256';
+	private $cipher = 'AES-256-CBC';
 
 	/**
-	 * @param string $password
+	 * @param string $data
 	 * @param string $initVector
 	 * @param string $secretKey
 	 */
-	public function __construct($password, $initVector = self::VECTOR, $secretKey = self::SECRET, $length = 16)
+	public function __construct($data, $secretKey = self::SECRET, $initVector = self::VECTOR, $length = 16)
 	{
-		$this->password = $password;
-		$this->initVector = $initVector;
-		$this->secretKey = $secretKey;
-		$this->length = $length;
+		$this->data = $data;
+		$this->setSecretKey($secretKey);
+		$this->setInitVector($initVector);
+		$this->setLength($length);
 		$this->initialize();
 	}
 
 	/**
-	 * @access protected
-	 * @param void
+	 * @access public
+	 * @param string $key
 	 * @param void
 	 */
-	protected function initialize()
+	public function setSecretKey($key)
 	{
-		$this->secretKey = hash('sha256',$this->secretKey);
-		$this->initVector = substr(hash('sha256',$this->initVector),0,$this->length);
+		$this->secretKey = $key;
 	}
 
 	/**
 	 * @access public
-	 * @param string $method
+	 * @param string $vector
+	 * @param void
+	 */
+	public function setInitVector($vector)
+	{
+		$this->initVector = $vector;
+	}
+
+	/**
+	 * @access public
+	 * @param int $length
+	 * @param void
+	 */
+	public function setLength($length)
+	{
+		$this->length = $length;
+	}
+
+	/**
+	 * @access public
+	 * @param string $cipher
 	 * @param object
 	 */
-	public function setMethod($method)
+	public function setCipher($cipher)
 	{
-		$this->method = $method;
+		$this->cipher = $cipher;
+		return $this;
+	}
+
+	/**
+	 * @access public
+	 * @param int $options
+	 * @param object
+	 */
+	public function setOptions($options = OPENSSL_ZERO_PADDING)
+	{
+		$this->options = $options;
+		return $this;
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @param object
+	 */
+	public function initialize()
+	{
+		$this->secretKey = hash($this->algorithm,$this->secretKey);
+		$this->initVector = substr(hash($this->algorithm,$this->initVector),0,$this->length);
 		return $this;
 	}
 
@@ -82,27 +130,26 @@ class Encryption
 
 	/**
 	 * @access public
-	 * @param void
-	 * @param string | Hashed
+	 * @param int $loop
+	 * @param string
 	 */
-	public function encrypt()
+	public function encrypt($loop = 1)
 	{
-		$crypted = base64_encode(
-			openssl_encrypt($this->password,$this->method,$this->secretKey,0,$this->initVector)
-		);
+		$encrypt = openssl_encrypt($this->data,$this->cipher,$this->secretKey,$this->options,$this->initVector);
+		$crypted = Tokenizer::base64($encrypt,$loop);
 		return "{$this->prefix}{$crypted}";
 	}
 
 	/**
 	 * @access public
-	 * @param void
-	 * @param string | Hashed
+	 * @param int $loop
+	 * @param string
 	 */
-	public function decrypt()
+	public function decrypt($loop = 1)
 	{
-		$decrypted = Stringify::replace($this->prefix,'',$this->password);
+		$decrypted = Stringify::replace($this->prefix,'',$this->data);
 		return openssl_decrypt(
-			base64_decode($decrypted),$this->method,$this->secretKey,0,$this->initVector
+			Tokenizer::unbase64($decrypted,$loop),$this->cipher,$this->secretKey,$this->options,$this->initVector
 		);
 	}
 
@@ -113,6 +160,6 @@ class Encryption
 	 */
 	public function isCrypted()
 	{
-		return substr($this->password,0,strlen($this->prefix)) === $this->prefix;
+		return substr($this->data,0,strlen($this->prefix)) === $this->prefix;
 	}
 }

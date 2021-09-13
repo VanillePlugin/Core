@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -278,7 +278,7 @@ class File
 	 */
 	public function getLines($length = null)
 	{
-		return fgets($this->handler, $length);
+		return fgets($this->handler,$length);
 	}
 
 	/**
@@ -297,7 +297,7 @@ class File
 			} else {
 				$this->content = @fread($this->handler, $this->size);
 			}
-			if ($return) {
+			if ( $return ) {
 				$this->close();
 				return $this->content;
 			}
@@ -306,7 +306,7 @@ class File
 	}
 
 	/**
-	 * Write file & create folder if not exists
+	 * Write file & create folder if not exists.
 	 *
 	 * @access public
 	 * @param string $input
@@ -320,13 +320,13 @@ class File
 			}
 		}
 		if ( $this->open('w', true) ) {
-			fwrite($this->handler, $input);
+			fwrite($this->handler,$input);
 		}
 		$this->close();
 	}
 
 	/**
-	 * Add string to file
+	 * Add string to file.
 	 *
 	 * @access public
 	 * @param string $input
@@ -336,7 +336,7 @@ class File
 	{
 		$this->open('a');
 		if ( $this->handler ) {
-			fwrite($this->handler, $input);
+			fwrite($this->handler,$input);
 		}
 		$this->close();
 	}
@@ -352,7 +352,7 @@ class File
 	{
 		$this->open('a');
 		if ( $this->handler ) {
-			fwrite($this->handler, PHP_EOL);
+			fwrite($this->handler,PHP_EOL);
 		}
 		$this->close();
 	}
@@ -601,7 +601,32 @@ class File
 	}
 
 	/**
-	 * Check File Exists without stream
+	 * Get file extension without stream.
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return string
+	 */
+	public static function extension($path)
+	{
+		return pathinfo($path,PATHINFO_EXTENSION);
+	}
+
+	/**
+	 * Get file base name without stream.
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return string
+	 */
+	public static function basename($path)
+	{
+		$path = substr($path,0,strrpos($path,'.'));
+		return basename($path);
+	}
+
+	/**
+	 * Check file exists without stream.
 	 *
 	 * @access public
 	 * @param string $path
@@ -611,6 +636,21 @@ class File
 	{
 		if ( file_exists($path) ) {
 			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Check file type
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return bool
+	 */
+	public static function isFileType($path)
+	{
+		if ( file_exists($path) ) {
+			return is_file($path);
 		}
 		return false;
 	}
@@ -641,8 +681,111 @@ class File
 		$flag = 0;
 		if ( $append ) {
 			$flag = FILE_APPEND;
+			$input .= PHP_EOL;
 		}
 		return @file_put_contents($path,$input,$flag);
+	}
+
+	/**
+	 * Copy file without stream
+	 *
+	 * @access public
+	 * @param string $path
+	 * @param string $copy
+	 * @return bool
+	 */
+    public static function cp($path = '', $copy = '')
+    {
+    	if ( self::exists($path) ) {
+	        if ( copy($path,$copy) ) {
+	            return true;
+	        }
+    	}
+        return false;
+    }
+
+	/**
+	 * Index path files
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return array
+	 */
+	public static function index($path = '')
+	{
+		$files = glob($path);
+		return Arrayify::combine($files,Arrayify::map('filectime',$files));
+	}
+
+	/**
+	 * Get last created file path
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return string
+	 */
+	public static function last($path = '')
+	{
+		$files = self::index($path);
+		arsort($files);
+		return (string)key($files);
+	}
+
+	/**
+	 * Get first created file path
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return string
+	 */
+	public static function first($path = '')
+	{
+		$files = self::index($path);
+		asort($files);
+		return (string)key($files);
+	}
+
+	/**
+	 * Get files count
+	 *
+	 * @access public
+	 * @param string $path
+	 * @return int
+	 */
+	public static function count($path = '')
+	{
+		$files = self::index($path);
+		return (int)count($files);
+	}
+
+	/**
+	 * Parse ini file
+	 *
+	 * @access public
+	 * @param string $path
+	 * @param bool $sections
+	 * @param int $mode
+	 * @return mixed
+	 */
+	public static function parseIni($path, $sections = false, $mode = INI_SCANNER_NORMAL)
+	{
+		return parse_ini_file($path,$sections,$mode);
+	}
+
+	/**
+	 * Import file from url.
+	 * 
+	 * @access public
+	 * @param string $url
+	 * @param string $path
+	 * @return bool
+	 */
+	public static function import($url,$path)
+	{
+		$tmp = @fopen($path,'w');
+		$status = fwrite($tmp,self::r($url));
+		fclose($tmp);
+		return (bool)$status;
 	}
 
 	/**
@@ -653,13 +796,30 @@ class File
 	 * @param bool $unlink
 	 * @param string $timeout
 	 * @param bool $verify
-	 * @return void
+	 * @return bool
 	 */
 	public static function download($path, $unlink = true, $timeout = 300, $verify = false)
 	{
-		download_url($path,$timeout,$verify);
-		if ( $unlink ) {
-			@unlink($path);
+		if ( self::exists($path) ) {
+			download_url($path,$timeout,$verify);
+			if ( $unlink ) {
+				@unlink($path);
+			}
+			return true;
 		}
+		return false;
+	}
+
+	/**
+	 * Get file mime type.
+	 * 
+	 * @access public
+	 * @param string $filename
+	 * @param array $mimes
+	 * @return array
+	 */
+	public static function getMime($filename, $mimes = null)
+	{
+		return wp_check_filetype($filename,$mimes);
 	}
 }

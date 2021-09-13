@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -13,6 +13,8 @@
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\OrmQueryInterface;
+use VanillePlugin\inc\Arrayify;
+use VanillePlugin\inc\TypeCheck;
 
 final class OrmQuery implements OrmQueryInterface
 {
@@ -37,8 +39,7 @@ final class OrmQuery implements OrmQueryInterface
 	 */
 	private function setDefault($query = [])
 	{
-		$query = array_merge([
-
+		$query = Arrayify::merge([
 			'table'    => '',
 			'column'   => '*',
 			'where'    => '',
@@ -48,8 +49,15 @@ final class OrmQuery implements OrmQueryInterface
 			'isRow'    => false,
 			'format'   => null,
 			'type'     => ARRAY_A
-
 		], $query);
+
+		if ( TypeCheck::isArray($query['where']) ) {
+			$temp = [];
+			foreach ($query['where'] as $property => $value) {
+				$temp[] = "`{$property}` = {$value}";
+			}
+			$query['where'] = implode(' AND ',$temp);
+		}
 
 		$query['where'] = !empty($query['where'])
 		? "WHERE {$query['where']}" : '';

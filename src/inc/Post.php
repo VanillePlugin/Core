@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,13 +16,17 @@ final class Post
 {
 	/**
 	 * @access public
-	 * @param void
+	 * @param int $id
 	 * @return object
 	 */
-	public static function get()
+	public static function get($id = null)
 	{
-		global $post;
-		return $post;
+		if ( $id ) {
+			$post = get_post($id);
+		} else {
+			global $post;
+		}
+		return (object)$post;
 	}
 
 	/**
@@ -34,6 +38,18 @@ final class Post
 	{
 		global $post;
 		return isset($post->ID) ? $post->ID : false;
+	}
+
+	/**
+	 * @access public
+	 * @param array $args
+	 * @param string $output
+	 * @param string $operator
+	 * @return array
+	 */
+	public static function getTypes($args = [], $output = 'names', $operator = 'and')
+	{
+		return get_post_types($args,$output,$operator);
 	}
 
 	/**

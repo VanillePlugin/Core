@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -14,8 +14,11 @@ namespace VanillePlugin\inc;
 
 use Twig\Loader\FilesystemLoader as Loader;
 use Twig\Environment as Environment;
-use Twig\TwigFunction as WPFunction;
+use Twig\TwigFunction as Module;
 
+/**
+ * Wrapper Class for Twig
+ */
 final class Template
 {
     /**
@@ -25,7 +28,7 @@ final class Template
      */
     public static function getEnvironment($path, $settings = [])
     {
-        return new Environment(new Loader($path), $settings);
+        return new Environment(new Loader($path),$settings);
     }
 
     /**
@@ -35,6 +38,6 @@ final class Template
      */
     public static function extend($name, $function)
     {
-        return new WPFunction($name, $function);
+        return new Module($name,$function);
     }
 }

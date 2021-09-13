@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,6 +16,7 @@ use VanillePlugin\int\RequirementInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\TypeCheck;
 
 final class Requirement extends Notice implements RequirementInterface
 {
@@ -236,7 +237,7 @@ final class Requirement extends Notice implements RequirementInterface
 		if ( $this->isPlugin("{$callable}/{$callable}.php") ) {
 			return true;
 			
-		} elseif ( $this->isClass($callable) || $this->isFunction($callable) ) {
+		} elseif ( $this->isPluginClass($callable) || TypeCheck::isFunction($callable) ) {
 			return true;
 
 		} elseif ( defined($callable) ) {

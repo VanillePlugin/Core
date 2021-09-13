@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -676,13 +676,13 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Return class exists
+	 * Return plugin class exists.
 	 *
 	 * @access protected
 	 * @param string $callable
 	 * @return bool
 	 */
-	protected function isClass($callable)
+	protected function isPluginClass($callable)
 	{
 		$callable = Stringify::replace('/','\\',$callable);
 		if ( Stringify::contains($callable,'\\') ) {
@@ -690,19 +690,7 @@ class PluginOptions extends WordPress
 				return false;
 			}
 		}
-		return class_exists($callable);
-	}
-
-	/**
-	 * Return function exists
-	 *
-	 * @access protected
-	 * @param string $callable
-	 * @return bool
-	 */
-	protected function isFunction($callable)
-	{
-		return function_exists($callable);
+		return TypeCheck::isClass($callable);
 	}
 
 	/**

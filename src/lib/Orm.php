@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -19,7 +19,7 @@ use VanillePlugin\int\PluginNameSpaceInterface;
 class Orm extends Db implements OrmInterface
 {
 	/**
-	 * Init Db object
+	 * Init Db object.
 	 *
 	 * @param void
 	 */
@@ -29,7 +29,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Custom SQL query
+	 * Custom SQL query.
 	 *
 	 * @access public
 	 * @param string $sql
@@ -41,7 +41,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * SQL query prepare
+	 * SQL query prepare.
 	 *
 	 * @access public
 	 * @param string $sql
@@ -54,7 +54,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Fetch SQL query
+	 * Fetch SQL query.
 	 *
 	 * @access public
 	 * @param string $sql
@@ -70,7 +70,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Select query
+	 * Select query.
 	 *
 	 * @access public
 	 * @param OrmQueryInterface $data
@@ -90,7 +90,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Select count query
+	 * Select count query.
 	 *
 	 * @access public
 	 * @param OrmQueryInterface $data
@@ -101,11 +101,11 @@ class Orm extends Db implements OrmInterface
 		extract($data->query);
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "SELECT COUNT(*) FROM {$prefix}{$table} {$where}";
-		return intval($this->getVar($sql));
+		return (int)$this->getVar($sql);
 	}
 
 	/**
-	 * Insert query
+	 * Insert query.
 	 *
 	 * @access public
 	 * @param string $table
@@ -116,33 +116,35 @@ class Orm extends Db implements OrmInterface
 	public function insert($table, $data = [], $format = false)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$this->db->insert("{$prefix}{$table}",$data,$format);
-		return $this->db->insert_id;
+		if ( $this->db->insert("{$prefix}{$table}",$data,$format) ) {
+			return $this->db->insert_id;
+		}
+		return false;
 	}
 
 	/**
-	 * Update query
+	 * Update query.
 	 *
 	 * @access public
 	 * @param string $table
 	 * @param array $data
 	 * @param array $where
 	 * @param mixed $format false
-	 * @return mixed
+	 * @return bool
 	 */
 	public function update($table, $data = [], $where = [], $format = false)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		return $this->db->update("{$prefix}{$table}",$data,$where,$format);
+		return (bool)$this->db->update("{$prefix}{$table}",$data,$where,$format);
 	}
 
 	/**
-	 * Delete all query
+	 * Delete all query.
 	 *
 	 * @access public
 	 * @param string $table
 	 * @param bool $resetId
-	 * @return mixed
+	 * @return bool
 	 */
 	public function deleteAll($table, $resetId = true)
 	{
@@ -153,28 +155,28 @@ class Orm extends Db implements OrmInterface
 				$sql = "ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = 1";
 				$this->db->query($sql);
 			}
-			return $result;
+			return (bool)$result;
 		}
 		return false;
 	}
 
 	/**
-	 * Delete query
+	 * Delete query.
 	 *
 	 * @access public
 	 * @param string $table
 	 * @param array $where
 	 * @param string $format null
-	 * @return int
+	 * @return bool
 	 */
 	public function delete($table, $where = [], $format = null)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		return $this->db->delete("{$prefix}{$table}", $where, $format);
+		return (bool)$this->db->delete("{$prefix}{$table}",$where,$format);
 	}
 
 	/**
-	 * Get query var
+	 * Get query var.
 	 *
 	 * @access public
 	 * @param string $sql
@@ -186,7 +188,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Get query row
+	 * Get query row.
 	 *
 	 * @access public
 	 * @param string $sql
@@ -199,7 +201,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Get query result
+	 * Get query result.
 	 *
 	 * @access public
 	 * @param string $sql
@@ -212,16 +214,16 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Check table
+	 * Check table.
 	 *
 	 * @access public
 	 * @param string $table
-	 * @return int
+	 * @return bool
 	 */
 	public function hasTable($table = '')
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "SHOW TABLES LIKE '{$prefix}{$table}'";
-		return $this->db->query($sql);
+		return (bool)$this->db->query($sql);
 	}
 }

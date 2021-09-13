@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -26,6 +26,7 @@ final class Response extends Status
 		self::setHttpHeaders($code);
 		echo Json::encode([
 			'status'  => $status,
+			'code'    => $code,
 			'message' => $message,
 			'content' => $content
 		]);
@@ -41,14 +42,14 @@ final class Response extends Status
 	public static function setHttpHeaders($code, $type = 'application/json')
 	{
 		$status = self::getMessage($code);
-		$protocol = Server::get('SERVER_PROTOCOL');
+		$protocol = Server::get('server-protocol');
 		header("Content-Type: {$type}");
 		header("{$protocol} {$code} {$status}");
 	}
 
 	/**
 	 * @param string $reponse
-	 * @param bool $isArray false
+	 * @param bool $isArray
 	 * @return mixed
 	 */
 	public static function get($reponse, $isArray = false)

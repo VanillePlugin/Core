@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -44,7 +44,7 @@ abstract class AbstractAPI extends PluginOptions
 	 */
 	public function getResponse($array = false)
 	{
-		return Response::get($this->response->getBody(), $array);
+		return Response::get($this->response->getBody(),$array);
 	}
 
 	/**

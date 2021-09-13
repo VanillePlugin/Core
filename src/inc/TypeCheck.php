@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -114,6 +114,60 @@ final class TypeCheck
 
 	/**
 	 * @access public
+	 * @param string $function
+	 * @return bool
+	 */
+	public static function isFunction($function)
+	{
+		return function_exists($function);
+	}
+
+	/**
+	 * @access public
+	 * @param string $class
+	 * @return bool
+	 */
+	public static function isClass($class)
+	{
+		return class_exists($class);
+	}
+
+	/**
+	 * @access public
+	 * @param string $sub
+	 * @param string $class
+	 * @return bool
+	 */
+	public static function isSubClassOf($sub, $class)
+	{
+		return is_subclass_of($sub,$class);
+	}
+
+	/**
+	 * @access public
+	 * @param string $class
+	 * @param string $interface
+	 * @return bool
+	 */
+	public static function hasInterface($class, $interface)
+	{
+		$interfaces = class_implements($class);
+		return Stringify::contains($interfaces,$interface);
+	}
+
+	/**
+	 * @access public
+	 * @param object $object
+	 * @param string $method
+	 * @return bool
+	 */
+	public static function hasMethod($object, $method)
+	{
+		return method_exists($object,$method);
+	}
+
+	/**
+	 * @access public
 	 * @param mixed $data
 	 * @return bool
 	 */
@@ -140,5 +194,20 @@ final class TypeCheck
 	public static function isScalar($data)
 	{
 		return is_scalar($data);
+	}
+
+	/**
+	 * @access public
+	 * @param string $path
+	 * @return bool
+	 */
+	public static function isStream($path)
+	{
+	    $scheme = strpos($path,'://');
+	    if ( false === $scheme ) {
+	        return false;
+	    }
+	    $stream = substr($path,0,$scheme);
+	    return Arrayify::inArray($stream,stream_get_wrappers(),true);
 	}
 }

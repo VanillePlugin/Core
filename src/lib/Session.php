@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.6.9
+ * @version   : 0.7.0
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -13,33 +13,35 @@
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\inc\Date;
 
 final class Session extends PluginOptions
 {
-	/**
-	 * @param PluginNameSpaceInterface $plugin
-	 */
-	public function __construct(PluginNameSpaceInterface $plugin)
-	{
-		// Init plugin config
-		$this->initConfig($plugin);
-        if ( !$this->isSetted() ) {
+    /**
+     * @param PluginNameSpaceInterface $plugin
+     */
+    public function __construct(PluginNameSpaceInterface $plugin)
+    {
+        // Init plugin config
+        $this->initConfig($plugin);
+        
+        if ( !self::isSetted() ) {
             session_start();
         }
-	}
+    }
     
     /**
      * Register the session
      *
      * @access public
-     * @param int $time 60
+     * @param int $time
      * @return void
      */
-    public function register($time = 60)
+    public static function register($time = 60)
     {
-        $this->set('sessionId', session_id());
-        $this->set('sessionTime', intval($time));
-        $this->set('sessionStart', $this->newTime());
+        self::set('--session-id', session_id());
+        self::set('--session-time', intval($time));
+        self::set('--session-start', Date::newTime(0, 0, self::get('--session-time')));
     }
 
     /**
@@ -49,13 +51,12 @@ final class Session extends PluginOptions
      * @param void
      * @return bool
      */
-    public function isRegistered()
+    public static function isRegistered()
     {
-        if ( !empty($this->get('sessionId')) ) {
+        if ( !empty(self::get('--session-id')) ) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -66,38 +67,39 @@ final class Session extends PluginOptions
      * @param mixed $value
      * @return void
      */
-    public function set($key, $value)
+    public static function set($key, $value = null)
     {
-        $_SESSION[$this->getNameSpace()][$key] = $value;
+        $_SESSION[$key] = $value;
     }
 
     /**
      * Retrieve value stored in session by key
      *
      * @access public
-     * @param string $key
+     * @param string $item
      * @return mixed
      */
-    public function get($key)
+    public static function get($item = null)
     {
-        return $this->isSetted($key) 
-        ? $_SESSION[$this->getNameSpace()][$key] : false;
+        if ( $item ) {
+            return self::isSetted($item) ? $_SESSION[$item] : false;
+        }
+        return isset($_SESSION) && !empty($_SESSION);
     }
 
     /**
      * Check key exists
      *
      * @access public
-     * @param string $key null
+     * @param string $key
      * @return bool
      */
-    public function isSetted($key = null)
+    public static function isSetted($key = null)
     {
         if ( $key ) {
-            return isset($_SESSION[$this->getNameSpace()][$key]);
-        } else {
-            return isset($_SESSION);
+            return isset($_SESSION[$key]);
         }
+        return isset($_SESSION) && !empty($_SESSION);
     }
 
     /**
@@ -107,7 +109,7 @@ final class Session extends PluginOptions
      * @param void
      * @return array
      */
-    public function getSession()
+    public static function getSession()
     {
         return $_SESSION;
     }
@@ -119,9 +121,9 @@ final class Session extends PluginOptions
      * @param void
      * @return int
      */
-    public function getSessionId()
+    public static function getSessionId()
     {
-        return $this->get('sessionId');
+        return self::get('--session-id');
     }
 
     /**
@@ -131,9 +133,9 @@ final class Session extends PluginOptions
      * @param void
      * @return bool
      */
-    public function isExpired()
+    public static function isExpired()
     {
-        if ( $this->get('sessionStart') < $this->timeNow() ) {
+        if ( self::get('--session-start') < Date::timeNow() ) {
             return true;
         }
         return false;
@@ -146,59 +148,9 @@ final class Session extends PluginOptions
      * @param void
      * @return void
      */
-    public function renew()
+    public static function renew()
     {
-        $this->set('sessionStart', $this->newTime());
-    }
-
-    /**
-     * Return current time
-     *
-     * @access public
-     * @param void
-     * @return unix timestamp
-     */
-    private function timeNow()
-    {
-        $currentHour = date('H');
-        $currentMin  = date('i');
-        $currentSec  = date('s');
-        $currentMon  = date('m');
-        $currentDay  = date('d');
-        $currentYear = date('y');
-        return mktime(
-            $currentHour,
-            $currentMin,
-            $currentSec,
-            $currentMon,
-            $currentDay,
-            $currentYear
-        );
-    }
-
-    /**
-     * Generates new time
-     *
-     * @access public
-     * @param void
-     * @return unix timestamp
-     */
-    private function newTime()
-    {
-        $currentHour = date('H');
-        $currentMin  = date('i');
-        $currentSec  = date('s');
-        $currentMon  = date('m');
-        $currentDay  = date('d');
-        $currentYear = date('y');
-        return mktime(
-            $currentHour,
-            ($currentMin + $this->get('sessionTime')),
-            $currentSec,
-            $currentMon,
-            $currentDay,
-            $currentYear
-        );
+        self::set('--session-start', Date::newTime(0, 0, self::get('--session-time')));
     }
 
     /**
@@ -208,7 +160,7 @@ final class Session extends PluginOptions
      * @param void
      * @return void
      */
-    public function end()
+    public static function end()
     {
         session_destroy();
         $_SESSION = [];
