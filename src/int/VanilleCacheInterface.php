@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.0
+ * @version   : 0.7.1
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -18,11 +18,7 @@ interface VanilleCacheInterface
      * @param PluginNameSpaceInterface $plugin
      */
     function __construct(PluginNameSpaceInterface $plugin);
-
-    /**
-     * @param void
-     * @return void
-     */
+    
     function __destruct();
 
     /**
@@ -66,7 +62,7 @@ interface VanilleCacheInterface
      * @param void
      * @return void
      */
-    public function clear();
+    public function purge();
 
     /**
      * @param int $ttl 30

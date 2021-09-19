@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.0
+ * @version   : 0.7.1
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -17,6 +17,7 @@ use VanillePlugin\int\VanilleCacheInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
 /**
@@ -30,12 +31,10 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * @access private
 	 * @var object $cache, cache object
 	 * @var object $adapter, adapter object
-	 * @var boolean $isCached, cache status
 	 * @var int $ttl, cache TTL
 	 */
 	private $cache = false;
 	private $adapter = false;
-	private $isCached = false;
 	private static $ttl = false;
 
 	/**
@@ -47,29 +46,40 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 		$this->initConfig($plugin);
 
 		// Set default ttl
-		if (!self::$ttl) {
+		if ( !self::$ttl ) {
 			self::expireIn($this->getExpireIn());
 		}
 		
 		// Set adapter default params
 		CacheManager::setDefaultConfig([
-		    'path' => $this->getTempPath(),
-		    'default_chmod' => 0755,
+		    'path'               => $this->getTempPath(),
+		    'default_chmod'      => 0755,
+		    'securityKey'        => 'private',
 		    'cacheFileExtension' => 'db'
 		]);
 
-		// Set adapter instance
+		// Init adapter
+		$this->reset();
 		$this->adapter = CacheManager::getInstance('Files');
 	}
 
 	/**
-	 * @access public
-	 * @param void
-	 * @return void
+	 * Clear adapter instances
 	 */
 	public function __destruct()
 	{
-		// Clear adapter instances
+		$this->reset();
+	}
+
+	/**
+	 * Reset cache instance
+	 *
+	 * @access private
+	 * @param void
+	 * @return void
+	 */
+	private function reset()
+	{
 		CacheManager::clearInstances();
 	}
 
@@ -80,63 +90,73 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function get($key)
 	{
-		$key = Stringify::slugify($key);
+		$key = Stringify::formatKey($key);
 		$this->cache = $this->adapter->getItem($key);
-		return $this->isCached = $this->cache->get();
+		return $this->cache->get();
 	}
 
 	/**
 	 * @access public
 	 * @param mixed $data
-	 * @param string $tag null
-	 * @return void
+	 * @param mixed $tags
+	 * @return bool
 	 */
-	public function set($data, $tag = null)
+	public function set($data, $tags = null)
 	{
 		$this->cache->set($data)
 		->expiresAfter(self::$ttl);
-		if ($tag) {
-			$tag = Stringify::slugify($tag);
-			$this->cache->addTag($tag);
+		if ( $tags ) {
+			if ( TypeCheck::isArray($tags) ) {
+				foreach ($tags as $key => $value) {
+					$tags[$key] = Stringify::formatKey($value);
+				}
+				$this->cache->addTags($tags);
+			} else {
+				$tags = Stringify::formatKey($tags);
+				$this->cache->addTag($tags);
+			}
 		}
-		$this->adapter->save($this->cache);
+		return $this->adapter->save($this->cache);
 	}
 
 	/**
 	 * @access public
 	 * @param string $key
 	 * @param mixed $data
-	 * @return void
+	 * @return bool
 	 */
 	public function update($key, $data)
 	{
-		$key = Stringify::slugify($key);
+		$key = Stringify::formatKey($key);
 		$this->cache = $this->adapter->getItem($key);
 		$this->cache->set($data)
 		->expiresAfter(self::$ttl);
-		$this->adapter->save($this->cache);
+		return $this->adapter->save($this->cache);
 	}
 
 	/**
 	 * @access public
 	 * @param string $key
-	 * @return void
+	 * @return bool
 	 */
 	public function delete($key)
 	{
-		$key = Stringify::slugify($key);
-		$this->adapter->deleteItem($key);
+		$key = Stringify::formatKey($key);
+		return $this->adapter->deleteItem($key);
 	}
 
 	/**
 	 * @access public
-	 * @param string $tag
-	 * @return void
+	 * @param mixed $tag
+	 * @return bool
 	 */
-	public function deleteByTag($tag)
+	public function deleteByTag($tag = '')
 	{
-		$tag = Stringify::slugify($tag);
-		$this->adapter->deleteItemsByTag($tag);
+		if ( TypeCheck::isArray($tag) ) {
+			return $this->adapter->deleteItemsByTags($tag);
+		} else {
+			return $this->adapter->deleteItemsByTag($tag);
+		}
 	}
 
 	/**
@@ -146,7 +166,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function isCached()
 	{
-		return ($this->isCached) ? true : false;
+		return $this->cache->isHit();
 	}
 
 	/**
@@ -154,7 +174,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * @param void
 	 * @return void
 	 */
-	public function clear()
+	public function purge()
 	{
 		// Secured removing : filecache
 		if ( Stringify::contains($this->getTempPath(), $this->getRoot()) ) {

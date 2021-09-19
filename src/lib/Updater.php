@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.0
+ * @version   : 0.7.1
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,6 +15,8 @@ namespace VanillePlugin\lib;
 use VanillePlugin\int\UpdaterInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\TypeCheck;
+use VanillePlugin\inc\Arrayify;
+use VanillePlugin\inc\Stringify;
 
 final class Updater extends PluginOptions implements UpdaterInterface
 {
@@ -147,19 +149,22 @@ final class Updater extends PluginOptions implements UpdaterInterface
 				// Prepare response
 				$info = $this->getPluginInfo($this->getMainFilePath());
 
-				// Build query
+				// Set request params
 				$params = [
 					'slug'      => $this->getNameSpace(),
 					'version'   => $info['Version'],
-					'wpversion' => $this->wpVerion
+					'wpversion' => $this->wpVerion,
+					'ua'        => "{$this->getNameSpace()}-wordpress/{$info['Version']};",
+					'action'    => "{$this->getNameSpace()}-get-info"
 				];
+
+				// Additional params
+				$params = Arrayify::merge($params,$this->params);
+
+				// Build request query
 				$query = [
-					'headers' => $this->headers,
-					'body' => [
-						'action'  => "{$this->getNameSpace()}-get-info",
-						'request' => serialize($params),
-						'params'  => $this->params
-					],
+					'headers'    => $this->headers,
+					'body'       => ['request' => Stringify::serialize($params)],
 					'user-agent' => "{$this->getNameSpace()}-wordpress/{$info['Version']};"
 				];
 
@@ -174,7 +179,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 				if ( $temp->getStatusCode() == 200 ) {
 					if ( !empty($body = $temp->getBody()) ) {
 						$response = unserialize($body);
-						$ttl = $this->applyPluginFilter('updater-info-ttl',1800);
+						$ttl = $this->applyPluginFilter('updater-info-ttl',3600);
 						$this->setTransient('get-info',$response,$ttl);
 					} else {
 						$this->deleteTransient('get-info');
@@ -212,19 +217,22 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			$version = isset($transient->checked[$this->getMainFile()])
 			? $transient->checked[$this->getMainFile()] : '0.0.0';
 
-			// Build query
+			// Set request params
 			$params = [
 				'slug'      => $this->getNameSpace(),
 				'version'   => $version,
-				'wpversion' => $this->wpVerion
+				'wpversion' => $this->wpVerion,
+				'ua'        => "{$this->getNameSpace()}-wordpress/{$version};",
+				'action'    => "{$this->getNameSpace()}-check-update"
 			];
+
+			// Additional params
+			$params = Arrayify::merge($params,$this->params);
+			
+			// Build request query
 			$query = [
-				'headers' => $this->headers,
-				'body' => [
-					'action'  => "{$this->getNameSpace()}-check-update", 
-					'request' => serialize($params),
-					'params'  => $this->params
-				],
+				'headers'    => $this->headers,
+				'body'       => ['request' => Stringify::serialize($params)],
 				'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
 			];
 
@@ -239,7 +247,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			if ( $temp->getStatusCode() == 200 ) {
 				if ( !empty($body = $temp->getBody()) ) {
 					$response = unserialize($body);
-					$ttl = $this->applyPluginFilter('updater-update-ttl',1800);
+					$ttl = $this->applyPluginFilter('updater-update-ttl',3600);
 					$this->setTransient('check-update',$response,$ttl);
 				} else {
 					$this->deleteTransient('check-update');
@@ -275,19 +283,22 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			$version = isset($transient->checked[$this->getMainFile()])
 			? $transient->checked[$this->getMainFile()] : '0.0.0';
 
-			// Build query
+			// Set request params
 			$params = [
 				'slug'      => $this->getNameSpace(),
 				'version'   => $version,
-				'wpversion' => $this->wpVerion
+				'wpversion' => $this->wpVerion,
+				'ua'        => "{$this->getNameSpace()}-wordpress/{$version};",
+				'action'    => "{$this->getNameSpace()}-check-translation"
 			];
+
+			// Additional params
+			$params = Arrayify::merge($params,$this->params);
+
+			// Build request query
 			$query = [
-				'headers' => $this->headers,
-				'body' => [
-					'action'  => "{$this->getNameSpace()}-check-translation", 
-					'request' => serialize($params),
-					'params'  => $this->params
-				],
+				'headers'    => $this->headers,
+				'body'       => ['request' => Stringify::serialize($params)],
 				'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
 			];
 
@@ -302,8 +313,8 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			if ( $temp->getStatusCode() == 200 ) {
 				if ( !empty($body = $temp->getBody()) ) {
 					$response = unserialize($body);
-					$ttl = $this->applyPluginFilter('updater-translation-ttl',1800);
-					$this->setTransient('check-translation',$response,1800);
+					$ttl = $this->applyPluginFilter('updater-translation-ttl',3600);
+					$this->setTransient('check-translation',$response,3600);
 				} else {
 					$this->deleteTransient('check-translation');
 				}

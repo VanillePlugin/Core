@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.0
+ * @version   : 0.7.1
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -829,15 +829,18 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Translated string
+	 * Translated string.
 	 *
 	 * @access public
 	 * @param string $string
-	 * @return string
+	 * @return mixed
 	 */
 	public function translateString($string = '')
 	{
-		return __($string, $this->getNameSpace());
+		if ( TypeCheck::isString($string) ) {
+			return __($string,$this->getNameSpace());
+		}
+		return false;
 	}
 
 	/**
