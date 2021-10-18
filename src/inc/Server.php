@@ -82,7 +82,7 @@ final class Server
 	{
 		if ( $domain ) {
 			$ip = gethostbyname($domain);
-			return self::isValidIP($ip);
+			return Validator::isValidIP($ip);
 		}
 		if ( self::isSetted('http-x-real-ip') ) {
 			$ip = self::get('http-x-real-ip');
@@ -93,7 +93,7 @@ final class Server
 			$ip = Stringify::slashStrip($ip);
 			$ip = Stringify::split($ip, ['regex' => '/,/']);
 			$ip = (string) trim(current($ip));
- 			return self::isValidIP($ip);
+ 			return Validator::isValidIP($ip);
 
 		} elseif ( self::isSetted('remote-addr') ) {
 			$ip = self::get('remote-addr');
