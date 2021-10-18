@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -75,11 +75,15 @@ final class Server
 	 * Get remote IP address.
 	 *
 	 * @access public
-	 * @param void
+	 * @param string $domain
 	 * @return mixed
 	 */
-	public static function getIP()
+	public static function getIP($domain = null)
 	{
+		if ( $domain ) {
+			$ip = gethostbyname($domain);
+			return self::isValidIP($ip);
+		}
 		if ( self::isSetted('http-x-real-ip') ) {
 			$ip = self::get('http-x-real-ip');
 			return Stringify::slashStrip($ip);
@@ -89,7 +93,7 @@ final class Server
 			$ip = Stringify::slashStrip($ip);
 			$ip = Stringify::split($ip, ['regex' => '/,/']);
 			$ip = (string) trim(current($ip));
- 			return Validator::isValidIP($ip);
+ 			return self::isValidIP($ip);
 
 		} elseif ( self::isSetted('remote-addr') ) {
 			$ip = self::get('remote-addr');

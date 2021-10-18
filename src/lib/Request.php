@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -45,7 +45,7 @@ final class Request extends WordPress implements RequestInterface
 	 * @param mixed $value
 	 * @return void
 	 */
-	public function addParameter($param,$value)
+	public function addParameter($param = '',$value = false)
 	{
 		$this->params[$param] = $value;
 	}
@@ -129,7 +129,7 @@ final class Request extends WordPress implements RequestInterface
 	 */
 	public function post($url, $args = [])
 	{
-		$this->raw = wp_remote_post($url, $args);
+		$this->raw = wp_remote_post($url,$args);
 		return $this;
 	}
 
@@ -141,7 +141,7 @@ final class Request extends WordPress implements RequestInterface
 	 */
 	public function get($url, $args = [])
 	{
-		$this->raw = wp_remote_get($url, $args);
+		$this->raw = wp_remote_get($url,$args);
 		return $this;
 	}
 
@@ -153,7 +153,7 @@ final class Request extends WordPress implements RequestInterface
 	 */
 	public function head($url, $args = [])
 	{
-		$this->raw = wp_remote_head($url, $args);
+		$this->raw = wp_remote_head($url,$args);
 		return $this;
 	}
 

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -512,13 +512,13 @@ class PluginOptions extends WordPress
 	 * @access protected
 	 * @param string $key
 	 * @param mixed $value
-	 * @param int $expiration
+	 * @param int $ttl
 	 * @return bool
 	 */
-	protected function setTransient($key, $value = 1, $expiration = 300)
+	protected function setTransient($key, $value = 1, $ttl = 300)
 	{
 		$key = substr(Stringify::slugify("{$this->getNameSpace()}-{$key}"), 0, 172);
-		return set_transient($key,$value,$expiration);
+		return set_transient($key,$value,$ttl);
 	}
 
 	/**

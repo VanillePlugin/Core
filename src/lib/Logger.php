@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -84,8 +84,11 @@ class Logger extends PluginOptions
      * @param string $message
      * @return void
      */
-    public function debug($message = '')
+    public function debug($message = '', $isArray = false)
     {
+        if ( $isArray ) {
+            $message = print_r($message,true);
+        }
         $this->write('debug',$message);
     }
 

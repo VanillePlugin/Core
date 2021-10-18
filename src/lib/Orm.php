@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,6 +15,7 @@ namespace VanillePlugin\lib;
 use VanillePlugin\int\OrmInterface;
 use VanillePlugin\int\OrmQueryInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\inc\Stringify;
 
 class Orm extends Db implements OrmInterface
 {
@@ -79,8 +80,22 @@ class Orm extends Db implements OrmInterface
 	public function select(OrmQueryInterface $data)
 	{
 		extract($data->query);
+		if ( $column !== '*' ) {
+			if ( Stringify::contains($column,',') ) {
+				$exceptions = ['`','COUNT','CONCAT'];
+				if ( !Stringify::contains($exceptions,$column) ) {
+					$columns = explode(',',$column);
+					foreach($columns as $key => $value) {
+						$value = trim($value);
+						$columns[$key] = "`{$value}`";
+					}
+					$column = implode(',',$columns);
+				}
+			}
+		}
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "SELECT {$column} FROM {$prefix}{$table} {$where} {$orderby} {$limit}";
+		$sql  = trim("SELECT $column FROM `{$prefix}{$table}` {$where} {$orderby} {$limit}");
+		$sql .= ';';
 		if ( $isSingle ) {
 			return $this->getVar($sql);
 		} elseif ( $isRow ) {
@@ -214,6 +229,32 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
+	 * Reset table Id.
+	 *
+	 * @access public
+	 * @param string $table
+	 * @return mixed
+	 */
+	public function resetId($table = '')
+	{
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$sql = "ALTER TABLE `{$prefix}{$table}` AUTO_INCREMENT = 1;";
+		return $this->db->query($sql);
+	}
+
+	/**
+	 * Get tables.
+	 *
+	 * @access public
+	 * @param void
+	 * @return array
+	 */
+	public function getTables()
+	{
+		return (array)$this->db->query('show tables;');
+	}
+
+	/**
 	 * Check table.
 	 *
 	 * @access public
@@ -223,7 +264,7 @@ class Orm extends Db implements OrmInterface
 	public function hasTable($table = '')
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "SHOW TABLES LIKE '{$prefix}{$table}'";
+		$sql = "SHOW TABLES LIKE '{$prefix}{$table}';";
 		return (bool)$this->db->query($sql);
 	}
 }

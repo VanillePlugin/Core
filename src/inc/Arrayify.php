@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -190,4 +190,65 @@ final class Arrayify
 		}
 		return array_filter($array);
 	}
+
+    /**
+     * @access public
+     * @param array $array
+     * @param array $args
+     * @return array
+     */
+    public static function order($array = [], $args = [], $flags = 0)
+    {
+    	$args = self::merge([
+    		'sort'   => 'asc',
+    		'column' => false
+    	], (array)$args);
+
+    	if ( TypeCheck::isString($args['column']) ) {
+
+    		// Order by values
+    		$ordered = $array;
+    		$excluded = [];
+    		if ( isset($args['exclude']) ) {
+    			$ordered = $array;
+    			foreach ($ordered as $key => $item) {
+    				if ( isset($item[$args['column']]) ) {
+    					if ( $item[$args['column']] == $args['exclude'] ) {
+    						$excluded[$key] = $item;
+    						unset($ordered[$key]);
+    					}
+    				}
+    			}
+    		}
+
+    		if ( count($ordered) > 1 ) {
+				usort($ordered,function($a, $b) use ($args) {
+					$column = $args['column'];
+					if ( isset($a[$column]) && isset($b[$column]) ) {
+						// Order
+						if ( Stringify::lowercase($args['sort']) == 'asc' ) {
+					   		return (int)($a[$column] >= $b[$column]) && ($b[$column] <= $a[$column]);
+
+						} elseif ( Stringify::lowercase($args['sort']) == 'desc' ) {
+					   		return (int)($a[$column] <= $b[$column]) && ($b[$column] >= $a[$column]);
+						}
+					}
+				});
+    		}
+    		$array = $ordered;
+    		$array = self::merge($array,$excluded);
+
+    	} else {
+
+    		// Order
+	    	if ( Stringify::lowercase($args['sort']) == 'asc' ) {
+	    		asort($array,$flags);
+
+	    	} elseif ( Stringify::lowercase($args['sort']) == 'desc' ) {
+	    		arsort($array,$flags);
+	    	}
+    	}
+
+        return $array;
+    }
 }

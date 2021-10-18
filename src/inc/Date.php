@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -79,6 +79,27 @@ final class Date extends DateTime
 	{
 		return self::create($date,$format)->format($to);
 	}
+
+    /**
+     * @access public
+     * @param string $dates
+     * @param string $format
+     * @return array
+     */
+    public static function order($dates = [], $sort = 'asc', $format = 'Y-m-d H:i:s')
+    {
+        usort($dates,function($a, $b) use ($sort,$format) {
+            if ( Stringify::lowercase($sort) == 'asc' ) {
+                return (int)(self::create($a,$format) >= self::create($b,$format)) 
+                && (self::create($a,$format) <= self::create($b,$format));
+
+            } elseif ( Stringify::lowercase($sort) == 'desc' ) {
+                return (int)(self::create($a,$format) <= self::create($b,$format)) 
+                && (self::create($a,$format) >= self::create($b,$format));
+            }
+        });
+        return $dates;
+    }
     
     /**
      * Return current time

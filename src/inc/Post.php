@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -38,6 +38,18 @@ final class Post
 	{
 		global $post;
 		return isset($post->ID) ? $post->ID : false;
+	}
+
+	/**
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public static function getTitle($id = null)
+	{
+		$id = ($id) ? $id : self::getId();
+		$title = get_the_title($id);
+		return !empty($title) ? $title : 'Archive page';
 	}
 
 	/**

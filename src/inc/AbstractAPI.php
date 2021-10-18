@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -13,6 +13,7 @@
 namespace VanillePlugin\inc;
 
 use VanillePlugin\lib\PluginOptions;
+use VanillePlugin\lib\Request;
 
 abstract class AbstractAPI extends PluginOptions
 {
@@ -39,35 +40,52 @@ abstract class AbstractAPI extends PluginOptions
 
 	/**
 	 * @access public
-	 * @param bool $array
-	 * @return string
+	 * @param bool $isArray
+	 * @return mixed
 	 */
-	public function getResponse($array = false)
+	public function getResponse($isArray = false)
 	{
-		return Response::get($this->response->getBody(),$array);
+		if ( $this->response ) {
+			return Response::get($this->response->getBody(),$isArray);
+		}
+		$this->error = true;
+		return false;
 	}
 
 	/**
 	 * @access public
 	 * @param void
-	 * @return int
+	 * @return mixed
 	 */
 	public function getStatus()
 	{
-		return $this->response->getStatusCode();
+		if ( $this->response ) {
+			return $this->response->getStatusCode();
+		}
+		$this->error = true;
+		return false;
 	}
 
 	/**
 	 * @access public
-	 * @param void
+	 * @param string $host
 	 * @return bool
 	 */
-	public function isDown()
+	public function isDown($host = null)
 	{
-		if ( $this->getStatus() >= 500 ) {
-			return true;
-		} elseif ( empty($this->getResponse()) ) {
-			return true;
+		if ( $host ) {
+			$request = new Request();
+			$request->get($host);
+			if ( $request->getStatusCode() >= 500 ) {
+				return true;
+			}
+		} else {
+			if ( $this->getStatus() >= 500 ) {
+				return true;
+				
+			} elseif ( empty($this->getResponse()) ) {
+				return true;
+			}
 		}
 		return false;
 	}

@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.1
+ * @version   : 0.7.2
  * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -97,7 +97,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 		 * @property priority 10
 		 * @property count 1
 		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkUpdate'], 10);
+		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkUpdate'], 20);
 
 		/**
 		 * Check plugin translation update
@@ -105,10 +105,10 @@ final class Updater extends PluginOptions implements UpdaterInterface
 		 * Filter : site_transient_update_{$transient}
 		 *
 		 * @see checkTranslation@self
-		 * @property priority 20
+		 * @property priority 30
 		 * @property count 1
 		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkTranslation'], 20);
+		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkTranslation'], 30);
 
 		/**
 		 * Clear plugin updates cache
@@ -164,6 +164,8 @@ final class Updater extends PluginOptions implements UpdaterInterface
 				// Build request query
 				$query = [
 					'headers'    => $this->headers,
+					'timeout'    => 30,
+					'sslverify'  => false,
 					'body'       => ['request' => Stringify::serialize($params)],
 					'user-agent' => "{$this->getNameSpace()}-wordpress/{$info['Version']};"
 				];
@@ -173,7 +175,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 
 				// Get temp response
 				$client = new Request();
-				$temp = $client->post($this->infoUrl,$query);
+				$temp = $client->get($this->infoUrl,$query);
 
 				// Cache on success
 				if ( $temp->getStatusCode() == 200 ) {
@@ -232,6 +234,8 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			// Build request query
 			$query = [
 				'headers'    => $this->headers,
+				'timeout'    => 30,
+				'sslverify'  => false,
 				'body'       => ['request' => Stringify::serialize($params)],
 				'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
 			];
@@ -241,7 +245,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 
 			// Get temp response & Update transient
 			$client = new Request();
-			$temp = $client->post($this->updateUrl,$query);
+			$temp = $client->get($this->updateUrl,$query);
 
 			// Cache on success
 			if ( $temp->getStatusCode() == 200 ) {
@@ -298,6 +302,8 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			// Build request query
 			$query = [
 				'headers'    => $this->headers,
+				'timeout'    => 30,
+				'sslverify'  => false,
 				'body'       => ['request' => Stringify::serialize($params)],
 				'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
 			];
@@ -307,7 +313,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 
 			// Get temp response
 			$client = new Request();
-			$temp = $client->post($this->translationUrl,$query);
+			$temp = $client->get($this->translationUrl,$query);
 
 			// Cache on success
 			if ( $temp->getStatusCode() == 200 ) {
