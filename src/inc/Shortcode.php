@@ -105,6 +105,24 @@ final class Shortcode
 	}
 
 	/**
+	 * Check shortcode has flag attribute.
+	 * 
+	 * @access public
+	 * @param array $atts
+	 * @param string $attr
+	 * @return bool
+	 */
+	public static function hasFlag($atts = [], $attr = '')
+	{
+		if ( Arrayify::hasKey(0,$atts) ) {
+			if ( $atts[0] == $attr ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Get shortcode attribute value.
 	 * 
 	 * @access public
