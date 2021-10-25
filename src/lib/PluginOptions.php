@@ -19,6 +19,7 @@ use VanillePlugin\inc\HttpRequest;
 use VanillePlugin\inc\HttpGet;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Server;
+use VanillePlugin\inc\Response;
 use VanillePlugin\inc\GlobalConst;
 use VanillePlugin\thirdparty\Translator;
 
@@ -791,6 +792,19 @@ class PluginOptions extends WordPress
 			return true;
 		}
 	}
+
+	/**
+	 * @access protected
+	 * @param string $message
+	 * @param array $content
+	 * @param string $status
+	 * @param int $code
+	 * @return void
+	 */
+	protected function setResponse($message = '', $content = [], $status = 'success', $code = 200)
+	{
+		Response::set($this->translateString($message),$content,$status,$code);
+	}
 	
 	/**
 	 * Compare Versions
@@ -928,17 +942,23 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Check token
+	 * Check action token.
 	 *
 	 * @access public
-	 * @param int|string $action
+	 * @param mixed $action
+	 * @param bool $strict
 	 * @return bool
 	 */
-	public function checkToken($action = -1)
+	public function checkToken($action = -1, $strict = false)
 	{
 		$nonce = HttpRequest::isSetted('nonce') ? HttpRequest::get('nonce') : false;
 	    if ( !$this->checkNonce($nonce,$action) ) {
-	    	die($this->translateString('Invalid token'));
+	    	if ( $strict ) {
+	    		die($this->translateString('Invalid token'));
+	    		
+	    	} else {
+	    		$this->setResponse('Invalid token',[],'error');
+	    	}
 	    }
 	}
 
