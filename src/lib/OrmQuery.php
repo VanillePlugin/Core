@@ -15,6 +15,7 @@ namespace VanillePlugin\lib;
 use VanillePlugin\int\OrmQueryInterface;
 use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\TypeCheck;
+use VanillePlugin\inc\Stringify;
 
 final class OrmQuery implements OrmQueryInterface
 {
@@ -33,9 +34,11 @@ final class OrmQuery implements OrmQueryInterface
 	}
 
 	/**
-	 * @access public
+	 * Set default query builder values.
+	 * 
+	 * @access private
 	 * @param array $query
-	 * @return varray
+	 * @return array
 	 */
 	private function setDefault($query = [])
 	{
@@ -47,26 +50,44 @@ final class OrmQuery implements OrmQueryInterface
 			'limit'    => '',
 			'isSingle' => false,
 			'isRow'    => false,
-			'format'   => null,
 			'type'     => ARRAY_A
 		], $query);
 
-		if ( TypeCheck::isArray($query['where']) ) {
-			$temp = [];
-			foreach ($query['where'] as $property => $value) {
-				$temp[] = "`{$property}` = {$value}";
+		// Set table
+		if ( Stringify::contains($query['table'],',') ) {
+			$tables = explode(',',$query['table']);
+			foreach ($tables as $key => $table) {
+				$table = trim($table);
+				$tables[$key] = "_prefix_{$table}";
 			}
-			$query['where'] = implode(' AND ',$temp);
+			$query['table'] = implode(',',$tables);
+			
+		} else {
+			$query['table'] = trim($query['table']);
+			$query['table'] = "_prefix_{$query['table']}";
 		}
 
-		$query['where'] = !empty($query['where'])
-		? "WHERE {$query['where']}" : '';
+		// Set where clause
+		if ( !empty($query['where']) ) {
+			if ( TypeCheck::isArray($query['where']) ) {
+				$temp = [];
+				foreach ($query['where'] as $field => $value) {
+					$temp[] = "`{$field}` = {$value}";
+				}
+				$query['where'] = implode(' AND ',$temp);
+			}
+			$query['where'] = "WHERE {$query['where']}";
+		}
 
-		$query['limit'] = !empty($query['limit'])
-		? "LIMIT {$query['limit']}" : '';
+		// Set orderby
+		if ( !empty($query['orderby']) ) {
+			$query['orderby'] = "ORDER BY {$query['orderby']}";
+		}
 
-		$query['orderby'] = !empty($query['orderby'])
-		? "ORDER BY {$query['orderby']}" : '';
+		// Set limit
+		if ( !empty($query['limit']) ) {
+			$query['limit'] = "LIMIT {$query['limit']}";
+		}
 
 		return $query;
 	}

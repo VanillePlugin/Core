@@ -29,7 +29,7 @@ interface OrmInterface
     /**
      * @param string $table
      * @param array $data
-     * @param string $format false
+     * @param string $format
      * @return bool
      */
 	function insert($table, $data = [], $format = false);
@@ -37,14 +37,15 @@ interface OrmInterface
     /**
      * @param string $table
      * @param array $where
-     * @param string $format false
+     * @param string $format
      * @return bool
      */
 	function delete($table, $where = [], $format = null);
 
     /**
      * @param string $table
+     * @param bool $resetId
      * @return void
      */
-	function deleteAll($table);
+	function deleteAll($table, $resetId = true);
 }

@@ -63,11 +63,14 @@ final class Shortcode
 	 * 
 	 * @access public
 	 * @param string $value
+	 * @param bool $spaceStrip
 	 * @return string
 	 */
-	public static function formatSeparator($value = '')
+	public static function formatSeparator($value = '', $spaceStrip = false)
 	{
-		$value = Stringify::spaceStrip($value);
+		if ( $spaceStrip ) {
+			$value = Stringify::spaceStrip($value);
+		}
 		$value = Stringify::replace(';',',',$value);
 		$value = Stringify::replace('|',',',$value);
 		return $value;

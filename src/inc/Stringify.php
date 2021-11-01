@@ -374,31 +374,34 @@ final class Stringify
 	/**
 	 * @access public
 	 * @param string $string
+	 * @param string $replace
 	 * @return string
 	 */
-	public static function numberStrip($string)
+	public static function numberStrip($string, $replace = '')
 	{
-		return self::replaceRegex('/[0-9]+/','',(string)$string);
+		return self::replaceRegex('/[0-9]+/',$replace,(string)$string);
 	}
 
 	/**
 	 * @access public
 	 * @param string $string
+	 * @param string $replace
 	 * @return string
 	 */
-	public static function charStrip($string)
+	public static function charStrip($string, $replace = '')
 	{
-		return self::replaceRegex('/[^a-zA-Z0-9\s]/','',(string)$string);
+		return self::replaceRegex('/[^a-zA-Z0-9\s]/',$replace,(string)$string);
 	}
 
 	/**
 	 * @access public
 	 * @param string $string
+	 * @param string $replace
 	 * @return string
 	 */
-	public static function spaceStrip($string)
+	public static function spaceStrip($string, $replace = '')
 	{
-		return self::replaceRegex('/\s+/','',trim((string)$string));
+		return self::replaceRegex('/\s+/',$replace,trim((string)$string));
 	}
 
 	/**
@@ -415,11 +418,12 @@ final class Stringify
 	/**
 	 * @access public
 	 * @param string $string
+	 * @param string $replace
 	 * @return string
 	 */
-	public static function breakStrip($string)
+	public static function breakStrip($string, $replace = '')
 	{
-		return self::replaceRegex('/\r|\n/','',(string)$string);
+		return self::replaceRegex('/\r|\n/',$replace,(string)$string);
 	}
 
 	/**

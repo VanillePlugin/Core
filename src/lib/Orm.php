@@ -30,13 +30,13 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Custom SQL query.
+	 * SQL query.
 	 *
 	 * @access public
 	 * @param string $sql
 	 * @return mixed
 	 */
-	public function query($sql)
+	public function query($sql = '')
 	{
 		return $this->db->query($sql);
 	}
@@ -49,7 +49,7 @@ class Orm extends Db implements OrmInterface
 	 * @param mixed $args
 	 * @return mixed
 	 */
-	public function prepare($sql, $args)
+	public function prepare($sql = '', $args = [])
 	{
 		return $this->db->prepare($sql,$args);
 	}
@@ -62,7 +62,7 @@ class Orm extends Db implements OrmInterface
 	 * @param string $type
 	 * @return mixed
 	 */
-	public function fetchQuery($sql, $isRow = false, $type = 'ARRAY_A')
+	public function fetchQuery($sql = '', $isRow = false, $type = 'ARRAY_A')
 	{
 		if ( $isRow ) {
 			return $this->getRow($sql,$type);
@@ -71,7 +71,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Select query.
+	 * Custom select query.
 	 *
 	 * @access public
 	 * @param OrmQueryInterface $data
@@ -80,24 +80,13 @@ class Orm extends Db implements OrmInterface
 	public function select(OrmQueryInterface $data)
 	{
 		extract($data->query);
-		if ( $column !== '*' ) {
-			if ( Stringify::contains($column,',') ) {
-				$exceptions = ['`','COUNT','CONCAT'];
-				if ( !Stringify::contains($exceptions,$column) ) {
-					$columns = explode(',',$column);
-					foreach($columns as $key => $value) {
-						$value = trim($value);
-						$columns[$key] = "`{$value}`";
-					}
-					$column = implode(',',$columns);
-				}
-			}
-		}
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql  = trim("SELECT $column FROM `{$prefix}{$table}` {$where} {$orderby} {$limit}");
+		$table = Stringify::replace('_prefix_',$prefix,$table);
+		$sql  = trim("SELECT {$column} FROM {$table} {$where} {$orderby} {$limit}");
 		$sql .= ';';
 		if ( $isSingle ) {
 			return $this->getVar($sql);
+
 		} elseif ( $isRow ) {
 			return $this->getRow($sql,$type);
 		}
@@ -105,7 +94,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Select count query.
+	 * Custom select count query.
 	 *
 	 * @access public
 	 * @param OrmQueryInterface $data
@@ -115,7 +104,9 @@ class Orm extends Db implements OrmInterface
 	{
 		extract($data->query);
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "SELECT COUNT(*) FROM {$prefix}{$table} {$where}";
+		$table = Stringify::replace('_prefix_',$prefix,$table);
+		$sql  = trim("SELECT COUNT(*) FROM {$table} {$where}");
+		$sql .= ';';
 		return (int)$this->getVar($sql);
 	}
 
@@ -125,7 +116,7 @@ class Orm extends Db implements OrmInterface
 	 * @access public
 	 * @param string $table
 	 * @param array $data
-	 * @param mixed $format false
+	 * @param mixed $format
 	 * @return mixed
 	 */
 	public function insert($table, $data = [], $format = false)
@@ -144,7 +135,7 @@ class Orm extends Db implements OrmInterface
 	 * @param string $table
 	 * @param array $data
 	 * @param array $where
-	 * @param mixed $format false
+	 * @param mixed $format
 	 * @return bool
 	 */
 	public function update($table, $data = [], $where = [], $format = false)
@@ -154,7 +145,7 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Delete all query.
+	 * Delete table content.
 	 *
 	 * @access public
 	 * @param string $table
@@ -181,7 +172,7 @@ class Orm extends Db implements OrmInterface
 	 * @access public
 	 * @param string $table
 	 * @param array $where
-	 * @param string $format null
+	 * @param string $format
 	 * @return bool
 	 */
 	public function delete($table, $where = [], $format = null)
@@ -266,5 +257,65 @@ class Orm extends Db implements OrmInterface
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "SHOW TABLES LIKE '{$prefix}{$table}';";
 		return (bool)$this->db->query($sql);
+	}
+
+	/**
+	 * Get field min.
+	 *
+	 * @access public
+	 * @param string $table
+	 * @param string $field
+	 * @return mixed
+	 */
+	public function min($table = '', $field = '')
+	{
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$sql = "SELECT min({$field}) FROM `{$prefix}{$table}`;";
+		return $this->db->query($sql);
+	}
+
+	/**
+	 * Get field max.
+	 *
+	 * @access public
+	 * @param string $table
+	 * @param string $field
+	 * @return mixed
+	 */
+	public function max($table = '', $field = '')
+	{
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$sql = "SELECT max({$field}) FROM `{$prefix}{$table}`;";
+		return $this->db->query($sql);
+	}
+
+	/**
+	 * Get field avg.
+	 *
+	 * @access public
+	 * @param string $table
+	 * @param string $field
+	 * @return mixed
+	 */
+	public function avg($table = '', $field = '')
+	{
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$sql = "SELECT avg({$field}) FROM `{$prefix}{$table}`;";
+		return $this->db->query($sql);
+	}
+
+	/**
+	 * Get field sum.
+	 *
+	 * @access public
+	 * @param string $table
+	 * @param string $field
+	 * @return mixed
+	 */
+	public function sum($table = '', $field = '')
+	{
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		$sql = "SELECT sum({$field}) FROM `{$prefix}{$table}`;";
+		return $this->db->query($sql);
 	}
 }
