@@ -35,7 +35,10 @@ class Mailer
 	 */
 	public function __construct($email = null)
 	{
-		$this->email = isset($email) ? $email : get_bloginfo('admin_email');
+		if ( !$email ) {
+			$email = get_bloginfo('admin_email');
+		}
+		$this->email = $email;
 	}
 
 	/**
