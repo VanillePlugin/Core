@@ -739,4 +739,17 @@ class WordPress
 	{
 		return wp_authenticate($username,$password);
 	}
+
+	/**
+	 * Deactivate plugins.
+	 *
+	 * @access protected
+	 * @param array $plugins
+	 * @param bool $silent
+	 * @return void
+	 */
+	protected function deactivatePlugins($plugins = [], $silent = true)
+	{
+		deactivate_plugins($plugins,$silent);
+	}
 }

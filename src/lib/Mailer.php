@@ -12,6 +12,8 @@
 
 namespace VanillePlugin\lib;
 
+use VanillePlugin\inc\TypeCheck;
+
 class Mailer
 {
 	/**
@@ -142,8 +144,14 @@ class Mailer
 	 */
 	public function send()
 	{
-		if ( function_exists('wp_mail') ) {
-			return wp_mail($this->email,$this->subject,$this->content,$this->headers,$this->attachments);
+		if ( TypeCheck::isFunction('wp_mail') ) {
+			return wp_mail(
+				$this->email,
+				$this->subject,
+				$this->content,
+				$this->headers,
+				$this->attachments
+			);
 		}
 		return false;
 	}

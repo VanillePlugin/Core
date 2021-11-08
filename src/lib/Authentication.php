@@ -14,6 +14,7 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\Encryption;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\Server;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
@@ -52,7 +53,7 @@ final class Authentication extends PluginOptions
 		}
 
 		// Get user id by public key
-		if ( ($id = $this->getUserID($key)) ) {
+		if ( ($id = $this->getUserId($key)) ) {
 
 			// Validate public key
 			if ( isset($this->tokens[$id]) ) {
@@ -157,13 +158,13 @@ final class Authentication extends PluginOptions
 	 * @param string $key
 	 * @return mixed
 	 */
-	private function getUserID($key)
+	private function getUserId($key)
 	{
 		$users = get_users([
 			'meta_key'   => "_{$this->getNameSpace()}_public_key", 
 			'meta_value' => $key
 		]);
-		$user = array_shift($users);
+		$user = Arrayify::shift($users);
 		if ($user) {
 			return (int)$user->data->ID;
 		}

@@ -28,7 +28,7 @@ class View extends PluginOptions implements ViewInterface
     private $callables = false;
 
 	/**
-	 * Define custom callables
+	 * Define custom callables.
 	 *
 	 * @access public
      * @param array $callables
@@ -40,24 +40,25 @@ class View extends PluginOptions implements ViewInterface
 	}
 
     /**
-     * Render view
+     * Render view.
      *
      * @access public
-     * @param {inherit}
+     * @param array $content
+     * @param string $template
      * @return void
      */
     public function render($content = [], $template = 'default')
     {
-        echo $this->assign($content, $template);
+        echo $this->assign($content,$template);
     }
 
 	/**
-	 * Aassign content to view
+	 * Aassign content to view.
 	 *
      * @access public
 	 * @param array $content
      * @param string $template
-	 * @return string
+	 * @return mixed
 	 */
 	public function assign($content = [], $template = 'default')
 	{
@@ -70,7 +71,7 @@ class View extends PluginOptions implements ViewInterface
         // Set custom callables
         if ($this->callables) {
             foreach ($this->callables as $name => $callable) {
-                $env->addFunction(Template::extend($name, $callable));
+                $env->addFunction(Template::extend($name,$callable));
             }
         }
     
@@ -138,9 +139,6 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('unserialize', function($string){
             return Stringify::unserialize($string);
         }));
-        $env->addFunction(Template::extend('formatDate', function($date, $format = 'm/d/Y H:i', $to = 'd/m/Y H:i'){
-            return Date::toString($date,$format,$to);
-        }));
         $env->addFunction(Template::extend('hasFilter', function($hook){
             return $this->hasFilter($hook);
         }));
@@ -163,11 +161,11 @@ class View extends PluginOptions implements ViewInterface
      * @param string $template
      * @return string
      */
-    protected function getPath($template)
+    protected function getPath($template = '')
     {
         // Set overriding path
         $override = "{$this->getThemeDir()}/{$this->getNameSpace()}/";
-        $override = $this->applyFilter("{$this->getNameSpace()}-override-template-path", $override);
+        $override = $this->applyFilter("{$this->getNameSpace()}-override-template-path",$override);
         if ( File::exists("{$override}{$template}{$this->getViewExtension()}") ) {
             return $override;
         }

@@ -175,7 +175,7 @@ class Orm extends Db implements OrmInterface
 	 * @param string $format
 	 * @return bool
 	 */
-	public function delete($table, $where = [], $format = null)
+	public function delete($table = '', $where = [], $format = null)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		return (bool)$this->db->delete("{$prefix}{$table}",$where,$format);
@@ -188,7 +188,7 @@ class Orm extends Db implements OrmInterface
 	 * @param string $sql
 	 * @return mixed
 	 */
-	public function getVar($sql)
+	public function getVar($sql = '')
 	{
 		return $this->db->get_var($sql);
 	}
@@ -201,7 +201,7 @@ class Orm extends Db implements OrmInterface
 	 * @param string $type
 	 * @return mixed
 	 */
-	public function getRow($sql, $type = 'ARRAY_A')
+	public function getRow($sql = '', $type = 'ARRAY_A')
 	{
 		return $this->db->get_row($sql,$type);
 	}
@@ -214,7 +214,7 @@ class Orm extends Db implements OrmInterface
 	 * @param string $type
 	 * @return mixed
 	 */
-	public function getResult($sql, $type = 'ARRAY_A')
+	public function getResult($sql = '', $type = 'ARRAY_A')
 	{
 		return $this->db->get_results($sql,$type);
 	}

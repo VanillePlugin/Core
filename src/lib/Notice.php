@@ -23,6 +23,6 @@ class Notice extends View implements NoticeInterface
 	 */
 	public function init($callable = [])
 	{
-		$this->addAction('admin_notices', $callable);
+		$this->addAction('admin_notices',$callable);
 	}
 }
