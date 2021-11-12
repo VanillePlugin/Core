@@ -140,10 +140,10 @@ class View extends PluginOptions implements ViewInterface
             return Stringify::unserialize($string);
         }));
         $env->addFunction(Template::extend('hasFilter', function($hook){
-            return $this->hasFilter($hook);
+            return $this->hasPluginFilter($hook);
         }));
         $env->addFunction(Template::extend('applyFilter', function($hook, $value){
-            return $this->applyFilter($hook,$value);
+            return $this->applyPluginFilter($hook,$value);
         }));
         $env->addFunction(Template::extend('doAction', function($hook, $args = null){
             $this->doPluginAction($hook,$args);
