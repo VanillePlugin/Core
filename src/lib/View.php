@@ -79,9 +79,6 @@ class View extends PluginOptions implements ViewInterface
         $env->addFunction(Template::extend('dump', function($var){
             var_dump($var);
         }));
-        $env->addFunction(Template::extend('exit', function(){
-            exit;
-        }));
         $env->addFunction(Template::extend('exit', function($status = null){
             exit($status);
         }));
