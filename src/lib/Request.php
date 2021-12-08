@@ -13,6 +13,7 @@
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\RequestInterface;
+use VanillePlugin\inc\Arrayify;
 
 final class Request extends WordPress implements RequestInterface
 {
@@ -34,9 +35,31 @@ final class Request extends WordPress implements RequestInterface
 	 */
 	public function __construct($method = 'GET', $params = [], $baseUrl = null)
 	{
-		$this->method = $method;
-		$this->params = $params;
+		$this->method  = $method;
+		$this->params  = $params;
 		$this->baseUrl = $baseUrl;
+	}
+
+	/**
+	 * @access public
+	 * @param array $method
+	 * @return object
+	 */
+	public function setMethod($method = 'GET')
+	{
+		$this->method = $method;
+		return $this;
+	}
+
+	/**
+	 * @access public
+	 * @param array $params
+	 * @return object
+	 */
+	public function setParameters($params = [])
+	{
+		$this->params = $params;
+		return $this;
 	}
 
 	/**
@@ -45,9 +68,20 @@ final class Request extends WordPress implements RequestInterface
 	 * @param mixed $value
 	 * @return void
 	 */
-	public function addParameter($param = '',$value = false)
+	public function addParameter($param = '', $value = false)
 	{
 		$this->params[$param] = $value;
+	}
+
+	/**
+	 * @access public
+	 * @param string $url
+	 * @return object
+	 */
+	public function setBaseUrl($url)
+	{
+		$this->baseUrl = $url;
+		return $this;
 	}
 
 	/**
@@ -85,34 +119,12 @@ final class Request extends WordPress implements RequestInterface
 
 	/**
 	 * @access public
-	 * @param array $method
-	 * @return object
-	 */
-	public function setMethod($method = 'GET')
-	{
-		$this->method = $method;
-		return $this;
-	}
-
-	/**
-	 * @access public
-	 * @param string $url
-	 * @return object
-	 */
-	public function setBaseUrl($url)
-	{
-		$this->baseUrl = $url;
-		return $this;
-	}
-
-	/**
-	 * @access public
 	 * @param void
 	 * @return object
 	 */
 	public function send($url = null)
 	{
-		$this->raw = wp_remote_request("{$this->baseUrl}{$url}", array_merge([
+		$this->raw = wp_remote_request("{$this->baseUrl}{$url}", Arrayify::merge([
 		    'method'  => $this->method,
 		    'headers' => $this->headers,
 		    'body'    => $this->body,
@@ -127,9 +139,9 @@ final class Request extends WordPress implements RequestInterface
 	 * @param array $args
 	 * @return object
 	 */
-	public function post($url, $args = [])
+	public function get($url, $args = [])
 	{
-		$this->raw = wp_remote_post($url,$args);
+		$this->raw = wp_remote_get($url,$args);
 		return $this;
 	}
 
@@ -139,9 +151,9 @@ final class Request extends WordPress implements RequestInterface
 	 * @param array $args
 	 * @return object
 	 */
-	public function get($url, $args = [])
+	public function post($url, $args = [])
 	{
-		$this->raw = wp_remote_get($url,$args);
+		$this->raw = wp_remote_post($url,$args);
 		return $this;
 	}
 
@@ -180,14 +192,24 @@ final class Request extends WordPress implements RequestInterface
 	{
 		return wp_remote_retrieve_body($this->raw);
 	}
+	
+	/**
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public function getBaseUrl()
+	{
+		return $this->baseUrl;
+	}
 
 	/**
 	 * @access public
-	 * @param array|string $args
+	 * @param mixed $args
 	 * @param string $url
 	 * @return string
 	 */
-	public static function addQueryArg($args,$url)
+	public static function addQueryArg($args, $url)
 	{
 		return add_query_arg($args,$url);
 	}

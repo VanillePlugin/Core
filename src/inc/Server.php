@@ -12,6 +12,8 @@
 
 namespace VanillePlugin\inc;
 
+use VanillePlugin\lib\Request;
+
 final class Server
 {
 	/**
@@ -193,6 +195,115 @@ final class Server
 			$url = rtrim("{$url['scheme']}://{$url['host']}{$url['path']}");
 		}
 		return $url;
+	}
+
+	/**
+	 * Parse base from URL.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @return string
+	 */
+	public static function parseBaseUrl($url = '')
+	{
+		if ( !empty($url) && ($url = parse_url($url)) ) {
+			unset($url['path']);
+			$tmp = '';
+			if ( isset($url['scheme']) ) {
+				$tmp = "{$url['scheme']}://";
+			}
+			if ( isset($url['host']) ) {
+				$tmp = "{$tmp}{$url['host']}";
+			}
+			$url = $tmp;
+		}
+		return (string)$url;
+	}
+
+	/**
+	 * Check external url status code.
+	 * 
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return bool
+	 */
+	public static function isDown($url = '', $args = [])
+	{
+		// Set config
+		$args = Arrayify::merge([
+			'code'     => 500,
+			'format'   => false,
+			'endpoint' => true,
+			'response' => false,
+			'auth'     => false,
+			'method'   => 'GET',
+			'operator' => '>=',
+			'params'   => [
+				'timeout'     => 30,
+				'redirection' => 0,
+				'sslverify'   => false
+			]
+		], $args);
+
+		// Format URL (Base)
+		if ( $args['format'] ) {
+			$url = self::parseBaseUrl($url);
+		}
+
+		// Format URL (Endpoint)
+		if ( $args['endpoint'] ) {
+			$url = rtrim($url,'/');
+			$url = "{$url}/";
+		}
+
+		// Init request
+		$request = new Request();
+		$request->setMethod($args['method']);
+		$request->setParameters($args['params']);
+		$request->setBaseUrl($url);
+
+		// Auth config
+		if ( TypeCheck::isArray($args['auth']) ) {
+			$request->setHeaders($args['auth']);
+		}
+
+		// Send request
+		$request->send();
+
+		// Check status
+		if ( $args['operator'] == '==' ) {
+			if ( $request->getStatusCode() == intval($args['code']) ) {
+				return true;
+			}
+
+		} elseif ( $args['operator'] == '>=' ) {
+			if ( $request->getStatusCode() >= intval($args['code']) ) {
+				return true;
+			}
+
+		} elseif ( $args['operator'] == '<=' ) {
+			if ( $request->getStatusCode() <= intval($args['code']) ) {
+				return true;
+			}
+		}
+
+		// Check response
+		if ( $args['response'] ) {
+			if ( ($body = Json::decode($request->getBody(),true)) ) {
+				if ( TypeCheck::isString($args['response']) ) {
+					if ( !isset($body[$args['response']]) ) {
+						return true;
+					}
+				}
+			} else {
+				if ( $request->getBody() !== $args['response'] ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**

@@ -13,8 +13,10 @@
 namespace VanillePlugin\inc;
 
 use VanillePlugin\lib\PluginOptions;
-use VanillePlugin\lib\Request;
 
+/**
+ * API Client Helper.
+ */
 abstract class AbstractAPI extends PluginOptions
 {
 	/**
@@ -28,8 +30,8 @@ abstract class AbstractAPI extends PluginOptions
 	 * @var object $client
 	 * @var object $response
 	 */
-	protected $client;
-	protected $response;
+	protected $client = null;
+	protected $response = null;
 
 	/**
 	 * @access public
@@ -39,6 +41,8 @@ abstract class AbstractAPI extends PluginOptions
 	abstract public function setClient($params = null);
 
 	/**
+	 * Get current server response.
+	 * 
 	 * @access public
 	 * @param bool $isArray
 	 * @return mixed
@@ -47,45 +51,42 @@ abstract class AbstractAPI extends PluginOptions
 	{
 		if ( $this->response ) {
 			return Response::get($this->response->getBody(),$isArray);
+
+		} else {
+			$this->error = true;
+			return false;
 		}
-		$this->error = true;
-		return false;
 	}
 
 	/**
+	 * Get current server status code.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return mixed
 	 */
-	public function getStatus()
+	public function getStatusCode()
 	{
 		if ( $this->response ) {
 			return $this->response->getStatusCode();
+
+		} else {
+			$this->error = true;
+			return false;
 		}
-		$this->error = true;
-		return false;
 	}
 
 	/**
+	 * Check current server status code.
+	 * 
 	 * @access public
-	 * @param string $host
+	 * @param int $code
 	 * @return bool
 	 */
-	public function isDown($host = null)
+	public function isDown($code = 429)
 	{
-		if ( $host ) {
-			$request = new Request();
-			$request->get($host);
-			if ( $request->getStatusCode() >= 500 ) {
-				return true;
-			}
-		} else {
-			if ( $this->getStatus() >= 500 ) {
-				return true;
-				
-			} elseif ( empty($this->getResponse()) ) {
-				return true;
-			}
+		if ( $this->getStatusCode() >= intval($code) ) {
+			return true;
 		}
 		return false;
 	}
