@@ -215,9 +215,14 @@ final class Updater extends PluginOptions implements UpdaterInterface
 		
 		if ( !$response ) {
 
-			// Get plugin version
+			// Get plugin version from WP
 			$version = isset($transient->checked[$this->getMainFile()])
-			? $transient->checked[$this->getMainFile()] : '0.0.0';
+			? $transient->checked[$this->getMainFile()] : false;
+
+			// Get version from plugin itself
+			if ( !$version ) {
+				$version = $this->getPluginVersion();
+			}
 
 			// Set request params
 			$params = [
@@ -283,9 +288,14 @@ final class Updater extends PluginOptions implements UpdaterInterface
 		$response = $this->getTransient('check-translation');
 		if ( !$response ) {
 
-			// Get plugin version
+			// Get plugin version from WP
 			$version = isset($transient->checked[$this->getMainFile()])
-			? $transient->checked[$this->getMainFile()] : '0.0.0';
+			? $transient->checked[$this->getMainFile()] : false;
+			
+			// Get version from plugin itself
+			if ( !$version ) {
+				$version = $this->getPluginVersion();
+			}
 
 			// Set request params
 			$params = [
