@@ -66,6 +66,42 @@ final class Post
 
 	/**
 	 * @access public
+	 * @param array $data
+	 * @param bool $error
+	 * @param bool $after
+	 * @return mixed
+	 */
+	public static function add($data = [], $error = false, $after = true)
+	{
+		return wp_insert_post($data,$error,$after);
+	}
+
+	/**
+	 * @access public
+	 * @param array $data
+	 * @param bool $error
+	 * @param bool $after
+	 * @return mixed
+	 */
+	public static function update($data = [], $error = false, $after = true)
+	{
+		return wp_update_post($data,$error,$after);
+	}
+
+	/**
+	 * @access public
+	 * @param array $id
+	 * @param bool $force
+	 * @return mixed
+	 */
+	public static function delete($id = false, $force = false)
+	{
+		$id = ($id) ? $id : self::getId();
+		return wp_delete_post($id,$force);
+	}
+
+	/**
+	 * @access public
 	 * @param string $key
 	 * @param int $id
 	 * @param bool $single
