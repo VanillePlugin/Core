@@ -77,8 +77,21 @@ final class Date extends DateTime
 	 */
 	public static function toString($date, $format, $to = 'Y-m-d H:i:s')
 	{
-		return self::create($date,$format)->format($to);
+        $datetime = self::create($date,$format)->format($to);
+        return self::i18n($datetime,$to);
 	}
+
+    /**
+     * @access public
+     * @param string $date
+     * @param string $format
+     * @param string $gmt
+     * @return string
+     */
+    public static function i18n($date, $format = 'Y-m-d H:i:s', $gmt = false)
+    {
+        return date_i18n($format,strtotime($date),$gmt);
+    }
 
     /**
      * @access public
