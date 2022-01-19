@@ -1021,11 +1021,11 @@ class PluginOptions extends WordPress
 	/**
 	 * Set options language
 	 *
-	 * @access private
+	 * @access public
 	 * @param mixed $lang
 	 * @return mixed
 	 */
-	private function setOptionLanguage($lang = null)
+	public function setOptionLanguage($lang = null)
 	{
 		if ( $this->hasMultilingual() ) {
 			if ( $lang !== false ) {
