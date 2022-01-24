@@ -21,8 +21,8 @@ final class AMP
 	 */
 	public static function isActive()
 	{
-		if ( function_exists('is_amp_endpoint') ) {
-			return is_amp_endpoint();
+		if ( function_exists('amp_is_request') ) {
+			return amp_is_request();
 		} else {
 			return false;
 		}
