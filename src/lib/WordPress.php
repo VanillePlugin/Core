@@ -590,6 +590,18 @@ class WordPress
 	}
 
 	/**
+	 * Check mobile.
+	 *
+	 * @access protected
+	 * @param void
+	 * @return bool
+	 */
+	protected function isMobile()
+	{
+		return wp_is_mobile();
+	}
+
+	/**
 	 * Check user exists.
 	 *
 	 * @access protected
