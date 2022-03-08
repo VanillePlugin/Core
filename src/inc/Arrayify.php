@@ -21,7 +21,7 @@ final class Arrayify
 	 * @param bool $strict
 	 * @return bool
 	 */
-	public static function inArray($needle, $haystack, $strict = false)
+	public static function inArray($needle, $haystack, $strict = true)
 	{
 		return in_array($needle,$haystack,$strict);
 	}
