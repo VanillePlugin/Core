@@ -18,10 +18,10 @@ final class ArrayifyTest extends TestCase
     public function testInArray()
     {
         $array = [0,1,'test'];
-        $this->assertEquals(true, Arrayify::inArray('test'));
-        $this->assertEquals(false, Arrayify::inArray('test2'));
-        $this->assertEquals(true, !Arrayify::inArray('test3'));
-        $this->assertEquals(false, Arrayify::inArray(2));
-        $this->assertEquals(true, !Arrayify::inArray(2));
+        $this->assertEquals(true, Arrayify::inArray('test',$array));
+        $this->assertEquals(false, Arrayify::inArray('test2',$array));
+        $this->assertEquals(true, !Arrayify::inArray('test3',$array));
+        $this->assertEquals(false, Arrayify::inArray(2,$array));
+        $this->assertEquals(true, !Arrayify::inArray(2,$array));
     }
 }
