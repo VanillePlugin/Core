@@ -13,7 +13,7 @@
 use VanillePlugin\inc\Arrayify;
 use PHPUnit\Framework\TestCase;
 
-final class ArrayifyTest
+final class ArrayifyTest extends TestCase
 {
     public function testInArray()
     {
