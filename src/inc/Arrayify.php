@@ -66,7 +66,7 @@ final class Arrayify
 	 * @param array $arrays
 	 * @return array
 	 */
-	public static function map($callback = null, $array, $arrays = [])
+	public static function map($callback, $array, $arrays = [])
 	{
 		return array_map($callback,$array,$arrays);
 	}
