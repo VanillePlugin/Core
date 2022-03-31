@@ -64,7 +64,7 @@ final class Image
 		$path = "{$dir['path']}/{$name}";
 
 		// Get existing image from gallery by name (Title)
-		if ( ($id = Attachment::getIdByTitle(File::basename($path))) ) {
+		if ( ($id = Attachment::getIdByTitle(File::getFileName($path))) ) {
 
 		    return [
 		    	'id'  => $id,
@@ -77,7 +77,7 @@ final class Image
 			if ( !$override ) {
 				if ( File::exists($path) ) {
 					$ext  = $data['ext'];
-					$tmp  = File::basename($name);
+					$tmp  = File::getFileName($name);
 					$id   = Tokenizer::getUniqueId();
 					$name = "{$tmp}-{$id}.{$ext}";
 					$path = "{$dir['path']}/{$name}";

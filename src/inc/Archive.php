@@ -50,7 +50,7 @@ final class Archive
 					        $zip->addFile($p,basename($name));
 					    }
 					}
-				} elseif ( File::isFileType($path) ) {
+				} elseif ( File::isFile($path) ) {
 					$zip->addFile($path,basename($path));
 				}
 				$zip->close();

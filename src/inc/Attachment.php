@@ -49,7 +49,7 @@ final class Attachment
 	{
 		$data = self::defaultArgs($data);
 		if ( empty($data['title']) ) {
-			$data['title'] = File::basename($path);
+			$data['title'] = File::getFileName($path);
 		}
 		$attachment = [
 	        'guid'           => $data['url'],

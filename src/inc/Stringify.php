@@ -157,8 +157,8 @@ final class Stringify
 	 */
 	public static function getSpecialChars()
 	{
-		$json = new Json(dirname(__FILE__).'/bin/special.json');
-		return (array)$json->parse(true);
+		$json = dirname(__FILE__).'/bin/special.json';
+		return (array)Json::parse($json,true);
 	}
 
 	/**
