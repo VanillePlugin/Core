@@ -83,15 +83,14 @@ final class VanillePluginValidator extends Validator
 
 	/**
 	 * @access private
-	 * @var mixed $config
+	 * @var object $config
 	 * @return mixed
 	 */
 	private static function isValidConfig($config)
 	{
-		if ( $config->parse() && !empty($config->parse()) ) {
+		if ( TypeCheck::isObject($config) ) {
 			$validator = new JsonValidator;
-			$json = $config->parse();
-			$validator->validate($json, (object)[
+			$validator->validate($config, (object)[
 				'$ref' => 'file://' . dirname(__FILE__).'/config.schema.json'
 			]);
 			if ( $validator->isValid() ) {

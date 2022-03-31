@@ -55,22 +55,21 @@ trait VanillePluginConfig
 		// Check Namespace
 		VanillePluginValidator::checkNamespace($plugin);
 
-		// Define Plugin Internal Namespace
+		// Define plugin internal namespace
 		$this->namespace = $plugin->getNameSpace();
 
-		// Parse Plugin Config
-		$config = "{$this->getRoot()}{$this->path}";
-		if ( File::exists($config) ) {
+		// Parse plugin config
+		$json = "{$this->getRoot()}{$this->path}";
+		if ( File::exists($json) ) {
 
-			$json = new Json($config);
-			VanillePluginValidator::checkConfig($json);
-			$this->global = $json->parse();
+			$this->global = Json::parse($json);
+			VanillePluginValidator::checkConfig($this->global);
 
 		} else {
 
 			// Parse VanillePLugin Default Config
-			$json = new Json(dirname(__FILE__).'/config.default.json');
-			$this->global = $json->parse();
+			$json = dirname(__FILE__).'/config.default.json';
+			$this->global = Json::parse($json);
 		}
 	}
 
@@ -84,8 +83,8 @@ trait VanillePluginConfig
 	 */
 	protected function updateConfig($options = [], $args = 64|128|256)
 	{
-		$config = new Json("{$this->getRoot()}{$this->path}");
-		$update = $config->parse(true);
+		$json = "{$this->getRoot()}{$this->path}";
+		$update = Json::parse($json,true);
 		foreach ($options as $option => $value) {
 			if ( isset($update['options'][$option]) ) {
 				$update['options'][$option] = $value;
