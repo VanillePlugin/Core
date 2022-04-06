@@ -15,6 +15,8 @@ namespace VanillePlugin\inc;
 class Tokenizer
 {
     /**
+     * Get token.
+     * 
      * @access public
      * @param string $user
      * @param string $password
@@ -34,6 +36,8 @@ class Tokenizer
     }
 
     /**
+     * Get range of numbers.
+     * 
      * @access public
      * @param int $min
      * @param int $max
@@ -58,6 +62,8 @@ class Tokenizer
     }
 
     /**
+     * Generate token.
+     * 
      * @access public
      * @param int $length
      * @param bool $special
@@ -82,7 +88,7 @@ class Tokenizer
     }
 
     /**
-     * base64 encode
+     * base64 encode.
      *
      * @access public
      * @param string $data
@@ -99,7 +105,7 @@ class Tokenizer
     }
 
     /**
-     * base64 decode
+     * base64 decode.
      *
      * @access public
      * @param string $data
@@ -116,7 +122,7 @@ class Tokenizer
     }
 
     /**
-     * Get unique Id
+     * Get unique Id.
      *
      * @access public
      * @param void
@@ -125,5 +131,19 @@ class Tokenizer
     public static function getUniqueId()
     {
         return md5(uniqid(time()));
+    }
+
+    /**
+     * Get password.
+     *
+     * @access public
+     * @param int $length
+     * @param bool $special
+     * @param bool $extra
+     * @return string
+     */
+    public static function getPassword($length = 12, $special = true, $extra = false)
+    {
+        return wp_generate_password($length,$special,$extra);
     }
 }
