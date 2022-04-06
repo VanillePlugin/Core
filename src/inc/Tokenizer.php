@@ -132,18 +132,4 @@ class Tokenizer
     {
         return md5(uniqid(time()));
     }
-
-    /**
-     * Get password.
-     *
-     * @access public
-     * @param int $length
-     * @param bool $special
-     * @param bool $extra
-     * @return string
-     */
-    public static function getPassword($length = 12, $special = true, $extra = false)
-    {
-        return wp_generate_password($length,$special,$extra);
-    }
 }

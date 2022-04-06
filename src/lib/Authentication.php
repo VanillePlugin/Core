@@ -187,4 +187,18 @@ final class Authentication extends PluginOptions
 		$password = isset($credentials[1]) ? $credentials[1] : '';
 		return $this->authenticate($username,$password);
 	}
+
+    /**
+     * Get password.
+     *
+     * @access public
+     * @param int $length
+     * @param bool $special
+     * @param bool $extra
+     * @return string
+     */
+    public static function getPassword($length = 12, $special = true, $extra = false)
+    {
+        return wp_generate_password($length,$special,$extra);
+    }
 }
