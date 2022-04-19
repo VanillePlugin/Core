@@ -31,7 +31,7 @@ final class Session extends PluginOptions
     }
     
     /**
-     * Register the session
+     * Register the session.
      *
      * @access public
      * @param int $time
@@ -45,7 +45,7 @@ final class Session extends PluginOptions
     }
 
     /**
-     * Check if session is registered
+     * Check if session is registered.
      *
      * @access public
      * @param void
@@ -73,7 +73,7 @@ final class Session extends PluginOptions
     }
 
     /**
-     * Retrieve value stored in session by key
+     * Retrieve value stored in session by key.
      *
      * @access public
      * @param string $item
@@ -88,7 +88,7 @@ final class Session extends PluginOptions
     }
 
     /**
-     * Check key exists
+     * Check key exists.
      *
      * @access public
      * @param string $key
@@ -103,7 +103,19 @@ final class Session extends PluginOptions
     }
 
     /**
-     * Retrieve global session variable
+     * Unset key.
+     *
+     * @access public
+     * @param string $key
+     * @return bool
+     */
+    public static function unset($key)
+    {
+        unset($_SESSION[$key]);
+    }
+
+    /**
+     * Retrieve global session variable.
      *
      * @access public
      * @param void
@@ -115,7 +127,7 @@ final class Session extends PluginOptions
     }
 
     /**
-     * Get id for current session
+     * Get id for current session.
      *
      * @access public
      * @param void
@@ -127,7 +139,7 @@ final class Session extends PluginOptions
     }
 
     /**
-     * Check if session is over
+     * Check if session is over.
      *
      * @access public
      * @param void
@@ -142,7 +154,7 @@ final class Session extends PluginOptions
     }
 
     /**
-     * Renew session when the given time is not up
+     * Renew session when the given time is not up.
      *
      * @access public
      * @param void
@@ -154,7 +166,7 @@ final class Session extends PluginOptions
     }
 
     /**
-     * Destroy session
+     * Destroy session.
      *
      * @access public
      * @param void
