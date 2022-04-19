@@ -213,4 +213,14 @@ final class Request extends WordPress implements RequestInterface
 	{
 		return add_query_arg($args,$url);
 	}
+
+	/**
+	 * @access public
+	 * @param array $args
+	 * @return string
+	 */
+	public static function buildQuery($args)
+	{
+		return http_build_query($args);
+	}
 }
