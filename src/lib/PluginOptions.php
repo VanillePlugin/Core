@@ -28,7 +28,7 @@ class PluginOptions extends WordPress
 	use VanillePluginConfig;
 
 	/**
-	 * Fire plugin action
+	 * Fire plugin action.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -41,7 +41,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add plugin action
+	 * Add plugin action.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -56,7 +56,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Remove plugin action
+	 * Remove plugin action.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -70,7 +70,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add plugin filter
+	 * Add plugin filter.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -85,7 +85,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Remove plugin filter
+	 * Remove plugin filter.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -99,7 +99,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Apply plugin filter
+	 * Apply plugin filter.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -113,7 +113,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Has plugin filter
+	 * Has plugin filter.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -126,7 +126,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Register plugin settings
+	 * Register plugin settings.
 	 *
 	 * @access protected
 	 * @param string $group
@@ -143,7 +143,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Addd plugin option
+	 * Addd plugin option.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -159,7 +159,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Get plugin option
+	 * Get plugin option.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -193,7 +193,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Update plugin option
+	 * Update plugin option.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -209,7 +209,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Remove plugin option
+	 * Remove plugin option.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -224,7 +224,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Remove all plugin options
+	 * Remove all plugin options.
 	 *
 	 * @access protected
 	 * @param void
@@ -238,7 +238,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Retrieves plugin option as object
+	 * Retrieves plugin option as object.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -252,7 +252,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add plugin menu page
+	 * Add plugin menu page.
 	 *
 	 * @access protected
 	 * @param array $settings
@@ -295,7 +295,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add plugin submenu page
+	 * Add plugin submenu page.
 	 *
 	 * @access protected
 	 * @param array $settings
@@ -339,7 +339,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Reset plugin submenu
+	 * Reset plugin submenu.
 	 *
 	 * @access protected
 	 * @param string $title
@@ -363,7 +363,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Update the value of an option that was already added.
 	 *
 	 * @access protected
 	 * @param string $path
@@ -381,7 +381,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Update the value of an option that was already added.
 	 *
 	 * @access protected
 	 * @param string $path
@@ -397,7 +397,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Update the value of an option that was already added.
 	 *
 	 * @access protected
 	 * @param string $path
@@ -413,7 +413,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Update the value of an option that was already added.
 	 *
 	 * @access protected
 	 * @param array $name
@@ -428,7 +428,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Update the value of an option that was already added.
 	 *
 	 * @access protected
 	 * @param array $name
@@ -443,7 +443,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Update the value of an option that was already added
+	 * Update the value of an option that was already added.
 	 *
 	 * @access protected
 	 * @param string $path
@@ -461,7 +461,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add Plugin Main CSS
+	 * Add Plugin Main CSS.
 	 *
 	 * @access protected
 	 * @param string $path
@@ -477,7 +477,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add Plugin Global CSS
+	 * Add Plugin Global CSS.
 	 *
 	 * @access protected
 	 * @param string $path
@@ -493,7 +493,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Retrieves the value of a transient
+	 * Retrieves the value of a transient.
 	 *
 	 * @see /reference/functions/get_transient/
 	 * @access protected
@@ -507,7 +507,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Set the value of a transient
+	 * Set the value of a transient.
 	 *
 	 * @see /reference/functions/set_transient/
 	 * @access protected
@@ -523,7 +523,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Deletes a transient
+	 * Deletes a transient.
 	 *
 	 * @see /reference/functions/delete_transient/
 	 * @access protected
@@ -537,7 +537,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Deletes all transients
+	 * Deletes all transients.
 	 *
 	 * @access protected
 	 * @param void
@@ -551,7 +551,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Check if is plugin namespace
+	 * Check if is plugin namespace.
 	 *
 	 * @access protected
 	 * @param string $slug null
@@ -571,7 +571,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Get current used local
+	 * Get current used local.
 	 *
 	 * @access protected
 	 * @param bool $local
@@ -588,7 +588,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Get current used lang
+	 * Get current used lang.
 	 *
 	 * @access protected
 	 * @param void
@@ -605,24 +605,25 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Return plugin info via absolute path,
-	 * {pluginDir}/{pluginMain}.php.
+	 * Return plugin header using file,
+	 * file : {pluginDir}/{pluginMain}.php.
 	 *
 	 * @access protected
 	 * @param string $file
 	 * @return mixed
 	 */
-	protected function getPluginInfo($file = '')
+	protected function getPluginHeader($file = '')
 	{
-		if ( function_exists('get_plugin_data') ) {
-			return get_plugin_data($file);
-		}
-		return false;
+	    if ( ! TypeCheck::isFunction('get_plugin_data') ) {
+	        require_once(GlobalConst::rootDir('wp-admin/includes/plugin.php'));
+	    }
+	    $file = GlobalConst::pluginDir($file);
+		return get_plugin_data($file);
 	}
 
 	/**
-	 * Return plugin data via absolute path,
-	 * {pluginDir}/{pluginMain}.php.
+	 * Return plugin data using file,
+	 * file : {pluginDir}/{pluginMain}.php.
 	 *
 	 * @access protected
 	 * @param string $file

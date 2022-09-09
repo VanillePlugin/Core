@@ -15,6 +15,9 @@ namespace VanillePlugin\inc;
 use VanillePlugin\int\ShortcodeInterface;
 use VanillePlugin\lib\View;
 
+/**
+ * Shortcode Helper.
+ */
 abstract class AbstractShortcode extends View implements ShortcodeInterface
 {
 	/**

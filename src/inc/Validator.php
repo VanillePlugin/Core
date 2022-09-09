@@ -62,7 +62,7 @@ class Validator
      * @param string $address
      * @return bool
      */
-    public static function isValidMac($address = '')
+    public static function isValidMAC($address = '')
     {
         return (bool)Stringify::match("/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/i",$address);
     }

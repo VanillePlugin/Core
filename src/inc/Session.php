@@ -10,26 +10,26 @@
  * This file if a part of VanillePlugin Framework
  */
 
-namespace VanillePlugin\lib;
+namespace VanillePlugin\inc;
 
-use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\Date;
 
-final class Session extends PluginOptions
+final class Session
 {
     /**
-     * @param PluginNameSpaceInterface $plugin
+     * Start session.
+     *
+     * @access public
+     * @param string $key
+     * @return bool
      */
-    public function __construct(PluginNameSpaceInterface $plugin)
+    public static function start()
     {
-        // Init plugin config
-        $this->initConfig($plugin);
-        
         if ( !self::isSetted() ) {
             session_start();
         }
     }
-    
+
     /**
      * Register the session.
      *
@@ -84,7 +84,7 @@ final class Session extends PluginOptions
         if ( $item ) {
             return self::isSetted($item) ? $_SESSION[$item] : false;
         }
-        return isset($_SESSION) && !empty($_SESSION);
+        return $_SESSION;
     }
 
     /**
@@ -115,25 +115,13 @@ final class Session extends PluginOptions
     }
 
     /**
-     * Retrieve global session variable.
-     *
-     * @access public
-     * @param void
-     * @return array
-     */
-    public static function getSession()
-    {
-        return $_SESSION;
-    }
-
-    /**
      * Get id for current session.
      *
      * @access public
      * @param void
      * @return int
      */
-    public static function getSessionId()
+    public static function getId()
     {
         return self::get('--session-id');
     }
@@ -162,7 +150,7 @@ final class Session extends PluginOptions
      */
     public static function renew()
     {
-        self::set('--session-start', Date::newTime(0, 0, self::get('--session-time')));
+        self::set('--session-start', Date::newTime(0,0,self::get('--session-time')));
     }
 
     /**
@@ -175,6 +163,5 @@ final class Session extends PluginOptions
     public static function end()
     {
         session_destroy();
-        $_SESSION = [];
     }
 }

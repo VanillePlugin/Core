@@ -2,8 +2,8 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.7
- * @copyright : (c) 2018 - 2021 JIHAD SINNAOUR <mail@jihadsinnaour.com>
+ * @version   : 0.7.8
+ * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,6 +17,8 @@ use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\GlobalConst;
+use \stdClass;
 
 final class Updater extends PluginOptions implements UpdaterInterface
 {
@@ -25,7 +27,8 @@ final class Updater extends PluginOptions implements UpdaterInterface
 	 * @var string $updateUrl
 	 * @var string $infoUrl
 	 * @var string $translationUrl
-	 * @var string $wpVerion
+	 * @var string $version
+	 * @var string $wpVersion
 	 * @var array $license
 	 * @var array $headers
 	 * @var array $params
@@ -33,7 +36,8 @@ final class Updater extends PluginOptions implements UpdaterInterface
 	private $updateUrl;
 	private $infoUrl;
 	private $translationUrl;
-	private $wpVerion;
+	private $version;
+	private $wpVersion;
 	private $license = [];
 	private $headers = [];
 	private $params = [];
@@ -50,20 +54,15 @@ final class Updater extends PluginOptions implements UpdaterInterface
 		// Init plugin config
 		$this->initConfig($plugin);
 
-		// Check update capability
-		if ( !$this->hadCapability('update_plugins') ) {
-		    return;
-		}
-
-		// Check WordPress update
-		if ( wp_installing() ) {
-			return;
-		}
+		// Parse plugin version
+		$pluginHeader = $this->getPluginHeader($this->getMainFile());
+		$version = !empty($pluginHeader['Version'])
+		? $pluginHeader['Version'] : $this->getPluginVersion();
 
 		// Init updater config
-		global $wp_version;
-		$this->wpVerion = $wp_version;
+		$this->wpVersion = GlobalConst::version();
 		$this->updateUrl = $host;
+		$this->version = $version;
 		
 		// Define request
 		$this->headers = isset($params['headers']) ? $params['headers'] : [];
@@ -97,7 +96,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 		 * @property priority 10
 		 * @property count 1
 		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkUpdate'], 20);
+		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkUpdate']);
 
 		/**
 		 * Check plugin translation update
@@ -105,10 +104,10 @@ final class Updater extends PluginOptions implements UpdaterInterface
 		 * Filter : site_transient_update_{$transient}
 		 *
 		 * @see checkTranslation@self
-		 * @property priority 30
+		 * @property priority 10
 		 * @property count 1
 		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkTranslation'], 30);
+		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkTranslation']);
 
 		/**
 		 * Clear plugin updates cache
@@ -139,22 +138,20 @@ final class Updater extends PluginOptions implements UpdaterInterface
 
 			// Check info option
 			if ( !$this->infoUrl ) {
-				return false;
+				return $transient;
 			}
 
 			// Get response from cache
 			$response = $this->getTransient('get-info');
-			if ( !$response ) {
 
-				// Prepare response
-				$info = $this->getPluginInfo($this->getMainFilePath());
+			if ( !$response ) {
 
 				// Set request params
 				$params = [
 					'slug'      => $this->getNameSpace(),
-					'version'   => $info['Version'],
-					'wpversion' => $this->wpVerion,
-					'ua'        => "{$this->getNameSpace()}-wordpress/{$info['Version']};",
+					'version'   => $this->version,
+					'wpversion' => $this->wpVersion,
+					'ua'        => $this->getUserAgent(),
 					'action'    => "{$this->getNameSpace()}-get-info"
 				];
 
@@ -164,13 +161,13 @@ final class Updater extends PluginOptions implements UpdaterInterface
 				// Build request query
 				$query = [
 					'headers'    => $this->headers,
-					'timeout'    => 30,
-					'sslverify'  => false,
+					'timeout'    => $this->getTimeout(),
+					'sslverify'  => $this->isSSL(),
 					'body'       => ['request' => Stringify::serialize($params)],
-					'user-agent' => "{$this->getNameSpace()}-wordpress/{$info['Version']};"
+					'user-agent' => $this->getUserAgent()
 				];
 
-				// Add licence
+				// Set licence
 				$query = $this->setLicense($query);
 
 				// Get temp response
@@ -205,31 +202,17 @@ final class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	public function checkUpdate($transient)
 	{
-		// Check transient
-		if ( empty($transient->checked) ) {
-			return $transient;
-		}
-
 		// Get response from cache
 		$response = $this->getTransient('check-update');
 		
 		if ( !$response ) {
 
-			// Get plugin version from WP
-			$version = isset($transient->checked[$this->getMainFile()])
-			? $transient->checked[$this->getMainFile()] : false;
-
-			// Get version from plugin itself
-			if ( !$version ) {
-				$version = $this->getPluginVersion();
-			}
-
 			// Set request params
 			$params = [
 				'slug'      => $this->getNameSpace(),
-				'version'   => $version,
-				'wpversion' => $this->wpVerion,
-				'ua'        => "{$this->getNameSpace()}-wordpress/{$version};",
+				'version'   => $this->version,
+				'wpversion' => $this->wpVersion,
+				'ua'        => $this->getUserAgent(),
 				'action'    => "{$this->getNameSpace()}-check-update"
 			];
 
@@ -239,16 +222,16 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			// Build request query
 			$query = [
 				'headers'    => $this->headers,
-				'timeout'    => 30,
+				'timeout'    => $this->getTimeout(),
 				'sslverify'  => false,
 				'body'       => ['request' => Stringify::serialize($params)],
-				'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
+				'user-agent' => $this->getUserAgent()
 			];
 
-			// Add licence
+			// Set licence
 			$query = $this->setLicense($query);
 
-			// Get temp response & Update transient
+			// Get temp response
 			$client = new Request();
 			$temp = $client->get($this->updateUrl,$query);
 
@@ -264,10 +247,35 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			}
 		}
 
+		// Fix transient
+		if ( !TypeCheck::isObject($transient) ) {
+			$transient = new stdClass();
+		}
+
 		// Update transient
 		if ( $this->isValidResponse($response) ) {
 			$transient->response[$this->getMainFile()] = $response;
+
+		} else {
+	        $item = (object)[
+	            'id'            => $this->getMainFile(),
+	            'slug'          => $this->getNameSpace(),
+	            'plugin'        => $this->getMainFile(),
+	            'new_version'   => $this->version,
+	            'url'           => '',
+	            'package'       => '',
+	            'icons'         => [],
+	            'banners'       => [],
+	            'banners_rtl'   => [],
+	            'tested'        => '',
+	            'requires_php'  => '',
+	            'compatibility' => new stdClass()
+	        ];
+	        $transient->no_update[$this->getMainFile()] = $item;
 		}
+
+		$transient->last_checked = time();
+		$transient->checked[$this->getMainFile()] = $this->version;
 
 		return $transient;
 	}
@@ -286,23 +294,15 @@ final class Updater extends PluginOptions implements UpdaterInterface
 
 		// Get response from cache
 		$response = $this->getTransient('check-translation');
-		if ( !$response ) {
 
-			// Get plugin version from WP
-			$version = isset($transient->checked[$this->getMainFile()])
-			? $transient->checked[$this->getMainFile()] : false;
-			
-			// Get version from plugin itself
-			if ( !$version ) {
-				$version = $this->getPluginVersion();
-			}
+		if ( !$response ) {
 
 			// Set request params
 			$params = [
 				'slug'      => $this->getNameSpace(),
-				'version'   => $version,
-				'wpversion' => $this->wpVerion,
-				'ua'        => "{$this->getNameSpace()}-wordpress/{$version};",
+				'version'   => $this->version,
+				'wpversion' => $this->wpVersion,
+				'ua'        => $this->getUserAgent(),
 				'action'    => "{$this->getNameSpace()}-check-translation"
 			];
 
@@ -312,13 +312,13 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			// Build request query
 			$query = [
 				'headers'    => $this->headers,
-				'timeout'    => 30,
-				'sslverify'  => false,
+				'timeout'    => $this->getTimeout(),
+				'sslverify'  => $this->isSSL(),
 				'body'       => ['request' => Stringify::serialize($params)],
-				'user-agent' => "{$this->getNameSpace()}-wordpress/{$version};"
+				'user-agent' => $this->getUserAgent()
 			];
 
-			// Add licence
+			// Set licence
 			$query = $this->setLicense($query);
 
 			// Get temp response
@@ -393,6 +393,36 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			}
 		}
 		return $query;
+	}
+
+	/**
+	 * @access private
+	 * @param void
+	 * @return string
+	 */
+	private function getUserAgent()
+	{
+		return "{$this->getNameSpace()}-wordpress/{$this->version};";
+	}
+
+	/**
+	 * @access private
+	 * @param void
+	 * @return string
+	 */
+	private function getTimeout()
+	{
+		return $this->applyPluginFilter('updater-timeout',10);
+	}
+
+	/**
+	 * @access private
+	 * @param void
+	 * @return bool
+	 */
+	private function isSSL()
+	{
+		return $this->applyPluginFilter('updater-ssl',is_ssl());
 	}
 
 	/**

@@ -81,6 +81,17 @@ final class GlobalConst
 
 	/**
 	 * @access public
+	 * @param string $path
+	 * @return string
+	 */
+	public static function version()
+	{
+		global $wp_version;
+		return $wp_version;
+	}
+
+	/**
+	 * @access public
 	 * @param void
 	 * @return bool
 	 */

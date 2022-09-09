@@ -56,7 +56,7 @@ trait VanillePluginConfig
 		VanillePluginValidator::checkNamespace($plugin);
 
 		// Define plugin internal namespace
-		$this->namespace = $plugin->getNameSpace();
+		$this->namespace = Stringify::slugify($plugin->getNameSpace());
 
 		// Parse plugin config
 		$json = "{$this->getRoot()}{$this->path}";
@@ -173,7 +173,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static version
+	 * Get static version.
 	 *
 	 * @access protected
 	 * @param void
