@@ -19,11 +19,9 @@ final class Session
     /**
      * Start session.
      *
-     * @access public
-     * @param string $key
-     * @return bool
+     * @param void
      */
-    public static function start()
+    public function __construct()
     {
         if ( !self::isSetted() ) {
             session_start();
@@ -60,7 +58,7 @@ final class Session
     }
 
     /**
-     * Set key in session
+     * Set key in session.
      *
      * @access public
      * @param mixed $key
@@ -154,14 +152,14 @@ final class Session
     }
 
     /**
-     * Destroy session.
+     * End session.
      *
      * @access public
      * @param void
-     * @return void
+     * @return bool
      */
     public static function end()
     {
-        session_destroy();
+        return session_destroy();
     }
 }
