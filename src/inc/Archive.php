@@ -89,7 +89,6 @@ final class Archive
 				}
 			}
 			if ( $clear ) {
-				var_dump($archive);die();
 				@unlink($archive);
 			}
 		}
