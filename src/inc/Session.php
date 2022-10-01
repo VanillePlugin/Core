@@ -23,13 +23,13 @@ final class Session
      */
     public function __construct()
     {
-        if ( !self::isSetted() ) {
+        if ( !self::isActive() ) {
             session_start();
         }
     }
-
+    
     /**
-     * Register the session.
+     * Register session.
      *
      * @access public
      * @param int $time
@@ -58,7 +58,7 @@ final class Session
     }
 
     /**
-     * Set key in session.
+     * Set session value.
      *
      * @access public
      * @param mixed $key
@@ -71,7 +71,7 @@ final class Session
     }
 
     /**
-     * Retrieve value stored in session by key.
+     * Retrieve session value.
      *
      * @access public
      * @param string $item
@@ -80,13 +80,25 @@ final class Session
     public static function get($item = null)
     {
         if ( $item ) {
-            return self::isSetted($item) ? $_SESSION[$item] : false;
+            return self::isSetted($item) ? $_SESSION[$item] : null;
         }
-        return $_SESSION;
+        return self::isSetted() ? $_SESSION : null;
     }
 
     /**
-     * Check key exists.
+     * Retrieve session name.
+     *
+     * @access public
+     * @param void
+     * @return mixed
+     */
+    public static function getName()
+    {
+        return session_name();
+    }
+
+    /**
+     * Check session key exists.
      *
      * @access public
      * @param string $key
@@ -101,42 +113,27 @@ final class Session
     }
 
     /**
-     * Unset key.
-     *
-     * @access public
-     * @param string $key
-     * @return bool
-     */
-    public static function unset($key)
-    {
-        unset($_SESSION[$key]);
-    }
-
-    /**
-     * Get id for current session.
+     * Get current session id.
      *
      * @access public
      * @param void
      * @return int
      */
-    public static function getId()
+    public static function getSessionId()
     {
         return self::get('--session-id');
     }
 
     /**
-     * Check if session is over.
+     * Check if session is expired.
      *
      * @access public
      * @param void
      * @return bool
      */
-    public static function isExpired()
+    public static function isExpired() : bool
     {
-        if ( self::get('--session-start') < Date::timeNow() ) {
-            return true;
-        }
-        return false;
+        return (self::get('--session-start') < Date::timeNow());
     }
 
     /**
@@ -148,7 +145,31 @@ final class Session
      */
     public static function renew()
     {
-        self::set('--session-start', Date::newTime(0,0,self::get('--session-time')));
+        self::set('--session-start', Date::newTime(0, 0, self::get('--session-time')));
+    }
+
+    /**
+     * Check session is active.
+     *
+     * @access public
+     * @param void
+     * @return bool
+     */
+    public static function isActive()
+    {
+        return (session_status() === PHP_SESSION_ACTIVE);
+    }
+    
+    /**
+     * Close session.
+     *
+     * @access public
+     * @param void
+     * @return bool
+     */
+    public static function close()
+    {
+        return session_write_close();
     }
 
     /**
@@ -160,6 +181,10 @@ final class Session
      */
     public static function end()
     {
-        return session_destroy();
+        if ( self::isActive() ) {
+            $_SESSION = [];
+            return session_destroy();
+        }
+        return false;
     }
 }
