@@ -51,11 +51,9 @@ abstract class AbstractAPI extends PluginOptions
 	{
 		if ( $this->response ) {
 			return Response::get($this->response->getBody(),$isArray);
-
-		} else {
-			$this->error = true;
-			return false;
 		}
+		$this->error = true;
+		return false;
 	}
 
 	/**
@@ -70,10 +68,9 @@ abstract class AbstractAPI extends PluginOptions
 		if ( $this->response ) {
 			return $this->response->getStatusCode();
 
-		} else {
-			$this->error = true;
-			return false;
 		}
+		$this->error = true;
+		return false;
 	}
 
 	/**
