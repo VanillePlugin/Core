@@ -12,7 +12,7 @@
 
 namespace VanillePlugin\lib;
 
-use phpFastCache\CacheManager;
+use Phpfastcache\CacheManager;
 use VanillePlugin\int\VanilleCacheInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
