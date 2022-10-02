@@ -13,6 +13,7 @@
 namespace VanillePlugin\lib;
 
 use Phpfastcache\CacheManager;
+use Phpfastcache\Drivers\Files\Config;
 use VanillePlugin\int\VanilleCacheInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
@@ -49,14 +50,16 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 		if ( !self::$ttl ) {
 			self::expireIn($this->getExpireIn());
 		}
-		
-		// Set adapter default params
-		CacheManager::setDefaultConfig([
-		    'path'               => $this->getTempPath(),
-		    'default_chmod'      => 0755,
-		    'securityKey'        => 'private',
-		    'cacheFileExtension' => 'db'
-		]);
+
+		// Set adapter default config
+		CacheManager::setDefaultConfig(new Config([
+			'path'               => $this->getTempPath(),
+			'autoTmpFallback'    => true,
+			'compressData'       => true,
+			'defaultChmod'       => 0755,
+			'securityKey'        => 'private',
+			'cacheFileExtension' => 'db'
+		]));
 
 		// Init adapter
 		$this->reset();
