@@ -322,6 +322,8 @@ class File
     	if ( !self::isFile($path) && !self::isDir($path) ) {
     		if ( @mkdir($path,$permissions,$recursive) ) {
             	return true;
+        	} else {
+        		return wp_mkdir_p($path);
         	}
     	}
         return false;
