@@ -149,7 +149,7 @@ final class Asset extends PluginOptions
 	 */
 	private function downloadCDN()
 	{
-		$this->remove();
+		$this->reset();
 		$client = new Request('GET', ['timeout' => 30]);
 		foreach ($this->assets as $asset => $files) {
 			foreach ($files as $file) {
@@ -168,24 +168,20 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Extract remote assets
+	 * Extract remote assets archive.
 	 *
 	 * @access private
-	 * @param string $path
+	 * @param string $archive
 	 * @return bool
 	 */
-	private function extract($path)
+	private function extract($archive)
 	{
-		$zip = new \ZipArchive;
-		if ( @$zip->open($path) ) {
-			$this->remove();
-			@$zip->extractTo($this->dir);
-		  	@$zip->close();
-		 	@unlink("{$this->dir}/assets.zip");
-		} else {
-			return false;
+		if ( Archive::uncompress($archive,$this->dir) ) {
+			$this->reset();
+			File::remove("{$this->dir}/assets.zip");
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -208,13 +204,13 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Reset assets
+	 * Reset assets.
 	 *
 	 * @access private
 	 * @param void
 	 * @return void
 	 */
-	private function remove()
+	private function reset()
 	{
 		// Secured removing
 		foreach ($this->getAssets() as $asset => $files) {
@@ -226,7 +222,7 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Get assets
+	 * Get assets.
 	 *
 	 * @access private
 	 * @param void

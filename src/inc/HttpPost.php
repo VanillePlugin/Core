@@ -23,9 +23,8 @@ final class HttpPost
 	{
 		if ( $item ) {
 			return self::isSetted($item) ? $_POST[$item] : false;
-		} else {
-			return $_POST;
 		}
+		return $_POST;
 	}
 
 	/**
@@ -48,8 +47,7 @@ final class HttpPost
 	{
 		if ( $item ) {
 			return isset($_POST[$item]);
-		} else {
-			return isset($_POST) && !empty($_POST);
 		}
+		return isset($_POST) && !empty($_POST);
 	}
 }

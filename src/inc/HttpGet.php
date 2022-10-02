@@ -23,9 +23,8 @@ final class HttpGet
 	{
 		if ( $item ) {
 			return self::isSetted($item) ? $_GET[$item] : false;
-		} else {
-			return $_GET;
 		}
+		return $_GET;
 	}
 
 	/**
@@ -48,8 +47,7 @@ final class HttpGet
 	{
 		if ( $item ) {
 			return isset($_GET[$item]);
-		} else {
-			return isset($_GET) && !empty($_GET);
 		}
+		return isset($_GET) && !empty($_GET);
 	}
 }

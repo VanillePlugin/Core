@@ -23,9 +23,8 @@ final class HttpRequest
 	{
 		if ( $item ) {
 			return self::isSetted($item) ? $_REQUEST[$item] : false;
-		} else {
-			return $_REQUEST;
 		}
+		return $_REQUEST;
 	}
 
 	/**
@@ -48,8 +47,7 @@ final class HttpRequest
 	{
 		if ( $item ) {
 			return isset($_REQUEST[$item]);
-		} else {
-			return isset($_REQUEST) && !empty($_REQUEST);
 		}
+		return isset($_REQUEST) && !empty($_REQUEST);
 	}
 }
