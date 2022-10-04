@@ -132,33 +132,9 @@ final class Stringify
 	 * @param string $string
 	 * @return string
 	 */
-	public static function slugify($string)
+	public static function slugify(string $string)
 	{
-	  	// Replace non letter or digits by -
-	  	$slug = self::replaceRegex('~[^\pL\d]+~u','-',(string)$string);
-	  	// Transliterate
-	  	$slug = strtr($slug,self::getSpecialChars());
-	  	$slug = self::encode($slug,'ASCII//TRANSLIT//IGNORE');
-	  	// Remove unwanted characters
-	  	$slug = self::replaceRegex('~[^-\w]+~','',$slug);
-	  	// Trim
-	  	$slug = trim($slug,'-');
-	  	// Remove duplicate -
-	  	$slug = self::replaceRegex('~-+~','-',$slug);
-	  	// Lowercase
-	  	$slug = strtolower($slug);
-	  	return !empty($slug) ? $slug : sanitize_title($string);
-	}
-
-	/**
-	 * @access public
-	 * @param void
-	 * @return array
-	 */
-	public static function getSpecialChars()
-	{
-		$json = dirname(__FILE__).'/bin/special.json';
-		return (array)Json::parse($json,true);
+	  	return sanitize_title($string);
 	}
 
 	/**
