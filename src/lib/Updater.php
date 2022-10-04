@@ -17,6 +17,7 @@ use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\Server;
 use VanillePlugin\inc\GlobalConst;
 use \stdClass;
 
@@ -223,7 +224,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 			$query = [
 				'headers'    => $this->headers,
 				'timeout'    => $this->getTimeout(),
-				'sslverify'  => false,
+				'sslverify'  => $this->isSSL(),
 				'body'       => ['request' => Stringify::serialize($params)],
 				'user-agent' => $this->getUserAgent()
 			];
@@ -422,7 +423,7 @@ final class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	private function isSSL()
 	{
-		return $this->applyPluginFilter('updater-ssl',is_ssl());
+		return $this->applyPluginFilter('updater-ssl',Server::isSSL());
 	}
 
 	/**

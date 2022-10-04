@@ -113,7 +113,7 @@ final class Server
 	 */
 	public static function getProtocol()
 	{
-		return Server::isHttps() ? 'https://' : 'http://';
+		return Server::isSSL() ? 'https://' : 'http://';
 	}
 
 	/**
@@ -170,7 +170,7 @@ final class Server
 	public static function getBaseUrl()
 	{
 		$url = self::get('http-host');
-		if ( self::isHttps() ) {
+		if ( self::isSSL() ) {
 			return "https://{$url}";
 		} else {
 			return "http://{$url}";
@@ -388,20 +388,15 @@ final class Server
     }
 
 	/**
-	 * Check protocol is HTTPS.
+	 * Check protocol is HTTPS (SSL).
 	 *
 	 * @access public
 	 * @param void
 	 * @return bool
 	 */
-	public static function isHttps()
+	public static function isSSL()
 	{
-		if ( self::isSetted('https') && !empty(self::get('https')) ) {
-			if ( self::get('https') !== 'off' ) {
-				return true;
-			}
-		}
-		return false;
+		return is_ssl();
 	}
 
 	/**
