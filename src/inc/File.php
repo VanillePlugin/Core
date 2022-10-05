@@ -432,21 +432,19 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @param bool $inc Use include path
+	 * @param bool $inc (Use include path)
 	 * @param resource|array $context
 	 * @param int $offset
-	 * @param int $length
 	 * @return string|false
 	 */
-	public static function r($path, $inc = false, $context = null, $offset = 0, $length = null)
+	public static function r($path, $inc = false, $context = null, $offset = 0)
 	{
 		if ( TypeCheck::isStream($path) ) {
 			if ( TypeCheck::isArray($context) ) {
 				$context = stream_context_create($context);
 			}
-			return @file_get_contents($path,false,$context,$offset,$length);
 		}
-		return @file_get_contents($path,$inc,null,$offset);
+		return @file_get_contents($path,$inc,$context,$offset);
 	}
 
 	/**
