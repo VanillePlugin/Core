@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\inc;
@@ -207,10 +207,8 @@ class File
 	 */
 	public static function remove($path)
 	{
-		if ( self::exists($path) ) {
-			if ( @unlink($path) ) {
-				return true;
-			}
+		if ( self::isFile($path) ) {
+			return unlink($path);
 		}
 		return false;
 	}
@@ -221,15 +219,14 @@ class File
 	 * @access public
 	 * @param string $path
 	 * @param string $to
+	 * @param resource $context
 	 * @return bool
 	 */
-    public static function copy($path, $to)
+    public static function copy($path, $to, $context = null)
     {
     	$dir = dirname($to);
     	if ( self::exists($path) && self::isDir($dir) ) {
-	        if ( copy($path,$to) ) {
-	            return true;
-	        }
+	        return copy($path,$to,$context);
     	}
         return false;
     }
@@ -240,15 +237,14 @@ class File
 	 * @access public
 	 * @param string $path
 	 * @param string $to
+	 * @param resource $context
 	 * @return bool
 	 */
-    public static function move($path, $to)
+    public static function move($path, $to, $context = null)
     {
-    	$dist = dirname($to);
-    	if ( self::exists($path) && self::isDir($dist) ) {
-	        if ( rename($path,$to) ) {
-	            return true;
-	        }
+    	$dir = dirname($to);
+    	if ( self::exists($path) && self::isDir($dir) ) {
+	        return rename($path,$to,$context);
     	}
         return false;
     }
@@ -273,7 +269,7 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @return bool
+	 * @return mixed
 	 */
 	public static function isEmpty($path)
 	{
@@ -281,7 +277,7 @@ class File
 			clearstatcache();
 			return (self::getFileSize($path) == 0);
 		}
-		return false;
+		return null;
 	}
 
 	/**
@@ -313,18 +309,15 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @param int $permissions
-	 * @param bool $recursive
+	 * @param int $p permissions
+	 * @param bool $r recursive
+	 * @param resource $context
 	 * @return bool
 	 */
-    public static function addDir($path, $permissions = 0755, $recursive = true)
+    public static function addDir($path, $p = 0755, $r = true, $context = null)
     {
     	if ( !self::isFile($path) && !self::isDir($path) ) {
-    		if ( @mkdir($path,$permissions,$recursive) ) {
-            	return true;
-        	} else {
-        		return wp_mkdir_p($path);
-        	}
+    		return @mkdir($path,$p,$r,$context);
     	}
         return false;
     }
@@ -354,9 +347,7 @@ class File
     public static function removeDir($path)
     {
     	if ( self::isDir($path) ) {
-    		if ( @rmdir($path) ) {
-            	return true;
-        	}
+    		return @rmdir($path);
     	}
         return false;
     }
@@ -380,7 +371,7 @@ class File
 	   	while( $file = readdir($handler) ) {
 			if ( $file !== '.' && $file !== '..' ) {
 			    if ( !self::isDir("{$path}/{$file}") ) {
-			    	@unlink("{$path}/{$file}");
+			    	self::remove("{$path}/{$file}");
 			    } else {
 			    	$dir = "{$path}/{$file}";
 				    foreach( scandir($dir) as $file ) {
@@ -390,10 +381,10 @@ class File
 				        if ( self::isDir("{$dir}/{$file}") ) {
 				        	self::recursiveRemove("{$dir}/{$file}");
 				        } else {
-				        	@unlink("{$dir}/{$file}");
+				        	self::remove("{$dir}/{$file}");
 				        }
 				    }
-				    @rmdir($dir);
+				    self::removeDir($dir);
 			    }
 			}
 	   }
@@ -412,20 +403,20 @@ class File
 			$objects = scandir($path);
 			foreach ($objects as $object) {
 				if ( $object !== '.' && $object !== '..' ) {
-					if ( filetype("{$path}/{$object}") == 'dir' ) {
+					if ( self::isDir("{$path}/{$object}") ) {
 						self::recursiveRemove("{$path}/{$object}");
 					} else {
-						@unlink("{$path}/{$object}");
+						self::remove("{$path}/{$object}");
 					}
 				}
 			}
 			reset($objects);
-			@rmdir($path);
+			self::removeDir($path);
 		}
 	}
 
 	/**
-	 * Check file exists without stream.
+	 * Check path exists (file|directory).
 	 *
 	 * @access public
 	 * @param string $path
@@ -433,10 +424,7 @@ class File
 	 */
 	public static function exists($path)
 	{
-		if ( file_exists($path) ) {
-			return true;
-		}
-		return false;
+		return file_exists($path);
 	}
 
 	/**
@@ -589,18 +577,18 @@ class File
 	 *
 	 * @access public
 	 * @param string $path
-	 * @param bool $unlink
+	 * @param bool $remove
 	 * @param string $timeout
 	 * @param bool $verify
 	 * @return bool
 	 */
-	public static function download($path, $unlink = true, $timeout = 300, $verify = false)
+	public static function download($path, $remove = true, $timeout = 300, $verify = false)
 	{
 		if ( self::exists($path) ) {
 			if ( TypeCheck::isFunction('download_url') ) {
 				download_url($path,$timeout,$verify);
-				if ( $unlink ) {
-					@unlink($path);
+				if ( $remove ) {
+					self::remove($path);
 				}
 				return true;
 			}

@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\inc;
@@ -31,9 +31,8 @@ final class Server
 				$item = self::formatArgs($item);
 			}
 			return self::isSetted($item) ? $_SERVER[$item] : false;
-		} else {
-			return $_SERVER;
 		}
+		return self::isSetted() ? $_SERVER : null;
 	}
 
 	/**
@@ -68,9 +67,8 @@ final class Server
 				$item = self::formatArgs($item);
 			}
 			return isset($_SERVER[$item]);
-		} else {
-			return isset($_SERVER) && !empty($_SERVER);
 		}
+		return isset($_SERVER) && !empty($_SERVER);
 	}
 	
 	/**

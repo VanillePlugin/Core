@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\lib;
@@ -19,12 +19,12 @@ use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\TypeCheck;
+use VanillePlugin\inc\Exception;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
 /**
- * Wrapper Class for External Filecache & Templates
- * Includes Third-Party Cache Helper
- * Cache WordPress Transient
+ * Wrapper Class for External Filecache & Templates Cache,
+ * Includes Third-Party Cache Helper.
  */
 class VanilleCache extends PluginOptions implements VanilleCacheInterface
 {
@@ -43,6 +43,9 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin)
 	{
+		$exception = new Exception();
+		$exception->trigger('VanilleCache is deprecated, Use Cache instead',E_USER_DEPRECATED);
+
 		// Init plugin config
 		$this->initConfig($plugin);
 
@@ -67,7 +70,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
-	 * Clear adapter instances
+	 * Clear adapter instances.
 	 */
 	public function __destruct()
 	{
@@ -75,7 +78,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
-	 * Reset cache instance
+	 * Reset cache instance.
 	 *
 	 * @access private
 	 * @param void
@@ -87,6 +90,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * Get cache by key.
+	 *
 	 * @access public
 	 * @param string $key
 	 * @return mixed
@@ -99,14 +104,16 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * Set cache by tags.
+	 *
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @param mixed $tags
 	 * @return bool
 	 */
-	public function set($data, $tags = null)
+	public function set($value, $tags = null)
 	{
-		$this->cache->set($data)
+		$this->cache->set($value)
 		->expiresAfter(self::$ttl);
 		if ( $tags ) {
 			if ( TypeCheck::isArray($tags) ) {
@@ -123,21 +130,25 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * Update cache by key.
+	 *
 	 * @access public
 	 * @param string $key
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public function update($key, $data)
+	public function update($key, $value)
 	{
 		$key = Stringify::formatKey($key);
 		$this->cache = $this->adapter->getItem($key);
-		$this->cache->set($data)
+		$this->cache->set($value)
 		->expiresAfter(self::$ttl);
 		return $this->adapter->save($this->cache);
 	}
 
 	/**
+	 * Delete cache by key.
+	 *
 	 * @access public
 	 * @param string $key
 	 * @return bool
@@ -149,6 +160,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * Delete cache by tags.
+	 *
 	 * @access public
 	 * @param mixed $tags
 	 * @return bool
@@ -167,6 +180,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * Check cache.
+	 *
 	 * @access public
 	 * @param void
 	 * @return bool
@@ -180,11 +195,13 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * flush cache.
+	 *
 	 * @access public
 	 * @param void
 	 * @return void
 	 */
-	public function purge()
+	public function flush()
 	{
 		// Secured removing : filecache
 		if ( Stringify::contains($this->getTempPath(), $this->getRoot()) ) {
@@ -200,6 +217,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * Set global cache expiration.
+	 * 
 	 * @access public
 	 * @param int $ttl 30
 	 * @return void
@@ -210,13 +229,14 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
+	 * Remove WordPress 3rd-party cache.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return void
 	 */
 	public static function removeThirdParty()
 	{
-		// Clear WordPress 3rd-party cache
 		ThirdPartyCache::purge();
 	}
 }

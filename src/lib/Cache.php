@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\lib;
@@ -18,7 +18,7 @@ use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
 /**
- * Wrapper Class for Cache.
+ * Wrapper Class for Object Cache (non-persistent).
  */
 final class Cache extends PluginOptions
 {
@@ -58,51 +58,57 @@ final class Cache extends PluginOptions
 	}
 
 	/**
-	 * Saves the data to the cache.
+	 * Saves the value to the cache.
 	 * 
 	 * @access public
 	 * @param int|string $key
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @param string $group
 	 * @param int $expire
 	 * @return bool
 	 */
-	public function set($key, $data, $group = '', $expire = null)
+	public function set($key, $value, $group = '', $expire = null)
 	{
-		$expire = TypeCheck::isInt($expire) ? $expire : self::$ttl;
-		return wp_cache_set($this->formatKey($key),$data,$group,$expire);
+		if ( TypeCheck::isNull($expire) ) {
+			$expire = self::$ttl;
+		}
+		return wp_cache_set($this->formatKey($key),$value,$group,$expire);
 	}
 
 	/**
-	 * Adds data to the cache, if the cache key doesn’t already exist.
+	 * Adds value to the cache, if the cache key doesn’t already exist.
 	 * 
 	 * @access public
 	 * @param int|string $key
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @param string $group
 	 * @param int $expire
 	 * @return bool
 	 */
-	public function add($key, $data, $group = '', $expire = null)
+	public function add($key, $value, $group = '', $expire = null)
 	{
-		$expire = TypeCheck::isInt($expire) ? $expire : self::$ttl;
-		return wp_cache_add($this->formatKey($key),$data,$group,$expire);
+		if ( TypeCheck::isNull($expire) ) {
+			$expire = self::$ttl;
+		}
+		return wp_cache_add($this->formatKey($key),$value,$group,$expire);
 	}
 
 	/**
-	 * Replaces the contents of the cache with new data.
+	 * Replaces the contents of the cache with new value.
 	 * 
 	 * @access public
 	 * @param int|string $key
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @param string $group
 	 * @param int $expire
 	 * @return bool
 	 */
-	public function update($key, $data, $group = '', $expire = null)
+	public function update($key, $value, $group = '', $expire = null)
 	{
-		$expire = TypeCheck::isInt($expire) ? $expire : self::$ttl;
-		return wp_cache_replace($this->formatKey($key),$data,$group,$expire);
+		if ( TypeCheck::isNull($expire) ) {
+			$expire = self::$ttl;
+		}
+		return wp_cache_replace($this->formatKey($key),$value,$group,$expire);
 	}
 
 	/**
@@ -123,7 +129,7 @@ final class Cache extends PluginOptions
 	 * @param void
 	 * @return void
 	 */
-	public function purge()
+	public function flush()
 	{
 		wp_cache_flush();
 	}

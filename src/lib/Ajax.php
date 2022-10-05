@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\lib;
@@ -28,7 +28,7 @@ class Ajax extends PluginOptions implements AjaxInterface
 	private $actions = [];
 
 	/**
-	 * Ajax Controller
+	 * Ajax Controller.
 	 *
 	 * @param object $callable
 	 * @param PluginNameSpaceInterface $plugin
@@ -53,7 +53,7 @@ class Ajax extends PluginOptions implements AjaxInterface
 	}
 
 	/**
-	 * AjaxCallback react as Ajax Controller
+	 * AjaxCallback react as Ajax Controller.
 	 *
 	 * @access public
 	 * @param void

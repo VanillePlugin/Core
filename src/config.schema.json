@@ -40,12 +40,15 @@
     },
     "options": {
       "type": "object",
-      "required": ["ttl","multilingual","footprint","debug","view"],
+      "required": ["ttl","multilingual","multisite","footprint","debug","view"],
       "properties":{
         "ttl":{
           "type": "integer"
         },
         "multilingual":{
+          "type": "boolean"
+        },
+        "multisite":{
           "type": "boolean"
         },
         "footprint":{

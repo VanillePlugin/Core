@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\inc;
@@ -98,6 +98,7 @@ class Tokenizer
     public static function base64($data = '', $loop = 1)
     {
         $encode = base64_encode($data);
+        $loop = ($loop > 10) ?? 10;
         for ($i = 1; $i < $loop; $i++) {
             $encode = base64_encode($encode);
         }
@@ -115,6 +116,7 @@ class Tokenizer
     public static function unbase64($data = '', $loop = 1)
     {
         $decode = base64_decode($data);
+        $loop = ($loop > 10) ?? 10;
         for ($i = 1; $i < $loop; $i++) {
             $decode = base64_decode($decode);
         }

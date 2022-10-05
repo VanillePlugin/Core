@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\lib;
@@ -23,6 +23,12 @@ use VanillePlugin\inc\Response;
 use VanillePlugin\inc\GlobalConst;
 use VanillePlugin\thirdparty\Translator;
 
+/**
+ * Wrapper Class for Advanced Plugin Options API,
+ * Defines Only Base Functions Used by Plugins.
+ * 
+ * @see https://developer.wordpress.org/plugins/
+ */
 class PluginOptions extends WordPress
 {
 	use VanillePluginConfig;
@@ -502,12 +508,24 @@ class PluginOptions extends WordPress
 	 */
 	protected function getTransient($key)
 	{
-		$key = substr(Stringify::slugify("{$this->getNameSpace()}-{$key}"), 0, 172);
-		return get_transient($key);
+		return get_transient($this->formatTransientKey($key));
 	}
 
 	/**
-	 * Set the value of a transient.
+	 * Retrieves the value of a site transient.
+	 *
+	 * @see /reference/functions/get_site_transient/
+	 * @access protected
+	 * @param string $key
+	 * @return mixed
+	 */
+	protected function getSiteTransient($key)
+	{
+		return get_site_transient($this->formatTransientKey($key));
+	}
+
+	/**
+	 * Set/update the value of a transient.
 	 *
 	 * @see /reference/functions/set_transient/
 	 * @access protected
@@ -518,8 +536,22 @@ class PluginOptions extends WordPress
 	 */
 	protected function setTransient($key, $value = 1, $ttl = 300)
 	{
-		$key = substr(Stringify::slugify("{$this->getNameSpace()}-{$key}"), 0, 172);
-		return set_transient($key,$value,$ttl);
+		return set_transient($this->formatTransientKey($key),$value,$ttl);
+	}
+
+	/**
+	 * Set/update the value of a site transient.
+	 *
+	 * @see /reference/functions/set_site_transient/
+	 * @access protected
+	 * @param string $key
+	 * @param mixed $value
+	 * @param int $ttl
+	 * @return bool
+	 */
+	protected function setSiteTransient($key, $value = 1, $ttl = 300)
+	{
+		return set_site_transient($this->formatTransientKey($key),$value,$ttl);
 	}
 
 	/**
@@ -528,26 +560,52 @@ class PluginOptions extends WordPress
 	 * @see /reference/functions/delete_transient/
 	 * @access protected
 	 * @param string $key
-	 * @return void
+	 * @return bool
 	 */
 	protected function deleteTransient($key)
 	{
-		$key = substr(Stringify::slugify("{$this->getNameSpace()}-{$key}"), 0, 172);
-		delete_transient($key);
+		return delete_transient($this->formatTransientKey($key));
 	}
 
 	/**
-	 * Deletes all transients.
+	 * Deletes a site transient.
+	 *
+	 * @see /reference/functions/delete_site_transient/
+	 * @access protected
+	 * @param string $key
+	 * @return bool
+	 */
+	protected function deleteSiteTransient($key)
+	{
+		return delete_site_transient($this->formatTransientKey($key));
+	}
+
+	/**
+	 * Deletes all transients (Under namespace).
 	 *
 	 * @access protected
 	 * @param void
-	 * @return void
+	 * @return bool
 	 */
 	protected function deleteTransients()
 	{
 		$db = new Orm();
-		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_transient_{$this->getNameSpace()}_%'";
-		$db->query($query);
+		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_transient_{$this->getNameSpace()}_%';";
+		(bool)$db->query($query);
+	}
+
+	/**
+	 * Deletes all site transients (Under namespace).
+	 *
+	 * @access protected
+	 * @param void
+	 * @return bool
+	 */
+	protected function deleteSiteTransients()
+	{
+		$db = new Orm();
+		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_site_transient_{$this->getNameSpace()}_%';";
+		(bool)$db->query($query);
 	}
 
 	/**
@@ -780,7 +838,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Simple save action
+	 * Simple save action.
 	 *
 	 * @access protected
 	 * @param void
@@ -795,6 +853,8 @@ class PluginOptions extends WordPress
 	}
 
 	/**
+	 * Set HTTP response.
+	 * 
 	 * @access protected
 	 * @param string $message
 	 * @param array $content
@@ -808,7 +868,7 @@ class PluginOptions extends WordPress
 	}
 	
 	/**
-	 * Compare Versions
+	 * Compare Versions.
 	 *
 	 * @access public
 	 * @param string $version1
@@ -822,7 +882,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Load plugin translated strings
+	 * Load plugin translated strings.
 	 *
 	 * @access public
 	 * @param void
@@ -859,7 +919,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Translated string
+	 * Translated string.
 	 *
 	 * @access public
 	 * @param string $string
@@ -877,7 +937,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Get current screen
+	 * Get current screen.
 	 *
 	 * @access public
 	 * @param void
@@ -889,7 +949,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Check is current screen
+	 * Check is current screen.
 	 *
 	 * @access public
 	 * @param string $screen
@@ -906,7 +966,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add help tab
+	 * Add help tab.
 	 *
 	 * @access public
 	 * @param array $settings
@@ -918,7 +978,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Set help sidebar
+	 * Set help sidebar.
 	 *
 	 * @access public
 	 * @param string $html
@@ -930,7 +990,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Set help sidebar
+	 * Set help sidebar.
 	 *
 	 * @access public
 	 * @param object $bar
@@ -964,7 +1024,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Check nonce
+	 * Check nonce.
 	 *
 	 * @access public
 	 * @param string $nonce
@@ -977,7 +1037,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Create nonce
+	 * Create nonce.
 	 *
 	 * @access public
 	 * @param int|string $action
@@ -989,7 +1049,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Check Ajax Referer
+	 * Check Ajax Referer.
 	 *
 	 * @access public
 	 * @param int|string $action
@@ -1003,7 +1063,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Get multilingual status
+	 * Get multilingual status.
 	 *
 	 * @access public
 	 * @param void
@@ -1020,7 +1080,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Set options language
+	 * Set options language.
 	 *
 	 * @access public
 	 * @param mixed $lang
@@ -1034,5 +1094,21 @@ class PluginOptions extends WordPress
 			}
 		}
 		return $lang;
+	}
+
+	/**
+	 * Format transient key.
+	 *
+	 * @access private
+	 * @param string $key
+	 * @return mixed
+	 */
+	private function formatTransientKey($key)
+	{
+		if ( $this->hasPluginFilter('transient-key-format') ) {
+			$key = $this->applyPluginFilter('transient-key-format',$key);
+		}
+		$key = Stringify::slugify($key);
+		$key = substr("{$this->getNameSpace()}-{$key}",0,172);
 	}
 }

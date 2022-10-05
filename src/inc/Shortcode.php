@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\inc;
@@ -203,9 +203,7 @@ final class Shortcode
 		$attr = self::formatAttribute($attr);
 		if ( isset($atts[$attr]) ) {
 			$value = Stringify::lowercase($atts[$attr]);
-			if ( Stringify::contains(['off','no','non','false','0'],$value) ) {
-				return true;
-			}
+			return Stringify::contains(['off','no','non','false','0'],$value);
 		}
 		return false;
 	}
@@ -223,9 +221,7 @@ final class Shortcode
 		$attr = self::formatAttribute($attr);
 		if ( isset($atts[$attr]) ) {
 			$value = Stringify::lowercase($atts[$attr]);
-			if ( Stringify::contains(['on','yes','oui','true','1'],$value) ) {
-				return true;
-			}
+			return Stringify::contains(['on','yes','oui','true','1'],$value);
 		}
 		return false;
 	}

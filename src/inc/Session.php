@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\inc;
@@ -154,6 +154,10 @@ final class Session
      * @access public
      * @param void
      * @return bool
+     * 
+     * PHP_SESSION_DISABLED 0
+     * PHP_SESSION_NONE 1
+     * PHP_SESSION_ACTIVE 2
      */
     public static function isActive()
     {
@@ -176,14 +180,17 @@ final class Session
      * End session.
      *
      * @access public
-     * @param void
+     * @param bool $destroy
      * @return bool
      */
-    public static function end()
+    public static function end($destroy = true)
     {
         if ( self::isActive() ) {
+            if ( $destroy ) {
+                return session_destroy();
+            }
             $_SESSION = [];
-            return session_destroy();
+            return true;
         }
         return false;
     }

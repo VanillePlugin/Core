@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\inc;
@@ -37,7 +37,7 @@ class Router
     ];
 
     /**
-     * Create router in one call from config
+     * Create router in one call from config.
      *
      * @param array $routes
      * @param string $basePath
@@ -51,8 +51,8 @@ class Router
     }
 
     /**
-     * Retrieves all routes
-     * Useful if you want to process or display routes
+     * Retrieves all routes,
+     * Useful if you want to process or display routes.
      *
      * @access public
      * @param void
@@ -64,8 +64,8 @@ class Router
     }
 
     /**
-     * Add multiple routes at once from array in the following format
-     * $routes = [[$method, $route, $target, $name]]
+     * Add multiple routes at once from array in the following format,
+     * $routes = [[$method, $route, $target, $name]].
      *
      * @access public
      * @param array $routes
@@ -82,7 +82,7 @@ class Router
     }
 
     /**
-     * Set the base path
+     * Set the base path.
      *
      * @access public
      * @param string $basePath
@@ -94,7 +94,7 @@ class Router
     }
 
     /**
-     * Add named match types
+     * Add named match types.
      *
      * @access public
      * @param array $matchTypes
@@ -106,9 +106,9 @@ class Router
     }
 
     /**
-     * Map route to target
-     * (GET|POST|PATCH|PUT|DELETE)
-     * Custom regex must start with an @
+     * Map route to target,
+     * (GET|POST|PATCH|PUT|DELETE),
+     * Custom regex must start with an @.
      *
      * @access public
      * @param string $method
@@ -132,8 +132,8 @@ class Router
     }
 
     /**
-     * Reversed routing
-     * Generate the URL for a named route
+     * Reversed routing,
+     * Generate the URL for a named route.
      *
      * @access public
      * @param string $routeName
@@ -173,7 +173,7 @@ class Router
     }
 
     /**
-     * Match a given Request Url against stored routes
+     * Match a given Request Url against stored routes.
      *
      * @access public
      * @param string $requestUrl
@@ -243,7 +243,7 @@ class Router
     }
 
     /**
-     * Compile the regex for a given route (EXPENSIVE)
+     * Compile the regex for a given route (EXPENSIVE).
      *
      * @access protected
      * @param $route

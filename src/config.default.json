@@ -16,6 +16,7 @@
         "footprint": true,
         "debug": true,
         "multilingual": false,
+        "multisite": false,
         "view": {
             "extension": ".tpl.html"
         }

@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\inc;
@@ -16,100 +16,100 @@ final class TypeCheck
 {
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isString($data)
+	public static function isString($value)
 	{
-		return is_string($data);
+		return is_string($value);
 	}
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isObject($data)
+	public static function isObject($value)
 	{
-		return is_object($data);
+		return is_object($value);
 	}
 	
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isArray($data)
+	public static function isArray($value)
 	{
-		return is_array($data);
+		return is_array($value);
 	}
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @param bool $string
 	 * @return bool
 	 */
-	public static function isInt($data, $string = false)
+	public static function isInt($value, $string = false)
 	{
 		if ( $string ) {
-			return is_numeric($data);
+			return is_numeric($value);
 		}
-		return is_int($data);
+		return is_int($value);
 	}
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @param bool $string
 	 * @return bool
 	 */
-	public static function isFloat($data, $string = false)
+	public static function isFloat($value, $string = false)
 	{
 		if ( $string ) {
-			$data = (float)$data;
+			$value = (float)$value;
 		}
-		return is_float($data);
+		return is_float($value);
 	}
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isBool($data)
+	public static function isBool($value)
 	{
-		return is_bool($data);
+		return is_bool($value);
 	}
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isNull($data)
+	public static function isNull($value)
 	{
-		return is_null($data);
+		return is_null($value);
 	}
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isNan($data)
+	public static function isNan($value)
 	{
-		return is_nan($data);
+		return is_nan($value);
 	}
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isCallable($data)
+	public static function isCallable($value)
 	{
-		return is_callable($data);
+		return is_callable($value);
 	}
 
 	/**
@@ -168,32 +168,32 @@ final class TypeCheck
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isCountable($data)
+	public static function isCountable($value)
 	{
-		return is_countable($data);
+		return is_countable($value);
 	}
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isResource($data)
+	public static function isResource($value)
 	{
-		return is_resource($data);
+		return is_resource($value);
 	}
 
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function isScalar($data)
+	public static function isScalar($value)
 	{
-		return is_scalar($data);
+		return is_scalar($value);
 	}
 
 	/**

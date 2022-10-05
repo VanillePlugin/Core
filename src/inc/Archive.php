@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\inc;
@@ -20,6 +20,8 @@ use \WP_Filesystem;
 final class Archive
 {
 	/**
+	 * Compress archive.
+	 * 
 	 * @access public
 	 * @param string $path
 	 * @param string $to
@@ -61,18 +63,22 @@ final class Archive
 	}
 
 	/**
+	 * Uncompress archive.
+	 * 
 	 * @access public
 	 * @param string $archive
 	 * @param string $to
-	 * @param bool $clear
+	 * @param bool $remove
 	 * @return bool
 	 */
-	public static function uncompress($archive = '', $to = '', $clear = false)
+	public static function uncompress($archive = '', $to = '', $remove = false)
 	{
 		if ( File::exists($archive) ) {
+
 			if ( empty($to) ) {
 				$to = dirname($archive);
 			}
+
 			if ( TypeCheck::isClass('ZipArchive') ) {
 				$zip = new ZIP();
 				$resource = $zip->open($archive);
@@ -81,49 +87,62 @@ final class Archive
 			  		$zip->close();
 			  		return true;
 				}
+
+			} elseif ( self::isGzip($archive) ) {
+				return self::unGzip($archive);
+
 			} else {
-				\WP_Filesystem();
+				WP_Filesystem();
 				$result = unzip_file($archive,$to);
 				if ( $result && !is_wp_error($result) ) {
 					return true;
 				}
 			}
-			if ( $clear ) {
-				@unlink($archive);
+
+			if ( $remove ) {
+				File::remove($archive);
 			}
 		}
 		return false;
 	}
 
 	/**
+	 * Check for valid gzip archive.
+	 * 
 	 * @access public
 	 * @param string $archive
+	 * @param int $length
 	 * @return bool
 	 */
-	public static function isGzip($archive) : bool
+	public static function isGzip($archive, $length = 4096) : bool
 	{
 		if ( File::isFile($archive) ) {
-			if ( File::getExtension($archive) == 'gz' ) {
-				return true;
+			$status = false;
+			if ( ($gz = gzopen($archive,'r')) ) {
+				$status = (bool)gzread($gz,$length);
 			}
+			gzclose($gz);
+			return $status;
 		}
 		return false;
 	}
 
 	/**
+	 * Uncompress gzip archive.
+	 * 
 	 * @access public
 	 * @param string $archive
-	 * @param int $buffer
+	 * @param int $length
 	 * @return bool
 	 */
-	public static function unGzip($archive, $buffer = 4096) : bool
+	public static function unGzip($archive, $length = 4096) : bool
 	{
 		$status = false;
 		if ( ($gz = gzopen($archive,'rb')) ) {
 			$filename = Stringify::replace('.gz','',$archive);
 			$to = fopen($filename,'wb');
 			while ( !gzeof($gz) ) {
-			    fwrite($to,gzread($gz,$buffer));
+			    fwrite($to,gzread($gz,$length));
 			}
 			$status = true;
 			fclose($to);

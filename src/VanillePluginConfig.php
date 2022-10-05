@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin;
@@ -31,7 +31,7 @@ trait VanillePluginConfig
 	private $namespace = false;
 
 	/**
-	 * Get static instance
+	 * Get static instance.
 	 *
 	 * @access public
 	 * @param void
@@ -43,8 +43,8 @@ trait VanillePluginConfig
 	}
 	
 	/**
-	 * Set Config Json File
-	 * Allow Parent Config Access
+	 * Set Config Json File,
+	 * Allow Parent Config Access.
 	 *
 	 * @access protected
 	 * @param PluginNameSpaceInterface $plugin
@@ -74,7 +74,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Update Custom Options
+	 * Update Custom Options.
 	 *
 	 * @access protected
 	 * @param array $options
@@ -97,7 +97,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get global
+	 * Get global.
 	 *
 	 * @access protected
 	 * @param string $var null
@@ -113,7 +113,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Set config path
+	 * Set config path.
 	 *
 	 * @access protected
 	 * @param string $path
@@ -125,7 +125,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static namespace
+	 * Get static namespace.
 	 *
 	 * @access protected
 	 * @param void
@@ -137,7 +137,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static namespace
+	 * Get static namespace.
 	 *
 	 * @access protected
 	 * @param void
@@ -149,7 +149,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static description
+	 * Get static description.
 	 *
 	 * @access protected
 	 * @param void
@@ -161,7 +161,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static namespace
+	 * Get static namespace.
 	 *
 	 * @access protected
 	 * @param void
@@ -185,7 +185,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static prefix
+	 * Get static prefix.
 	 *
 	 * @access protected
 	 * @param void
@@ -198,7 +198,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static assets url
+	 * Get static assets url.
 	 *
 	 * @access protected
 	 * @param void
@@ -210,7 +210,7 @@ trait VanillePluginConfig
 	}
 	
 	/**
-	 * Get static assets path
+	 * Get static assets path.
 	 *
 	 * @access protected
 	 * @param void
@@ -222,7 +222,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static migrate path
+	 * Get static migrate path.
 	 *
 	 * @access protected
 	 * @param void
@@ -234,7 +234,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static cache path
+	 * Get static cache path.
 	 *
 	 * @access protected
 	 * @param void
@@ -246,7 +246,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static temp path
+	 * Get static temp path.
 	 *
 	 * @access protected
 	 * @param void
@@ -258,7 +258,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static expire
+	 * Get static expire.
 	 *
 	 * @access protected
 	 * @param void
@@ -270,7 +270,7 @@ trait VanillePluginConfig
 	}
 	
 	/**
-	 * Get static view path
+	 * Get static view path.
 	 *
 	 * @access protected
 	 * @param void
@@ -282,7 +282,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static logs path
+	 * Get static logs path.
 	 *
 	 * @access protected
 	 * @param void
@@ -294,7 +294,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static view extension
+	 * Get static view extension.
 	 *
 	 * @access protected
 	 * @param void
@@ -306,7 +306,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static root
+	 * Get static root.
 	 *
 	 * @access protected
 	 * @param void
@@ -318,7 +318,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get main filename
+	 * Get main filename.
 	 *
 	 * @access protected
 	 * @param void
@@ -330,7 +330,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get main file path
+	 * Get main file path.
 	 *
 	 * @access protected
 	 * @param void
@@ -342,7 +342,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get static Base url
+	 * Get static Base url.
 	 *
 	 * @access protected
 	 * @param void
@@ -354,7 +354,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get ajax url
+	 * Get ajax url.
 	 *
 	 * @access protected
 	 * @param string $scheme
@@ -366,7 +366,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get admin url
+	 * Get admin url.
 	 *
 	 * @access protected
 	 * @param string $url null
@@ -379,7 +379,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get ajax actions
+	 * Get ajax actions.
 	 *
 	 * @access protected
 	 * @param void
@@ -392,7 +392,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get api routes
+	 * Get api routes.
 	 *
 	 * @access protected
 	 * @param void
@@ -405,7 +405,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get requirements
+	 * Get requirements.
 	 *
 	 * @access protected
 	 * @param void
@@ -418,7 +418,7 @@ trait VanillePluginConfig
 	}
 	
 	/**
-	 * Get remote assets
+	 * Get remote assets.
 	 *
 	 * @access protected
 	 * @param void
@@ -431,7 +431,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get multilingual status
+	 * Get multilingual status.
 	 *
 	 * @access protected
 	 * @param void
@@ -443,7 +443,19 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get debug status
+	 * Get multisite status.
+	 *
+	 * @access protected
+	 * @param void
+	 * @return bool
+	 */
+	protected function allowedMultisite()
+	{
+		return $this->global->options->multisite;
+	}
+
+	/**
+	 * Get debug status.
 	 *
 	 * @access protected
 	 * @param bool $global
@@ -460,7 +472,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Load configuration file
+	 * Load configuration file.
 	 *
 	 * @access private
 	 * @param string $config

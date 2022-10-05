@@ -2,12 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.8
+ * @version   : 0.7.9
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
- * This file if a part of VanillePlugin Framework
+ * This file if a part of VanillePlugin Framework.
  */
 
 namespace VanillePlugin\lib;
@@ -16,11 +16,10 @@ use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\GlobalConst;
 
 /**
- * WordPress Main Class Wrapper.
+ * Wrapper Class for Advanced WordPress Global Functions,
+ * Defines Only Base Functions Used by Plugins.
+ * 
  * @see https://developer.wordpress.org/
- *
- * WordPress Class Wrap Global Functions,
- * Defines Only Base Functions Used by Plugin.
  */
 class WordPress
 {
@@ -158,6 +157,9 @@ class WordPress
 			case 'head':
 				$hook = 'wp_head';
 				break;
+			case 'body':
+				$hook = 'wp_body_open';
+				break;
 			case 'footer':
 				$hook = 'wp_footer';
 				break;
@@ -182,6 +184,9 @@ class WordPress
 		switch ( Stringify::lowercase($hook) ) {
 			case 'head':
 				$hook = 'wp_head';
+				break;
+			case 'body':
+				$hook = 'wp_body_open';
 				break;
 			case 'footer':
 				$hook = 'wp_footer';
@@ -221,6 +226,9 @@ class WordPress
 		switch ( Stringify::lowercase($hook) ) {
 			case 'head':
 				$hook = 'wp_head';
+				break;
+			case 'body':
+				$hook = 'wp_body_open';
 				break;
 			case 'footer':
 				$hook = 'wp_footer';
@@ -287,7 +295,7 @@ class WordPress
 	 */
 	protected function addCSS($id, $path, $deps = [], $version = false, $media = 'all')
 	{
-		if ( !Stringify::contains($path, 'http') ) {
+		if ( !Stringify::contains($path,'http') ) {
 		    $path = $this->getPluginUrl($path);
 		}
 		wp_register_style($id,$path,$deps,$version,$media);
@@ -307,7 +315,7 @@ class WordPress
 	 */
 	protected function addJS($id, $path, $deps = [], $version = false, $footer = false)
 	{
-		if ( !Stringify::contains($path, 'http') ) {
+		if ( !Stringify::contains($path,'http') ) {
 		    $path = $this->getPluginUrl($path);
 		}
 		wp_register_script($id,$path,$deps,$version,$footer);
@@ -763,5 +771,17 @@ class WordPress
 	protected function deactivatePlugins($plugins = [], $silent = true)
 	{
 		deactivate_plugins($plugins,$silent);
+	}
+
+	/**
+	 * Check if Multisite is enabled.
+	 *
+	 * @access protected
+	 * @param void
+	 * @return bool
+	 */
+	protected function isMultisite()
+	{
+		return is_multisite();
 	}
 }
