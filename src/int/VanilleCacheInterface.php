@@ -62,7 +62,7 @@ interface VanilleCacheInterface
      * @param void
      * @return void
      */
-    public function purge();
+    public function flush();
 
     /**
      * @param int $ttl 30
