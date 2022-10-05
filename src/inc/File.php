@@ -428,15 +428,19 @@ class File
 	}
 
 	/**
-	 * Read file without stream.
+	 * Read entire file into a string.
 	 *
 	 * @access public
 	 * @param string $path
-	 * @return mixed
+	 * @param bool $inc Use include path
+	 * @param resource $context
+	 * @param int $offset
+	 * @param int $length
+	 * @return string|false
 	 */
-	public static function r($path)
+	public static function r($path, $inc = false, $context = null, $offset = 0, $length = null)
 	{
-		return @file_get_contents($path);
+		return @file_get_contents($path,$inc,$context,$offset,$length);
 	}
 
 	/**
