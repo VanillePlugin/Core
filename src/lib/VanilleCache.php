@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.9
+ * @version   : 0.8.0
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -43,8 +43,8 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin)
 	{
-		$exception = new Exception();
-		$exception->trigger('VanilleCache is deprecated, Use Cache instead',E_USER_DEPRECATED);
+		// $exception = new Exception();
+		// $exception->trigger('VanilleCache is deprecated, Use Cache instead',E_USER_DEPRECATED);
 
 		// Init plugin config
 		$this->initConfig($plugin);

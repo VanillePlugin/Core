@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.9
+ * @version   : 0.8.0
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,7 +15,7 @@ namespace VanillePlugin\inc;
 final class Shortcode
 {
 	/**
-	 * Get formated shortcode attributes.
+	 * Get shortcode attributes.
 	 * 
 	 * @access public
 	 * @param array $default
@@ -40,22 +40,24 @@ final class Shortcode
 		$attributes = [];
 		$atts = array_change_key_case((array)$atts,CASE_LOWER);
 		foreach ($atts as $key => $value) {
-			$key = self::formatAttribute($key);
+			if ( TypeCheck::isString($key) ) {
+				$key = self::formatAttributeName($key);
+			}
 			$attributes[$key] = $value;
 		}
 		return $attributes;
 	}
 
 	/**
-	 * Format shortcode single attribute separator.
+	 * Format shortcode attribute name.
 	 * 
 	 * @access public
 	 * @param string $attr
 	 * @return string
 	 */
-	public static function formatAttribute($attr = '')
+	public static function formatAttributeName($attr = '')
 	{
-		return Stringify::replace('-','_',$attr);
+		return Stringify::replace('-','_',Stringify::lowercase($attr));
 	}
 
 	/**
@@ -86,15 +88,14 @@ final class Shortcode
 	public static function setAttsValues($atts = [])
 	{
 		$values = [];
-		foreach ($atts as $name) {
-			$key = self::formatAttribute($name);
-			$values[$key] = '';
+		foreach ($atts as $key => $name) {
+			$values[$name] = '';
 		}
 		return $values;
 	}
 
 	/**
-	 * Check shortcode has attribute.
+	 * Check shortcode has attribute (Not flag attribut).
 	 * 
 	 * @access public
 	 * @param array $atts
@@ -103,7 +104,8 @@ final class Shortcode
 	 */
 	public static function hasAttribute($atts = [], $attr = '')
 	{
-		$attr = self::formatAttribute($attr);
+		// $atts = self::formatAttributes($atts);
+		$attr = self::formatAttributeName($attr);
 		return isset($atts[$attr]) ? true : false;
 	}
 
@@ -117,12 +119,14 @@ final class Shortcode
 	 */
 	public static function hasFlag($atts = [], $attr = '')
 	{
-		if ( Arrayify::hasKey(0,$atts) ) {
-			if ( $atts[0] == $attr ) {
-				return true;
+		$flags = [];
+		$attr = self::formatAttributeName($attr);
+		foreach ($atts as $key => $name) {
+			if ( TypeCheck::isInt($key) && TypeCheck::isString($name) ) {
+				$flags[] = self::formatAttributeName($name);
 			}
 		}
-		return false;
+		return Arrayify::inArray($attr,$flags);
 	}
 	
 	/**
@@ -136,17 +140,33 @@ final class Shortcode
 	 */
 	public static function getValue($atts = [], $attr = '', $type = null)
 	{
-		$attr = self::formatAttribute($attr);
+		// $atts = self::formatAttributes($atts);
+		$attr = self::formatAttributeName($attr);
+
 		if ( isset($atts[$attr]) ) {
 			$value = $atts[$attr];
-			if ( $type == 'int' || $type == 'integer' ) {
-				$value = intval($value);
-			} elseif ( $type == 'float' || $type == 'double' ) {
-				$value = floatval($value);
+
+			switch ($type) {
+				case 'int':
+				case 'integer':
+					$value = intval($value);
+					break;
+
+				case 'float':
+				case 'double':
+					$value = floatval($value);
+					break;
+
+				case 'bool':
+				case 'boolean':
+					$value = boolval($value);
+					break;
 			}
+
 			return $value;
 		}
-		return false;
+
+		return null;
 	}
 
 	/**
@@ -155,18 +175,23 @@ final class Shortcode
 	 * @access public
 	 * @param array $atts
 	 * @param string $attr
-	 * @param string $value
+	 * @param mixed $value
 	 * @return bool
 	 */
 	public static function hasValue($atts = [], $attr = '', $value = '')
 	{
-		$attr = self::formatAttribute($attr);
+		// $atts = self::formatAttributes($atts);
+		$attr = self::formatAttributeName($attr);
+
 		if ( isset($atts[$attr]) ) {
-			$val = Stringify::lowercase($atts[$attr]);
-			$value = Stringify::lowercase($value);
-			if ( $val == $value ) {
-				return true;
+			$val = $atts[$attr];
+			if ( TypeCheck::isString($val) ) {
+				$val = Stringify::lowercase($val);
 			}
+			if ( TypeCheck::isString($value) ) {
+				$value = Stringify::lowercase($value);
+			}
+			return ($val === $value);
 		}
 		return false;
 	}
@@ -181,7 +206,7 @@ final class Shortcode
 	 */
 	public static function isEmpty($atts = [], $attr = '')
 	{
-		$attr = self::formatAttribute($attr);
+		$attr = self::formatAttributeName($attr);
 		if ( isset($atts[$attr]) ) {
 			if ( empty($atts[$attr]) ) {
 				return true;
@@ -200,7 +225,7 @@ final class Shortcode
 	 */
 	public static function isDisabled($atts = [], $attr = '')
 	{
-		$attr = self::formatAttribute($attr);
+		$attr = self::formatAttributeName($attr);
 		if ( isset($atts[$attr]) ) {
 			$value = Stringify::lowercase($atts[$attr]);
 			return Stringify::contains(['off','no','non','false','0'],$value);
@@ -218,7 +243,7 @@ final class Shortcode
 	 */
 	public static function isEnabled($atts = [], $attr = '')
 	{
-		$attr = self::formatAttribute($attr);
+		$attr = self::formatAttributeName($attr);
 		if ( isset($atts[$attr]) ) {
 			$value = Stringify::lowercase($atts[$attr]);
 			return Stringify::contains(['on','yes','oui','true','1'],$value);

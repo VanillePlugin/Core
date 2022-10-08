@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.9
+ * @version   : 0.8.0
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -904,35 +904,39 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Translated string.
+	 * Translate string,
+	 * May require quotes escaping.
 	 *
 	 * @access public
 	 * @param string $string
-	 * @return mixed
+	 * @return string
 	 */
 	public function translateString($string = '')
 	{
-		if ( TypeCheck::isString($string) ) {
-			return __($string,$this->getNameSpace());
-		}
-		return false;
+		return __((string)$string,$this->getNameSpace());
 	}
 
 	/**
-	 * Translated string.
+	 * Translate string using variables,
+	 * May require quotes escaping.
 	 *
 	 * @access public
 	 * @param string $string
-	 * @param mixed $var
+	 * @param mixed $vars
 	 * @return string
+	 * @todo remove old
 	 */
-	public function translateVar($string = '', $var = null)
+	public function translateVars($string = '', $vars = null)
 	{
-		if ( TypeCheck::isArray($var) ) {
-			return vsprintf($this->translateString(Stringify::replaceArray($var,$string)), $var);
+		if ( TypeCheck::isArray($vars) ) {
+			return vsprintf(
+				$this->translateString($string),
+				$vars
+			);
+
 		} else {
-			$var = Stringify::replaceRegex('/\s+/', $this->translateString('{Empty}'), $var);
-			return sprintf($this->translateString(Stringify::replace($var,'%s',$string)), $var);
+			$vars = Stringify::replaceRegex('/\s+/', $this->translateString('{Empty}'), $vars);
+			return sprintf($this->translateString(Stringify::replace($vars,'%s',$string)), $vars);
 		}
 	}
 
@@ -1018,7 +1022,7 @@ class PluginOptions extends WordPress
 	    		die($this->translateString('Invalid token'));
 	    		
 	    	} else {
-	    		$this->setResponse('Invalid token',[],'error');
+	    		$this->setResponse('Invalid token',[],'error',400);
 	    	}
 	    }
 	}

@@ -12,25 +12,21 @@
 
 namespace VanillePlugin\int;
 
-interface AjaxInterface
+interface ShortcodeHelperInterface
 {
     /**
-     * Ajax Controller
+     * Get templates.
      *
-     * @param object $callable
-     * @param PluginNameSpaceInterface $plugin
-     */
-    function __construct(AdminAjaxInterface $callable, PluginNameSpaceInterface $plugin);
-    
-    /**
      * @param void
-     * @return void
+     * @return array
      */
-    function callback();
+    static function templates();
 
     /**
-     * @param string $action
-     * @return bool
+     * Get attributes.
+     *
+     * @param void
+     * @return array
      */
-    function isAction($action);
+    static function atts();
 }
