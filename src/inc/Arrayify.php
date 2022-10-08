@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.9
+ * @version   : 0.8.0
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -61,14 +61,17 @@ final class Arrayify
 
 	/**
 	 * @access public
-	 * @param mixed $callback
+	 * @param callable $callable
 	 * @param array $array
 	 * @param array $arrays
 	 * @return array
 	 */
-	public static function map($callback, $array, $arrays = [])
+	public static function map($callable, $array, $arrays = null)
 	{
-		return array_map($callback,$array,$arrays);
+		if ( !TypeCheck::isNull($arrays) ) {
+			return array_map($callable,$array,$arrays);
+		}
+		return array_map($callable,$array);
 	}
 
 	/**
@@ -137,10 +140,22 @@ final class Arrayify
 	/**
 	 * @access public
 	 * @param array $array
+	 * @return array
+	 */
+	public static function uniqueMultiple($array)
+	{
+		return self::map('unserialize',self::unique(
+			self::map('serialize',$array)
+		));
+	}
+
+	/**
+	 * @access public
+	 * @param array $array
 	 * @param string $key
 	 * @return array
 	 */
-	public static function uniqueMultiple($array, $key = '')
+	public static function uniqueMultipleByKey($array, $key = '')
 	{
 		$temp = [];
 		foreach ($array as &$val) {
@@ -183,9 +198,9 @@ final class Arrayify
 	 * @param int $mode
 	 * @return array
 	 */
-	public static function filter($array, $callable = null, $mode = null)
+	public static function filter($array, $callable = null, $mode = 0)
 	{
-		if ( $callable ) {
+		if ( !TypeCheck::isNull($callable) ) {
 			return array_filter($array,$callable,$mode);
 		}
 		return array_filter($array);

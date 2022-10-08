@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.7.9
+ * @version   : 0.8.0
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,6 +16,7 @@ use VanillePlugin\int\RequirementInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\TypeCheck;
 
 final class Requirement extends Notice implements RequirementInterface
@@ -59,15 +60,18 @@ final class Requirement extends Notice implements RequirementInterface
 				'multiple' => 'One Of Templates Required'
 			],
 			'module' => [
-				'required' => 'Required on server, Please activate it'
+				'required' => 'Required on server, Please activate it',
+				'config'   => 'Required on server, Please activate it, Otherwise set \'%1$s\' to \'%2$s\''
 			],
 			'php' => [
 				'required' => 'Required'
 			]
 		]);
 	}
-
+	
 	/**
+	 * Requires plugins.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return void
@@ -80,14 +84,14 @@ final class Requirement extends Notice implements RequirementInterface
 		}
 
 		// Requires plugins
-		foreach ($plugins as $plugin) {
+		foreach (Arrayify::uniqueMultiple($plugins) as $plugin) {
 
 			$name = isset($plugin->name) ? $plugin->name : $plugin->slug;
 			if ( !$this->isInstalled($plugin->slug) ) {
 				
 				$this->render([
 					'item'   => $name,
-					'notice' => $this->translateString($this->strings['plugin']['install'])
+					'notice' => $this->translateString($this->strings['plugin']['install']) . '.'
 				],$this->tpl);
 
 			} else {
@@ -96,7 +100,7 @@ final class Requirement extends Notice implements RequirementInterface
 				if ( !$this->isActivated($callable) ) {
 					$this->render([
 						'item'   => $name,
-						'notice' => $this->translateString($this->strings['plugin']['activate'])
+						'notice' => $this->translateString($this->strings['plugin']['activate']) . '.'
 					],$this->tpl);
 				}
 			}
@@ -104,6 +108,8 @@ final class Requirement extends Notice implements RequirementInterface
 	}
 
 	/**
+	 * Requires options.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return void
@@ -116,24 +122,26 @@ final class Requirement extends Notice implements RequirementInterface
 		}
 
 		// Requires options
-		foreach ($options as $option) {
+		foreach (Arrayify::uniqueMultiple($options) as $option) {
 			$name = isset($option->name) ? $option->name : $option->slug;
 			if ( $this->getOption($option->slug) !== $option->value ) {
 				$this->render([
 					'item'   => $name,
-					'notice' => $this->translateString($this->strings['option']['missing'])
+					'notice' => $this->translateString($this->strings['option']['missing']) . '.'
 				],$this->tpl);
 
-			} else if ( empty($this->getOption($option->slug)) ) {
+			} elseif ( empty($this->getOption($option->slug)) ) {
 				$this->render([
 					'item'   => $name,
-					'notice' => $this->translateString($this->strings['option']['empty'])
+					'notice' => $this->translateString($this->strings['option']['empty']) . '.'
 				],$this->tpl);
 			}
 		}
 	}
 
 	/**
+	 * Requires templates.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return void
@@ -148,19 +156,24 @@ final class Requirement extends Notice implements RequirementInterface
 		// Requires templates
 		$slugs = [];
 		$names = [];
-		foreach ($templates as $template) {
+		foreach (Arrayify::uniqueMultiple($templates) as $template) {
 			$slugs[] = $template->slug;
 			$names[] = isset($template->name) ? $template->name : $template->slug;
 		}
 
 		if ( !Stringify::contains($slugs, $this->getOption('template')) ) {
 			if ( count($slugs) > 1 ) {
-				$item = implode(', ', $names);
-				$notice = $this->translateString($this->strings['template']['multiple']);
+
+				// Check for multiple templates
+				$item = implode(', ',$names);
+				$notice = $this->translateString($this->strings['template']['multiple']) . '.';
+
 			} else {
-				$item = trim(implode('', $names));
-				$notice = $this->translateString($this->strings['template']['single']);
+				// Check for single template
+				$item = trim(implode('',$names));
+				$notice = $this->translateString($this->strings['template']['single']) . '.';
 			}
+
 			$this->render([
 				'item'   => $item,
 				'notice' => $notice,
@@ -169,6 +182,8 @@ final class Requirement extends Notice implements RequirementInterface
 	}
 
 	/**
+	 * Requires modules.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return void
@@ -181,17 +196,41 @@ final class Requirement extends Notice implements RequirementInterface
 		}
 
 		// Requires modules
-		foreach ($modules as $module) {
-			if ( !$this->isActivated($module->callable) ) {
-				$this->render([
-					'item'   => $module->name,
-					'notice' => $this->translateString($this->strings['module']['required'])
-				],$this->tpl);
+		foreach (Arrayify::uniqueMultiple($modules) as $module) {
+
+			if ( isset($module->override) ) {
+
+				// Overrided module check
+				$name = $module->override->name ?? '';
+				$value = $module->override->value ?? '';
+
+				if ( !$this->isActivated($module->callable) && !$this->hasConfig($name,$value) ) {
+					$notice = $this->translateVars(
+						$this->strings['module']['config'],
+						[$name,$value]
+					) . '.';
+					$this->render([
+						'item'   => $module->name,
+						'notice' => $notice
+					],$this->tpl);
+				}
+
+			} else {
+				
+				// Single module check
+				if ( !$this->isActivated($module->callable) ) {
+					$this->render([
+						'item'   => $module->name,
+						'notice' => $this->translateString($this->strings['module']['required']) . '.'
+					],$this->tpl);
+				}
 			}
 		}
 	}
 
 	/**
+	 * Requires PHP version.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return void
@@ -206,12 +245,14 @@ final class Requirement extends Notice implements RequirementInterface
 		if ( $this->versionCompare(phpversion(),$version,'<') ){
 			$this->render([
 				'item'   => "PHP {$version}",
-				'notice' => $this->translateString($this->strings['php']['required'])
+				'notice' => $this->translateString($this->strings['php']['required']) . '.'
 			],$this->tpl);
 		};
 	}
 
 	/**
+	 * Check if plugin installed.
+	 * 
 	 * @access protected
 	 * @param string $slug
 	 * @return bool
@@ -228,6 +269,8 @@ final class Requirement extends Notice implements RequirementInterface
 	}
 
 	/**
+	 * Check if plugin/module activated.
+	 * 
 	 * @access protected
 	 * @param string $callable
 	 * @return bool
@@ -241,6 +284,25 @@ final class Requirement extends Notice implements RequirementInterface
 			return true;
 
 		} elseif ( defined($callable) ) {
+			return true;
+
+		} elseif ( extension_loaded($callable) ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Check server config.
+	 * 
+	 * @access protected
+	 * @param string $name
+	 * @param string $value
+	 * @return bool
+	 */
+	protected function hasConfig($name, $value)
+	{
+		if ( (string)ini_get($name) == (string)$value ) {
 			return true;
 		}
 		return false;
