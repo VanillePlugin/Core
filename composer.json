@@ -1,43 +1,49 @@
 {
-  "name": "jakiboy/vanilleplugin",
-  "version" : "0.8.0",
-  "type": "library",
-  "description": "WordPress Plugin Framework",
-  "keywords": ["VanillePlugin","WordPress","WordPress-Plugin","WordPress-Plugin-Framework"],
-  "homepage": "https://jakiboy.github.io/VanillePlugin/",
-  "license": "MIT",
-  "authors": [
+  "name":"jakiboy/vanilleplugin",
+  "version":"0.9.0",
+  "type":"library",
+  "description":"WordPress Plugin Framework",
+  "keywords":[
+    "VanillePlugin",
+    "WordPress",
+    "WordPress-Plugin",
+    "WordPress-Plugin-Framework",
+    "Boilerplate"
+  ],
+  "homepage":"https://jakiboy.github.io/VanillePlugin/",
+  "license":"MIT",
+  "authors":[
     {
-      "name": "Jihad Sinnaour",
-      "email": "mail@jihadsinnaour.com",
-      "role": "Founder"
+      "name":"Jihad Sinnaour",
+      "email":"mail@jihadsinnaour.com",
+      "role":"Founder"
     },
     {
-      "name": "Softgine",
-      "email": "e-mailing@soft-gine.com",
-      "role": "Developer"
+      "name":"Softgine",
+      "email":"e-mailing@soft-gine.com",
+      "role":"Developer"
     }
   ],
-  "require": {
-    "php": ">=7.2",
-    "twig/twig": "3.4.3",
-    "phpfastcache/phpfastcache": "7.1.2",
-    "justinrainbow/json-schema": "5.2.11"
+  "require":{
+    "php":">=7.2",
+    "twig/twig":"3.4.3",
+    "phpfastcache/phpfastcache":"7.1.2",
+    "justinrainbow/json-schema":"5.2.11"
   },
-  "require-dev": {
-    "phpunit/phpunit": "^9"
+  "require-dev":{
+    "phpunit/phpunit":"^9"
   },
-  "scripts": {
-    "test": [
+  "scripts":{
+    "test":[
       "phpunit tests"
     ]
   },
-  "autoload": {
-    "psr-4" : {
-      "VanillePlugin\\" : "src/"
+  "autoload":{
+    "psr-4":{
+      "VanillePlugin\\":"src/"
     }
   },
-  "suggest": {
-    "jakiboy/vanilleplugin-packager": "Prefixes VanillePlugin namespaces to avoid issues with other plugins"
+  "suggest":{
+    "jakiboy/vanilleplugin-packager":"Prefixes VanillePlugin namespaces to avoid issues with other plugins"
   }
 }

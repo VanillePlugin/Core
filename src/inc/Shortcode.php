@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.8.0
+ * @version   : 0.9.0
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -12,6 +12,9 @@
 
 namespace VanillePlugin\inc;
 
+/**
+ * @todo fix 1 => true self::isEnabled
+ */
 final class Shortcode
 {
 	/**
