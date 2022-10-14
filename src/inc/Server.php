@@ -30,7 +30,7 @@ final class Server
 			if ( $format ) {
 				$item = self::formatArgs($item);
 			}
-			return self::isSetted($item) ? $_SERVER[$item] : false;
+			return self::isSetted($item) ? $_SERVER[$item] : null;
 		}
 		return self::isSetted() ? $_SERVER : null;
 	}
@@ -219,7 +219,7 @@ final class Server
 	}
 
 	/**
-	 * Check external url status code.
+	 * Check external server status code.
 	 * 
 	 * @access public
 	 * @param string $url
@@ -228,7 +228,7 @@ final class Server
 	 */
 	public static function isDown($url = '', $args = [])
 	{
-		// Set config
+		// Set overridden args
 		$args = Arrayify::merge([
 			'code'     => 500,
 			'format'   => false,
@@ -237,10 +237,10 @@ final class Server
 			'auth'     => false,
 			'method'   => 'GET',
 			'operator' => '>=',
-			'params'   => [
+			'http'     => [
 				'timeout'     => 30,
 				'redirection' => 0,
-				'sslverify'   => false
+				'sslverify'   => self::maybeRequireSSL()
 			]
 		], $args);
 
@@ -256,20 +256,30 @@ final class Server
 		}
 
 		// Init request
-		$request = new Request();
+		$request = new API();
 		$request->setMethod($args['method']);
-		$request->setParameters($args['params']);
+		$request->setArgs($args['http']);
 		$request->setBaseUrl($url);
 
-		// Auth config
-		if ( TypeCheck::isArray($args['auth']) ) {
-			$request->setHeaders($args['auth']);
+		// Set Auth
+		if ( $args['auth'] ) {
+			if ( TypeCheck::isArray($args['auth']) ) {
+				$user = $args['auth'][0] ?? '';
+				$pswd = $args['auth'][1] ?? '';
+				$request->setBasicAuthentication($user,$pswd);
+			} else {
+				$request->setAuthentication($args['auth']);
+			}
 		}
 
 		// Send request
 		$request->send();
 
-		// Check status
+		// Check status match
+		if ( !$request->getStatusCode() ) {
+			return true;
+		}
+
 		if ( $args['operator'] == '==' ) {
 			if ( $request->getStatusCode() == intval($args['code']) ) {
 				return true;
@@ -286,7 +296,7 @@ final class Server
 			}
 		}
 
-		// Check response
+		// Check response match
 		if ( $args['response'] ) {
 			if ( ($body = Json::decode($request->getBody(),true)) ) {
 				if ( TypeCheck::isString($args['response']) ) {
@@ -396,6 +406,22 @@ final class Server
 	{
 		return is_ssl();
 	}
+
+    /**
+     * Check if SSL verify is required in request,
+     * Maybe remote server requires (SNI).
+     * 
+     * @access public
+     * @param void
+     * @return bool
+     */
+    public static function maybeRequireSSL()
+    {
+    	if ( !TypeCheck::isFunction('curl_init') ) {
+    		return true;
+    	}
+    	return self::isSSL();
+    }
 
 	/**
 	 * Format args.

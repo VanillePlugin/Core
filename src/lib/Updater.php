@@ -19,6 +19,7 @@ use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Server;
 use VanillePlugin\inc\GlobalConst;
+use VanillePlugin\inc\Request;
 use \stdClass;
 
 final class Updater extends PluginOptions implements UpdaterInterface
@@ -423,7 +424,10 @@ final class Updater extends PluginOptions implements UpdaterInterface
 	 */
 	private function isSSL()
 	{
-		return $this->applyPluginFilter('updater-ssl',Server::isSSL());
+		return $this->applyPluginFilter(
+			'updater-ssl',
+			Server::maybeRequireSSL()
+		);
 	}
 
 	/**

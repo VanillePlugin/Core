@@ -199,7 +199,7 @@ final class Stringify
 	}
 
 	/**
-	 * Encode string
+	 * Encode string | Default encode string to UTF-8.
 	 *
 	 * @access public
 	 * @param string $string
@@ -209,80 +209,42 @@ final class Stringify
 	 */
 	public static function encode($string, $from = 'ISO-8859-1', $to = 'UTF-8')
 	{
-		$from = self::uppercase($from);
-		$to = self::uppercase($to);
-		if ( self::getEncoding($string,$to) !== $to ) {
-			if ( $from  == 'ISO-8859-1' && $to == 'UTF-8' ) {
-				$string = self::encodeUTF8($string);
-			} else {
-				$string = @iconv($to,$from,$string);
+		if ( self::getEncoding($string,$to,true) !== self::uppercase($to) ) {
+			if ( ($encoded = @iconv($to,$from,$string)) ) {
+				$string = $encoded;
 			}
 		}
 		return $string;
 	}
 
 	/**
-	 * Decode string
-	 *
-	 * @access public
-	 * @param string $string
-	 * @param string $to
-	 * @param string $from
-	 * @return string
-	 */
-	public static function decode($string, $from = 'UTF-8', $to = 'ISO-8859-1')
-	{
-		$from = self::uppercase($from);
-		$to = self::uppercase($to);
-		if ( self::getEncoding($string,$to) !== $to ) {
-			if ( $from == 'UTF-8' && $to == 'ISO-8859-1' ) {
-				$string = self::decodeUTF8($string);
-			} else {
-				$string = @iconv($from,$to,$string);
-			}
-		}
-		return $string;
-	}
-
-	/**
-	 * Decode string UTF-8
-	 *
-	 * @access public
-	 * @param string $string
-	 * @return string
-	 */
-	public static function decodeUTF8($string)
-	{
-		return utf8_decode((string)$string);
-	}
-
-	/**
-	 * Encode string UTF-8
-	 *
-	 * @access public
-	 * @param string $string
-	 * @return string
-	 */
-	public static function encodeUTF8($string)
-	{
-		return utf8_encode((string)$string);
-	}
-
-	/**
-	 * Detect encoding
+	 * Detect encoding.
 	 *
 	 * @access public
 	 * @param string $string
 	 * @param mixed $encodings
+	 * @param bool $strict
 	 * @return mixed
 	 */
-	public static function getEncoding($string, $encodings = null)
+	public static function getEncoding($string, $encodings = null, $strict = true)
 	{
-		return mb_detect_encoding((string)$string,$encodings);
+		return mb_detect_encoding($string,$encodings,$strict);
 	}
 
 	/**
-	 * Parse string
+	 * Check UTF8.
+	 *
+	 * @access public
+	 * @param string $string
+	 * @return bool
+	 */
+	public static function isUTF8($string)
+	{
+		return seems_utf8($string);
+	}
+
+	/**
+	 * Parse string.
 	 *
 	 * @access public
 	 * @param string $string

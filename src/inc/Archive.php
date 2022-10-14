@@ -94,7 +94,7 @@ final class Archive
 			} else {
 				WP_Filesystem();
 				$result = unzip_file($archive,$to);
-				if ( $result && !is_wp_error($result) ) {
+				if ( $result && !Exception::isError($result) ) {
 					return true;
 				}
 			}

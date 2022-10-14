@@ -12,10 +12,9 @@
 
 namespace VanillePlugin\inc;
 
-use \Exception as MainException;
 use \WP_Error;
 
-class Exception extends MainException
+class Exception extends \Exception
 {
 	/**
 	 * Handle shutdown exception.
@@ -24,7 +23,7 @@ class Exception extends MainException
 	 * @var array $callable
 	 * @return void
 	 */
-	public function handle($callable)
+	public static function handle($callable)
 	{
 		register_shutdown_function($callable);
 	}
@@ -36,7 +35,7 @@ class Exception extends MainException
 	 * @var void
 	 * @return string
 	 */
-	public function getLastError()
+	public static function getLastError()
 	{
 		return error_get_last();
 	}
@@ -48,7 +47,7 @@ class Exception extends MainException
 	 * @var void
 	 * @return void
 	 */
-	public function clearLastError()
+	public static function clearLastError()
 	{
 		error_clear_last();
 	}
@@ -61,7 +60,7 @@ class Exception extends MainException
 	 * @var int $type
 	 * @return bool
 	 */
-	public function trigger($message, $type = E_USER_NOTICE)
+	public static function trigger($message, $type = E_USER_NOTICE)
 	{
 		return trigger_error($message,$type);
 	}
@@ -75,7 +74,7 @@ class Exception extends MainException
 	 * @param array $args
 	 * @return object
 	 */
-	public function error($code = '', $message = '', $args = [])
+	public static function error($code = '', $message = '', $args = [])
 	{
 	    return new WP_Error($code,$message,$args);
 	}
@@ -89,8 +88,20 @@ class Exception extends MainException
 	 * @param array $args
 	 * @return void
 	 */
-	public function except($message = '', $title = '', $args = [])
+	public static function except($message = '', $title = '', $args = [])
 	{
 		wp_die($message,$title,$args);
+	}
+
+	/**
+	 * Check for WordPress error.
+	 *
+	 * @access public
+	 * @param mixed $object
+	 * @return void
+	 */
+	public static function isError($object)
+	{
+		return is_wp_error($object);
 	}
 }

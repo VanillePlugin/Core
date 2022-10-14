@@ -13,10 +13,11 @@
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\int\LoggerInterface;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\File;
 
-class Logger extends PluginOptions
+class Logger extends PluginOptions implements LoggerInterface
 {
     /**
      * @access protected
@@ -44,6 +45,18 @@ class Logger extends PluginOptions
         $this->setPath($this->getLoggerPath());
         $this->setFilename('debug');
         $this->setExtension('log');
+    }
+
+    /**
+     * Get debug status.
+     *
+     * @access public
+     * @param bool $global
+     * @return bool
+     */
+    public function isDebug($global = false)
+    {
+        return parent::isDebug($global);
     }
 
     /**

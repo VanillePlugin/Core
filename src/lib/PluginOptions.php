@@ -26,6 +26,7 @@ use VanillePlugin\thirdparty\Translator;
 /**
  * Wrapper Class for Advanced Plugin Options API,
  * Defines Only Base Functions Used by Plugins.
+ * Notice: Multiple instances of this class have no impact on performance.
  * 
  * @see https://developer.wordpress.org/plugins/
  */
@@ -924,7 +925,6 @@ class PluginOptions extends WordPress
 	 * @param string $string
 	 * @param mixed $vars
 	 * @return string
-	 * @todo remove old
 	 */
 	public function translateVars($string = '', $vars = null)
 	{
@@ -933,7 +933,6 @@ class PluginOptions extends WordPress
 				$this->translateString($string),
 				$vars
 			);
-
 		} else {
 			$vars = Stringify::replaceRegex('/\s+/', $this->translateString('{Empty}'), $vars);
 			return sprintf($this->translateString(Stringify::replace($vars,'%s',$string)), $vars);
@@ -1020,7 +1019,6 @@ class PluginOptions extends WordPress
 	    if ( !$this->checkNonce($nonce,$action) ) {
 	    	if ( $strict ) {
 	    		die($this->translateString('Invalid token'));
-	    		
 	    	} else {
 	    		$this->setResponse('Invalid token',[],'error',400);
 	    	}
@@ -1113,6 +1111,6 @@ class PluginOptions extends WordPress
 			$key = $this->applyPluginFilter('transient-key-format',$key);
 		}
 		$key = Stringify::slugify($key);
-		$key = substr("{$this->getNameSpace()}-{$key}",0,172);
+		return substr("{$this->getNameSpace()}-{$key}",0,172);
 	}
 }

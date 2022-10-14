@@ -15,6 +15,7 @@ namespace VanillePlugin\lib;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Archive;
+use VanillePlugin\inc\Request;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
 final class Asset extends PluginOptions

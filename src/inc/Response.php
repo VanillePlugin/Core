@@ -51,6 +51,7 @@ final class Response extends Status
 	 * @param string $reponse
 	 * @param bool $isArray
 	 * @return mixed
+	 * @todo deprecated
 	 */
 	public static function get($reponse, $isArray = false)
 	{

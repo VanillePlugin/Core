@@ -16,17 +16,24 @@ interface RequestInterface
 {
     /**
      * @param string $method
-     * @param array $params
-     * @param string $baseUrl null
+     * @param string $baseUrl
      */
     function __construct($method = 'GET', $params = [], $baseUrl = null);
 
     /**
-     * @param string $param
+     * Set additional request args.
+     * 
+     * @param array $args
+     * @return object
+     */
+    function setArgs($args = []);
+
+    /**
+     * @param string $arg
      * @param mixed $value
      * @return void
      */
-    function addParameter($param,$value);
+    function addArg($arg,$value);
 
     /**
      * @param array $headers
@@ -47,10 +54,10 @@ interface RequestInterface
     function setBody($body = []);
 
     /**
-     * @param array $method
+     * @param string $method
      * @return object
      */
-    function setMethod($method = 'GET');
+    function setMethod($method);
 
     /**
      * @param string $url
@@ -96,4 +103,10 @@ interface RequestInterface
      * @return string
      */
     function getBody();
+    
+    /**
+     * @param void
+     * @return string
+     */
+    function hasError();
 }

@@ -27,6 +27,11 @@
   "require-dev": {
     "phpunit/phpunit": "^9"
   },
+  "scripts": {
+    "test": [
+      "phpunit tests"
+    ]
+  },
   "autoload": {
     "psr-4" : {
       "VanillePlugin\\" : "src/"
