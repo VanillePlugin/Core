@@ -12,9 +12,6 @@
 
 namespace VanillePlugin\inc;
 
-/**
- * @todo fix 1 => true self::isEnabled
- */
 final class Shortcode
 {
 	/**
@@ -231,7 +228,7 @@ final class Shortcode
 		$attr = self::formatAttributeName($attr);
 		if ( isset($atts[$attr]) ) {
 			$value = Stringify::lowercase($atts[$attr]);
-			return Stringify::contains(['off','no','non','false','0'],$value);
+			return Stringify::contains(['off','no','non','false'],$value);
 		}
 		return false;
 	}
@@ -249,7 +246,7 @@ final class Shortcode
 		$attr = self::formatAttributeName($attr);
 		if ( isset($atts[$attr]) ) {
 			$value = Stringify::lowercase($atts[$attr]);
-			return Stringify::contains(['on','yes','oui','true','1'],$value);
+			return Stringify::contains(['on','yes','oui','true'],$value);
 		}
 		return false;
 	}

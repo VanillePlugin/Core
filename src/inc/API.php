@@ -177,7 +177,6 @@ class API extends Request
 	 * @access protected
 	 * @param object $logger
 	 * @return void
-	 * @todo logger
 	 */
 	protected function setLogger(LoggerInterface $logger)
 	{

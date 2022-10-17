@@ -228,7 +228,10 @@ final class Stringify
 	 */
 	public static function getEncoding($string, $encodings = null, $strict = true)
 	{
-		return mb_detect_encoding($string,$encodings,$strict);
+		if ( TypeCheck::isFunction('mb_detect_encoding') ) {
+			return mb_detect_encoding($string,$encodings,$strict);
+		}
+		return false;
 	}
 
 	/**

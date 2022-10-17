@@ -60,6 +60,8 @@ class Logger extends PluginOptions implements LoggerInterface
     }
 
     /**
+     * Set logger path.
+     *
      * @access public
      * @param string $path
      * @return void
@@ -73,6 +75,8 @@ class Logger extends PluginOptions implements LoggerInterface
     }
 
     /**
+     * Set logger filename.
+     *
      * @access public
      * @param string $filename
      * @return void
@@ -83,6 +87,8 @@ class Logger extends PluginOptions implements LoggerInterface
     }
 
     /**
+     * Set logger extension.
+     *
      * @access public
      * @param string $extension
      * @return void
@@ -93,8 +99,11 @@ class Logger extends PluginOptions implements LoggerInterface
     }
 
     /**
+     * Set logger debug.
+     *
      * @access public
      * @param string $message
+     * @param bool $isArray
      * @return void
      */
     public function debug($message = '', $isArray = false)
@@ -106,6 +115,8 @@ class Logger extends PluginOptions implements LoggerInterface
     }
 
     /**
+     * Set logger error.
+     *
      * @access public
      * @param string $message
      * @return void
@@ -116,6 +127,8 @@ class Logger extends PluginOptions implements LoggerInterface
     }
 
     /**
+     * Set logger warning.
+     *
      * @access public
      * @param string $message
      * @return void
@@ -126,6 +139,8 @@ class Logger extends PluginOptions implements LoggerInterface
     }
 
     /**
+     * Set logger info.
+     *
      * @access public
      * @param string $message
      * @return void
@@ -136,6 +151,8 @@ class Logger extends PluginOptions implements LoggerInterface
     }
 
     /**
+     * Set logger custom message.
+     *
      * @access public
      * @param string $message
      * @param string $type
@@ -162,6 +179,8 @@ class Logger extends PluginOptions implements LoggerInterface
     }
 
     /**
+     * Write logger message.
+     *
      * @access protected
      * @param string $status 
      * @param string $message 

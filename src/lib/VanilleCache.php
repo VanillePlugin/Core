@@ -19,7 +19,6 @@ use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\inc\Exception;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
 /**
@@ -43,9 +42,6 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function __construct(PluginNameSpaceInterface $plugin)
 	{
-		// $exception = new Exception();
-		// $exception->trigger('VanilleCache is deprecated, Use Cache instead',E_USER_DEPRECATED);
-
 		// Init plugin config
 		$this->initConfig($plugin);
 

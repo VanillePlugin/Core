@@ -17,6 +17,8 @@ use VanillePlugin\int\NoticeInterface;
 class Notice extends View implements NoticeInterface
 {
 	/**
+	 * Init notice.
+	 * 
 	 * @access public
 	 * @param array $callable
 	 * @return void

@@ -25,7 +25,7 @@ class Cron extends PluginOptions implements CronInterface
 	private $actions = [];
 
 	/**
-	 * Set schedulers
+	 * Set schedulers.
 	 *
 	 * @access public
 	 * @param array $schedules
@@ -37,7 +37,7 @@ class Cron extends PluginOptions implements CronInterface
 	}
 
 	/**
-	 * Add schedulers
+	 * Add schedulers.
 	 *
 	 * @access public
 	 * @param array $schedules
@@ -49,7 +49,7 @@ class Cron extends PluginOptions implements CronInterface
 	}
 
 	/**
-	 * Set actions
+	 * Set actions.
 	 *
 	 * @access public
 	 * @param array $actions
@@ -61,7 +61,7 @@ class Cron extends PluginOptions implements CronInterface
 	}
 
 	/**
-	 * Add actions
+	 * Add actions.
 	 *
 	 * @access public
 	 * @param array $actions
@@ -73,7 +73,7 @@ class Cron extends PluginOptions implements CronInterface
 	}
 
 	/**
-	 * Apply schedulers
+	 * Apply schedulers.
 	 * Filter : cron_schedules
 	 *
 	 * @access public
@@ -94,7 +94,7 @@ class Cron extends PluginOptions implements CronInterface
 	}
 
 	/**
-	 * Start schedulers
+	 * Start schedulers.
 	 *
 	 * @access public
 	 * @param void
@@ -112,7 +112,7 @@ class Cron extends PluginOptions implements CronInterface
 	}
 
 	/**
-	 * Check scheduled waitlist
+	 * Check scheduled waitlist.
 	 *
 	 * @access public
 	 * @param string $name
@@ -124,7 +124,7 @@ class Cron extends PluginOptions implements CronInterface
 	}
 
 	/**
-	 * Check scheduled waitlist
+	 * Check scheduled waitlist.
 	 *
 	 * @access public
 	 * @param int $interval
@@ -137,7 +137,7 @@ class Cron extends PluginOptions implements CronInterface
 	}
 
 	/**
-	 * Clear scheduled hook
+	 * Clear scheduled hook.
 	 *
 	 * @access public
 	 * @param string $name

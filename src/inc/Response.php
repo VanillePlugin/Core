@@ -46,15 +46,4 @@ final class Response extends Status
 		header("Content-Type: {$type}");
 		header("{$protocol} {$code} {$status}");
 	}
-
-	/**
-	 * @param string $reponse
-	 * @param bool $isArray
-	 * @return mixed
-	 * @todo deprecated
-	 */
-	public static function get($reponse, $isArray = false)
-	{
-		return Json::decode($reponse,$isArray);
-	}
 }

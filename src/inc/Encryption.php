@@ -16,6 +16,8 @@ class Encryption
 {
 	/**
 	 * @access private
+	 * @var SECRET default passphrase
+	 * @var VECTOR default initialzation vector
 	 */
 	const SECRET = 'v8t1pQ92PN';
 	const VECTOR = 'ZRfvSPsFQ';
@@ -23,57 +25,64 @@ class Encryption
 	/**
 	 * @access private
 	 * @var string $data
-	 * @var string $initVector
-	 * @var string $secretKey
-	 * @var int $length
-	 * @var int $options
-	 * @var string $algorithm
-	 * @var string $cipher
+	 * @var string $key, Secret key (Passphrase)
+	 * @var string $vector, Initialzation vector
+	 * @var int $length, Encryption length
+	 * @var string $prefix, Encryption prefix
+	 * @var int $options, Openssl options
+	 * @var string $algo, Hash algorithm
+	 * @var string $cipher, Openssl cipher algorithm
 	 */
 	private $data;
-	private $initVector;
-	private $secretKey;
+	private $key;
+	private $vector;
 	private $length;
 	private $prefix = '[vanillecrypt]';
 	private $options = 0;
-	private $algorithm = 'sha256';
+	private $algo = 'sha256';
 	private $cipher = 'AES-256-CBC';
 
 	/**
 	 * @param string $data
-	 * @param string $initVector
-	 * @param string $secretKey
+	 * @param string $vector
+	 * @param string $key
 	 */
-	public function __construct($data, $secretKey = self::SECRET, $initVector = self::VECTOR, $length = 16)
+	public function __construct($data, $key = self::SECRET, $vector = self::VECTOR, $length = 16)
 	{
 		$this->data = $data;
-		$this->setSecretKey($secretKey);
-		$this->setInitVector($initVector);
+		$this->setSecretKey($key);
+		$this->setInitVector($vector);
 		$this->setLength($length);
 		$this->initialize();
 	}
 
 	/**
+	 * Set secret key (Passphrase).
+	 * 
 	 * @access public
 	 * @param string $key
 	 * @param void
 	 */
 	public function setSecretKey($key)
 	{
-		$this->secretKey = $key;
+		$this->key = $key;
 	}
 
 	/**
+	 * Set initialzation vector.
+	 * 
 	 * @access public
 	 * @param string $vector
 	 * @param void
 	 */
 	public function setInitVector($vector)
 	{
-		$this->initVector = $vector;
+		$this->vector = $vector;
 	}
 
 	/**
+	 * Set encryption length.
+	 * 
 	 * @access public
 	 * @param int $length
 	 * @param void
@@ -84,6 +93,8 @@ class Encryption
 	}
 
 	/**
+	 * Set openssl cipher algorithm.
+	 * 
 	 * @access public
 	 * @param string $cipher
 	 * @param object
@@ -95,6 +106,8 @@ class Encryption
 	}
 
 	/**
+	 * Set openssl options.
+	 * 
 	 * @access public
 	 * @param int $options
 	 * @param object
@@ -106,18 +119,8 @@ class Encryption
 	}
 
 	/**
-	 * @access public
-	 * @param void
-	 * @param object
-	 */
-	public function initialize()
-	{
-		$this->secretKey = hash($this->algorithm,$this->secretKey);
-		$this->initVector = substr(hash($this->algorithm,$this->initVector),0,$this->length);
-		return $this;
-	}
-
-	/**
+	 * Set encryption prefix.
+	 * 
 	 * @access public
 	 * @param string $prefix
 	 * @param object
@@ -129,31 +132,37 @@ class Encryption
 	}
 
 	/**
+	 * Encrypt data using base64 loop.
+	 * 
 	 * @access public
-	 * @param int $loop
+	 * @param int $loop, base64 loop
 	 * @param string
 	 */
 	public function encrypt($loop = 1)
 	{
-		$encrypt = openssl_encrypt($this->data,$this->cipher,$this->secretKey,$this->options,$this->initVector);
+		$encrypt = openssl_encrypt($this->data,$this->cipher,$this->key,$this->options,$this->vector);
 		$crypted = Tokenizer::base64($encrypt,$loop);
 		return "{$this->prefix}{$crypted}";
 	}
 
 	/**
+	 * Decrypt data using base64 loop.
+	 * 
 	 * @access public
-	 * @param int $loop
+	 * @param int $loop, base64 loop
 	 * @param string
 	 */
 	public function decrypt($loop = 1)
 	{
 		$decrypted = Stringify::replace($this->prefix,'',$this->data);
 		return openssl_decrypt(
-			Tokenizer::unbase64($decrypted,$loop),$this->cipher,$this->secretKey,$this->options,$this->initVector
+			Tokenizer::unbase64($decrypted,$loop),$this->cipher,$this->key,$this->options,$this->vector
 		);
 	}
 
 	/**
+	 * Check data is crypted using prefix.
+	 * 
 	 * @access public
 	 * @param void
 	 * @param bool
@@ -161,5 +170,19 @@ class Encryption
 	public function isCrypted()
 	{
 		return substr($this->data,0,strlen($this->prefix)) === $this->prefix;
+	}
+
+	/**
+	 * Initialize hash.
+	 * 
+	 * @access protected
+	 * @param void
+	 * @param object
+	 */
+	protected function initialize()
+	{
+		$this->key = hash($this->algo,$this->key);
+		$this->vector = substr(hash($this->algo,$this->vector),0,$this->length);
+		return $this;
 	}
 }

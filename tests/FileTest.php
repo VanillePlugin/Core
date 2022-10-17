@@ -17,7 +17,6 @@ final class FileTest extends TestCase
 {
     public function testGetParentDir()
     {
-        include(__dir__ . '/bootstrap.php');
         $this->assertSame(basename(File::getParentDir(__FILE__)),'tests');
     }
 

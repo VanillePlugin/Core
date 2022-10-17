@@ -95,13 +95,14 @@ final class ArrayifyTest extends TestCase
     public function testUniqueMultiple()
     {
         $tmp = [];
-        $array1 = ['1', '1', '2', '2', '3'];
-        $tmp = Arrayify::uniqueMultiple(
+        $array1 = [
             [1,2,3,4,5,'6'],
             [1,2,3,4,5,'6'],
             [1,2,3,4,5,'6']
-        )
-        $this->assertCount(3, $tmp);
+        ];
+        $tmp = Arrayify::uniqueMultiple($array1);
+        $this->assertCount(3, $array1);
+        $this->assertCount(1, $tmp);
     }
 
     public function testFilter()
