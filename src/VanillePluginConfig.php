@@ -23,14 +23,14 @@ use VanillePlugin\inc\GlobalConst;
 trait VanillePluginConfig
 {
 	/**
-	 * @access protected
+	 * @access private
 	 * @var string $path
 	 * @var object $global
 	 * @var string $namespace
 	 */
-	protected $path = '/core/storage/config/global.json';
-	protected $global = false;
-	protected $namespace = false;
+	private $path = '/core/storage/config/global.json';
+	private $global = false;
+	private $namespace = false;
 
 	/**
 	 * Get static instance.
@@ -45,8 +45,8 @@ trait VanillePluginConfig
 	}
 	
 	/**
-	 * Set Config Json File,
-	 * Allow Parent Config Access.
+	 * Set configuration JSON File,
+	 * Allows access to parent config.
 	 *
 	 * @access protected
 	 * @param PluginNameSpaceInterface $plugin
