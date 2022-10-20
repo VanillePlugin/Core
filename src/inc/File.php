@@ -210,7 +210,7 @@ class File
 	public static function remove($path)
 	{
 		if ( self::isFile($path) ) {
-			return unlink($path);
+			return @unlink($path);
 		}
 		return false;
 	}
@@ -365,9 +365,9 @@ class File
     {
 		$handler = false;
 		if ( self::isDir($path) ) {
-			$handler = opendir($path);
+			$handler = @opendir($path);
 		}
-		if ( !$handler ) {
+		if ( !TypeCheck::isResource($handler) ) {
 			return false;
 		}
 	   	while( $file = readdir($handler) ) {

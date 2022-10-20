@@ -51,8 +51,7 @@ final class Requirement extends Notice implements RequirementInterface
 		// Set strings
 		$this->strings = $this->applyPluginFilter('requirement-strings',[
 			'path'     => [
-				'exists' => '%1$s required path \'%2$s\'',
-				'chmod'  => '%1$s required permissions \'%2$s\' on folder \'%3$s\''
+				'exists'   => '%1$s requires path \'%2$s\''
 			],
 			'plugin'   => [
 				'install'  => 'Required, Please install it',
@@ -124,40 +123,6 @@ final class Requirement extends Notice implements RequirementInterface
 				$notice .= '</div>';
 
 				echo $notice;
-				
-			} else {
-
-				if ( $this->isDebug(true) ) {
-					$permissions = $this->applyPluginFilter('storage-chmod',755);
-					if ( File::getPermissions($path,true) < $permissions ) {
-
-						$message = $this->translateVars(
-							$this->strings['path']['chmod'],
-							[
-								$this->getPluginName(),
-								$permissions,
-								basename($path)
-							]
-						);
-
-						$notice  = '<div class="';
-						$notice .= $this->getNameSpace();
-						$notice .= '-notice notice notice-error">';
-						$notice .= '<p>';
-						$notice .= '<i class="icon-close"></i> ';
-						$notice .= '<strong>';
-						$notice .= $this->translateString('Warning') . ' : ';
-						$notice .= '</strong>';
-						$notice .= $message;
-						$notice .= '</p>';
-						$notice .= '<small>';
-						$notice .= $path;
-						$notice .= '</small>';
-						$notice .= '</div>';
-
-						echo $notice;
-					}
-				}
 			}
 
 		}

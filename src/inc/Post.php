@@ -39,7 +39,7 @@ final class Post
 	public static function getId()
 	{
 		global $post;
-		return isset($post->ID) ? $post->ID : false;
+		return isset($post->ID) ? $post->ID : null;
 	}
 
 	/**

@@ -45,28 +45,29 @@ final class Json extends File
 	 * Encode JSON.
 	 *
 	 * @access public
-	 * @param mixen $data
+	 * @param mixen $value
 	 * @return string
 	 */
-	public static function encode($data)
+	public static function encode($value)
 	{
-		return json_encode($data);
+		return self::format($value,0);
 	}
 
 	/**
 	 * Format JSON For WordPress.
 	 *
 	 * @access public
-	 * @param mixen $data
-	 * @param int $args
-	 * @return string
+	 * @param mixed $value
+	 * @param int $flags
+	 * @param int $depth
+	 * @return mixed
 	 *
 	 * JSON_UNESCAPED_UNICODE : 256
 	 * JSON_PRETTY_PRINT : 128
 	 * JSON_UNESCAPED_SLASHES : 64
 	 */
-	public static function format($data, $args = 64|256)
+	public static function format($value, $flags = 64|256, $depth = 512)
 	{
-		return json_encode($data,$args);
+		return json_encode($value,$flags,$depth);
 	}
 }

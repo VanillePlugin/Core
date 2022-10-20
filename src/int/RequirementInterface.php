@@ -17,6 +17,14 @@ namespace VanillePlugin\int;
 interface RequirementInterface
 {
 	/**
+	 * Check plugin cache path.
+	 * 
+	 * @param void
+	 * @return void
+	 */
+	function requirePath();
+
+	/**
 	 * @param void
 	 * @return void
 	 */

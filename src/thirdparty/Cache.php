@@ -42,7 +42,8 @@ final class Cache
 		}
 
 		/**
-		 * Clear Opcode cache
+		 * Purge Opcode cache.
+		 * 
 		 * @see https://www.php.net/manual/fr/book.opcache.php
 		 */
 		if ( function_exists('opcache_reset') ) {
@@ -50,7 +51,8 @@ final class Cache
 		}
  
 		/**
-		 * Clear APCu cache
+		 * Purge APCu cache.
+		 * 
 		 * @see https://www.php.net/manual/fr/function.apcu-clear-cache.php
 		 */
 		if ( function_exists('apcu_clear_cache') ) {
@@ -58,7 +60,8 @@ final class Cache
 		}
 
 		/**
-		 * Purge WP Rocket
+		 * Purge WP Rocket.
+		 * 
 		 * @see https://github.com/wp-media/wp-rocket
 		 */
 		if ( function_exists('rocket_clean_domain') ) {
@@ -66,7 +69,8 @@ final class Cache
 		}
 
 		/**
-		 * Purge W3 Total Cache
+		 * Purge W3 Total cache.
+		 * 
 		 * @see https://github.com/W3EDGE/w3-total-cache
 		 */
 	    if ( function_exists('w3tc_pgcache_flush') ) { 
@@ -74,7 +78,8 @@ final class Cache
 	    }
 
 		/**
-		 * Purge LiteSpeed
+		 * Purge LiteSpeed.
+		 * 
 		 * @see https://github.com/litespeedtech/lscache_wp
 		 */
 		if ( class_exists('\LiteSpeed\Purge') ) {
@@ -82,7 +87,8 @@ final class Cache
 		}
 
 		/**
-		 * Purge WP-Optimize
+		 * Purge WP-Optimize.
+		 * 
 		 * @see https://github.com/DavidAnderson684/WP-Optimize
 		 */
 		if ( class_exists('WP_Optimize_Cache_Commands') ) {
@@ -91,7 +97,8 @@ final class Cache
 		}
  
 		/**
-		 * Purge Kinsta Cache
+		 * Purge Kinsta Cache.
+		 * 
 		 * @see https://kinsta.com/knowledgebase/kinsta-mu-plugin/
 		 */
 		if ( class_exists('\Kinsta\Cache') ) {
@@ -102,7 +109,8 @@ final class Cache
 		}
 
 		/**
-		 * Purge WP Fastest Cache
+		 * Purge WP Fastest cache.
+		 * 
 		 * @see https://github.com/emrevona/wp-fastest-cache
 		 */
 		if ( method_exists('WpFastestCache','deleteCache') ) {
@@ -111,7 +119,8 @@ final class Cache
 		}
 
 		/**
-		 * Purge WP Super Cache
+		 * Purge WP Super cache.
+		 * 
 		 * @see https://github.com/Automattic/wp-super-cache
 		 */
 		if ( function_exists('wp_cache_clean_cache') ) {
@@ -123,7 +132,8 @@ final class Cache
 		}
 
 		/**
-		 * Purge Cache Enabler
+		 * Purge Cache Enabler.
+		 * 
 		 * @see https://github.com/keycdn/cache-enabler
 		 */
 		if ( class_exists('Cache_Enabler') ) {

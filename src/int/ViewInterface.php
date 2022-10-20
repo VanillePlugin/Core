@@ -17,7 +17,7 @@ namespace VanillePlugin\int;
 interface ViewInterface
 {
     /**
-     * Define custom callables
+     * Define custom callables.
      *
      * @access public
      * @param array $callables
@@ -26,7 +26,7 @@ interface ViewInterface
     function setCallables($callables = []);
     
     /**
-     * Render view
+     * Render view.
      *
      * @access public
      * @param {inherit}
@@ -35,7 +35,7 @@ interface ViewInterface
     function render($content = [], $template = 'default');
 
     /**
-     * Aassign content to view
+     * Aassign content to view.
      *
      * @access public
      * @param array $content

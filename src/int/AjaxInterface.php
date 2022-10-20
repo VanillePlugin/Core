@@ -17,7 +17,7 @@ namespace VanillePlugin\int;
 interface AjaxInterface
 {
     /**
-     * Ajax Controller
+     * Ajax Controller.
      *
      * @param object $callable
      * @param PluginNameSpaceInterface $plugin

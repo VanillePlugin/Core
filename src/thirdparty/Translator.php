@@ -29,7 +29,8 @@ final class Translator
 		global $sitepress, $q_config, $polylang;
 
 		/**
-		 * Check WPML
+		 * Check WPML.
+		 * 
 		 * @see https://github.com/wp-premium/wpml-media
 		 */
 		if ( !empty($sitepress) && TypeCheck::isObject($sitepress) ) {
@@ -39,7 +40,8 @@ final class Translator
 		}
 
 		/**
-		 * Check Polylang
+		 * Check Polylang.
+		 * 
 		 * @see https://github.com/polylang/polylang
 		 */
 		if ( !empty($polylang) && function_exists('pll_languages_list') ) {
@@ -51,7 +53,8 @@ final class Translator
 		}
 
 		/**
-		 * Check qTranslate
+		 * Check qTranslate.
+		 * 
 		 * @see https://github.com/qtranslate/qtranslate-xt
 		 */
 		if ( !empty($q_config) && TypeCheck::isArray($q_config) ) {

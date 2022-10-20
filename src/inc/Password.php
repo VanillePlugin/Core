@@ -17,6 +17,8 @@ namespace VanillePlugin\inc;
 final class Password extends Tokenizer
 {
     /**
+     * Validate password.
+     * 
      * @access public
      * @param string $password
      * @param string $hash
@@ -28,6 +30,8 @@ final class Password extends Tokenizer
     }
 
     /**
+     * Hash password.
+     * 
      * @access public
      * @param string $password
      * @param string $algo
@@ -40,6 +44,8 @@ final class Password extends Tokenizer
     }
 
     /**
+     * Check password is strong.
+     * 
      * @access public
      * @param string $password
      * @param int $length
@@ -47,6 +53,10 @@ final class Password extends Tokenizer
      */
     public static function isStrong($password = '', $length = 8)
     {
+        if ( (int)$length < 8 ) {
+            $length = 8;
+        }
+        
         $uppercase = Stringify::match('@[A-Z]@',$password);
         $lowercase = Stringify::match('@[a-z]@',$password);
         $number    = Stringify::match('@[0-9]@',$password);

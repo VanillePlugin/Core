@@ -16,7 +16,9 @@ namespace VanillePlugin\inc;
 
 class Validator
 {
-	/**
+    /**
+     * Validate IP address.
+     *
 	 * @access public
 	 * @param string $ip
 	 * @return bool
@@ -29,7 +31,9 @@ class Validator
 		return false;
 	}
 
-	/**
+    /**
+     * Validate mime type.
+     *
 	 * @access public
 	 * @param string $filename
 	 * @param array $mimes
@@ -44,7 +48,9 @@ class Validator
 		return false;
 	}
 
-	/**
+    /**
+     * Validate email.
+     *
 	 * @access public
 	 * @param string $email
 	 * @return bool

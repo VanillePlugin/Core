@@ -25,8 +25,7 @@ final class AMP
 	{
 		if ( function_exists('amp_is_request') ) {
 			return amp_is_request();
-		} else {
-			return false;
 		}
+		return false;
 	}
 }
