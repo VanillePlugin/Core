@@ -23,14 +23,14 @@ use VanillePlugin\inc\GlobalConst;
 trait VanillePluginConfig
 {
 	/**
-	 * @access private
+	 * @access protected
 	 * @var string $path
 	 * @var object $global
 	 * @var string $namespace
 	 */
-	private $path = '/core/storage/config/global.json';
-	private $global = false;
-	private $namespace = false;
+	protected $path = '/core/storage/config/global.json';
+	protected $global = false;
+	protected $namespace = false;
 
 	/**
 	 * Get static instance.
