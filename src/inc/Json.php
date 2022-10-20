@@ -17,7 +17,7 @@ namespace VanillePlugin\inc;
 final class Json extends File
 {
 	/**
-	 * Parse Json file.
+	 * Parse JSON file.
 	 *
 	 * @access public
 	 * @param bool $isArray
@@ -29,7 +29,7 @@ final class Json extends File
 	}
 
 	/**
-	 * Decode Json.
+	 * Decode JSON.
 	 *
 	 * @access public
 	 * @param string $content
@@ -38,11 +38,11 @@ final class Json extends File
 	 */
 	public static function decode($content, $isArray = false)
 	{
-		return json_decode($content,(bool)$isArray);
+		return json_decode((string)$content,(bool)$isArray);
 	}
 
 	/**
-	 * Encode Json.
+	 * Encode JSON.
 	 *
 	 * @access public
 	 * @param mixen $data
@@ -54,7 +54,7 @@ final class Json extends File
 	}
 
 	/**
-	 * Format Json For WordPress.
+	 * Format JSON For WordPress.
 	 *
 	 * @access public
 	 * @param mixen $data
