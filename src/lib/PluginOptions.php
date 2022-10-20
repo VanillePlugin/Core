@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\lib;
 
 use VanillePlugin\VanillePluginConfig;
@@ -639,11 +641,10 @@ class PluginOptions extends WordPress
 	protected function getLocale($local = false)
 	{
 		$lang = get_user_locale();
-		if ($local) {
+		if ( $local ) {
 			return $lang;
-		} else {
-			return substr($lang,0,strpos($lang,'_'));
 		}
+		return substr($lang,0,strpos($lang,'_'));
 	}
 
 	/**
@@ -755,44 +756,82 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add Plugin Cap
+	 * Add plugin capability.
 	 *
 	 * @access protected
 	 * @param string $role
 	 * @param string $cap
 	 * @return void
 	 */
-	protected function addPluginCapability($role, $cap)
+	protected function addPluginCapability($role, $cap = 'manage')
 	{
 		$prefix = Stringify::replace('-','_',$this->getNameSpace());
 		$this->addCapability($role,"{$cap}_{$prefix}");
 	}
 
 	/**
-	 * Check Plugin Cap
+	 * Add plugin capabilities.
+	 *
+	 * @access protected
+	 * @param mixed $roles
+	 * @param string $cap
+	 * @return void
+	 */
+	protected function addPluginCaps($roles, $cap = 'manage')
+	{
+		if ( TypeCheck::isArray($roles) ) {
+			foreach ($roles as $role) {
+				$this->addPluginCapability($role,$cap);
+			}
+		} else {
+			$this->addPluginCapability($roles,$cap);
+		}
+	}
+
+	/**
+	 * Check plugin capability.
 	 *
 	 * @access protected
 	 * @param string $cap
 	 * @return void
 	 */
-	protected function hadPluginCapability($cap)
+	protected function hadPluginCapability($cap = 'manage')
 	{
 		$prefix = Stringify::replace('-','_',$this->getNameSpace());
 		$this->hadCapability("{$cap}_{$prefix}");
 	}
 
 	/**
-	 * Remove Plugin Cap
+	 * Remove plugin capability.
 	 *
 	 * @access protected
 	 * @param string $role
 	 * @param string $cap
 	 * @return void
 	 */
-	protected function removePluginCapability($role, $cap)
+	protected function removePluginCapability($role, $cap = 'manage')
 	{
 		$prefix = Stringify::replace('-','_',$this->getNameSpace());
 		$this->removeCapability($role,"{$cap}_{$prefix}");
+	}
+
+	/**
+	 * Remove plugin capabilities.
+	 *
+	 * @access protected
+	 * @param mixed $roles
+	 * @param string $cap
+	 * @return void
+	 */
+	protected function removePluginCaps($roles, $cap = 'manage')
+	{
+		if ( TypeCheck::isArray($roles) ) {
+			foreach ($roles as $role) {
+				$this->removePluginCapability($role,$cap);
+			}
+		} else {
+			$this->removePluginCapability($roles,$cap);
+		}
 	}
 
 	/**
@@ -848,7 +887,7 @@ class PluginOptions extends WordPress
 	protected function saved()
 	{
 		if ( HttpGet::isSetted('settings-updated') 
-		&& HttpGet::get('settings-updated') == 'true' ) {
+		  && HttpGet::get('settings-updated') == 'true' ) {
 			return true;
 		}
 	}
@@ -869,7 +908,7 @@ class PluginOptions extends WordPress
 	}
 	
 	/**
-	 * Compare Versions.
+	 * Compare versions.
 	 *
 	 * @access public
 	 * @param string $version1
@@ -1019,9 +1058,8 @@ class PluginOptions extends WordPress
 	    if ( !$this->checkNonce($nonce,$action) ) {
 	    	if ( $strict ) {
 	    		die($this->translateString('Invalid token'));
-	    	} else {
-	    		$this->setResponse('Invalid token',[],'error',400);
 	    	}
+	    	$this->setResponse('Invalid token',[],'error',400);
 	    }
 	}
 

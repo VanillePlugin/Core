@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\HttpRequest;
@@ -28,7 +30,7 @@ class Ajax extends PluginOptions implements AjaxInterface
 	private $actions = [];
 
 	/**
-	 * Ajax Controller.
+	 * Ajax controller.
 	 *
 	 * @param object $callable
 	 * @param PluginNameSpaceInterface $plugin
@@ -53,7 +55,7 @@ class Ajax extends PluginOptions implements AjaxInterface
 	}
 
 	/**
-	 * AjaxCallback react as Ajax Controller.
+	 * AjaxCallback react as Ajax controller.
 	 *
 	 * @access public
 	 * @param void
@@ -74,7 +76,7 @@ class Ajax extends PluginOptions implements AjaxInterface
 
 	/**
 	 * Check required action,
-	 * Supports both Post & Get method.
+	 * Supports both POST & GET methods.
 	 *
 	 * @access public
 	 * @param string $action

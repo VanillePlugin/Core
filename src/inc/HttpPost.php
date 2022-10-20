@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 final class HttpPost
@@ -24,7 +26,7 @@ final class HttpPost
 		if ( $item ) {
 			return self::isSetted($item) ? $_POST[$item] : null;
 		}
-		return $_POST;
+		return self::isSetted() ? $_POST : null;
 	}
 
 	/**

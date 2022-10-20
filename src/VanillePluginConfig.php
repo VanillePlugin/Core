@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin;
 
 use VanillePlugin\int\PluginNameSpaceInterface;
@@ -369,7 +371,7 @@ trait VanillePluginConfig
 	 * Get admin url.
 	 *
 	 * @access protected
-	 * @param string $url null
+	 * @param string $url
 	 * @param string $scheme
 	 * @return string
 	 */

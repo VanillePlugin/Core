@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 final class Json extends File
@@ -36,7 +38,7 @@ final class Json extends File
 	 */
 	public static function decode($content, $isArray = false)
 	{
-		return json_decode($content,$isArray);
+		return json_decode($content,(bool)$isArray);
 	}
 
 	/**

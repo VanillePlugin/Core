@@ -10,14 +10,18 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\lib;
 
+use VanillePlugin\int\ViewInterface;
 use VanillePlugin\inc\Template;
 use VanillePlugin\inc\Json;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Date;
 use VanillePlugin\inc\File;
-use VanillePlugin\int\ViewInterface;
+use VanillePlugin\inc\Exception as ErrorHandler;
+use \Exception;
 
 class View extends PluginOptions implements ViewInterface
 {
@@ -76,83 +80,89 @@ class View extends PluginOptions implements ViewInterface
         }
     
 		// Add view global functions
-        $env->addFunction(Template::extend('dump', function($var){
+        $env->addFunction(Template::extend('dump', function($var) {
             var_dump($var);
         }));
-        $env->addFunction(Template::extend('exit', function($status = null){
+        $env->addFunction(Template::extend('exit', function($status = null) {
             exit($status);
         }));
-        $env->addFunction(Template::extend('getSession', function($var = null){
+        $env->addFunction(Template::extend('getSession', function($var = null) {
             return Session::get($var);
         }));
-        $env->addFunction(Template::extend('settingsFields', function($group){
+        $env->addFunction(Template::extend('settingsFields', function($group) {
             settings_fields($group);
         }));
-        $env->addFunction(Template::extend('settingsSections', function($group){
+        $env->addFunction(Template::extend('settingsSections', function($group) {
             do_settings_sections($group);
         }));
-        $env->addFunction(Template::extend('submitButton', function(){
+        $env->addFunction(Template::extend('submitButton', function() {
             submit_button();
         }));
-        $env->addFunction(Template::extend('isLoggedIn', function(){
+        $env->addFunction(Template::extend('isLoggedIn', function() {
             return $this->isLoggedIn();
         }));
-        $env->addFunction(Template::extend('isDebug', function($global = false){
+        $env->addFunction(Template::extend('isDebug', function($global = false) {
             return $this->isDebug($global);
         }));
-        $env->addFunction(Template::extend('getConfig', function($config){
+        $env->addFunction(Template::extend('getConfig', function($config) {
             return $this->getConfig($config);
         }));
-        $env->addFunction(Template::extend('getPluginOption', function($option, $type = 'array', $default = false, $lang = null){
+        $env->addFunction(Template::extend('getPluginOption', function($option, $type = 'array', $default = false, $lang = null) {
             return $this->getPluginOption($option,$type,$default,$lang);
         }));
-        $env->addFunction(Template::extend('getOption', function($option){
+        $env->addFunction(Template::extend('getOption', function($option) {
             return $this->getOption($option);
         }));
-        $env->addFunction(Template::extend('getRoot', function(){
+        $env->addFunction(Template::extend('getRoot', function() {
             return $this->getRoot();
         }));
-        $env->addFunction(Template::extend('getBaseUrl', function(){
+        $env->addFunction(Template::extend('getBaseUrl', function() {
             return $this->getBaseUrl();
         }));
-        $env->addFunction(Template::extend('getAssetUrl', function(){
+        $env->addFunction(Template::extend('getAssetUrl', function() {
             return $this->getAssetUrl();
         }));
-        $env->addFunction(Template::extend('nonce', function($action = -1){
+        $env->addFunction(Template::extend('nonce', function($action = -1) {
             return $this->createNonce($action);
         }));
-        $env->addFunction(Template::extend('translate', function($string){
+        $env->addFunction(Template::extend('translate', function($string) {
             return $this->translateString($string);
         }));
-        $env->addFunction(Template::extend('decodeJSON', function($json = ''){
+        $env->addFunction(Template::extend('decodeJSON', function($json = '') {
             return Json::decode($json);
         }));
-        $env->addFunction(Template::extend('encodeJSON', function($array = []){
+        $env->addFunction(Template::extend('encodeJSON', function($array = []) {
             return Json::encode($array);
         }));
-        $env->addFunction(Template::extend('serialize', function($data){
+        $env->addFunction(Template::extend('serialize', function($data) {
             return Stringify::serialize($data);
         }));
-        $env->addFunction(Template::extend('unserialize', function($string){
+        $env->addFunction(Template::extend('unserialize', function($string) {
             return Stringify::unserialize($string);
         }));
-        $env->addFunction(Template::extend('hasFilter', function($hook){
+        $env->addFunction(Template::extend('hasFilter', function($hook) {
             return $this->hasPluginFilter($hook);
         }));
-        $env->addFunction(Template::extend('applyFilter', function($hook, $value){
+        $env->addFunction(Template::extend('applyFilter', function($hook, $value) {
             return $this->applyPluginFilter($hook,$value);
         }));
-        $env->addFunction(Template::extend('doAction', function($hook, $args = null){
+        $env->addFunction(Template::extend('doAction', function($hook, $args = null) {
             $this->doPluginAction($hook,$args);
         }));
 
         // Return rendered view
-		$view = $env->load("{$template}{$this->getViewExtension()}");
-		return $view->render($content);
+        try {
+            $view = $env->load("{$template}{$this->getViewExtension()}");
+            return $view->render($content);
+        } catch (Exception $e) {
+            ErrorHandler::clearLastError();
+        }
+
+        return false;
 	}
 
     /**
-     * Get view path
+     * Get view path (Overridden).
      *
      * @access protected
      * @param string $template
@@ -162,7 +172,10 @@ class View extends PluginOptions implements ViewInterface
     {
         // Set overriding path
         $override = "{$this->getThemeDir()}/{$this->getNameSpace()}/";
-        $override = $this->applyFilter("{$this->getNameSpace()}-override-template-path",$override);
+        $override = $this->applyFilter(
+            "{$this->getNameSpace()}-override-template-path",
+            $override
+        );
         if ( File::exists("{$override}{$template}{$this->getViewExtension()}") ) {
             return $override;
         }

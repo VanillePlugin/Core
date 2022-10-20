@@ -10,9 +10,9 @@
  * This file if a part of VanillePlugin Framework.
  */
 
-namespace VanillePlugin\lib;
+declare(strict_types=1);
 
-use VanillePlugin\inc\TypeCheck;
+namespace VanillePlugin\inc;
 
 class Mailer
 {
@@ -42,6 +42,8 @@ class Mailer
 	}
 
 	/**
+	 * Add email adress.
+	 * 
 	 * @access public
 	 * @param string $email
 	 * @return object
@@ -53,6 +55,8 @@ class Mailer
 	}
 
 	/**
+	 * Set email content.
+	 * 
 	 * @access public
 	 * @param array $content
 	 * @return object
@@ -64,6 +68,8 @@ class Mailer
 	}
 
 	/**
+	 * Add email content.
+	 * 
 	 * @access public
 	 * @param string $content
 	 * @return object
@@ -75,6 +81,8 @@ class Mailer
 	}
 
 	/**
+	 * Set email subject.
+	 * 
 	 * @access public
 	 * @param string $subject
 	 * @return object
@@ -86,6 +94,8 @@ class Mailer
 	}
 
 	/**
+	 * Set email headers.
+	 * 
 	 * @access public
 	 * @param array $headers
 	 * @return object
@@ -97,6 +107,8 @@ class Mailer
 	}
 
 	/**
+	 * Add email headers.
+	 * 
 	 * @access public
 	 * @param string $header
 	 * @return object
@@ -108,6 +120,8 @@ class Mailer
 	}
 
 	/**
+	 * Set email attachments.
+	 * 
 	 * @access public
 	 * @param array $attachments
 	 * @return object
@@ -119,6 +133,8 @@ class Mailer
 	}
 
 	/**
+	 * Add email attachments.
+	 * 
 	 * @access public
 	 * @param string $attachments
 	 * @return object
@@ -130,6 +146,8 @@ class Mailer
 	}
 
 	/**
+	 * Format email as HTML.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return object
@@ -141,6 +159,8 @@ class Mailer
 	}
 
 	/**
+	 * Send email.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return bool

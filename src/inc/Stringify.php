@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 final class Stringify
@@ -134,7 +136,7 @@ final class Stringify
 	 */
 	public static function slugify(string $string)
 	{
-	  	return sanitize_title($string);
+	  	return self::replace('_','-',sanitize_title($string));
 	}
 
 	/**
@@ -150,7 +152,7 @@ final class Stringify
 		if ( TypeCheck::isArray($string) ) {
 			return Arrayify::inArray($search,$string);
 		}
-		if ( strpos($string,$search) !== false ) {
+		if ( strpos((string)$string,$search) !== false ) {
 			return true;
 		}
 		return false;

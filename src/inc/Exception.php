@@ -10,10 +10,15 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 use \WP_Error;
 
+/**
+ * Exception/Error Handler Helper.
+ */
 class Exception extends \Exception
 {
 	/**

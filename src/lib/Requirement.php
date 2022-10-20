@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\RequirementInterface;
@@ -36,6 +38,7 @@ final class Requirement extends Notice implements RequirementInterface
 	{
 		// Init plugin config
 		$this->initConfig($plugin);
+		$this->init([$this,'requirePath']);
 		$this->init([$this,'requirePlugins']);
 		$this->init([$this,'requireOptions']);
 		$this->init([$this,'requireTemplates']);
@@ -47,11 +50,15 @@ final class Requirement extends Notice implements RequirementInterface
 		
 		// Set strings
 		$this->strings = $this->applyPluginFilter('requirement-strings',[
-			'plugin' => [
+			'path'     => [
+				'exists' => '%1$s required path \'%2$s\'',
+				'chmod'  => '%1$s required permissions \'%2$s\' on folder \'%3$s\''
+			],
+			'plugin'   => [
 				'install'  => 'Required, Please install it',
 				'activate' => 'Required, Please activate it'
 			],
-			'option' => [
+			'option'   => [
 				'missing' => 'Option Required',
 				'empty'   => 'Option Not Defined'
 			],
@@ -59,14 +66,101 @@ final class Requirement extends Notice implements RequirementInterface
 				'single'   => 'Template Required',
 				'multiple' => 'One Of Templates Required'
 			],
-			'module' => [
+			'module'   => [
 				'required' => 'Required on server, Please activate it',
 				'config'   => 'Required on server, Please activate it, Otherwise set \'%1$s\' to \'%2$s\''
 			],
-			'php' => [
+			'php'      => [
 				'required' => 'Required'
 			]
 		]);
+	}
+	
+	/**
+	 * Check plugin cache path.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public function requirePath()
+	{
+		$paths = [];
+		if ( $this->getCachePath() ) {
+			$paths[] = $this->getCachePath();
+		}
+		if ( $this->getTempPath() ) {
+			$paths[] = $this->getTempPath();
+		}
+		if ( $this->getLoggerPath() ) {
+			$paths[] = $this->getLoggerPath();
+		}
+
+		foreach ($paths as $path) {
+
+			if ( !File::isDir($path) || !File::isWritable($path) ) {
+
+				$message = $this->translateVars(
+					$this->strings['path']['exists'],
+					[
+						$this->getPluginName(),
+						basename($path)
+					]
+				);
+
+				$notice  = '<div class="';
+				$notice .= $this->getNameSpace();
+				$notice .= '-notice notice notice-error">';
+				$notice .= '<p>';
+				$notice .= '<i class="icon-close"></i> ';
+				$notice .= '<strong>';
+				$notice .= $this->translateString('Warning') . ' : ';
+				$notice .= '</strong>';
+				$notice .= $message;
+				$notice .= '</p>';
+				$notice .= '<small>';
+				$notice .= $path;
+				$notice .= '</small>';
+				$notice .= '</div>';
+
+				echo $notice;
+				
+			} else {
+
+				if ( $this->isDebug(true) ) {
+					$permissions = $this->applyPluginFilter('storage-chmod',755);
+					if ( File::getPermissions($path,true) < $permissions ) {
+
+						$message = $this->translateVars(
+							$this->strings['path']['chmod'],
+							[
+								$this->getPluginName(),
+								$permissions,
+								basename($path)
+							]
+						);
+
+						$notice  = '<div class="';
+						$notice .= $this->getNameSpace();
+						$notice .= '-notice notice notice-error">';
+						$notice .= '<p>';
+						$notice .= '<i class="icon-close"></i> ';
+						$notice .= '<strong>';
+						$notice .= $this->translateString('Warning') . ' : ';
+						$notice .= '</strong>';
+						$notice .= $message;
+						$notice .= '</p>';
+						$notice .= '<small>';
+						$notice .= $path;
+						$notice .= '</small>';
+						$notice .= '</div>';
+
+						echo $notice;
+					}
+				}
+			}
+
+		}
 	}
 	
 	/**

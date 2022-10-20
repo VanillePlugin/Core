@@ -10,20 +10,27 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\lib;
 
-use Phpfastcache\CacheManager;
-use Phpfastcache\Drivers\Files\Config;
 use VanillePlugin\int\VanilleCacheInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\TypeCheck;
+use VanillePlugin\inc\Exception as ErrorHandler;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
+use Phpfastcache\CacheManager;
+use Phpfastcache\Drivers\Files\Config;
+use \Exception;
 
 /**
- * Wrapper Class for External Filecache & Templates Cache,
- * Includes Third-Party Cache Helper.
+ * Wrapper Class for External Filecache,
+ * Includes Third-Party Cache Helper,
+ * Requires: Phpfastcache & VanillePlugin.
+ * @see https://www.phpfastcache.com/
+ * @see https://jakiboy.github.io/VanillePlugin/
  */
 class VanilleCache extends PluginOptions implements VanilleCacheInterface
 {
@@ -62,7 +69,11 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 
 		// Init adapter
 		$this->reset();
-		$this->adapter = CacheManager::getInstance('Files');
+		try {
+			$this->adapter = CacheManager::getInstance('Files');
+		} catch (Exception $e) {
+			ErrorHandler::clearLastError();
+		}
 	}
 
 	/**
@@ -74,7 +85,7 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	}
 
 	/**
-	 * Reset cache instance.
+	 * Reset adapter instance.
 	 *
 	 * @access private
 	 * @param void
@@ -94,6 +105,9 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function get($key)
 	{
+		if ( !$this->adapter ) {
+			return false;
+		}
 		$key = Stringify::formatKey($key);
 		$this->cache = $this->adapter->getItem($key);
 		return $this->cache->get();
@@ -109,6 +123,9 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function set($value, $tags = null)
 	{
+		if ( !$this->adapter ) {
+			return false;
+		}
 		$this->cache->set($value)
 		->expiresAfter(self::$ttl);
 		if ( $tags ) {
@@ -135,6 +152,9 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function update($key, $value)
 	{
+		if ( !$this->adapter ) {
+			return false;
+		}
 		$key = Stringify::formatKey($key);
 		$this->cache = $this->adapter->getItem($key);
 		$this->cache->set($value)
@@ -151,6 +171,9 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function delete($key)
 	{
+		if ( !$this->adapter ) {
+			return false;
+		}
 		$key = Stringify::formatKey($key);
 		return $this->adapter->deleteItem($key);
 	}
@@ -164,6 +187,9 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function deleteByTag($tags = '')
 	{
+		if ( !$this->adapter ) {
+			return false;
+		}
 		if ( TypeCheck::isArray($tags) ) {
 			foreach ($tags as $key => $value) {
 				$tags[$key] = Stringify::formatKey($value);
@@ -199,15 +225,19 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 */
 	public function flush()
 	{
-		// Secured removing : filecache
-		if ( Stringify::contains($this->getTempPath(), $this->getRoot()) ) {
-			File::clearDir($this->getTempPath());
+		// Secured removing: filecache
+		if ( File::isDir($this->getTempPath()) ) {
+			if ( Stringify::contains($this->getTempPath(),$this->getRoot()) ) {
+				File::clearDir($this->getTempPath());
+			}
 		}
 
-		// Secured removing : template cache on debug
+		// Secured removing: template cache on debug
 		if ( $this->isDebug() ) {
-			if ( Stringify::contains($this->getCachePath(), $this->getRoot()) ) {
-				File::clearDir($this->getCachePath());
+			if ( File::isDir($this->getCachePath()) ) {
+				if ( Stringify::contains($this->getCachePath(),$this->getRoot()) ) {
+					File::clearDir($this->getCachePath());
+				}
 			}
 		}
 	}
@@ -216,12 +246,12 @@ class VanilleCache extends PluginOptions implements VanilleCacheInterface
 	 * Set global cache expiration.
 	 * 
 	 * @access public
-	 * @param int $ttl 30
+	 * @param int $ttl
 	 * @return void
 	 */
 	public static function expireIn($ttl = 30)
 	{
-		self::$ttl = intval($ttl);
+		self::$ttl = (int)$ttl;
 	}
 
 	/**

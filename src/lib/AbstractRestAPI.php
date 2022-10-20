@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\Stringify;
@@ -111,24 +113,24 @@ abstract class AbstractRestAPI extends PluginOptions implements RestApiInterface
 	/**
 	 * @access protected
 	 * @param string $route
-	 * @param string $methods
-	 * @param string $callback
-	 * @param string $permission
+	 * @param mixed $methods
+	 * @param string $cb, Register callback
+	 * @param string $p, Permission callback
 	 * @return void
 	 */
-	protected function register($route, $methods = 'GET', $callback = 'defaultCallback', $permission = 'isPermitted')
+	protected function register($route, $methods = 'GET', $cb = 'defaultCallback', $p = 'isPermitted')
 	{
 		// Override default routes using custom plugin settings
 		if ( $this->args ) {
-			$route = !empty($this->args->{$callback}['route'])
-			? $this->args->{$callback}['route'] : $route;
+			$route = !empty($this->args->{$cb}['route'])
+			? $this->args->{$cb}['route'] : $route;
 		}
 
 		// Register rest route
-	    register_rest_route("{$this->endpoint}/{$this->version}", $route, [
-	        'methods'  => $methods,
-	        'callback' => [$this, $callback],
-	        'permission_callback' => [$this, $permission]
+	    register_rest_route("{$this->endpoint}/{$this->version}",$route, [
+	        'methods'             => $methods,
+	        'callback'            => [$this,$cb],
+	        'permission_callback' => [$this,$p]
 	    ], $this->isOverridable);
 	}
 

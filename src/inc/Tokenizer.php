@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 class Tokenizer
@@ -132,6 +134,8 @@ class Tokenizer
      */
     public static function getUniqueId()
     {
-        return md5(uniqid(time()));
+        return md5(
+            uniqid((string)time())
+        );
     }
 }

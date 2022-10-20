@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\int;
 
 interface UpdaterInterface
@@ -17,9 +19,9 @@ interface UpdaterInterface
     /**
      * @param PluginNameSpaceInterface $plugin
      * @param string $host
-     * @param array $params
+     * @param array $args
      */
-    function __construct(PluginNameSpaceInterface $plugin, $host, $params = []);
+    function __construct(PluginNameSpaceInterface $plugin, $host, $args = []);
 
     /**
      * @param object $transient

@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\OrmInterface;
@@ -17,6 +19,9 @@ use VanillePlugin\int\OrmQueryInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\Stringify;
 
+/**
+ * Helper Class for DB Object uses ORM query style.
+ */
 class Orm extends Db implements OrmInterface
 {
 	/**

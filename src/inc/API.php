@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 use VanillePlugin\lib\PluginOptions;
@@ -38,8 +40,31 @@ class API extends Request
 		$this->args = Arrayify::merge([
 			'timeout'     => 30,
 			'redirection' => 0,
-			'sslverify'   => Server::maybeRequireSSL()
-		], $args);
+			'sslverify'   => true
+		], $this->maybeRequireSSL($args));
+	}
+
+	/**
+	 * Send request,
+	 * Logs errors if logger is setted.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @return object
+	 */
+	public function send($url = null)
+	{
+		parent::send($url);
+		if ( $this->hasError() && $this->logger ) {
+			if ( $this->logger->isDebug() ) {
+				$this->logger->debug("Request response:");
+				$this->logger->debug($this->response,true);
+				$this->logger->debug("Request args:");
+				$this->logger->debug($this->args,true);
+				$this->logger->debug("Request body:");
+				$this->logger->debug($this->body,true);
+			}
+		}
 	}
 
 	/**
@@ -76,8 +101,7 @@ class API extends Request
 
 	/**
 	 * Get API formated response from body (JSON),
-	 * Returns false if request failed,
-	 * Logs error if logger is setted.
+	 * Returns false if request failed.
 	 * 
 	 * @access public
 	 * @param bool $isArray
@@ -88,18 +112,12 @@ class API extends Request
 		if ( !$this->hasError() ) {
 			return Json::decode($this->getBody(),$isArray);
 		}
-		if ( $this->logger ) {
-			if ( $this->logger->isDebug() ) {
-				$this->logger->debug($this->response,true);
-			}
-		}
 		return false;
 	}
 
 	/**
 	 * Get API formated response from body (XML),
-	 * Returns false if request failed,
-	 * Logs error if logger is setted.
+	 * Returns false if request failed.
 	 * 
 	 * @access public
 	 * @param void
@@ -109,11 +127,6 @@ class API extends Request
 	{
 		if ( !$this->hasError() ) {
 			return ResponseXML::parse($this->getBody());
-		}
-		if ( $this->logger ) {
-			if ( $this->logger->isDebug() ) {
-				$this->logger->debug($this->response,true);
-			}
 		}
 		return false;
 	}
@@ -181,5 +194,24 @@ class API extends Request
 	protected function setLogger(LoggerInterface $logger)
 	{
 		$this->logger = $logger;
+	}
+
+	/**
+	 * Fix (SNI) SSL verification.
+	 * 
+	 * @access protected
+	 * @param array $args
+	 * @return array
+	 */
+	protected function maybeRequireSSL($args)
+	{
+		if ( isset($args['sslverify']) ) {
+			if ( $args['sslverify'] === false && Server::maybeRequireSSL() ) {
+				$args['sslverify'] = true;
+			} else {
+				$args['sslverify'] = Server::maybeRequireSSL();
+			}
+		}
+		return $args;
 	}
 }

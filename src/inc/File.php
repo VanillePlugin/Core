@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 class File
@@ -180,7 +182,7 @@ class File
 	public static function addString($path, $input = '')
 	{
 		$handle = fopen($path,'a');
-		fwrite($handle,$input);
+		fwrite($handle,(string)$input);
 		fclose($handle);
 	}
 
@@ -575,7 +577,7 @@ class File
 	public static function import($url, $path)
 	{
 		$tmp = @fopen($path,'w');
-		$status = fwrite($tmp,self::r($url));
+		$status = fwrite($tmp,(string)self::r($url));
 		fclose($tmp);
 		return (bool)$status;
 	}

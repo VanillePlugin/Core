@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 final class HttpRequest
@@ -24,7 +26,7 @@ final class HttpRequest
 		if ( $item ) {
 			return self::isSetted($item) ? $_REQUEST[$item] : null;
 		}
-		return $_REQUEST;
+		return self::isSetted() ? $_REQUEST : null;
 	}
 
 	/**

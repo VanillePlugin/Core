@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 class Validator
@@ -64,7 +66,10 @@ class Validator
      */
     public static function isValidMAC($address = '')
     {
-        return (bool)Stringify::match("/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/i",$address);
+        return (bool)Stringify::match(
+        	"/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/i",
+        	$address
+        );
     }
 
     /**

@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 final class Shortcode
@@ -91,7 +93,7 @@ final class Shortcode
 		foreach ($atts as $key => $name) {
 			$values[$name] = '';
 		}
-		return $values;
+		return self::formatAttributes($values);
 	}
 
 	/**
@@ -104,8 +106,8 @@ final class Shortcode
 	 */
 	public static function hasAttribute($atts = [], $attr = '')
 	{
-		// $atts = self::formatAttributes($atts);
 		$attr = self::formatAttributeName($attr);
+		$atts = self::formatAttributes($atts);
 		return isset($atts[$attr]) ? true : false;
 	}
 
@@ -140,9 +142,8 @@ final class Shortcode
 	 */
 	public static function getValue($atts = [], $attr = '', $type = null)
 	{
-		// $atts = self::formatAttributes($atts);
 		$attr = self::formatAttributeName($attr);
-
+		$atts = self::formatAttributes($atts);
 		if ( isset($atts[$attr]) ) {
 			$value = $atts[$attr];
 
@@ -180,9 +181,8 @@ final class Shortcode
 	 */
 	public static function hasValue($atts = [], $attr = '', $value = '')
 	{
-		// $atts = self::formatAttributes($atts);
 		$attr = self::formatAttributeName($attr);
-
+		$atts = self::formatAttributes($atts);
 		if ( isset($atts[$attr]) ) {
 			$val = $atts[$attr];
 			if ( TypeCheck::isString($val) ) {
@@ -207,10 +207,12 @@ final class Shortcode
 	public static function isEmpty($atts = [], $attr = '')
 	{
 		$attr = self::formatAttributeName($attr);
+		$atts = self::formatAttributes($atts);
 		if ( isset($atts[$attr]) ) {
-			if ( empty($atts[$attr]) ) {
-				return true;
+			if ( $atts[$attr] === '0' || $atts[$attr] === 0 ) {
+				return false;
 			}
+			return empty($atts[$attr]);
 		}
 		return false;
 	}
@@ -226,6 +228,7 @@ final class Shortcode
 	public static function isDisabled($atts = [], $attr = '')
 	{
 		$attr = self::formatAttributeName($attr);
+		$atts = self::formatAttributes($atts);
 		if ( isset($atts[$attr]) ) {
 			$value = Stringify::lowercase($atts[$attr]);
 			return Stringify::contains(['off','no','non','false'],$value);
@@ -244,6 +247,7 @@ final class Shortcode
 	public static function isEnabled($atts = [], $attr = '')
 	{
 		$attr = self::formatAttributeName($attr);
+		$atts = self::formatAttributes($atts);
 		if ( isset($atts[$attr]) ) {
 			$value = Stringify::lowercase($atts[$attr]);
 			return Stringify::contains(['on','yes','oui','true'],$value);

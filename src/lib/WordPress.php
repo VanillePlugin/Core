@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\Stringify;
@@ -51,7 +53,7 @@ class WordPress
 
 	/**
 	 * Set the uninstallation hook for a plugin,
-	 * use class name instead of $this.
+	 * use class name instead of object ['Plugin','uninstall'].
 	 *
 	 * @access protected
 	 * @param string $file
@@ -60,7 +62,9 @@ class WordPress
 	 */
 	protected function registerUninstall($file, $method)
 	{
-		register_uninstall_hook($file,$method);
+		if ( $this->isAdmin() ) {
+			register_uninstall_hook($file,$method);
+		}
 	}
 	
 	/**
@@ -411,7 +415,7 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $option
-	 * @param string $default null
+	 * @param string $default
 	 * @return mixed
 	 */
 	protected function getOption($option, $default = null)
@@ -451,20 +455,20 @@ class WordPress
 	 * @access protected
 	 * @param string $title
 	 * @param string $menu
-	 * @param string $cap
+	 * @param string $cap capability
 	 * @param string $slug
-	 * @param callable $callable
+	 * @param callable $cb callback
 	 * @param string $icon
-	 * @param bool $customIcon false
-	 * @param int $position 20
-	 * @return inherit
+	 * @param bool $i custom icon
+	 * @param int $p position
+	 * @return string
 	 */
-	protected function addMenuPage($title, $menu, $cap, $slug, $callable, $icon = 'admin-plugins', $customIcon = false, $position = 20)
+	protected function addMenuPage($title, $menu, $cap, $slug, $cb, $icon = 'admin-plugins', $i = false, $p = 20)
 	{
-		if ( $customIcon ) {
+		if ( $i ) {
 			$icon = "dashicons-{$icon}";
 		}
-		return add_menu_page($title,$menu,$cap,$slug,$callable,$icon,$position);
+		return add_menu_page($title,$menu,$cap,$slug,$cb,$icon,$p);
 	}
 
 	/**
@@ -476,12 +480,12 @@ class WordPress
 	 * @param string $menu
 	 * @param string $cap
 	 * @param string $slug
-	 * @param callable $callable
+	 * @param callable $cb callback
 	 * @return inherit
 	 */
-	protected function addSubMenuPage($parent, $title, $menu, $cap, $slug, $callable)
+	protected function addSubMenuPage($parent, $title, $menu, $cap, $slug, $cb)
 	{
-		return add_submenu_page($parent,$title,$menu,$cap,$slug,$callable);
+		return add_submenu_page($parent,$title,$menu,$cap,$slug,$cb);
 	}
 
 	/**
@@ -506,19 +510,19 @@ class WordPress
 	 * @access protected
 	 * @param string $id
 	 * @param string $title
-	 * @param callback $callback
+	 * @param callable $cb callback
 	 * @param mixed $screen
 	 * @param string $context
-	 * @param string $priority
-	 * @param array $args null
+	 * @param string $p priority
+	 * @param array $args
 	 * @return void
 	 *
 	 * action : add_meta_boxes
 	 * action : add_meta_boxes_{type}
 	 */
-	protected function addMetabox($id, $title, $callback, $screen, $context = 'advanced', $priority = 'high', $args = null)
+	protected function addMetabox($id, $title, $cb, $screen, $context = 'advanced', $p = 'high', $args = null)
 	{
-		add_meta_box($id,$title,$callback,$screen,$context,$priority,$args);
+		add_meta_box($id,$title,$cb,$screen,$context,$p,$args);
 	}
 
 	/**

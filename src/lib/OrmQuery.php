@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\OrmQueryInterface;
@@ -17,6 +19,9 @@ use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\inc\Stringify;
 
+/**
+ * Helper Class for ORM queries.
+ */
 final class OrmQuery implements OrmQueryInterface
 {
 	/**

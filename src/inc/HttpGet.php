@@ -10,6 +10,8 @@
  * This file if a part of VanillePlugin Framework.
  */
 
+declare(strict_types=1);
+
 namespace VanillePlugin\inc;
 
 final class HttpGet
@@ -24,7 +26,7 @@ final class HttpGet
 		if ( $item ) {
 			return self::isSetted($item) ? $_GET[$item] : null;
 		}
-		return $_GET;
+		return self::isSetted() ? $_GET : null;
 	}
 
 	/**
