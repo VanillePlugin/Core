@@ -4,7 +4,7 @@ A big welcome and thank you for considering contributing to VanillePlugin open s
 
 Reading and following these guidelines will help us make the contribution process easy and effective for everyone involved. It also communicates that you agree to respect the time of the developers managing and developing these open source projects. In return, we will reciprocate that respect by addressing your issue, assessing changes, and helping you finalize your pull requests.
 
-## Quicklinks
+## Quicklinks:
 
 * [Code of Conduct](#code-of-conduct)
 * [Getting Started](#getting-started)
@@ -12,28 +12,28 @@ Reading and following these guidelines will help us make the contribution proces
     * [Pull Requests](#pull-requests)
 * [Getting Help](#getting-help)
 
-## Code of Conduct
+## Code of Conduct:
 
 We take our open source community seriously and hold ourselves and other contributors to high standards of communication. By participating and contributing to this project, you agree to uphold our [Code of Conduct](https://github.com/Jakiboy/VanillePlugin/blob/master/CODE-OF-CONDUCT.md).
 
-## Getting Started
+## Getting Started:
 
 Contributions are made to this repo via Issues and Pull Requests (PRs). A few general guidelines that cover both:
 
 - Search for existing Issues, Vulnerabilities and PRs before creating your own.
 - We work hard to makes sure issues are handled in a timely manner but, depending on the impact, it could take a while to investigate the root cause. A friendly ping in the comment thread to the submitter or a contributor can help draw attention if your issue is blocking.
 
-### Coding standards
+### Coding standards:
 
 * VanillePlugin uses the [PSR](https://www.php-fig.org/) Coding standards (As possible).
 
-### Issues
+### Issues:
 
 Issues should be used to report problems with the library, request a new feature, or to discuss potential changes before a PR is created. When you create a new Issue, a template will be loaded that will guide you through collecting and providing the information we need to investigate.
 
 If you find an Issue that addresses the problem you're having, please add your own reproduction information to the existing issue rather than creating a new one.
 
-### Pull Requests
+### Pull Requests:
 
 PRs to our libraries are always welcome and can be a quick way to get your fix or improvement slated for the next release. In general, PRs should:
 
@@ -55,6 +55,6 @@ In general, we follow the ["fork-and-pull" Git workflow](https://github.com/susa
 6. Push changes to your fork
 7. Open a PR in our repository and follow the PR template so that we can efficiently review the changes.
 
-## Getting Help
+## Getting Help:
 
 Join us in the [VanillePlugin Issues](https://github.com/Jakiboy/VanillePlugin/issues).

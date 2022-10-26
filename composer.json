@@ -43,6 +43,6 @@
     }
   },
   "suggest":{
-    "jakiboy/vanilleplugin-packager":"Prefixes VanillePlugin namespaces to avoid issues with other plugins"
+    "jakiboy/vanilleplugin-packager":"Composer Namespaces Prefixer for WordPress Plugins"
   }
 }

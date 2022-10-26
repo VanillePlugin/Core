@@ -5,34 +5,34 @@
 
 VanillePlugin is a **WordPress Plugin Framework** (WordPress Wrapper Lib for Base Plugin Functions) that simplify [WordPress Plugin API](https://developer.wordpress.org/plugins/), Makes creating plugins easier without hardcoding.
 
-## Installing :
+## Installing:
 
 ```
 composer require jakiboy/vanilleplugin
 ```
 
-## Getting Started :
+## Getting Started:
 
-### Quickstart :
+### Quickstart:
 
 ```
 Using VanillePlugin installer
 ```
 
-## Contributing :
+## Contributing:
 
 Please read [CONTRIBUTING.md](https://github.com/Jakiboy/VanillePlugin/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## Versioning :
+## Versioning:
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/Jakiboy/VanillePlugin/tags). 
 
-## Authors :
+## Authors:
 
 * **Jihad Sinnaour** - [Jakiboy](https://github.com/Jakiboy) (*Initial work*)
 
 See also the full list of [contributors](https://github.com/Jakiboy/VanillePlugin/contributors) who participated in this project.
 
-## License :
+## License:
 
-This project is licensed under the MIT License - see the [LICENSE.txt](https://github.com/Jakiboy/VanillePlugin/blob/master/LICENSE.txt) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Jakiboy/VanillePlugin/blob/master/LICENSE) file for details
