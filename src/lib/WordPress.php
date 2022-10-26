@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\GlobalConst;
+use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\Shortcode;
 
 /**
  * Wrapper Class for Advanced WordPress Global Functions,
@@ -140,9 +141,9 @@ class WordPress
 	 * @param string $tag
 	 * @return bool
 	 */
-	protected function shortcodeIn($content, $tag)
+	protected function hasShortcode($content, $tag)
 	{
-		return has_shortcode($content,$tag);
+		return Shortcode::has($content,$tag);
 	}
 
 	/**

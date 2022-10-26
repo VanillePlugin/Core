@@ -140,4 +140,17 @@ final class Post
 		$id = ($id) ? $id : self::getId();
 		return delete_post_meta($id,$key,$value);
 	}
+
+	/**
+	 * @access public
+	 * @param array $args
+	 * @return array
+	 */
+	public static function all($args = [])
+	{
+		return get_posts(Arrayify::merge([
+			'post_type'      => 'any',
+			'posts_per_page' => -1
+		],$args));
+	}
 }

@@ -210,7 +210,6 @@ class Updater extends PluginOptions implements UpdaterInterface
 		// Fix transient
 		if ( !TypeCheck::isObject($transient) ) {
 			$transient = new stdClass();
-			$transient->translations = [];
 		}
 
 		// Check translation API URL
@@ -223,12 +222,19 @@ class Updater extends PluginOptions implements UpdaterInterface
 
 		// Update transient
 		if ( $this->isValid('translation',$update) ) {
+
+			// Set translations
+			if ( !isset($transient->translations) ) {
+				$transient->translations = [];
+			}
+
 			// Remove oldest translations
 			foreach ($transient->translations as $key => $translation) {
 				if ( $translation['slug'] == $this->getNameSpace() ) {
 					unset($transient->translations[$key]);
 				}
 			}
+
 			// Update translations
 			foreach ($update->translations as $translation) {
 				$transient->translations[] = $translation;

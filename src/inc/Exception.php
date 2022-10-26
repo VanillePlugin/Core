@@ -103,10 +103,25 @@ class Exception extends \Exception
 	 *
 	 * @access public
 	 * @param mixed $object
-	 * @return void
+	 * @return bool
 	 */
 	public static function isError($object)
 	{
 		return is_wp_error($object);
+	}
+
+	/**
+	 * Get WordPress error.
+	 *
+	 * @access public
+	 * @param mixed $object
+	 * @return mixed
+	 */
+	public static function getError($object)
+	{
+		if ( self::isError($object) ) {
+			return $object->get_error_message();
+		}
+		return false;
 	}
 }

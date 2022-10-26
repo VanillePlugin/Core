@@ -254,4 +254,29 @@ final class Shortcode
 		}
 		return false;
 	}
+
+	/**
+	 * Checks whether content contains shortcode.
+	 *
+	 * @access public
+	 * @param string $content
+	 * @param string $tag
+	 * @return bool
+	 */
+	public static function has($content, $tag)
+	{
+		return has_shortcode($content,$tag);
+	}
+
+	/**
+	 * Checks whether content contains shortcode.
+	 *
+	 * @access public
+	 * @param string $content
+	 * @return string
+	 */
+	public static function strip($content)
+	{
+		return strip_shortcodes($content);
+	}
 }

@@ -29,10 +29,15 @@ final class TypeCheck
 	/**
 	 * @access public
 	 * @param mixed $value
+	 * @param string $class
+	 * @param bool $string, Allow string
 	 * @return bool
 	 */
-	public static function isObject($value)
+	public static function isObject($value, $class = null, $string = false)
 	{
+		if ( $class ) {
+			return is_a($value,$class,$string);
+		}
 		return is_object($value);
 	}
 	

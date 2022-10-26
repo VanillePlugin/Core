@@ -152,7 +152,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Addd plugin option.
+	 * Add plugin option.
 	 *
 	 * @access protected
 	 * @param string $option
@@ -1050,7 +1050,7 @@ class PluginOptions extends WordPress
 	 * @access public
 	 * @param mixed $action
 	 * @param bool $strict
-	 * @return bool
+	 * @return mixed
 	 */
 	public function checkToken($action = -1, $strict = false)
 	{
@@ -1061,6 +1061,25 @@ class PluginOptions extends WordPress
 	    	}
 	    	$this->setResponse('Invalid token',[],'error',400);
 	    }
+	}
+
+	/**
+	 * Check Ajax referer.
+	 *
+	 * @access public
+	 * @param int|string $action
+	 * @param false|string $arg, Query arg
+	 * @param bool $strict
+	 * @return mixed
+	 */
+	public function checkAjaxReferer($action = -1, $arg = 'nonce', $strict = false)
+	{
+	  	if ( !check_ajax_referer($action,$arg,false) ) {
+	    	if ( $strict ) {
+	    		die($this->translateString('Invalid token'));
+	    	}
+	    	$this->setResponse('Invalid token',[],'error',400);
+	  	}
 	}
 
 	/**
@@ -1086,20 +1105,6 @@ class PluginOptions extends WordPress
 	public function createNonce($action = -1)
 	{
 	  	return wp_create_nonce($action);
-	}
-
-	/**
-	 * Check Ajax Referer.
-	 *
-	 * @access public
-	 * @param int|string $action
-	 * @param false|string $args
-	 * @param bool $die
-	 * @return int|false
-	 */
-	public function checkAjaxReferer($action = -1, $args = false, $die = true)
-	{
-	  	return check_ajax_referer($action,$args,$die);
 	}
 
 	/**

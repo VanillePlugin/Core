@@ -14,23 +14,32 @@ declare(strict_types=1);
 
 namespace VanillePlugin\thirdparty;
 
-final class AMP
+final class Server
 {
 	/**
+	 * Get used web server name.
+	 * 
 	 * @access public
 	 * @param void
-	 * @return bool
+	 * @return string
 	 */
-	public static function isActive()
+	public static function getName()
 	{
-		/**
-		 * Check AMP.
-		 * 
-		 * @see https://github.com/ampproject/amp-wp/
-		 */
-		if ( function_exists('amp_is_request') ) {
-			return amp_is_request();
+		global $is_apache,$is_nginx,$is_iis7,$is_IIS;
+
+		if ( $is_apache ) {
+			return 'Apache';
+
+		} elseif ( $is_nginx ) {
+			return 'NGINX';
+
+		} elseif ( $is_iis7 ) {
+			return 'IIS 7';
+
+		} elseif ( $is_IIS ) {
+			return 'IIS';
 		}
-		return false;
+
+		return 'Unknown';
 	}
 }

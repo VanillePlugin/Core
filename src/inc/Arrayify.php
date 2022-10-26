@@ -25,7 +25,7 @@ final class Arrayify
 	 */
 	public static function inArray($needle, $haystack, $strict = true)
 	{
-		return in_array($needle,$haystack,$strict);
+		return in_array($needle,(array)$haystack,$strict);
 	}
 
 	/**
@@ -36,7 +36,7 @@ final class Arrayify
 	 */
 	public static function merge($array, $arrays)
 	{
-		return array_merge($array,$arrays);
+		return array_merge($array,(array)$arrays);
 	}
 
 	/**
@@ -58,7 +58,7 @@ final class Arrayify
 	 */
 	public static function combine($keys, $values)
 	{
-		return array_combine($keys,$values);
+		return array_combine((array)$keys,(array)$values);
 	}
 
 	/**
@@ -71,9 +71,9 @@ final class Arrayify
 	public static function map($callable, $array, $arrays = null)
 	{
 		if ( !TypeCheck::isNull($arrays) ) {
-			return array_map($callable,$array,$arrays);
+			return array_map($callable,(array)$array,$arrays);
 		}
-		return array_map($callable,$array);
+		return array_map($callable,(array)$array);
 	}
 
 	/**

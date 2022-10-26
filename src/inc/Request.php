@@ -401,6 +401,18 @@ class Request implements RequestInterface
 	}
 
 	/**
+	 * Get response error.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return string
+	 */
+	public function getError()
+	{
+		return Exception::getError($this->response);
+	}
+
+	/**
 	 * @access public
 	 * @param mixed $args
 	 * @param string $url

@@ -376,7 +376,7 @@ class File
 			    	self::remove("{$path}/{$file}");
 			    } else {
 			    	$dir = "{$path}/{$file}";
-				    foreach( scandir($dir) as $file ) {
+				    foreach( @scandir($dir) as $file ) {
 				        if ( '.' === $file || '..' === $file ) {
 				        	continue;
 				        }
@@ -402,7 +402,7 @@ class File
 	private static function recursiveRemove($path)
 	{
 		if ( self::isDir($path) ) {
-			$objects = scandir($path);
+			$objects = @scandir($path);
 			foreach ($objects as $object) {
 				if ( $object !== '.' && $object !== '..' ) {
 					if ( self::isDir("{$path}/{$object}") ) {
@@ -470,16 +470,21 @@ class File
 
 	/**
 	 * Scan path.
+	 * 
+	 * SCANDIR_SORT_ASCENDING : 0
+	 * SCANDIR_SORT_DESCENDING : 1
+	 * SCANDIR_SORT_NONE : 2
 	 *
 	 * @access public
 	 * @param string $path
+	 * @param int $sort
+	 * @param array $except
 	 * @return array
 	 */
-	public static function scanDir($path = '.')
+	public static function scanDir($path = '.', $sort = 0, $except = [])
 	{
-		return Arrayify::diff(
-			scandir($path),['.', '..']
-		);
+		$except = Arrayify::merge(['.', '..'],$except);
+		return Arrayify::diff(@scandir($path,$sort),$except);
 	}
 
 	/**
