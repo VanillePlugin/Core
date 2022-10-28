@@ -16,7 +16,6 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\GlobalConst;
 use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\Shortcode;
 
 /**
  * Wrapper Class for Advanced WordPress Global Functions,
@@ -131,19 +130,6 @@ class WordPress
 	protected function shortcodeExists($tag)
 	{
 		return shortcode_exists($tag);
-	}
-
-	/**
-	 * Checks whether content contains shortcode.
-	 *
-	 * @access protected
-	 * @param string $content
-	 * @param string $tag
-	 * @return bool
-	 */
-	protected function hasShortcode($content, $tag)
-	{
-		return Shortcode::has($content,$tag);
 	}
 
 	/**

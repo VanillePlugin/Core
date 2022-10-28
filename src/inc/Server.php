@@ -242,9 +242,9 @@ final class Server
 			'http'     => [
 				'timeout'     => 30,
 				'redirection' => 0,
-				'sslverify'   => self::maybeRequireSSL()
+				'sslverify'   => self::isSSL()
 			]
-		], $args);
+		], self::maybeRequireSSL($args));
 
 		// Format URL (Base)
 		if ( $args['format'] ) {
@@ -411,18 +411,23 @@ final class Server
 
     /**
      * Check if SSL verify is required in request,
-     * Maybe remote server requires (SNI).
+     * Maybe remote server requires (SNI),
+     * Fix (SNI) SSL verification.
      * 
      * @access public
-     * @param void
-     * @return bool
+     * @param array $args, Request args
+     * @return array
      */
-    public static function maybeRequireSSL()
+    public static function maybeRequireSSL($args)
     {
-    	if ( !TypeCheck::isFunction('curl_init') ) {
-    		return true;
-    	}
-    	return self::isSSL();
+    	$hasCurl = TypeCheck::isFunction('curl_init');
+		if ( isset($args['sslverify']) && !$args['sslverify'] ) {
+			// Force sslverify when cUrl not used
+			if ( !$hasCurl ) {
+				$args['sslverify'] = true;
+			}
+		}
+    	return $args;
     }
 
 	/**

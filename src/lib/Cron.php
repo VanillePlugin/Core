@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\CronInterface;
+use VanillePlugin\inc\Arrayify;
+use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\TypeCheck;
 
 class Cron extends PluginOptions implements CronInterface
 {
@@ -27,64 +30,16 @@ class Cron extends PluginOptions implements CronInterface
 	private $actions = [];
 
 	/**
-	 * Set schedulers.
-	 *
-	 * @access public
-	 * @param array $schedules
-	 * @return void
-	 */
-	public function setSchedules($schedules = [])
-	{
-		$this->schedules = $schedules;
-	}
-
-	/**
-	 * Add schedulers.
-	 *
-	 * @access public
-	 * @param array $schedules
-	 * @return void
-	 */
-	public function addSchedules($schedules = [])
-	{
-		$this->schedules[] = $schedules;
-	}
-
-	/**
-	 * Set actions.
-	 *
-	 * @access public
-	 * @param array $actions
-	 * @return void
-	 */
-	public function setActions($actions = [])
-	{
-		$this->actions = $actions;
-	}
-
-	/**
-	 * Add actions.
-	 *
-	 * @access public
-	 * @param array $actions
-	 * @return void
-	 */
-	public function addActions($actions = [])
-	{
-		$this->actions[] = $actions;
-	}
-
-	/**
 	 * Apply schedulers.
-	 * Filter : cron_schedules
+	 * Filter: cron_schedules
 	 *
 	 * @access public
 	 * @param array $schedules
-	 * @return void
+	 * @return array
 	 */
 	public function apply($schedules)
 	{
-		foreach ($this->schedules as $schedule) {
+		foreach ($this->sanitizeSchedules() as $schedule) {
 			if ( !isset($schedules[$schedule['name']]) ) {
 		        $schedules[$schedule['name']] = [
 		            'display'  => $schedule['display'],
@@ -105,9 +60,12 @@ class Cron extends PluginOptions implements CronInterface
 	public function start()
 	{
 		$this->addFilter('cron_schedules', [$this,'apply']);
-		foreach ($this->actions as $action) {
+		foreach ($this->sanitizeActions() as $action) {
 			if ( !$this->next("{$this->getNameSpace()}-{$action['name']}") ) {
-				$this->schedule($action['schedule'],"{$this->getNameSpace()}-{$action['name']}");
+				$this->schedule(
+					$action['schedule'],
+					"{$this->getNameSpace()}-{$action['name']}"
+				);
 			}
 			$this->addAction("{$this->getNameSpace()}-{$action['name']}",$action['callable']);
 		}
@@ -131,22 +89,134 @@ class Cron extends PluginOptions implements CronInterface
 	 * @access public
 	 * @param int $interval
 	 * @param string $hook
-	 * @return void
+	 * @return mixed
 	 */
 	public function schedule($interval,$hook)
 	{
-		wp_schedule_event(time(),$interval,$hook);
+		return wp_schedule_event(time(),$interval,$hook);
 	}
 
 	/**
-	 * Clear scheduled hook.
+	 * Clear hooked schedulers.
 	 *
 	 * @access public
 	 * @param string $name
-	 * @return void
+	 * @return mixed
 	 */
 	public function clear($name)
 	{
-		wp_clear_scheduled_hook("{$this->getNameSpace()}-{$name}");
+		return wp_clear_scheduled_hook("{$this->getNameSpace()}-{$name}");
+	}
+
+	/**
+	 * Set schedulers.
+	 *
+	 * @access protected
+	 * @param array $schedules
+	 * @return void
+	 */
+	protected function setSchedules($schedules = [])
+	{
+		$this->schedules = $schedules;
+	}
+
+	/**
+	 * Add schedulers.
+	 *
+	 * @access protected
+	 * @param array $schedules
+	 * @return void
+	 */
+	protected function addSchedules($schedules = [])
+	{
+		$this->schedules[] = $schedules;
+	}
+
+	/**
+	 * Set schedulers actions.
+	 *
+	 * @access protected
+	 * @param array $actions
+	 * @return void
+	 */
+	protected function setActions($actions = [])
+	{
+		$this->actions = $actions;
+	}
+
+	/**
+	 * Add schedulers actions.
+	 *
+	 * @access protected
+	 * @param array $actions
+	 * @return void
+	 */
+	protected function addActions($actions = [])
+	{
+		$this->actions[] = $actions;
+	}
+
+	/**
+	 * Sanitize schedulers actions.
+	 * Filter: {plugin}-schedulers-actions
+	 *
+	 * @access protected
+	 * @param void
+	 * @return array
+	 */
+	protected function sanitizeActions()
+	{
+		$this->actions = Arrayify::uniqueMultiple(
+			$this->applyPluginFilter('schedulers-actions',$this->actions)
+		);
+		foreach ($this->actions as $key => $action) {
+			if ( !isset($action['name']) ) {
+				unset($this->actions[$key]);
+			}
+			if ( !isset($action['schedule']) ) {
+				$this->actions[$key]['schedule'] = 'daily';
+			}
+			if ( !isset($action['callable']) && isset($action['name']) ) {
+				$name = explode('-',Stringify::slugify($action['name']));
+				if ( count($name) == 2 ) {
+					$name[1] = Stringify::capitalize($name[1]);
+				}
+				$callable = implode('',$name);
+				$callable = Stringify::replace('-','',$callable);
+				if ( TypeCheck::hasMethod($this,$callable) ) {
+					$this->actions[$key]['callable'] = [$this,$callable];
+				} else {
+					unset($this->actions[$key]);
+				}
+			} else {
+				unset($this->actions[$key]);
+			}
+		}
+		return $this->actions;
+	}
+
+	/**
+	 * Sanitize schedulers.
+	 * Filter: {plugin}-cron-schedules
+	 *
+	 * @access protected
+	 * @param void
+	 * @return array
+	 */
+	protected function sanitizeSchedules()
+	{
+		$this->schedules = Arrayify::uniqueMultiple(
+			$this->applyPluginFilter('cron-schedules',$this->schedules)
+		);
+		foreach ($this->schedules as $key => $schedule) {
+			if ( !isset($schedule['name']) 
+			  || !isset($schedule['display']) 
+			  || !isset($schedule['interval']) ) {
+				unset($this->schedules[$key]);
+			} else {
+				$this->schedules[$key]['interval'] = (int)$schedule['interval'];
+			}
+		}
+		return $this->schedules;
 	}
 }

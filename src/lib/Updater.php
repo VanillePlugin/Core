@@ -275,11 +275,11 @@ class Updater extends PluginOptions implements UpdaterInterface
 			$api = new API();
 			$api->setBaseUrl($url);
 			$api->setHeaders($this->headers);
-			$api->setArgs([
+			$api->setArgs(Server::maybeRequireSSL([
 				'timeout'    => $this->getTimeout(),
 				'sslverify'  => $this->isSSL(),
 				'user-agent' => $this->getUserAgent()
-			]);
+			]));
 
 			// Set updater API request body (Including license)
 			$body = ['request' => Stringify::serialize($args)];
@@ -367,7 +367,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 	{
 		return $this->applyPluginFilter(
 			'updater-ssl',
-			Server::maybeRequireSSL()
+			Server::isSSL()
 		);
 	}
 
@@ -406,10 +406,10 @@ class Updater extends PluginOptions implements UpdaterInterface
 	{
 		$transient = new stdClass();
 		$transient->name = $this->pluginHeader['Name'];
+		$transient->slug = $this->getNameSpace();
 
 		if ( $action == 'update' ) {
 			$transient->id            = Stringify::slugify($this->pluginHeader['Name']);
-			$transient->slug          = $this->getNameSpace();
 			$transient->plugin        = $this->getMainFile();
 			$transient->new_version   = $this->version;
 			$transient->compatibility = new stdClass();

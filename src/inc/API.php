@@ -18,7 +18,7 @@ use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\int\LoggerInterface;
 
 /**
- * API Request Client Helper.
+ * Advanced API Request Client Helper.
  */
 class API extends Request
 {
@@ -41,7 +41,7 @@ class API extends Request
 			'timeout'     => 30,
 			'redirection' => 0,
 			'sslverify'   => true
-		], $this->maybeRequireSSL($args));
+		], Server::maybeRequireSSL($args));
 	}
 
 	/**
@@ -185,6 +185,18 @@ class API extends Request
 	}
 
 	/**
+	 * Force disabling SSL verification.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public function forceDisableSSL()
+	{
+		$this->args['sslverify'] = false;
+	}
+
+	/**
 	 * Set API logger.
 	 * 
 	 * @access protected
@@ -194,24 +206,5 @@ class API extends Request
 	protected function setLogger(LoggerInterface $logger)
 	{
 		$this->logger = $logger;
-	}
-
-	/**
-	 * Fix (SNI) SSL verification.
-	 * 
-	 * @access protected
-	 * @param array $args
-	 * @return array
-	 */
-	protected function maybeRequireSSL($args)
-	{
-		if ( isset($args['sslverify']) ) {
-			if ( $args['sslverify'] === false && Server::maybeRequireSSL() ) {
-				$args['sslverify'] = true;
-			} else {
-				$args['sslverify'] = Server::maybeRequireSSL();
-			}
-		}
-		return $args;
 	}
 }

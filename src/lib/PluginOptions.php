@@ -893,18 +893,28 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Set HTTP response.
+	 * Set HTTP response,
+	 * Including translated message. 
 	 * 
 	 * @access protected
-	 * @param string $message
+	 * @param mixed $message
 	 * @param array $content
 	 * @param string $status
 	 * @param int $code
 	 * @return void
 	 */
-	protected function setResponse($message = '', $content = [], $status = 'success', $code = 200)
+	protected function setResponse($message, $content = [], $status = 'success', $code = 200)
 	{
-		Response::set($this->translateString($message),$content,$status,$code);
+		// Parse vars translation
+		if ( TypeCheck::isArray($message) && count($message) == 2 ) {
+		  	$temp = $message[0];
+		  	$args = (array)$message[1];
+		  	$message = $this->translateVars($temp,$args);
+		  	
+		} else {
+			$message = $this->translateString($message);
+		}
+		Response::set($message,$content,$status,$code);
 	}
 	
 	/**
@@ -1059,7 +1069,11 @@ class PluginOptions extends WordPress
 	    	if ( $strict ) {
 	    		die($this->translateString('Invalid token'));
 	    	}
-	    	$this->setResponse('Invalid token',[],'error',400);
+	    	$code = 200;
+	    	if ( $this->isDebug() ) {
+	    		$code = 400;
+	    	}
+	    	$this->setResponse('Invalid token',[],'error',$code);
 	    }
 	}
 
@@ -1078,7 +1092,11 @@ class PluginOptions extends WordPress
 	    	if ( $strict ) {
 	    		die($this->translateString('Invalid token'));
 	    	}
-	    	$this->setResponse('Invalid token',[],'error',400);
+	    	$code = 200;
+	    	if ( $this->isDebug() ) {
+	    		$code = 400;
+	    	}
+	    	$this->setResponse('Invalid token',[],'error',$code);
 	  	}
 	}
 

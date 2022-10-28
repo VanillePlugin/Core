@@ -19,6 +19,9 @@ use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\int\RestApiInterface;
 use \WP_REST_Server as WPRestServer;
 
+/**
+ * Wrapper Class for RestAPI.
+ */
 abstract class AbstractRestAPI extends PluginOptions implements RestApiInterface
 {
 	/**

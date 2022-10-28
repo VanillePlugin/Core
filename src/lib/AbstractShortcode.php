@@ -54,6 +54,6 @@ abstract class AbstractShortcode extends View implements ShortcodeInterface
 	 */
 	protected function formatAtts($atts = [])
 	{
-		return Shortcode::formatAtts($atts);
+		return Shortcode::formatAttributes($atts);
 	}
 }

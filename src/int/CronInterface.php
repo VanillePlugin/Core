@@ -17,18 +17,6 @@ namespace VanillePlugin\int;
 interface CronInterface
 {
     /**
-     * @param array $schedules
-     * @return void
-     */
-    function setSchedules($schedules = []);
-
-    /**
-     * @param array $actions
-     * @return void
-     */
-    function setActions($actions = []);
-
-    /**
      * Filter : cron_schedules
      *
      * @param array $schedules

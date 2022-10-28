@@ -17,7 +17,7 @@ namespace VanillePlugin\inc;
 final class System
 {
 	/**
-	 * PHP CLI mode.
+	 * Check PHP SAPI (CLI) mode.
 	 *
 	 * @access public
 	 * @param void
@@ -231,6 +231,37 @@ final class System
             ];
         }
         return $usage;
+    }
+
+    /**
+     * Get CPU cores count.
+     *
+     * @access public
+     * @param void
+     * @return int
+     */
+    public static function getCpuCores()
+    {
+        $count = 1; // Init with min
+        if ( !TypeCheck::isFunction('ini_get') ) {
+            return $count;
+        }
+        if ( self::getIni('open_basedir') ) {
+            return $count;
+        }
+
+        if ( self::getOs() == 'winnt' ) {
+            $count = (int)getenv('NUMBER_OF_PROCESSORS');
+
+        } else {
+            if ( !($info = File::r('/proc/cpuinfo')) ) {
+                return $count;
+            }
+            if ( ($match = Stringify::matchAll('/^processor/m',$info)) ) {
+                $count = count($match);
+            }
+        }
+        return $count;
     }
 
     /**

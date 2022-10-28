@@ -261,7 +261,7 @@ class File
     public static function isFile($path)
     {
 		if ( self::exists($path) ) {
-			return is_file($path);
+			return @is_file($path);
 		}
 		return false;
     }
@@ -276,7 +276,6 @@ class File
 	public static function isEmpty($path)
 	{
 		if ( self::exists($path) ) {
-			clearstatcache();
 			return (self::getFileSize($path) == 0);
 		}
 		return null;
@@ -426,6 +425,7 @@ class File
 	 */
 	public static function exists($path)
 	{
+		clearstatcache();
 		return file_exists($path);
 	}
 

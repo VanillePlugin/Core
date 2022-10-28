@@ -147,7 +147,7 @@ final class Arrayify
 	public static function uniqueMultiple($array)
 	{
 		return self::map('unserialize',self::unique(
-			self::map('serialize',$array)
+			self::map('serialize',(array)$array)
 		));
 	}
 
