@@ -14,16 +14,32 @@ declare(strict_types=1);
 
 namespace VanillePlugin\thirdparty;
 
+use VanillePlugin\thirdparty\inc\module\Opcache;
+use VanillePlugin\thirdparty\inc\module\APCu;
+use VanillePlugin\thirdparty\inc\plugin\WpRocket;
+use VanillePlugin\thirdparty\inc\plugin\LiteSpeed;
+use VanillePlugin\thirdparty\inc\plugin\WpOptimize;
+use VanillePlugin\thirdparty\inc\plugin\W3TotalCache;
+use VanillePlugin\thirdparty\inc\plugin\Kinsta;
+use VanillePlugin\thirdparty\inc\plugin\WpFastestCache;
+use VanillePlugin\thirdparty\inc\plugin\WpSuperCache;
+use VanillePlugin\thirdparty\inc\plugin\CacheEnabler;
+
+/**
+ * Third-Party Cache Helper Class.
+ */
 final class Cache
 {
 	/**
+	 * Check whether cache is active (functional),
+	 * Using WordPress cache constant.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return bool
 	 */
 	public static function isActive()
 	{
-		// Check WordPress Cache
 		if ( !defined('WP_CACHE') || WP_CACHE == false ) {
 			return false;
 		}
@@ -31,113 +47,101 @@ final class Cache
 	}
 
 	/**
+	 * Purge plugin cache including server cache,
+	 * Purge: Can either be flush or clear or both.
+	 * 
 	 * @access public
 	 * @param void
-	 * @return void
+	 * @return bool (internal)
 	 */
 	public static function purge()
 	{
 		if ( !self::isActive() ) {
-			return;
+			return false;
 		}
 
 		/**
-		 * Purge Opcode cache.
-		 * 
-		 * @see https://www.php.net/manual/fr/book.opcache.php
+		 * Purge Opcode.
 		 */
-		if ( function_exists('opcache_reset') ) {
-			opcache_reset();
-		}
+		Opcache::purge();
  
 		/**
-		 * Purge APCu cache.
-		 * 
-		 * @see https://www.php.net/manual/fr/function.apcu-clear-cache.php
+		 * Purge APCu.
 		 */
-		if ( function_exists('apcu_clear_cache') ) {
-			apcu_clear_cache();
-		}
+		APCu::purge();
 
 		/**
 		 * Purge WP Rocket.
-		 * 
-		 * @see https://github.com/wp-media/wp-rocket
 		 */
-		if ( function_exists('rocket_clean_domain') ) {
-			rocket_clean_domain();
+		if ( WpRocket::isEnabled() ) {
+			WpRocket::purge();
+		}
+			    
+		/**
+		 * Purge LiteSpeed.
+		 */
+		if ( LiteSpeed::isEnabled() ) {
+			LiteSpeed::purge();
 		}
 
 		/**
-		 * Purge W3 Total cache.
-		 * 
-		 * @see https://github.com/W3EDGE/w3-total-cache
+		 * Purge W3 Total Cache.
 		 */
-	    if ( function_exists('w3tc_pgcache_flush') ) { 
-	        w3tc_pgcache_flush(); 
-	    }
-
-		/**
-		 * Purge LiteSpeed.
-		 * 
-		 * @see https://github.com/litespeedtech/lscache_wp
-		 */
-		if ( class_exists('\LiteSpeed\Purge') ) {
-			\LiteSpeed\Purge::purge_all();
+		if ( W3TotalCache::isEnabled() ) {
+			W3TotalCache::purge();
 		}
 
 		/**
 		 * Purge WP-Optimize.
-		 * 
-		 * @see https://github.com/DavidAnderson684/WP-Optimize
 		 */
-		if ( class_exists('WP_Optimize_Cache_Commands') ) {
-            $wpoptimize = new \WP_Optimize_Cache_Commands();
-            $wpoptimize->purge_page_cache();
+		if ( WpOptimize::isEnabled() ) {
+			WpOptimize::purge();
 		}
  
 		/**
-		 * Purge Kinsta Cache.
-		 * 
-		 * @see https://kinsta.com/knowledgebase/kinsta-mu-plugin/
+		 * Purge Kinsta.
 		 */
-		if ( class_exists('\Kinsta\Cache') ) {
-			global $kinsta_cache;
-            if ( !empty($kinsta_cache) ) {
-            	$kinsta_cache->kinsta_cache_purge->purge_complete_caches();
-            }
+		if ( Kinsta::isEnabled() ) {
+			Kinsta::purge();
 		}
 
 		/**
-		 * Purge WP Fastest cache.
-		 * 
-		 * @see https://github.com/emrevona/wp-fastest-cache
+		 * Purge WP Fastest Cache.
 		 */
-		if ( method_exists('WpFastestCache','deleteCache') ) {
-			$cache = new \WpFastestCache();
-			$cache->deleteCache();
+		if ( WpFastestCache::isEnabled() ) {
+			WpFastestCache::purge();
 		}
 
 		/**
-		 * Purge WP Super cache.
-		 * 
-		 * @see https://github.com/Automattic/wp-super-cache
+		 * Purge WP Super Cache.
 		 */
-		if ( function_exists('wp_cache_clean_cache') ) {
-		    global $file_prefix, $supercachedir;
-		    if ( function_exists('get_supercache_dir') && empty($supercachedir) ) {
-		        $supercachedir = get_supercache_dir();
-		    }
-		    wp_cache_clean_cache($file_prefix);
+		if ( WpSuperCache::isEnabled() ) {
+			WpSuperCache::purge();
 		}
 
 		/**
 		 * Purge Cache Enabler.
-		 * 
-		 * @see https://github.com/keycdn/cache-enabler
 		 */
-		if ( class_exists('Cache_Enabler') ) {
-			\Cache_Enabler::clear_complete_cache();
+		if ( CacheEnabler::isEnabled() ) {
+			CacheEnabler::purge();
 		}
+
+		return false;
+	}
+
+	/**
+	 * Fix geolocation under cache.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return bool (internal)
+	 */
+	public static function geolocate()
+	{
+		if ( !self::isActive() ) {
+			return false;
+		}
+
+		return false;
 	}
 }

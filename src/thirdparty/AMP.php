@@ -14,9 +14,17 @@ declare(strict_types=1);
 
 namespace VanillePlugin\thirdparty;
 
+use VanillePlugin\thirdparty\inc\plugin\Amp as WpAmp;
+use VanillePlugin\thirdparty\inc\plugin\AmpForWp;
+
+/**
+ * Third-Party AMP Helper Class.
+ */
 final class AMP
 {
 	/**
+	 * Check whether AMP is active.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return bool
@@ -25,12 +33,18 @@ final class AMP
 	{
 		/**
 		 * Check AMP.
-		 * 
-		 * @see https://github.com/ampproject/amp-wp/
 		 */
-		if ( function_exists('amp_is_request') ) {
-			return amp_is_request();
+		if ( WpAmp::isEnabled() ) {
+			return WpAmp::isActive();
 		}
+
+		/**
+		 * Check AMP for WP.
+		 */
+		if ( AmpForWp::isEnabled() ) {
+			return AmpForWp::isActive();
+		}
+		
 		return false;
 	}
 }

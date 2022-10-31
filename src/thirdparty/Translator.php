@@ -14,98 +14,86 @@ declare(strict_types=1);
 
 namespace VanillePlugin\thirdparty;
 
-use VanillePlugin\inc\TypeCheck;
+use VanillePlugin\thirdparty\inc\plugin\Wpml;
+use VanillePlugin\thirdparty\inc\plugin\Polylang;
+use VanillePlugin\thirdparty\inc\plugin\Qtranslate;
 
+/**
+ * Third-Party Translator Helper Class.
+ */
 final class Translator
 {
 	/**
+	 * Check whether translator is active (functional).
+	 * 
 	 * @access public
 	 * @param void
 	 * @return mixed
 	 */
 	public static function isActive()
 	{
-		// Check WordPress Translator
-		global $sitepress, $q_config, $polylang;
-
 		/**
 		 * Check WPML.
-		 * 
-		 * @see https://github.com/wp-premium/wpml-media
 		 */
-		if ( !empty($sitepress) && TypeCheck::isObject($sitepress) ) {
-			if ( method_exists($sitepress,'get_active_languages') ) {
-				return 'wpml';
-			}
+		if ( Wpml::isEnabled() && Wpml::isActive() ) {
+			return 'wpml';
 		}
 
 		/**
 		 * Check Polylang.
-		 * 
-		 * @see https://github.com/polylang/polylang
 		 */
-		if ( !empty($polylang) && function_exists('pll_languages_list') ) {
-			$languages = pll_languages_list();
-			if ( empty($languages) ) {
-				return false;
-			}
+		if ( Polylang::isEnabled() && Polylang::isActive() ) {
 			return 'polylang';
 		}
 
 		/**
 		 * Check qTranslate.
-		 * 
-		 * @see https://github.com/qtranslate/qtranslate-xt
 		 */
-		if ( !empty($q_config) && TypeCheck::isArray($q_config) ) {
-			if ( function_exists('qtranxf_convertURL') ) {
-				return 'qtranslate-x';
-			}
-			if ( function_exists('qtrans_convertURL') ) {
-				return 'qtranslate';
-			}
+		if ( Qtranslate::isEnabled() && Qtranslate::isActive() ) {
+			return 'qtranslate';
 		}
 
 		return false;
 	}
 
 	/**
+	 * Get translator active languages.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return mixed
 	 */
 	public static function getActiveLanguages()
 	{
-		if ( ($code = self::isActive()) ) {
-			if ( $code == 'wpml' ) {
-				return array_keys($GLOBALS['sitepress']->get_active_languages());
+		if ( ($plugin = self::isActive()) ) {
+			if ( $plugin == 'wpml' ) {
+				return Wpml::getActiveLanguages();
 			}
-			if ( $code == 'polylang' ) {
-				return pll_languages_list();
+			if ( $plugin == 'polylang' ) {
+				return Polylang::getActiveLanguages();
 			}
-			if ( $code == 'qtranslate' || $code == 'qtranslate-x' ) {
-				return !empty($GLOBALS['q_config']['enabled_languages']) 
-				? $GLOBALS['q_config']['enabled_languages'] : [];
+			if ( $plugin == 'qtranslate' ) {
+				return Qtranslate::getActiveLanguages();
 			}
 		}
 		return false;
 	}
 
 	/**
+	 * Get translator current language.
+	 * 
 	 * @access public
 	 * @param void
 	 * @return mixed
 	 */
 	public static function getCurrentLanguage()
 	{
-		if ( ($code = self::isActive()) ) {
-			if ( $code == 'wpml' ) {
-				return apply_filters('wpml_current_language',null);
+		if ( ($plugin = self::isActive()) ) {
+			if ( $plugin == 'wpml' ) {
+				return Wpml::getCurrentLanguage();
 			}
-			if ( $code == 'polylang' ) {
-				if ( function_exists('pll_current_language') ) {
-					return pll_current_language();
-				}
+			if ( $plugin == 'polylang' ) {
+				return Polylang::getCurrentLanguage();
 			}
 		}
 		return false;

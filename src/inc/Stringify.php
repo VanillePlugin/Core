@@ -249,20 +249,6 @@ final class Stringify
 	}
 
 	/**
-	 * Parse string.
-	 *
-	 * @access public
-	 * @param string $string
-	 * @param array $result
-	 * @return mixed
-	 */
-	public static function parse($string, &$result = null)
-	{
-		parse_str((string)$string,$result);
-		return $result;
-	}
-
-	/**
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -587,6 +573,55 @@ final class Stringify
 	public static function shuffle($string)
 	{
 		return str_shuffle((string)$string);
+	}
+
+	/**
+	 * Parse string (URL toolkit).
+	 *
+	 * @access public
+	 * @param string $string
+	 * @param array $result
+	 * @return mixed
+	 */
+	public static function parse($string, &$result = [])
+	{
+		parse_str((string)$string,$result);
+		return $result;
+	}
+
+	/**
+	 * Parse URL (URL toolkit).
+	 *
+	 * @access public
+	 * @param string $url
+	 * @param int $component
+	 * @return mixed
+	 * 
+	 * PHP_URL_SCHEME : 0
+	 * PHP_URL_HOST : 1
+	 * PHP_URL_PATH : 5
+	 * PHP_URL_QUERY : 6
+	 */
+	public static function parseUrl($url, $component = -1)
+	{
+		return parse_url((string)$url,$component);
+	}
+
+	/**
+	 * Build query args from string (URL toolkit).
+	 * 
+	 * @access public
+	 * @param mixed $args
+	 * @param string $prefix, Numeric index for args (array)
+	 * @param string $sep, Args separator
+	 * @param string $enc, Encoding type
+	 * @return string
+	 * 
+	 * PHP_QUERY_RFC1738 : 1
+	 */
+	public static function buildQuery($args, $prefix = '', $sep = '', $enc = 1)
+	{
+		return http_build_query($args,$prefix,$sep,$enc);
 	}
 
 	/**

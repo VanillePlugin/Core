@@ -413,23 +413,27 @@ class Request implements RequestInterface
 	}
 
 	/**
+	 * Add arg to query.
+	 * 
 	 * @access public
-	 * @param mixed $args
+	 * @param mixed $arg
 	 * @param string $url
 	 * @return string
 	 */
-	public static function addQueryArg($args, $url)
+	public static function addQueryArg($arg, $url)
 	{
-		return add_query_arg($args,$url);
+		return add_query_arg($arg,$url);
 	}
 
 	/**
+	 * Build query args from string (Alias).
+	 * 
 	 * @access public
 	 * @param array $args
 	 * @return string
 	 */
 	public static function buildQuery($args)
 	{
-		return http_build_query($args);
+		return Stringify::buildQuery($args);
 	}
 }

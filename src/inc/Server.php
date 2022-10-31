@@ -188,7 +188,7 @@ final class Server
 	{
 		$url = self::getBaseUrl() . self::get('request-uri');
 		if ( $escape ) {
-			$url = parse_url($url);
+			$url = Stringify::parseUrl($url);
 			if ( isset($url['query']) ) {
 				unset($url['query']);
 			}
@@ -206,7 +206,7 @@ final class Server
 	 */
 	public static function parseBaseUrl($url = '')
 	{
-		if ( !empty($url) && ($url = parse_url($url)) ) {
+		if ( !empty($url) && ($url = Stringify::parseUrl($url)) ) {
 			unset($url['path']);
 			$tmp = '';
 			if ( isset($url['scheme']) ) {

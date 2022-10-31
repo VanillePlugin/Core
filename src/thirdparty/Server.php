@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace VanillePlugin\thirdparty;
 
+/**
+ * Web Server Helper Class.
+ */
 final class Server
 {
 	/**
@@ -25,13 +28,13 @@ final class Server
 	 */
 	public static function getName()
 	{
-		global $is_apache,$is_nginx,$is_iis7,$is_IIS;
+		global $is_apache, $is_nginx, $is_iis7, $is_IIS;
 
 		if ( $is_apache ) {
 			return 'Apache';
 
 		} elseif ( $is_nginx ) {
-			return 'NGINX';
+			return 'Nginx';
 
 		} elseif ( $is_iis7 ) {
 			return 'IIS 7';
