@@ -181,8 +181,8 @@ class File
 	 */
 	public static function addString($path, $input = '')
 	{
-		$handle = fopen($path,'a');
-		fwrite($handle,(string)$input);
+		$handle = @fopen($path,'a');
+		@fwrite($handle,(string)$input);
 		fclose($handle);
 	}
 
@@ -195,8 +195,8 @@ class File
 	 */
 	public static function addBreak($path)
 	{
-		$handle = fopen($path,'a');
-		fwrite($handle,PHP_EOL);
+		$handle = @fopen($path,'a');
+		@fwrite($handle,PHP_EOL);
 		fclose($handle);
 	}
 
@@ -585,7 +585,7 @@ class File
 	public static function import($url, $path)
 	{
 		$tmp = @fopen($path,'w');
-		$status = fwrite($tmp,(string)self::r($url));
+		$status = @fwrite($tmp,(string)self::r($url));
 		fclose($tmp);
 		return (bool)$status;
 	}

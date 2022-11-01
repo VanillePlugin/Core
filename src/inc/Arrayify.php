@@ -20,12 +20,11 @@ final class Arrayify
 	 * @access public
 	 * @param mixed $needle
 	 * @param array $haystack
-	 * @param bool $strict
 	 * @return bool
 	 */
-	public static function inArray($needle, $haystack, $strict = true)
+	public static function inArray($needle, $haystack)
 	{
-		return in_array($needle,(array)$haystack,$strict);
+		return in_array($needle,(array)$haystack,true);
 	}
 
 	/**

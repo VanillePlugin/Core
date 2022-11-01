@@ -22,12 +22,10 @@ final class ArrayifyTest extends TestCase
         $this->assertTrue(Arrayify::inArray(0, $array));
         $this->assertTrue(Arrayify::inArray(1, $array));
         $this->assertFalse(Arrayify::inArray('Test', $array));
-        $this->assertTrue(Arrayify::inArray('Test', $array, false));
         $this->assertFalse(Arrayify::inArray('test2', $array));
         $this->assertTrue(!Arrayify::inArray('test3', $array));
         $this->assertFalse(Arrayify::inArray(2, $array));
         $this->assertTrue(!Arrayify::inArray(2, $array));
-        $this->assertTrue(Arrayify::inArray('1', $array, false));
     }
 
     public function testMerge()

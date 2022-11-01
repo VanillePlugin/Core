@@ -225,13 +225,12 @@ final class Stringify
 	 * @access public
 	 * @param string $string
 	 * @param mixed $encodings
-	 * @param bool $strict
 	 * @return mixed
 	 */
-	public static function getEncoding($string, $encodings = null, $strict = true)
+	public static function getEncoding($string, $encodings = null)
 	{
 		if ( TypeCheck::isFunction('mb_detect_encoding') ) {
-			return mb_detect_encoding($string,$encodings,$strict);
+			return mb_detect_encoding($string,$encodings,true);
 		}
 		return false;
 	}
@@ -392,12 +391,11 @@ final class Stringify
 	/**
 	 * @access public
 	 * @param array $data
-	 * @param bool $strict
 	 * @return bool
 	 */
-	public static function isSerialized($data, $strict = true)
+	public static function isSerialized($data)
 	{
-		return is_serialized($data,$strict);
+		return is_serialized($data,true);
 	}
 
 	/**

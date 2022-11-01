@@ -22,7 +22,6 @@ class Tokenizer
      * @access public
      * @param string $user
      * @param string $password
-     * @param bool $strict
      * @return array
      */
     public static function get($user, $password)

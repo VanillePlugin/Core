@@ -224,7 +224,7 @@ final class FileTest extends TestCase
 
     public function testImport()
     {
-        $this->assertFalse(File::import('',__DIR__ . '/temp'));
+        $this->assertTrue(File::import('https://example.com/',__DIR__ . '/temp'));
         File::remove(__DIR__ . '/temp');
     }
 
