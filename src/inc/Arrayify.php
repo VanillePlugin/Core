@@ -210,61 +210,13 @@ final class Arrayify
     /**
      * @access public
      * @param array $array
-     * @param array $args
+     * @param mixed $orderby
+     * @param string $order
+     * @param bool $preserve
      * @return array
      */
-    public static function order($array = [], $args = [], $flags = 0)
+    public static function sort($array = [], $orderby = [], $order = 'ASC', $preserve = false)
     {
-    	$args = self::merge([
-    		'sort'   => 'asc',
-    		'column' => false
-    	], (array)$args);
-
-    	if ( TypeCheck::isString($args['column']) ) {
-
-    		// Order by values
-    		$ordered = $array;
-    		$excluded = [];
-    		if ( isset($args['exclude']) ) {
-    			$ordered = $array;
-    			foreach ($ordered as $key => $item) {
-    				if ( isset($item[$args['column']]) ) {
-    					if ( $item[$args['column']] == $args['exclude'] ) {
-    						$excluded[$key] = $item;
-    						unset($ordered[$key]);
-    					}
-    				}
-    			}
-    		}
-
-    		if ( count($ordered) > 1 ) {
-				usort($ordered,function($a, $b) use ($args) {
-					$column = $args['column'];
-					if ( isset($a[$column]) && isset($b[$column]) ) {
-						// Order
-						if ( Stringify::lowercase($args['sort']) == 'asc' ) {
-					   		return (int)($a[$column] >= $b[$column]) && ($b[$column] <= $a[$column]);
-
-						} elseif ( Stringify::lowercase($args['sort']) == 'desc' ) {
-					   		return (int)($a[$column] <= $b[$column]) && ($b[$column] >= $a[$column]);
-						}
-					}
-				});
-    		}
-    		$array = $ordered;
-    		$array = self::merge($array,$excluded);
-
-    	} else {
-
-    		// Order
-	    	if ( Stringify::lowercase($args['sort']) == 'asc' ) {
-	    		asort($array,$flags);
-
-	    	} elseif ( Stringify::lowercase($args['sort']) == 'desc' ) {
-	    		arsort($array,$flags);
-	    	}
-    	}
-
-        return $array;
+		return wp_list_sort($array,$orderby,$order,$preserve);
     }
 }

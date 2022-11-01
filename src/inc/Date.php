@@ -94,27 +94,6 @@ final class Date extends DateTime
     {
         return date_i18n($format,strtotime($date),$gmt);
     }
-
-    /**
-     * @access public
-     * @param string $dates
-     * @param string $format
-     * @return array
-     */
-    public static function order($dates = [], $sort = 'asc', $format = 'Y-m-d H:i:s')
-    {
-        usort($dates,function($a, $b) use ($sort,$format) {
-            if ( Stringify::lowercase($sort) == 'asc' ) {
-                return (int)(self::create($a,$format) >= self::create($b,$format)) 
-                && (self::create($a,$format) <= self::create($b,$format));
-
-            } elseif ( Stringify::lowercase($sort) == 'desc' ) {
-                return (int)(self::create($a,$format) <= self::create($b,$format)) 
-                && (self::create($a,$format) >= self::create($b,$format));
-            }
-        });
-        return $dates;
-    }
     
     /**
      * Return current time

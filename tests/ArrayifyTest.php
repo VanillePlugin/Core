@@ -115,12 +115,12 @@ final class ArrayifyTest extends TestCase
         $this->assertCount(3, $tmp);
     }
 
-    public function testOrder()
+    public function testSort()
     {
-        $tmp = [];
-        $array1 = [1,3,4,5,2];
-        $tmp = Arrayify::order($array1);
-        $tmp = Arrayify::values($tmp);
-        $this->assertSame([1,2,3,4,5], $tmp);
+        $default = [['id' => 1],['id' => 3],['id' => 4],['id' => 2]];
+        $sorted = Arrayify::sort($default,'id','asc');
+        $this->assertSame([['id' => 1],['id' => 2],['id' => 3],['id' => 4]], $sorted);
+        $sorted = Arrayify::sort($default,'id','desc');
+        $this->assertSame([['id' => 4],['id' => 3],['id' => 2],['id' => 1]], $sorted);
     }
 }
