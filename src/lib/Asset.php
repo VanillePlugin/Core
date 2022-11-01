@@ -16,8 +16,10 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\Arrayify;
+use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\inc\Archive;
-use VanillePlugin\inc\Request;
+use VanillePlugin\inc\API;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
 final class Asset extends PluginOptions
@@ -53,7 +55,7 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Has asset lock
+	 * Check whether has asset lock.
 	 *
 	 * @access public
 	 * @param void
@@ -65,7 +67,7 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Lock asset
+	 * Lock asset.
 	 *
 	 * @access public
 	 * @param void
@@ -77,7 +79,7 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Set remote url
+	 * Set remote URL.
 	 *
 	 * @access public
 	 * @param string $remote
@@ -90,7 +92,7 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Set CDN url
+	 * Set CDN endpoint URL.
 	 *
 	 * @access public
 	 * @param string $url
@@ -103,7 +105,7 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Set assets dir
+	 * Set assets dir.
 	 *
 	 * @access public
 	 * @param string $dir
@@ -116,7 +118,7 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Download remote assets
+	 * Download remote assets.
 	 *
 	 * @access public
 	 * @param void
@@ -124,28 +126,36 @@ final class Asset extends PluginOptions
 	 */
 	public function download()
 	{
+		// Allow CDN by default
 		$cdn = true;
+
+		// Get from remote
 		if ( $this->remote ) {
-			$client = new Request('GET', ['timeout' => 30]);
-			if ( ($response = $client->send($this->remote)) ) {
-				if ( $response->getStatusCode() == 200 ) {
-					$archive = basename($this->remote);
-					if ( File::w("{$this->dir}/{$archive}", $response->getBody()) ) {
-						if ( $this->extract("{$this->dir}/{$archive}") && $this->check() ) {
-							$cdn = false;
-							$this->lock();
-						}
+			$api = new API('GET',[
+				'timeout'     => 30,
+				'redirection' => 1
+			]);
+			$api->send($this->remote);
+			if ( $api->getStatusCode() == 200 ) {
+				$archive = "{$this->dir}/{$this->getFileName($this->remote)}";
+				if ( File::w($archive,$api->getBody()) ) {
+					$this->extract($archive);
+					if ( $this->check() ) {
+						$cdn = false;
+						$this->lock();
 					}
 				}
 			}
 		}
+
+		// Get from CDN
 		if ( $cdn ) {
 			$this->downloadCDN();
 		}
 	}
 
 	/**
-	 * Download CDN assets
+	 * Download CDN assets.
 	 *
 	 * @access private
 	 * @param void
@@ -153,15 +163,18 @@ final class Asset extends PluginOptions
 	 */
 	private function downloadCDN()
 	{
-		$this->reset();
-		$client = new Request('GET', ['timeout' => 30]);
+		$api = new API('GET',[
+			'timeout'     => 10,
+			'redirection' => 1
+		]);
 		foreach ($this->assets as $asset => $files) {
 			foreach ($files as $file) {
-				if ( ($response = $client->send("{$this->cdn}/{$file}")) ) {
-					if ( $response->getStatusCode() == 200 ) {
-						$file = basename($file);
+				$filename = "{$this->dir}/{$asset}/{$this->getFileName($file)}";
+				if ( !$this->check($filename) ) {
+					$api->send("{$this->cdn}/{$file}");
+					if ( $api->getStatusCode() == 200 ) {
 						File::addDir("{$this->dir}/{$asset}");
-						File::w("{$this->dir}/{$asset}/{$file}", $response->getBody());
+						File::w($filename,$api->getBody());
 					}
 				}
 			}
@@ -181,7 +194,6 @@ final class Asset extends PluginOptions
 	private function extract($archive)
 	{
 		if ( Archive::uncompress($archive,$this->dir) ) {
-			$this->reset();
 			File::remove("{$this->dir}/assets.zip");
 			return true;
 		}
@@ -189,18 +201,24 @@ final class Asset extends PluginOptions
 	}
 
 	/**
-	 * Check assets
+	 * Check extracted assets.
 	 *
 	 * @access private
-	 * @param void
-	 * @return void
+	 * @param string $path
+	 * @return bool
 	 */
-	private function check()
+	private function check($path = false)
 	{
+		// Check for single asset
+		if ( TypeCheck::isString($path) && !empty($path) ) {
+			return File::exists($path);
+		}
+		// Check for all assets
 		foreach ($this->getAssets() as $asset => $files) {
 			foreach ($files as $file) {
 				if ( !File::exists("{$this->dir}/{$asset}/{$file}") ) {
 					return false;
+					break;
 				}
 			}
 		}
@@ -226,6 +244,18 @@ final class Asset extends PluginOptions
 	}
 
 	/**
+	 * Get asset filename from path.
+	 *
+	 * @access private
+	 * @param string $path
+	 * @return string
+	 */
+	private function getFileName($path)
+	{
+		return basename($path);
+	}
+
+	/**
 	 * Get assets.
 	 *
 	 * @access private
@@ -236,8 +266,8 @@ final class Asset extends PluginOptions
 	{
 		$wrapper = [];
 		foreach ($this->assets as $asset => $files) {
-			$wrapper[$asset] = array_map(function($files){
-				return basename($files);
+			$wrapper[$asset] = Arrayify::map(function($file){
+				return $this->getFileName($file);
 			}, $files);
 		}
 		return $wrapper;

@@ -40,7 +40,7 @@ class Queue extends Logger
 		$queue = $this->get($name);
 		$queue[] = $item;
 		if ( $this->isDebug(true) ) {
-			$this->debug("Add {$item} to queue");
+			$this->debug("Added '{$item}' to queue");
 		}
 		return $this->set($queue,$name);
 	}
@@ -57,7 +57,7 @@ class Queue extends Logger
 	{
 		if ( Stringify::contains($this->get($name),$item) ) {
 			if ( $this->isDebug(true) ) {
-				$this->debug("{$item} in queue");
+				$this->debug("'{$item}' in queue");
 			}
 			return true;
 		}

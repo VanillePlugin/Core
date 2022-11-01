@@ -459,7 +459,7 @@ class File
 	 * @param string $path
 	 * @param mixed $input
 	 * @param string $append
-	 * @return mixed
+	 * @return bool
 	 */
 	public static function w($path, $input = '', $append = false)
 	{
@@ -468,7 +468,7 @@ class File
 			$flag = FILE_APPEND;
 			$input .= PHP_EOL;
 		}
-		return @file_put_contents($path,$input,$flag);
+		return (bool)@file_put_contents($path,$input,$flag);
 	}
 
 	/**
