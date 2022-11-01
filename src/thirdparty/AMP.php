@@ -23,7 +23,7 @@ use VanillePlugin\thirdparty\inc\plugin\AmpForWp;
 final class AMP
 {
 	/**
-	 * Check whether AMP is active.
+	 * Check whether AMP is active (functional).
 	 * 
 	 * @access public
 	 * @param void

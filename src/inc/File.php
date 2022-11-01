@@ -318,7 +318,10 @@ class File
     public static function addDir($path, $p = 0755, $r = true, $context = null)
     {
     	if ( !self::isFile($path) && !self::isDir($path) ) {
-    		return @mkdir($path,$p,$r,$context);
+    		if ( TypeCheck::isResource($context) ) {
+    			return @mkdir($path,$p,$r,$context);
+    		}
+    		return @mkdir($path,$p,$r);
     	}
         return false;
     }

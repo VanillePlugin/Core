@@ -84,6 +84,7 @@ final class Requirement extends Notice implements RequirementInterface
 	 */
 	public function requirePath()
 	{
+		// Get required paths
 		$paths = [];
 		if ( $this->getCachePath() ) {
 			$paths[] = $this->getCachePath();
@@ -97,32 +98,38 @@ final class Requirement extends Notice implements RequirementInterface
 
 		foreach ($paths as $path) {
 
+			// Check path
 			if ( !File::isDir($path) || !File::isWritable($path) ) {
 
-				$message = $this->translateVars(
-					$this->strings['path']['exists'],
-					[
-						$this->getPluginName(),
-						basename($path)
-					]
-				);
+		        // Try creating path
+				if ( !File::addDir(Stringify::formatPath($path)) ) {
 
-				$notice  = '<div class="';
-				$notice .= $this->getNameSpace();
-				$notice .= '-notice notice notice-error">';
-				$notice .= '<p>';
-				$notice .= '<i class="icon-close"></i> ';
-				$notice .= '<strong>';
-				$notice .= $this->translateString('Warning') . ' : ';
-				$notice .= '</strong>';
-				$notice .= $message;
-				$notice .= '</p>';
-				$notice .= '<small>';
-				$notice .= $path;
-				$notice .= '</small>';
-				$notice .= '</div>';
+					$message = $this->translateVars(
+						$this->strings['path']['exists'],
+						[
+							$this->getPluginName(),
+							basename($path)
+						]
+					);
 
-				echo $notice;
+					$notice  = '<div class="';
+					$notice .= $this->getNameSpace();
+					$notice .= '-notice notice notice-error">';
+					$notice .= '<p>';
+					$notice .= '<i class="icon-close"></i> ';
+					$notice .= '<strong>';
+					$notice .= $this->translateString('Warning') . ' : ';
+					$notice .= '</strong>';
+					$notice .= $message;
+					$notice .= '</p>';
+					$notice .= '<small>';
+					$notice .= $path;
+					$notice .= '</small>';
+					$notice .= '</div>';
+
+					echo $notice;
+				}
+
 			}
 
 		}

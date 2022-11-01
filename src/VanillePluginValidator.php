@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.9.0
+ * @version   : 0.9.1
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,7 +16,6 @@ namespace VanillePlugin;
 
 use VanillePlugin\inc\Validator;
 use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\inc\Exception;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\GlobalConst;
 use JsonSchema\Validator as JsonValidator;
@@ -27,23 +26,22 @@ final class VanillePluginValidator extends Validator
 	 * @access public
 	 * @var mixed $plugin
 	 * @return void
+	 * @throws VanillePluginException
 	 */
 	public static function checkNamespace($plugin)
 	{
-		try {
-			if ( !self::isValidNamespace($plugin) ) {
-				$namespace = $plugin->getNameSpace();
-				if ( TypeCheck::isObject($namespace) ) {
-					$namespace = '{Object}';
-				} elseif ( TypeCheck::isArray($namespace) ) {
-					$namespace = '[Array]';
-				} else {
-					$namespace = (string)$namespace;
-				}
-				throw new VanillePluginException($namespace);
+		if ( !self::isValidNamespace($plugin) ) {
+			$namespace = $plugin->getNameSpace();
+			if ( TypeCheck::isObject($namespace) ) {
+				$namespace = '{Object}';
+			} elseif ( TypeCheck::isArray($namespace) ) {
+				$namespace = '[Array]';
+			} else {
+				$namespace = (string)$namespace;
 			}
-		} catch (VanillePluginException $e) {
-			die($e->get(1));
+	        throw new VanillePluginException(
+	            VanillePluginException::invalidPluginNamepsace($namespace)
+	        );
 		}
 	}
 
@@ -51,24 +49,27 @@ final class VanillePluginValidator extends Validator
 	 * @access public
 	 * @var mixed $json
 	 * @return void
+	 * @throws VanillePluginException
 	 */
 	public static function checkConfig($json)
 	{
-		try {
-			$error = self::isValidConfig($json);
-			if ( TypeCheck::isString($error) ) {
-				throw new VanillePluginException($error);
-			} elseif ( $error === false ) {
-				throw new VanillePluginException();
-			}
-		} catch (VanillePluginException $e) {
-			die($e->get(2));
+		$error = self::isValidConfig($json);
+		if ( TypeCheck::isString($error) ) {
+	        throw new VanillePluginException(
+	            VanillePluginException::InvalidPluginConfiguration($error)
+	        );
+		} elseif ( $error === false ) {
+	        throw new VanillePluginException(
+	            VanillePluginException::InvalidPluginConfiguration()
+	        );
 		}
 	}
 
 	/**
+	 * Validate plugin namespace.
+	 * 
 	 * @access private
-	 * @var mixed $plugin
+	 * @var object $plugin
 	 * @return bool
 	 */
 	private static function isValidNamespace($plugin)
@@ -76,7 +77,9 @@ final class VanillePluginValidator extends Validator
 		if ( TypeCheck::isObject($plugin) ) {
 			if ( TypeCheck::isString($plugin->getNameSpace()) ) {
 				if ( !empty($namespace = $plugin->getNameSpace()) ) {
-					return File::exists(GlobalConst::pluginDir("/{$namespace}/{$namespace}.php"));
+					return File::exists(
+						GlobalConst::pluginDir("/{$namespace}/{$namespace}.php")
+					);
 				}
 			}
 		}
@@ -84,6 +87,8 @@ final class VanillePluginValidator extends Validator
 	}
 
 	/**
+	 * Validate plugin configuration.
+	 * 
 	 * @access private
 	 * @var object $config
 	 * @return mixed

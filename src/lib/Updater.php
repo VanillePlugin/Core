@@ -21,7 +21,6 @@ use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Server;
 use VanillePlugin\inc\GlobalConst;
-use VanillePlugin\inc\Request;
 use VanillePlugin\inc\API;
 use \stdClass;
 

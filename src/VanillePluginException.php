@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.9.0
+ * @version   : 0.9.1
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -18,44 +18,13 @@ use VanillePlugin\inc\Exception;
 
 class VanillePluginException extends Exception
 {
-	/**
-	 * @access public
-	 * @var int $code
-	 * @return string
-	 */
-	public function get($code = 1)
+	public static function invalidPluginNamepsace($namepsace = 'Empty')
 	{
-		$header  = "[VanillePluginException][{$code}]";
-		$message = "{$header} Error : {$this->getError($code)}";
-		$source  = defined('VANILLEPLUGIN_EXCEPTION_SOURCE')
-		? VANILLEPLUGIN_EXCEPTION_SOURCE : false;
-		if ( $source ) {
-			$message .= "<br>{$header} Line : {$this->getLine()} in {$this->getFile()}";
-		}
-		if ( $this->getMessage() ) {
-			$message .= " ({$this->getMessage()})";
-		}
-		return $message;
+		return "Invalid Plugin Namepsace '{$namepsace}'";
 	}
 
-	/**
-	 * @access private
-	 * @var int $code
-	 * @return string
-	 */
-	private function getError($code)
+	public static function InvalidPluginConfiguration($config = 'Unknown')
 	{
-		$domain = defined('VANILLEPLUGIN_EXCEPTION_DOMAIN')
-		? VANILLEPLUGIN_EXCEPTION_DOMAIN : '';
-		$code = intval($code);
-		switch ($code) {
-			case 1:
-				return __('Invalid Plugin Namepsace', $domain);
-				break;
-			case 2:
-				return __('Invalid Plugin Configuration', $domain);
-				break;
-		}
-		return __('Unknown error', $domain);
+		return "Invalid Plugin Configuration '{$config}'";
 	}
 }

@@ -38,7 +38,8 @@ final class CacheEnabler
 	 * 
 	 * @access public
 	 * @param void
-	 * @return bool (internal)
+	 * @return bool
+	 * @internal
 	 */
 	public static function purge()
 	{

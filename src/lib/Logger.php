@@ -16,7 +16,6 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\int\LoggerInterface;
-use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\File;
 
 class Logger extends PluginOptions implements LoggerInterface
@@ -38,12 +37,8 @@ class Logger extends PluginOptions implements LoggerInterface
     {
         // Init plugin config
         $this->initConfig($plugin);
-
-        // Check logger path
-        if ( !File::exists($this->getLoggerPath()) ) {
-            File::addDir($this->getLoggerPath());
-        }
         
+        // Init logger
         $this->setPath($this->getLoggerPath());
         $this->setFilename('debug');
         $this->setExtension('log');
@@ -190,10 +185,13 @@ class Logger extends PluginOptions implements LoggerInterface
      */
     protected function write($status, $message)
     {
-        $date = date('[d-m-Y]');
-        $log  = "{$this->path}/{$this->filename}-{$date}.{$this->extension}";
-        $date = date('[d-m-Y H:i:s]');
-        $msg  = "{$date} : [{$status}] - {$message}" . PHP_EOL;
-        return File::w($log,$msg,true);
+        if ( File::isDir($this->path) && File::isWritable($this->path) ) {
+            $date = date('[d-m-Y]');
+            $file = "{$this->path}/{$this->filename}-{$date}.{$this->extension}";
+            $date = date('[d-m-Y H:i:s]');
+            $msg  = "{$date} : [{$status}] - {$message}" . PHP_EOL;
+            return File::w($file,$msg,true);
+        }
+        return false;
     }
 }

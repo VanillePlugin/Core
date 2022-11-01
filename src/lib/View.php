@@ -18,8 +18,8 @@ use VanillePlugin\int\ViewInterface;
 use VanillePlugin\inc\Template;
 use VanillePlugin\inc\Json;
 use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\Date;
 use VanillePlugin\inc\File;
+use VanillePlugin\inc\Session;
 use VanillePlugin\inc\Exception as ErrorHandler;
 use \Exception;
 

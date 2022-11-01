@@ -132,12 +132,12 @@ final class Date extends DateTime
         $currentDay  = date('d');
         $currentYear = date('y');
         return mktime(
-            $currentHour,
-            $currentMin,
-            $currentSec,
-            $currentMon,
-            $currentDay,
-            $currentYear
+            (int)$currentHour,
+            (int)$currentMin,
+            (int)$currentSec,
+            (int)$currentMon,
+            (int)$currentDay,
+            (int)$currentYear
         );
     }
 
@@ -181,21 +181,21 @@ final class Date extends DateTime
     {
         $date = new self($date);
         $now = mktime(
-            $date->format('H'),
-            $date->format('i'),
-            $date->format('s'),
-            $date->format('m'),
-            $date->format('d'),
-            $date->format('Y')
+            (int)$date->format('H'),
+            (int)$date->format('i'),
+            (int)$date->format('s'),
+            (int)$date->format('m'),
+            (int)$date->format('d'),
+            (int)$date->format('Y')
         );
         $expire = $date->add(new DateInterval($duration));
         $limit = mktime(
-            $expire->format('H'),
-            $expire->format('i'),
-            $expire->format('s'),
-            $expire->format('m'),
-            $expire->format('d'),
-            $expire->format('Y')
+            (int)$expire->format('H'),
+            (int)$expire->format('i'),
+            (int)$expire->format('s'),
+            (int)$expire->format('m'),
+            (int)$expire->format('d'),
+            (int)$expire->format('Y')
         );
         return (int)$limit - $now;
     }

@@ -52,7 +52,8 @@ final class Cache
 	 * 
 	 * @access public
 	 * @param void
-	 * @return bool (internal)
+	 * @return bool
+	 * @internal
 	 */
 	public static function purge()
 	{
@@ -130,18 +131,18 @@ final class Cache
 	}
 
 	/**
-	 * Fix geolocation under cache.
+	 * Geolocation through cache.
 	 * 
 	 * @access public
 	 * @param void
-	 * @return bool (internal)
+	 * @return bool
+	 * @internal
 	 */
 	public static function geolocate()
 	{
 		if ( !self::isActive() ) {
 			return false;
 		}
-
 		return false;
 	}
 }

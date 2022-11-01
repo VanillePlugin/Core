@@ -15,14 +15,14 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * Kinsta Helper Class.
+ * Kinsta (MU) Helper Class.
  * 
  * @see https://github.com/retlehs/kinsta-mu-plugins
  */
 final class Kinsta
 {
 	/**
-	 * Check whether plugin (MU) is enabled.
+	 * Check whether plugin is enabled.
 	 * 
 	 * @access public
 	 * @param void
@@ -38,7 +38,8 @@ final class Kinsta
 	 * 
 	 * @access public
 	 * @param void
-	 * @return bool (internal)
+	 * @return bool
+	 * @internal
 	 */
 	public static function purge()
 	{

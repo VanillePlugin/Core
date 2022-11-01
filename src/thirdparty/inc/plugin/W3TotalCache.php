@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * Purge W3 Total Cache Helper Class.
+ * W3 Total Cache Helper Class.
  * 
  * @see https://github.com/W3EDGE/w3-total-cache
  */
@@ -38,7 +38,8 @@ final class W3TotalCache
 	 * 
 	 * @access public
 	 * @param void
-	 * @return bool (internal)
+	 * @return bool
+	 * @internal
 	 */
 	public static function purge()
 	{

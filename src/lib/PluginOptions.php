@@ -983,6 +983,7 @@ class PluginOptions extends WordPress
 				$vars
 			);
 		} else {
+			$vars = (string)$vars;
 			$vars = Stringify::replaceRegex('/\s+/', $this->translateString('{Empty}'), $vars);
 			return sprintf($this->translateString(Stringify::replace($vars,'%s',$string)), $vars);
 		}

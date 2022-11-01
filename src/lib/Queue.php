@@ -24,17 +24,16 @@ class Queue extends Logger
      */
     public function __construct(PluginNameSpaceInterface $plugin)
 	{
-        // Init plugin config
-        $this->initConfig($plugin);
+		parent::__construct($plugin);
 	}
 
 	/**
-	 * Add item to queue
+	 * Add item to queue.
 	 * 
 	 * @access public
 	 * @param string $item
 	 * @param string $name
-	 * @return void
+	 * @return bool
 	 */
 	public function add($item = '', $name = 'in')
 	{
@@ -43,11 +42,11 @@ class Queue extends Logger
 		if ( $this->isDebug(true) ) {
 			$this->debug("Add {$item} to queue");
 		}
-		$this->set($queue,$name);
+		return $this->set($queue,$name);
 	}
 
 	/**
-	 * Check if item exists
+	 * Check if item exists.
 	 * 
 	 * @access public
 	 * @param string $item
@@ -56,7 +55,7 @@ class Queue extends Logger
 	 */
 	public function has($item = '', $name = 'in')
 	{
-		if ( Stringify::contains($this->get($name), $item) ) {
+		if ( Stringify::contains($this->get($name),$item) ) {
 			if ( $this->isDebug(true) ) {
 				$this->debug("{$item} in queue");
 			}
@@ -66,7 +65,7 @@ class Queue extends Logger
 	}
 
 	/**
-	 * Clear queue
+	 * Delete queue.
 	 * 
 	 * @access public
 	 * @param string $name
@@ -74,11 +73,11 @@ class Queue extends Logger
 	 */
 	public function delete($name = 'in')
 	{
-		$this->setTransient("{$name}-queue",[]);
+		return $this->setTransient("{$name}-queue",[]);
 	}
 
 	/**
-	 * Get queue
+	 * Get queue.
 	 * 
 	 * @access private
 	 * @param string $name
@@ -94,15 +93,15 @@ class Queue extends Logger
 	}
 
 	/**
-	 * Set queue
+	 * Set queue.
 	 * 
 	 * @access private
 	 * @param array $value
 	 * @param string $name
-	 * @return array
+	 * @return bool
 	 */
 	private function set($value = [], $name = 'in')
 	{
-		$this->setTransient("{$name}-queue",$value);
+		return $this->setTransient("{$name}-queue",$value);
 	}
 }

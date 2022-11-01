@@ -14,6 +14,11 @@ declare(strict_types=1);
 
 namespace VanillePlugin\thirdparty\inc\plugin;
 
+/**
+ * WP Fastest Cache Helper Class.
+ * 
+ * @see https://github.com/emrevona/wp-fastest-cache
+ */
 final class WpFastestCache
 {
 	/**
@@ -25,7 +30,7 @@ final class WpFastestCache
 	 */
 	public static function isEnabled()
 	{
-		return defined('LSCWP_BASENAME');
+		return defined('WPFC_MAIN_PATH');
 	}
 	
 	/**
@@ -33,8 +38,8 @@ final class WpFastestCache
 	 * 
 	 * @access public
 	 * @param void
-	 * @return bool (internal)
-	 * @see https://github.com/emrevona/wp-fastest-cache
+	 * @return bool
+	 * @internal
 	 */
 	public static function purge()
 	{

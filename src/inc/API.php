@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-use VanillePlugin\lib\PluginOptions;
 use VanillePlugin\int\LoggerInterface;
 
 /**

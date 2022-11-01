@@ -102,14 +102,13 @@ trait VanillePluginConfig
 	 * Get global.
 	 *
 	 * @access protected
-	 * @param string $var null
+	 * @param string $var
 	 * @return mixed
 	 */
 	protected function getConfig($var = null)
 	{
-		if ($var) {
-			return isset($this->global->$var)
-			? $this->global->$var : false;
+		if ( $var ) {
+			return $this->global->$var ?? null;
 		}
 		return $this->global;
 	}
