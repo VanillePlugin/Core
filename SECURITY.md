@@ -2,10 +2,10 @@
 
 ## Supported Versions
 
-| Version    | Supported  |
-| ---------- | ---------- |
-| **>= 7.2** | **Yes**    |
-| **< 7.2**  | **No**     |
+|   Version    |  Supported  |
+| ------------ | ----------- |
+| **>= 7.2.5** |   **Yes**   |
+| **< 7.2.5**  |   **No**    |
 
 ## Reporting a Vulnerability
 

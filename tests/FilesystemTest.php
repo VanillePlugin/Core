@@ -2,10 +2,12 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.9.0
+ * @version   : 0.9.1
  * @copyright : (c) 2018 - 2022 JIHAD SINNAOUR <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
+ *
+ * This file if a part of VanillePlugin Framework.
  */
 
 use VanillePlugin\inc\Filesystem;
