@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty;
 
 use VanillePlugin\thirdparty\inc\module\Opcache;
-use VanillePlugin\thirdparty\inc\module\APCu;
+use VanillePlugin\thirdparty\inc\module\Apcu;
 use VanillePlugin\thirdparty\inc\plugin\WpRocket;
 use VanillePlugin\thirdparty\inc\plugin\LiteSpeed;
 use VanillePlugin\thirdparty\inc\plugin\WpOptimize;
@@ -62,14 +62,14 @@ final class Cache
 		}
 
 		/**
-		 * Purge Opcode.
+		 * Purge Opcache.
 		 */
 		Opcache::purge();
  
 		/**
 		 * Purge APCu.
 		 */
-		APCu::purge();
+		Apcu::purge();
 
 		/**
 		 * Purge WP Rocket.

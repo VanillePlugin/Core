@@ -19,7 +19,7 @@ namespace VanillePlugin\thirdparty\inc\module;
  * 
  * @see https://www.php.net/manual/en/function.apcu-clear-cache.php
  */
-final class APCu
+final class Apcu
 {
 	/**
 	 * Purge cache.

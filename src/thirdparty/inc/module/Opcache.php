@@ -15,11 +15,11 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\module;
 
 /**
- * OpCache Helper Class.
+ * Opcache Helper Class.
  * 
  * @see https://www.php.net/manual/en/book.opcache.php
  */
-final class OpCache
+final class Opcache
 {
 	/**
 	 * Purge cache.
