@@ -95,7 +95,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 
 		/**
 		 * Get plugin info.
-		 * Filter : plugins_api
+		 * Filter: plugins_api
 		 *
 		 * @see getInfo@self
 		 * @property priority 10
@@ -105,8 +105,8 @@ class Updater extends PluginOptions implements UpdaterInterface
 
 		/**
 		 * Check plugin update.
-		 * Filter : pre_set_site_transient_{$transient}
-		 * Filter : site_transient_update_{$transient}
+		 * Filter: pre_set_site_transient_{$transient}
+		 * Filter: site_transient_update_{$transient}
 		 *
 		 * @see checkUpdate@self
 		 * @property priority 10
@@ -116,14 +116,24 @@ class Updater extends PluginOptions implements UpdaterInterface
 
 		/**
 		 * Check plugin translation update.
-		 * Filter : pre_set_site_transient_{$transient}
-		 * Filter : site_transient_update_{$transient}
+		 * Filter: pre_set_site_transient_{$transient}
+		 * Filter: site_transient_update_{$transient}
 		 *
 		 * @see checkTranslation@self
 		 * @property priority 10
 		 * @property count 1
 		 */
 		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkTranslation']);
+
+		/**
+		 * Filter updater args.
+		 * Filter: http_request_args
+		 *
+		 * @see filterArgs@self
+		 * @property priority 20
+		 * @property count 1
+		 */
+		$this->addFilter('http_request_args', [$this,'filterArgs'], 20);
 	}
 
 	/**
@@ -222,8 +232,9 @@ class Updater extends PluginOptions implements UpdaterInterface
 		// Update transient
 		if ( $this->isValid('translation',$update) ) {
 
-			// Set translations
+			// Fix translation transient
 			if ( !isset($transient->translations) ) {
+				$transient = new stdClass();
 				$transient->translations = [];
 			}
 
@@ -241,6 +252,22 @@ class Updater extends PluginOptions implements UpdaterInterface
 		}
 
 		return $transient;
+	}
+
+	/**
+	 * Filter updater args,
+	 * Allow unsafe updater URLs for non SSL.
+	 * 
+	 * @access public
+	 * @param array $args
+	 * @return array
+	 */
+	public function filterArgs($args)
+	{
+		if ( isset($args['reject_unsafe_urls']) ) {
+			$args['reject_unsafe_urls'] = $this->isSSL();
+		}
+		return $args;
 	}
 
 	/**
