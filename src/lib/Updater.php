@@ -441,18 +441,22 @@ class Updater extends PluginOptions implements UpdaterInterface
 			$transient->compatibility = new stdClass();
 
 		} elseif ( $action == 'info' ) {
-			$this->assetUrl = rtrim($this->assetUrl,'/');
+			
 			$transient->homepage = $this->pluginHeader['PluginURI'];
 			$transient->author   = $this->pluginHeader['AuthorName'];
 			$transient->tested   = $this->wpVersion;
 			$transient->requires = $this->pluginHeader['RequiresWP'];
-			$transient->banners  = [
-				'low'  => "{$this->assetUrl}/banner/{$this->getNameSpace()}-772x250.png",
-				'high' => "{$this->assetUrl}/banner/{$this->getNameSpace()}-1544x500.png"
-		    ];
 		    $transient->sections = [
 				'description' => $this->pluginHeader['Description']
 		    ];
+		    
+			if ( $this->assetUrl ) {
+				$this->assetUrl = rtrim((string)$this->assetUrl,'/');
+				$transient->banners  = [
+					'low'  => "{$this->assetUrl}/banner/{$this->getNameSpace()}-772x250.png",
+					'high' => "{$this->assetUrl}/banner/{$this->getNameSpace()}-1544x500.png"
+			    ];
+			}
 		}
 		return $transient;
 	}
