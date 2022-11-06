@@ -19,7 +19,7 @@ use Twig\Environment as Environment;
 use Twig\TwigFunction as Module;
 
 /**
- * Wrapper Class for Twig.
+ * Wrapper class for Twig.
  */
 final class Template
 {

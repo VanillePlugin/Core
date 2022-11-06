@@ -17,16 +17,20 @@ namespace VanillePlugin\int;
 interface ShortcodeInterface
 {
     /**
+     * Init shortcode(s).
+     *
      * @param void
      * @return void
      */
-	function init();
+    function init();
 
-	/**
-	 * @param array $params
-	 * @param string $content
-	 * @param string $tag
-	 * @return string
-	 */
-	function doCallable($atts = [], $content = null, $tag = '');
+    /**
+     * Do shortcode main callable.
+     * 
+     * @param array $atts
+     * @param string $content
+     * @param string $tag
+     * @return string
+     */
+    function doCallable($atts = [], $content = null, $tag = '');
 }

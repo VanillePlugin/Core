@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\module;
 
 /**
- * Opcache Helper Class.
+ * Opcache module helper class.
  * 
  * @see https://www.php.net/manual/en/book.opcache.php
  */

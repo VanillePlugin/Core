@@ -17,8 +17,10 @@ namespace VanillePlugin\int;
 interface MenuInterface
 {
     /**
+     * Construct plugin and include page settings.
+     *
      * @param void
      * @return void
      */
-	function init();
+    function init();
 }

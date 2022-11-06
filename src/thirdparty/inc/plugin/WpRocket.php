@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * WP Rocket Helper Class.
+ * WP Rocket plugin helper class.
  * 
  * @see https://github.com/wp-media/
  */

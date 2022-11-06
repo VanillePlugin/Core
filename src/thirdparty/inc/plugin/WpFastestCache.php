@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * WP Fastest Cache Helper Class.
+ * WP Fastest Cache plugin helper class.
  * 
  * @see https://github.com/emrevona/wp-fastest-cache
  */

@@ -16,12 +16,13 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\Arrayify;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
 final class Migrate extends Orm
 {
 	/**
-	 * Init Db object & Config object.
+	 * Init db object & config object.
 	 *
 	 * @param PluginNameSpaceInterface $plugin
 	 */
@@ -32,7 +33,7 @@ final class Migrate extends Orm
 	}
 
 	/**
-	 * Create Plugin Tables.
+	 * Create Plugin tables.
 	 *
 	 * @access public
 	 * @param void
@@ -56,7 +57,7 @@ final class Migrate extends Orm
 	}
 
 	/**
-	 * Upgrade Plugin Tables.
+	 * Upgrade Plugin tables.
 	 *
 	 * @access public
 	 * @param void
@@ -89,7 +90,7 @@ final class Migrate extends Orm
 	}
 
 	/**
-	 * Remove Plugin Tables.
+	 * Remove Plugin tables.
 	 *
 	 * @access public
 	 * @param void
@@ -108,7 +109,7 @@ final class Migrate extends Orm
 	}
 
 	/**
-	 * Has table lock.
+	 * Check whether plugin has migrate lock.
 	 *
 	 * @access public
 	 * @param void
@@ -120,7 +121,7 @@ final class Migrate extends Orm
 	}
 
 	/**
-	 * Parse table name for Upgrade.
+	 * Parse table name for upgrade.
 	 *
 	 * @access private
 	 * @param string $query
@@ -132,7 +133,7 @@ final class Migrate extends Orm
 	}
 
 	/**
-	 * Parse column name for Upgrade.
+	 * Parse column name for upgrade.
 	 *
 	 * @access private
 	 * @param string $query
@@ -144,7 +145,7 @@ final class Migrate extends Orm
 	}
 
 	/**
-	 * Create lock file.
+	 * Create migrate lock file.
 	 *
 	 * @access private
 	 * @param void
@@ -164,7 +165,7 @@ final class Migrate extends Orm
 	 */
 	private function load()
 	{
-		return array_diff(scandir($this->getMigrate()),[
+		return Arrayify::diff(scandir($this->getMigrate()),[
 			'.',
 			'..',
 			'migrate.lock',

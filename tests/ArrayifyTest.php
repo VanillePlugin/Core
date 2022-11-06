@@ -83,6 +83,33 @@ final class ArrayifyTest extends TestCase
         $this->assertEquals(['2', '3'], $array1);
     }
 
+    public function testDiff()
+    {
+        $tmp = [];
+        $array1 = ['1' => 1, '2' => 2, '3' => 3];
+        $array2 = ['1' => 1, '2' => 2];
+        $tmp = Arrayify::diff($array1,$array2);
+        $this->assertEquals(['3' => 3], $tmp);
+    }
+
+    public function testHasKey()
+    {
+        $this->assertTrue(Arrayify::hasKey('1',['1' => 1]));
+        $this->assertFalse(Arrayify::hasKey('2',['1' => 1]));
+    }
+
+    public function testKeys()
+    {
+        $array = ['1' => 1, '2' => 2, '3' => 3];
+        $this->assertSame([0 => 1, 1 => 2, 2 => 3], Arrayify::keys($array));
+    }
+
+    public function testValues()
+    {
+        $array = ['1' => 1, '2' => 2, '3' => 3];
+        $this->assertSame([0 => 1, 1 => 2, 2 => 3], Arrayify::values($array));
+    }
+
     public function testUnique()
     {
         $tmp = [];
@@ -105,6 +132,16 @@ final class ArrayifyTest extends TestCase
         $this->assertCount(1, $tmp);
     }
 
+    public function testRand()
+    {
+        $this->assertArrayHasKey(Arrayify::rand([1,2,3,4,5]), [1,2,3,4,5]);
+    }
+
+    public function testSlice()
+    {
+        $this->assertSame([0 => 4], Arrayify::slice([1,2,3,4,5], -2, 1));
+    }
+
     public function testFilter()
     {
         $tmp = [];
@@ -113,6 +150,11 @@ final class ArrayifyTest extends TestCase
         $tmp = Arrayify::values($tmp);
         $this->assertSame(['1', '2', '3'], $tmp);
         $this->assertCount(3, $tmp);
+    }
+
+    public function testFormatKeyCase()
+    {
+        $this->assertSame(['test' => 1], Arrayify::formatKeyCase(['TEST' => 1]));
     }
 
     public function testSort()

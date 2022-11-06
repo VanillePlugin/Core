@@ -18,7 +18,7 @@ use VanillePlugin\int\ShortcodeInterface;
 use VanillePlugin\inc\Shortcode;
 
 /**
- * Shortcode Helper.
+ * Wrapper class for shortcode.
  */
 abstract class AbstractShortcode extends View implements ShortcodeInterface
 {

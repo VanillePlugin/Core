@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * Redis Helper Class.
+ * Redis plugin helper class.
  * 
  * @see https://github.com/rhubarbgroup/redis-cache
  */

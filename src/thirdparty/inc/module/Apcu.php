@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\module;
 
 /**
- * APCu Helper Class.
+ * APCu module helper class.
  * 
  * @see https://www.php.net/manual/en/function.apcu-clear-cache.php
  */

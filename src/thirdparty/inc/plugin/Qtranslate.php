@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * QTranslate Helper Class.
+ * QTranslate plugin helper class.
  * 
  * @see https://github.com/qtranslate/qtranslate-xt
  */

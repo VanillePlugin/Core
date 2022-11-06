@@ -18,7 +18,7 @@ use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\TypeCheck;
 
 /**
- * Wrapper Class for Advanced Transients API.
+ * Wrapper class for advanced Transients API.
  */
 final class Transient extends PluginOptions
 {

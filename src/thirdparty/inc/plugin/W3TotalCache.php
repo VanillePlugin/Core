@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * W3 Total Cache Helper Class.
+ * W3 Total Cache plugin helper class.
  * 
  * @see https://github.com/W3EDGE/w3-total-cache
  */

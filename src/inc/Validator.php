@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
+/**
+ * Advanced custom I/O validation helper,
+ * @see https://wordpress.org/about/security/.
+ */
 class Validator
 {
     /**
@@ -21,14 +25,11 @@ class Validator
      *
 	 * @access public
 	 * @param string $ip
-	 * @return bool
+	 * @return mixed
 	 */
 	public static function isValidIP($ip = '')
 	{
-		if ( rest_is_ip_address($ip) ) {
-			return true;
-		}
-		return false;
+		return rest_is_ip_address($ip);
 	}
 
     /**
@@ -57,10 +58,7 @@ class Validator
 	 */
 	public static function isValidEmail($email = '')
 	{
-		if ( is_email($email) ) {
-			return true;
-		}
-		return false;
+		return (bool)is_email($email);
 	}
 
     /**

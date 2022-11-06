@@ -155,6 +155,7 @@ final class Arrayify
 	 * @param array $array
 	 * @param string $key
 	 * @return array
+	 * @todo improve
 	 */
 	public static function uniqueMultipleByKey($array, $key = '')
 	{
@@ -205,6 +206,17 @@ final class Arrayify
 			return array_filter($array,$callable,$mode);
 		}
 		return array_filter($array);
+	}
+
+	/**
+	 * @access public
+	 * @param array $array
+	 * @param int $case
+	 * @return array
+	 */
+	public static function formatKeyCase($array, $case = CASE_LOWER)
+	{
+		return array_change_key_case((array)$array,$case);
 	}
 
     /**

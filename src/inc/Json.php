@@ -54,7 +54,7 @@ final class Json extends File
 	}
 
 	/**
-	 * Format JSON For WordPress.
+	 * Format JSON for WordPress.
 	 *
 	 * @access public
 	 * @param mixed $value

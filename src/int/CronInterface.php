@@ -17,35 +17,44 @@ namespace VanillePlugin\int;
 interface CronInterface
 {
     /**
-     * Filter : cron_schedules
+     * Apply schedulers.
+     * Filter: cron_schedules
      *
      * @param array $schedules
-     * @return void
+     * @return array
      */
     function apply($schedules);
 
     /**
+     * Start schedulers.
+     *
      * @param void
      * @return void
      */
     function start();
 
     /**
+     * Check scheduled waitlist.
+     *
      * @param string $name
      * @return bool
      */
     function next($name);
 
     /**
+     * Check scheduled waitlist.
+     *
      * @param int $interval
      * @param string $hook
-     * @return void
+     * @return mixed
      */
     function schedule($interval,$hook);
 
     /**
+     * Clear hooked schedulers.
+     *
      * @param string $name
-     * @return void
+     * @return mixed
      */
     function clear($name);
 }

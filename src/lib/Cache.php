@@ -20,7 +20,7 @@ use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
 
 /**
- * Wrapper Class for Object Cache (non-persistent).
+ * Wrapper class for cache object (non-persistent).
  */
 final class Cache extends PluginOptions
 {

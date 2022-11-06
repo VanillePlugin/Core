@@ -18,7 +18,7 @@ use VanillePlugin\thirdparty\inc\plugin\Amp as WpAmp;
 use VanillePlugin\thirdparty\inc\plugin\AmpForWp;
 
 /**
- * Third-Party AMP Helper Class.
+ * Third-Party AMP helper class.
  */
 final class AMP
 {

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * Kinsta (MU) Helper Class.
+ * Kinsta (MU) plugin helper class.
  * 
  * @see https://github.com/retlehs/kinsta-mu-plugins
  */

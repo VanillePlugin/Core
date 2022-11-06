@@ -17,7 +17,7 @@ namespace VanillePlugin\int;
 interface RequirementInterface
 {
 	/**
-	 * Check plugin cache path.
+	 * Check plugin paths.
 	 * 
 	 * @param void
 	 * @return void
@@ -25,30 +25,40 @@ interface RequirementInterface
 	function requirePath();
 
 	/**
+	 * Requires plugins.
+	 * 
 	 * @param void
 	 * @return void
 	 */
 	function requirePlugins();
 
 	/**
+	 * Requires options.
+	 * 
 	 * @param void
 	 * @return void
 	 */
 	function requireOptions();
 
 	/**
+	 * Requires templates.
+	 * 
 	 * @param void
 	 * @return void
 	 */
 	function requireTemplates();
-	
+
 	/**
+	 * Requires modules.
+	 * 
 	 * @param void
 	 * @return void
 	 */
 	function requireModules();
 
 	/**
+	 * Requires PHP version.
+	 * 
 	 * @param void
 	 * @return void
 	 */

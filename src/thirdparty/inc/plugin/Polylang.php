@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * Polylang Helper Class.
+ * Polylang plugin helper class.
  * 
  * @see https://github.com/polylang/polylang
  */

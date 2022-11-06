@@ -14,8 +14,24 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
+/**
+ * Built-in filesystem class,
+ * @see Using WP Filesystem API for external use is recommended.
+ */
 class File
 {
+	/**
+	 * Init filesystem.
+	 *
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public static function init()
+	{
+		WP_Filesystem();
+	}
+
 	/**
 	 * Analyse file.
 	 *
@@ -502,7 +518,7 @@ class File
 		if ( self::isDir($path) ) {
 			$files = glob(Stringify::formatPath("{$path}/*.*"));
 			return Arrayify::combine(
-				$files,array_map('filectime',$files)
+				$files,Arrayify::map('filectime',$files)
 			);
 		}
 		return false;

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 /**
- * Wrapper Class for DB Object.
+ * Wrapper class for database Object.
  */
 class Db extends PluginOptions
 {

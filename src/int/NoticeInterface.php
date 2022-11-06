@@ -16,9 +16,13 @@ namespace VanillePlugin\int;
 
 interface NoticeInterface
 {
-	/**
-	 * @param array $callable
-	 * @return void
-	 */
-	function init($callable = []);
+    /**
+     * Init notice.
+     * 
+     * @param array $callable
+     * @return void
+     * 
+     * Action: admin_notices
+     */
+    function init($callable = []);
 }

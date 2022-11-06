@@ -19,12 +19,12 @@ use VanillePlugin\int\OrmQueryInterface;
 use VanillePlugin\inc\Stringify;
 
 /**
- * Helper Class for DB Object uses ORM query style.
+ * Helper class for database Object uses ORM query style.
  */
 class Orm extends Db implements OrmInterface
 {
 	/**
-	 * Init Db object.
+	 * Init db object.
 	 *
 	 * @param void
 	 */

@@ -26,7 +26,7 @@ use VanillePlugin\thirdparty\inc\plugin\WpSuperCache;
 use VanillePlugin\thirdparty\inc\plugin\CacheEnabler;
 
 /**
- * Third-Party Cache Helper Class.
+ * Third-Party cache helper class.
  */
 final class Cache
 {

@@ -25,7 +25,7 @@ use VanillePlugin\inc\API;
 use \stdClass;
 
 /**
- * Wrapper Class for Self-Hosted Plugin.
+ * Wrapper class for Self-Hosted plugin.
  */
 class Updater extends PluginOptions implements UpdaterInterface
 {

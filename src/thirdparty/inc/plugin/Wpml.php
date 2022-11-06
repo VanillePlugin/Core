@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * WPML Helper Class.
+ * WPML plugin helper class.
  * 
  * @see https://github.com/wp-premium/wpml-media
  */

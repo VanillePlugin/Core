@@ -19,7 +19,6 @@ interface ViewInterface
     /**
      * Define custom callables.
      *
-     * @access public
      * @param array $callables
      * @return void
      */
@@ -28,8 +27,8 @@ interface ViewInterface
     /**
      * Render view.
      *
-     * @access public
-     * @param {inherit}
+     * @param array $content
+     * @param string $template
      * @return void
      */
     function render($content = [], $template = 'default');
@@ -37,10 +36,9 @@ interface ViewInterface
     /**
      * Aassign content to view.
      *
-     * @access public
      * @param array $content
      * @param string $template
-     * @return string
+     * @return mixed
      */
     function assign($content = [], $template = 'default');
 }

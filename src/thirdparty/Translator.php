@@ -19,7 +19,7 @@ use VanillePlugin\thirdparty\inc\plugin\Polylang;
 use VanillePlugin\thirdparty\inc\plugin\Qtranslate;
 
 /**
- * Third-Party Translator Helper Class.
+ * Third-Party translator helper class.
  */
 final class Translator
 {

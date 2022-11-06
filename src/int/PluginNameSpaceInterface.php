@@ -16,9 +16,11 @@ namespace VanillePlugin\int;
 
 interface PluginNameSpaceInterface
 {
-	/**
-	 * @param void
-	 * @return string 
-	 */
+    /**
+     * Get plugin namespace (Slug).
+     *
+     * @param void
+     * @return string 
+     */
     function getNameSpace();
 }

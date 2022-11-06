@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * AMP Helper Class.
+ * AMP plugin helper class.
  * 
  * @see https://github.com/ampproject/amp-wp/
  */

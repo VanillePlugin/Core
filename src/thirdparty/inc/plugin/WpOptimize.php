@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * WP-Optimize Helper Class.
+ * WP-Optimize plugin helper class.
  * 
  * @see https://github.com/DavidAnderson684/WP-Optimize
  */

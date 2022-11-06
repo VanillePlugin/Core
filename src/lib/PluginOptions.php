@@ -26,8 +26,8 @@ use VanillePlugin\inc\GlobalConst;
 use VanillePlugin\thirdparty\Translator;
 
 /**
- * Wrapper Class for Advanced Plugin Options API,
- * Defines Only Base Functions Used by Plugins (PluginNameSpaceInterface),
+ * Wrapper class for advanced Plugin Options API,
+ * Defines only base functions used by plugins (PluginNameSpaceInterface),
  * Notice: Multiple instances of this class have no impact on performance.
  * 
  * @see https://developer.wordpress.org/plugins/

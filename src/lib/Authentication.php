@@ -21,8 +21,8 @@ use VanillePlugin\inc\Server;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
 /**
- * Built-in Authentication Class,
- * @see Use JWT instead.
+ * Built-in authentication class,
+ * @see Use JWT for external use is recommended.
  */
 final class Authentication extends PluginOptions
 {

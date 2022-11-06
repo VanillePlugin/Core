@@ -17,7 +17,7 @@ namespace VanillePlugin\inc;
 use VanillePlugin\int\LoggerInterface;
 
 /**
- * Advanced API Request Client Helper.
+ * Advanced request client helper.
  */
 class API extends Request
 {

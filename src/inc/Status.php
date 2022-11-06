@@ -68,6 +68,6 @@ class Status
 			504 => 'Gateway Timeout',
 			505 => 'HTTP Version Not Supported'
 		];
-		return isset($status[$code]) ? $status[$code] : $status[500];
+		return $status[$code] ?? $status[500];
 	}
 }

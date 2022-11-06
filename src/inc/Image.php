@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-final class Image
+final class Image extends File
 {
 	/**
 	 * Upload image file.
@@ -60,13 +60,13 @@ final class Image
 		}
 
 		// Set image upload data
-		$data = File::getMime($name);
+		$data = self::getMime($name);
 		$mime = $data['type'];
 		$dir  = Upload::dir();
 		$path = "{$dir['path']}/{$name}";
 
 		// Get existing image from gallery by name (Title)
-		if ( ($id = Attachment::getIdByTitle(File::getFileName($path))) ) {
+		if ( ($id = Attachment::getIdByTitle(self::getFileName($path))) ) {
 
 		    return [
 		    	'id'  => $id,
@@ -77,9 +77,9 @@ final class Image
 
 			// Duplicate image
 			if ( !$override ) {
-				if ( File::exists($path) ) {
+				if ( self::exists($path) ) {
 					$ext  = $data['ext'];
-					$tmp  = File::getFileName($name);
+					$tmp  = self::getFileName($name);
 					$id   = Tokenizer::getUniqueId();
 					$name = "{$tmp}-{$id}.{$ext}";
 					$path = "{$dir['path']}/{$name}";
@@ -87,7 +87,7 @@ final class Image
 			}
 
 			// Import image
-			if ( !File::import($url,$path) ) {
+			if ( !self::import($url,$path) ) {
 				return false;
 			}
 

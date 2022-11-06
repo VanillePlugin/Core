@@ -17,7 +17,7 @@ namespace VanillePlugin\inc;
 use \WP_Error;
 
 /**
- * Exception|Error Handler Helper.
+ * Exception and error handler helper.
  */
 class Exception extends \Exception
 {

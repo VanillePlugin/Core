@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * LiteSpeed Helper Class.
+ * LiteSpeed plugin helper class.
  * 
  * @see https://github.com/litespeedtech/lscache_wp
  */

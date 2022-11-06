@@ -21,6 +21,7 @@ use VanillePlugin\inc\File;
 
 /**
  * Class loader for custom functions and shortcodes.
+ * @internal
  */
 final class Loader extends PluginOptions
 {

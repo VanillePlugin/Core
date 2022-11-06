@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace VanillePlugin\inc;
 
 /**
- * Built-in Tokenizer Class,
- * @see Using JWT instead is recommended.
+ * Built-in tokenizer class,
+ * @see Using JWT for external use is recommended.
  */
 class Tokenizer
 {
@@ -155,7 +155,7 @@ class Tokenizer
     }
 
     /**
-     * Get unique Id.
+     * Get random unique Id.
      *
      * @access public
      * @param void
@@ -166,5 +166,21 @@ class Tokenizer
         return md5(
             uniqid((string)time())
         );
+    }
+
+    /**
+     * Get random UUID (4).
+     *
+     * @access public
+     * @param bool $format
+     * @return string
+     */
+    public static function getUUID($format = false)
+    {
+        $uuid = wp_generate_uuid4();
+        if ( $format ) {
+            return Stringify::replace('-','',$uuid);
+        }
+        return $uuid;
     }
 }

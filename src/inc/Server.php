@@ -86,18 +86,18 @@ final class Server
 		}
 		if ( self::isSetted('http-x-real-ip') ) {
 			$ip = self::get('http-x-real-ip');
-			return Stringify::slashStrip($ip);
+			return Stringify::stripSlash($ip);
 
 		} elseif ( self::isSetted('http-x-forwarded-for') ) {
 			$ip = self::get('http-x-forwarded-for');
-			$ip = Stringify::slashStrip($ip);
+			$ip = Stringify::stripSlash($ip);
 			$ip = Stringify::split($ip, ['regex' => '/,/']);
 			$ip = (string) trim(current($ip));
  			return Validator::isValidIP($ip);
 
 		} elseif ( self::isSetted('remote-addr') ) {
 			$ip = self::get('remote-addr');
-			return Stringify::slashStrip($ip);
+			return Stringify::stripSlash($ip);
 		}
 		return false;
 	}
@@ -133,7 +133,7 @@ final class Server
 			if ( self::isSetted($header) ) {
 				$code = self::get($header);
 				if ( !empty($code) ) {
-					$code = Stringify::slashStrip($code);
+					$code = Stringify::stripSlash($code);
 					return Stringify::uppercase($code);
 					break;
 				}
@@ -370,8 +370,9 @@ final class Server
 
         } elseif ( function_exists('apache_request_headers') ) {
             $requestHeaders = apache_request_headers();
-            $requestHeaders = array_combine(
-            	array_map('ucwords',array_keys($requestHeaders)),array_values($requestHeaders)
+            $requestHeaders = Arrayify::combine(
+            	Arrayify::map('ucwords',Arrayify::keys($requestHeaders)),
+            	Arrayify::values($requestHeaders)
             );
             if ( isset($requestHeaders['Authorization']) ) {
                 return trim($requestHeaders['Authorization']);
@@ -434,6 +435,7 @@ final class Server
 	 * @access private
 	 * @param string $arg
 	 * @return string
+	 * @internal
 	 */
 	private static function formatArgs($arg)
 	{

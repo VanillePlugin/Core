@@ -20,7 +20,7 @@ use VanillePlugin\int\RestApiInterface;
 use \WP_REST_Server as WPRestServer;
 
 /**
- * Wrapper Class for RestAPI.
+ * Wrapper class for RestAPI.
  */
 abstract class AbstractRestAPI extends PluginOptions implements RestApiInterface
 {

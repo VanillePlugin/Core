@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty;
 
 /**
- * Web Server Helper Class.
+ * Web server helper class.
  */
 final class Server
 {

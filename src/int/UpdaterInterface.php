@@ -16,30 +16,48 @@ namespace VanillePlugin\int;
 
 interface UpdaterInterface
 {
+
     /**
      * @param PluginNameSpaceInterface $plugin
      * @param string $host
      * @param array $args
+     *
+     * Action: admin_init
      */
     function __construct(PluginNameSpaceInterface $plugin, $host, $args = []);
 
     /**
+     * Get plugin info.
+     * 
      * @param object $transient
      * @param string $action
-     * @param array $args
+     * @param object $args
      * @return mixed
      */
     function getInfo($transient, $action, $args);
-    
+
     /**
+     * Check plugin update.
+     * 
      * @param object $transient
-     * @return mixed
+     * @return object
      */
     function checkUpdate($transient);
 
     /**
+     * Check plugin translation update.
+     * 
      * @param object $transient
-     * @return mixed
+     * @return object
      */
     function checkTranslation($transient);
+
+    /**
+     * Filter updater args,
+     * Allow unsafe updater URLs for non SSL.
+     * 
+     * @param array $args
+     * @return array
+     */
+    function filterArgs($args);
 }

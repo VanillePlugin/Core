@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * Cache Enabler Helper Class.
+ * Cache Enabler plugin helper class.
  * 
  * @see https://github.com/keycdn/cache-enabler
  */

@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
+/**
+ * Advanced shortcode helper.
+ */
 final class Shortcode
 {
 	/**
@@ -40,7 +43,7 @@ final class Shortcode
 	public static function formatAttributes($atts = [])
 	{
 		$attributes = [];
-		$atts = array_change_key_case((array)$atts,CASE_LOWER);
+		$atts = Arrayify::formatKeyCase($atts);
 		foreach ($atts as $key => $value) {
 			if ( TypeCheck::isString($key) ) {
 				$key = self::formatAttributeName($key);
@@ -67,13 +70,13 @@ final class Shortcode
 	 * 
 	 * @access public
 	 * @param string $value
-	 * @param bool $spaceStrip
+	 * @param bool $strip, Strip space
 	 * @return string
 	 */
-	public static function formatSeparator($value = '', $spaceStrip = false)
+	public static function formatSeparator($value = '', $strip = false)
 	{
-		if ( $spaceStrip ) {
-			$value = Stringify::spaceStrip($value);
+		if ( $strip ) {
+			$value = Stringify::stripSpace($value);
 		}
 		$value = Stringify::replace(';',',',$value);
 		$value = Stringify::replace('|',',',$value);

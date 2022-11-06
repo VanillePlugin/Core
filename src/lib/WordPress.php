@@ -19,8 +19,8 @@ use VanillePlugin\inc\Stringify;
 use \WP_User;
 
 /**
- * Wrapper Class for Advanced WordPress Global Functions,
- * Defines Only Base Functions Used by Plugins.
+ * Wrapper class for advanced WordPress global functions,
+ * Defines only base functions used by plugins (PluginNameSpaceInterface).
  * 
  * @see https://developer.wordpress.org/
  */
@@ -60,6 +60,7 @@ class WordPress
 	 * @param string $file
 	 * @param callable $callback
 	 * @return void
+	 * @see Used isAdmin() for better performance
 	 */
 	protected function registerUninstall($file, $callback)
 	{
@@ -94,7 +95,7 @@ class WordPress
 	}
 
 	/**
-	 * Checks Whether a shortcode exists.
+	 * Checks whether a shortcode exists.
 	 *
 	 * @access protected
 	 * @param string $tag
@@ -379,7 +380,7 @@ class WordPress
 	 */
 	protected function addOption($option, $value)
 	{
-		return add_option($option,Stringify::serialize($value));
+		return add_option($option,$value);
 	}
 
 	/**
@@ -387,13 +388,14 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $option
-	 * @param string $default
+	 * @param mixed $default
 	 * @return mixed
 	 */
-	protected function getOption($option, $default = null)
+	protected function getOption($option, $default = false)
 	{
-		$option = Stringify::unserialize(get_option($option,$default));
-		return Stringify::slashStrip($option);
+		return Stringify::deepStripSlash(
+			get_option($option,$default)
+		);
 	}
 
 	/**

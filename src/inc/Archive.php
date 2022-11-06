@@ -18,7 +18,7 @@ use \ZipArchive as ZIP;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 
-final class Archive
+final class Archive extends File
 {
 	/**
 	 * Compress archive.
@@ -42,7 +42,7 @@ final class Archive
 			$to = "{$to}/{$archive}.zip";
 			$zip = new ZIP();
 			if ( $zip->open($to, ZIP::CREATE | ZIP::OVERWRITE) ) {
-				if ( File::isDir($path) ) {
+				if ( self::isDir($path) ) {
 					$files = new RecursiveIteratorIterator(
 					    new RecursiveDirectoryIterator($path),
 					    RecursiveIteratorIterator::LEAVES_ONLY
@@ -53,7 +53,7 @@ final class Archive
 					        $zip->addFile($p,basename($name));
 					    }
 					}
-				} elseif ( File::isFile($path) ) {
+				} elseif ( self::isFile($path) ) {
 					$zip->addFile($path,basename($path));
 				}
 				$zip->close();
@@ -74,7 +74,7 @@ final class Archive
 	 */
 	public static function uncompress($archive = '', $to = '', $remove = false)
 	{
-		if ( File::exists($archive) ) {
+		if ( self::exists($archive) ) {
 
 			if ( empty($to) ) {
 				$to = dirname($archive);
@@ -93,7 +93,7 @@ final class Archive
 				return self::unGzip($archive);
 
 			} else {
-				WP_Filesystem();
+				self::init();
 				$result = unzip_file($archive,$to);
 				if ( $result && !Exception::isError($result) ) {
 					return true;
@@ -101,7 +101,7 @@ final class Archive
 			}
 
 			if ( $remove ) {
-				File::remove($archive);
+				self::remove($archive);
 			}
 		}
 		return false;
@@ -117,7 +117,7 @@ final class Archive
 	 */
 	public static function isGzip($archive, $length = 4096) : bool
 	{
-		if ( File::isFile($archive) ) {
+		if ( self::isFile($archive) ) {
 			$status = false;
 			if ( ($gz = gzopen($archive,'r')) ) {
 				$status = (bool)gzread($gz,$length);

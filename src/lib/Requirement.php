@@ -21,7 +21,7 @@ use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\TypeCheck;
 
-final class Requirement extends Notice implements RequirementInterface
+class Requirement extends Notice implements RequirementInterface
 {
 	/**
 	 * @access private
@@ -76,7 +76,7 @@ final class Requirement extends Notice implements RequirementInterface
 	}
 	
 	/**
-	 * Check plugin cache path.
+	 * Check plugin paths.
 	 * 
 	 * @access public
 	 * @param void

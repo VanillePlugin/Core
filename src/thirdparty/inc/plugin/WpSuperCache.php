@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * WP Super Cache Helper Class.
+ * WP Super Cache plugin helper class.
  * 
  * @see https://github.com/Automattic/wp-super-cache
  */

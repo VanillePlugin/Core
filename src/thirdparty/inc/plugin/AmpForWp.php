@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * AMP for WP Helper Class.
+ * AMP for WP plugin helper class.
  * 
  * @see https://github.com/ahmedkaludi/Accelerated-Mobile-Pages
  */

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty;
 
 /**
- * Editor Helper Class.
+ * Third-Party editor helper class.
  */
 final class Editor
 {
