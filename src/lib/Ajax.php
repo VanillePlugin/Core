@@ -23,20 +23,21 @@ class Ajax extends PluginOptions implements AjaxInterface
 {
 	/**
 	 * @access private
-	 * @var array $callable
-	 * @var array $actions
+	 * @var object $callable
+	 * @var object $actions
+	 * @var string $type
 	 */
-	private $callable = [];
-	private $actions = [];
+	private $callable;
+	private $actions;
 
 	/**
-	 * Ajax controller.
+	 * Ajax init hook.
 	 *
-	 * @param object $callable
+	 * @param AdminAjaxInterface $callable
 	 * @param PluginNameSpaceInterface $plugin
 	 *
-	 * action : wp_ajax_{namespace}-{action}
-	 * action : wp_ajax_nopriv_{namespace}-{action} (public)
+	 * Action: wp_ajax_{namespace}-{action} (admin)
+	 * Action: wp_ajax_nopriv_{namespace}-{action} (front)
 	 */
 	public function __construct(AdminAjaxInterface $callable, PluginNameSpaceInterface $plugin)
 	{
@@ -47,36 +48,56 @@ class Ajax extends PluginOptions implements AjaxInterface
 		$this->callable = $callable;
 		$this->actions = $this->getAjax();
 
-		// Add hooks
-		foreach ($this->actions as $action) {
-			$this->addAction("wp_ajax_{$this->getNameSpace()}-{$action}", [$this,'callback']);
-			$this->addAction("wp_ajax_nopriv_{$this->getNameSpace()}-{$action}", [$this,'callback']);
+		// Add admin hook
+		foreach ($this->actions->admin as $action) {
+			$this->addAction("wp_ajax_{$this->getNameSpace()}-{$action}", [$this,'adminCallback']);
+		}
+
+		// Add front hook
+		foreach ($this->actions->front as $action) {
+			$this->addAction("wp_ajax_nopriv_{$this->getNameSpace()}-{$action}", [$this,'frontCallback']);
 		}
 	}
 
 	/**
-	 * AjaxCallback react as Ajax controller.
+	 * Ajax admin action callback.
 	 *
 	 * @access public
 	 * @param void
 	 * @return void
-	 *
-	 * use : isAction to separate actions
+	 * @see Use 'isAction' to validate action
 	 */
-	public function callback()
+	public function adminCallback()
 	{
-		foreach ($this->actions as $action) {
-			while ( $this->isAction($action) ) {
-				$this->callable->$action();
-				exit();
+		foreach ($this->actions->admin as $action) {
+			if ( $this->isAction($action) ) {
+				$this->callable->{$action}();
 			}
 		}
 		die();
 	}
 
 	/**
-	 * Check required action,
-	 * Supports both POST & GET methods.
+	 * Ajax front action callback.
+	 *
+	 * @access public
+	 * @param void
+	 * @return void
+	 * @see Use 'isAction' to validate action
+	 */
+	public function frontCallback()
+	{
+		foreach ($this->actions->front as $action) {
+			if ( $this->isAction($action) ) {
+				$this->callable->{$action}();
+			}
+		}
+		die();
+	}
+
+	/**
+	 * Validate Ajax action,
+	 * Accept both POST & GET methods.
 	 *
 	 * @access public
 	 * @param string $action

@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
+/**
+ * Built-in Encryption Class,
+ * @see Using JWT instead is recommended.
+ */
 class Encryption
 {
 	/**

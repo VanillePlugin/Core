@@ -50,7 +50,7 @@ final class GlobalConst
 	public static function pluginUrl($url = null)
 	{
 		if ( $url ) {
-			return Stringify::formatUrl(WP_PLUGIN_URL .'/'. $url);
+			return Stringify::escapeURL(WP_PLUGIN_URL .'/'. $url);
 		}
 		return WP_PLUGIN_URL;
 	}

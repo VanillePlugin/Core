@@ -27,7 +27,7 @@ use VanillePlugin\thirdparty\Translator;
 
 /**
  * Wrapper Class for Advanced Plugin Options API,
- * Defines Only Base Functions Used by Plugins.
+ * Defines Only Base Functions Used by Plugins (PluginNameSpaceInterface),
  * Notice: Multiple instances of this class have no impact on performance.
  * 
  * @see https://developer.wordpress.org/plugins/
@@ -37,7 +37,36 @@ class PluginOptions extends WordPress
 	use VanillePluginConfig;
 
 	/**
-	 * Fire plugin action.
+	 * Add plugin action.
+	 *
+	 * @access protected
+	 * @param string $hook
+	 * @param callable $callback
+	 * @param int $priority
+	 * @param int $args
+	 * @return true
+	 */
+	protected function addPluginAction($hook, $callback, $priority = 10, $args = 1)
+	{
+		return $this->addAction("{$this->getNameSpace()}-{$hook}",$callback,$priority,$args);
+	}
+
+	/**
+	 * Remove plugin action.
+	 *
+	 * @access protected
+	 * @param string $hook
+	 * @param callable $callback
+	 * @param int $priority
+	 * @return bool
+	 */
+	protected function removePluginAction($hook, $callback, $priority = 10)
+	{
+		return $this->removeAction("{$this->getNameSpace()}-{$hook}",$hook,$callback,$priority);
+	}
+
+	/**
+	 * Call plugin action.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -50,32 +79,16 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Add plugin action.
+	 * Check whether plugin has action.
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param callable $method
-	 * @param int $priority
-	 * @param int $args
-	 * @return true
+	 * @param callable $callback
+	 * @return mixed
 	 */
-	protected function addPluginAction($hook, $method, $priority = 10, $args = 1)
+	protected function hasPluginAction($hook, $callback = false)
 	{
-		return $this->addAction("{$this->getNameSpace()}-{$hook}",$method,$priority,$args);
-	}
-
-	/**
-	 * Remove plugin action.
-	 *
-	 * @access protected
-	 * @param string $hook
-	 * @param callable $method
-	 * @param int $priority
-	 * @return bool
-	 */
-	protected function removePluginAction($hook, $method, $priority = 10)
-	{
-		return $this->removeAction("{$this->getNameSpace()}-{$hook}",$hook,$method,$priority);
+		return $this->hasAction("{$this->getNameSpace()}-{$hook}",$callback);
 	}
 
 	/**
@@ -83,14 +96,14 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param callable $method
+	 * @param callable $callback
 	 * @param int $priority
 	 * @param int $args
 	 * @return true
 	 */
-	protected function addPluginFilter($hook, $method, $priority = 10, $args = 1)
+	protected function addPluginFilter($hook, $callback, $priority = 10, $args = 1)
 	{
-		return $this->addFilter("{$this->getNameSpace()}-{$hook}",$method,$priority,$args);
+		return $this->addFilter("{$this->getNameSpace()}-{$hook}",$callback,$priority,$args);
 	}
 
 	/**
@@ -98,13 +111,13 @@ class PluginOptions extends WordPress
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param callable $method
+	 * @param callable $callback
 	 * @param int $priority
 	 * @return bool
 	 */
-	protected function removePluginFilter($hook, $method, $priority = 10)
+	protected function removePluginFilter($hook, $callback, $priority = 10)
 	{
-		return $this->removeFilter("{$this->getNameSpace()}-{$hook}",$method,$priority);
+		return $this->removeFilter("{$this->getNameSpace()}-{$hook}",$callback,$priority);
 	}
 
 	/**
@@ -122,16 +135,71 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Has plugin filter.
+	 * Check whether plugin has filter.
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param mixed $method
+	 * @param mixed $callback
 	 * @return bool
 	 */
-	protected function hasPluginFilter($hook, $method = false)
+	protected function hasPluginFilter($hook, $callback = false)
 	{
-		return $this->hasFilter("{$this->getNameSpace()}-{$hook}",$method);
+		return $this->hasFilter("{$this->getNameSpace()}-{$hook}",$callback);
+	}
+	
+	/**
+	 * Add plugin shortcode.
+	 *
+	 * @access protected
+	 * @param callable $callback
+	 * @param string $tag
+	 * @return void
+	 */
+	protected function addPluginShortcode($callback, $tag = '')
+	{
+		if ( empty($tag) ) {
+			$tag = $this->getNameSpace();
+		} else {
+			$tag = Stringify::slugify($tag);
+			$tag = "{$this->getNameSpace()}-{$tag}";
+		}
+		$this->addShortcode($tag,$callback);
+	}
+
+	/**
+	 * Remove plugin shortcode.
+	 *
+	 * @access protected
+	 * @param string $tag
+	 * @return void
+	 */
+	protected function removePluginShortcode($tag = '')
+	{
+		if ( empty($tag) ) {
+			$tag = $this->getNameSpace();
+		} else {
+			$tag = Stringify::slugify($tag);
+			$tag = "{$this->getNameSpace()}-{$tag}";
+		}
+		$this->removeShortcode($tag);
+	}
+
+	/**
+	 * Checks Whether plugin shortcode exists.
+	 *
+	 * @access protected
+	 * @param string $tag
+	 * @return bool
+	 */
+	protected function pluginShortcodeExists($tag = '')
+	{
+		if ( empty($tag) ) {
+			$tag = $this->getNameSpace();
+		} else {
+			$tag = Stringify::slugify($tag);
+			$tag = "{$this->getNameSpace()}-{$tag}";
+		}
+		return $this->shortcodeExists($tag);
 	}
 
 	/**
@@ -146,7 +214,6 @@ class PluginOptions extends WordPress
 	 */
 	protected function registerPluginOption($group, $option, $args = null, $lang = null)
 	{
-		// Define multilingual
 		$lang = $this->setOptionLanguage($lang);
 		$this->registerOption("{$this->getPrefix()}{$group}","{$this->getPrefix()}{$option}{$lang}",$args);
 	}
@@ -162,7 +229,6 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginOption($option, $value, $lang = null)
 	{
-		// Define multilingual
 		$lang = $this->setOptionLanguage($lang);
 		return $this->addOption("{$this->getPrefix()}{$option}{$lang}",$value);
 	}
@@ -179,7 +245,6 @@ class PluginOptions extends WordPress
 	 */
 	protected function getPluginOption($option, $type = 'array', $default = false, $lang = null)
 	{
-		// Define multilingual
 		$lang = $this->setOptionLanguage($lang);
 		$value = $this->getOption("{$this->getPrefix()}{$option}{$lang}",$default);
 		switch ($type) {
@@ -212,7 +277,6 @@ class PluginOptions extends WordPress
 	 */
 	protected function updatePluginOption($option, $value, $lang = null)
 	{
-		// Define multilingual
 		$lang = $this->setOptionLanguage($lang);
 		return $this->updateOption("{$this->getPrefix()}{$option}{$lang}",$value);
 	}
@@ -227,13 +291,12 @@ class PluginOptions extends WordPress
 	 */
 	protected function removePluginOption($option, $lang = null)
 	{
-		// Define multilingual
 		$lang = $this->setOptionLanguage($lang);
 		return $this->removeOption("{$this->getPrefix()}{$option}{$lang}");
 	}
 
 	/**
-	 * Remove all plugin options.
+	 * Remove all plugin options (Under namespace).
 	 *
 	 * @access protected
 	 * @param void
@@ -241,23 +304,13 @@ class PluginOptions extends WordPress
 	 */
 	protected function removePluginOptions()
 	{
+		$prefix = $this->getNameSpace();
+		if ( empty($prefix) ) {
+			return false;
+		}
 		$db = new Orm();
-		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%{$this->getNameSpace()}_%'";
-		$db->query($query);
-	}
-
-	/**
-	 * Retrieves plugin option as object.
-	 *
-	 * @access protected
-	 * @param string $option
-	 * @return object
-	 */
-	protected function getPluginObject($option, $lang = null)
-	{
-		// Define multilingual
-		$lang = $this->setOptionLanguage($lang);
-		return Stringify::toObject($this->getPluginOption($option,'array',[],$lang));
+		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%{$prefix}_%'";
+		return (bool)$db->query($query);
 	}
 
 	/**
@@ -269,37 +322,47 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginMenuPage($settings = [])
 	{
-		// Set title 
-		$title = isset($settings['title']) ? $settings['title'] : '';
+		// Set title
+		$title = $settings['title'] ?? '';
 		if ( empty($title) ) {
-			$title = $this->translateString("{$this->getPluginName()} Dashboard");
+			$title = "{$this->getPluginName()} Dashboard";
 		}
-		// Set menu 
-		$menu = isset($settings['menu']) ? $settings['menu'] : '';
+		$title = $this->translateString($title);
+
+		// Set menu
+		$menu = $settings['menu'] ?? '';
 		if ( empty($menu) ) {
 			$menu = $this->getPluginName();
 		}
+		$menu = $this->translateString($menu);
+
 		// Set capability
-		$cap = isset($settings['capability']) ? $settings['capability'] : '';
+		$cap = $settings['capability'] ?? '';
 		if ( empty($cap) ) {
 			$prefix = Stringify::replace('-','_',$this->getNameSpace());
 			$cap = "manage_{$prefix}";
 		}
+
 		// Set slug
-		$slug = isset($settings['slug']) ? $settings['slug'] : '';
+		$slug = $settings['slug'] ?? '';
 		if ( empty($slug) ) {
 			$slug = $this->getNameSpace();
 		}
+
 		// Set callback 
-		$callback = isset($settings['callback']) ? $settings['callback'] : '';
+		$callback = $settings['callback'] ?? '';
 		if ( empty($callback) ) {
-			$callback = [$this,'index'];
+			if ( TypeCheck::hasMethod($this,'index') ) {
+				$callback = [$this,'index'];
+			}
 		}
+
 		// Set icon
-		$icon = isset($settings['icon']) ? $settings['icon'] : 'admin-plugins';
+		$icon = $settings['icon'] ?? 'admin-plugins';
 		if ( !empty($icon) && !Stringify::contains($icon,'http') ) {
 			$icon = "dashicons-{$icon}";
 		}
+
 		return $this->addMenuPage($title,$menu,$cap,$slug,$callback,$icon);
 	}
 
@@ -312,38 +375,55 @@ class PluginOptions extends WordPress
 	 */
 	protected function addPluginSubMenuPage($settings = [])
 	{
-		// Set parent 
-		$parent = isset($settings['parent']) ? $settings['parent'] : '';
+		// Set parent
+		$parent = $settings['parent'] ?? '';
 		if ( empty($parent) ) {
 			$parent = $this->getNameSpace();
 		}
-		// Set title 
-		$title = isset($settings['title']) ? $settings['title'] : '';
+
+		// Set title
+		$title = $settings['title'] ?? '';
 		if ( empty($title) ) {
-			$title = $this->translateString("{$this->getPluginName()} Dashboard");
+			$title = "{$this->getPluginName()} Dashboard";
 		}
-		// Set menu 
-		$menu = isset($settings['menu']) ? $this->translateString($settings['menu']) : '';
+		$title = $this->translateString($title);
+
+		// Set menu
+		$menu = $settings['menu'] ?? '';
 		if ( empty($menu) ) {
 			$menu = $this->getPluginName();
 		}
+		$menu = $this->translateString($menu);
+
 		// Set icon
-		if ( isset($settings['icon']) && !empty($settings['icon']) ) {
-			$menu = "{$settings['icon']} {$menu}";
+		$icon = $settings['icon'] ?? '';
+		if ( !empty($icon) ) {
+			$menu = "{$icon} {$menu}";
 		}
+
 		// Set capability
-		$cap = isset($settings['capability']) ? $settings['capability'] : '';
+		$cap = $settings['capability'] ?? '';
 		if ( empty($cap) ) {
 			$prefix = Stringify::replace('-','_',$this->getNameSpace());
 			$cap = "manage_{$prefix}";
 		}
+
 		// Set slug
-		$slug = isset($settings['slug']) ? "{$this->getNameSpace()}-{$settings['slug']}" : $this->getNameSpace();
-		// Set callback 
-		$callback = isset($settings['callback']) ? $settings['callback'] : '';
-		if ( empty($callback) ) {
-			$callback = [$this,'index'];
+		$slug = $settings['slug'] ?? '';
+		if ( empty($slug) ) {
+			$slug = $this->getNameSpace();
+		} else {
+			$slug = "{$this->getNameSpace()}-{$slug}";
 		}
+
+		// Set callback
+		$callback = $settings['callback'] ?? '';
+		if ( empty($callback) ) {
+			if ( TypeCheck::hasMethod($this,'index') ) {
+				$callback = [$this,'index'];
+			}
+		}
+
 		return $this->addSubMenuPage($parent,$title,$menu,$cap,$slug,$callback);
 	}
 
@@ -592,9 +672,13 @@ class PluginOptions extends WordPress
 	 */
 	protected function deleteTransients()
 	{
+		$prefix = $this->getNameSpace();
+		if ( empty($prefix) ) {
+			return false;
+		}
 		$db = new Orm();
-		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_transient_{$this->getNameSpace()}_%';";
-		(bool)$db->query($query);
+		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_transient_{$prefix}_%';";
+		return (bool)$db->query($query);
 	}
 
 	/**
@@ -606,9 +690,13 @@ class PluginOptions extends WordPress
 	 */
 	protected function deleteSiteTransients()
 	{
+		$prefix = $this->getNameSpace();
+		if ( empty($prefix) ) {
+			return false;
+		}
 		$db = new Orm();
-		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_site_transient_{$this->getNameSpace()}_%';";
-		(bool)$db->query($query);
+		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_site_transient_{$prefix}_%';";
+		return (bool)$db->query($query);
 	}
 
 	/**
@@ -795,10 +883,10 @@ class PluginOptions extends WordPress
 	 * @param string $cap
 	 * @return void
 	 */
-	protected function hadPluginCapability($cap = 'manage')
+	protected function hasPluginCapability($cap = 'manage')
 	{
 		$prefix = Stringify::replace('-','_',$this->getNameSpace());
-		$this->hadCapability("{$cap}_{$prefix}");
+		$this->hasCapability("{$cap}_{$prefix}");
 	}
 
 	/**
@@ -832,30 +920,6 @@ class PluginOptions extends WordPress
 		} else {
 			$this->removePluginCapability($roles,$cap);
 		}
-	}
-
-	/**
-	 * @access protected
-	 * @param void
-	 * @return bool
-	 */
-	protected function isGutenberg()
-	{
-		$gutenberg = false;
-		$classic = false;
-		if ( $this->hasFilter('replace_editor','gutenberg_init') ) {
-			$gutenberg = true;
-		}
-		if ( $this->versionCompare($GLOBALS['wp_version'],'5.0-beta','>') ) {
-			$classic = true;
-		}
-		if ( !$gutenberg && !$classic ) {
-			return false;
-		}
-		if ( !$this->isPlugin('classic-editor/classic-editor.php') ) {
-			return true;
-		}
-		return ($this->getOption('classic-editor-replace') === 'no-replace');
 	}
 
 	/**
@@ -894,7 +958,7 @@ class PluginOptions extends WordPress
 
 	/**
 	 * Set HTTP response,
-	 * Including translated message. 
+	 * Including translated message.
 	 * 
 	 * @access protected
 	 * @param mixed $message
@@ -905,7 +969,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function setResponse($message, $content = [], $status = 'success', $code = 200)
 	{
-		// Parse vars translation
+		// Parse translation vars
 		if ( TypeCheck::isArray($message) && count($message) == 2 ) {
 		  	$temp = $message[0];
 		  	$args = (array)$message[1];
@@ -914,6 +978,21 @@ class PluginOptions extends WordPress
 		} else {
 			$message = $this->translateString($message);
 		}
+		$this->setHttpResponse($message,$content,$status,$code);
+	}
+
+	/**
+	 * Set HTTP response without translating message.
+	 * 
+	 * @access protected
+	 * @param mixed $message
+	 * @param array $content
+	 * @param string $status
+	 * @param int $code
+	 * @return void
+	 */
+	protected function setHttpResponse($message, $content = [], $status = 'success', $code = 200)
+	{
 		Response::set($message,$content,$status,$code);
 	}
 	

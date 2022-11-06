@@ -17,6 +17,8 @@ namespace VanillePlugin\inc;
 final class Stringify
 {
 	/**
+	 * Search replace string(s).
+	 * 
 	 * @access public
 	 * @param mixed $search
 	 * @param mixed $replace
@@ -29,6 +31,8 @@ final class Stringify
 	}
 
 	/**
+	 * Search replace substring(s).
+	 * 
 	 * @access public
 	 * @param mixed $search
 	 * @param mixed $replace
@@ -42,6 +46,8 @@ final class Stringify
 	}
 
 	/**
+	 * Search replace string(s) using array.
+	 * 
 	 * @access public
 	 * @param array $search
 	 * @param array $replace
@@ -58,6 +64,8 @@ final class Stringify
 	}
 
 	/**
+	 * Search replace string(s) using regex.
+	 * 
 	 * @access public
 	 * @param mixed $regex
 	 * @param mixed $replace
@@ -72,6 +80,8 @@ final class Stringify
 	}
 
 	/**
+	 * Repeat string.
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @param int $times
@@ -83,6 +93,8 @@ final class Stringify
 	}
 
 	/**
+	 * Lowercase string.
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -93,6 +105,8 @@ final class Stringify
 	}
 
 	/**
+	 * Uppercase string.
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -103,6 +117,8 @@ final class Stringify
 	}
 
 	/**
+	 * Capitalize string.
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -111,32 +127,18 @@ final class Stringify
 	{
 		return ucfirst(self::lowercase($string));
 	}
-	
-	/**
-	 * @access public
-	 * @param array $array
-	 * @return object
-	 */
-	public static function toObject($array)
-	{
-	    if ( empty($array) || !TypeCheck::isArray($array) ) {
-	    	return false;
-	    }
-	    $obj = new \stdClass;
-	    foreach ( $array as $key => $val ) {
-	        $obj->{$key} = $val;
-	    }
-	    return (object)$obj;
-	}
 
 	/**
+	 * Slugify string.
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @return string
 	 */
 	public static function slugify(string $string)
 	{
-	  	return self::replace('_','-',sanitize_title($string));
+		$string = self::sanitizeTitle($string);
+	  	return self::replace('_','-',$string);
 	}
 
 	/**
@@ -163,19 +165,18 @@ final class Stringify
 	 *
 	 * @access public
 	 * @param string $string
-	 * @param array $args
+	 * @param array $args, [regex,limit,flags,length]
 	 * @return mixed
 	 */
 	public static function split($string, $args = [])
 	{
 		if ( isset($args['regex']) ) {
-			$limit = isset($args['$limit']) ? $args['$limit'] : -1;
-			$flags = isset($args['$flags']) ? $args['$flags'] : 0;
+			$limit = $args['limit'] ?? -1;
+			$flags = $args['flags'] ?? 0;
 			return preg_split($args['regex'],(string)$string,$limit,$flags);
-		} else {
-			$length = isset($args['length']) ? $args['length'] : 1;
-			return str_split((string)$string,$length);
 		}
+		$length = $args['length'] ?? 1;
+		return str_split((string)$string,$length);
 	}
 
 	/**
@@ -197,7 +198,7 @@ final class Stringify
 	 */
 	public static function formatKey($key)
 	{
-	    return sanitize_key((string)$key);
+	    return self::sanitizeKey((string)$key);
 	}
 
 	/**
@@ -291,6 +292,7 @@ final class Stringify
 	 * @access public
 	 * @param string $string
 	 * @return string
+	 * @todo use wp_kses_stripslashes
 	 */
 	public static function slashStrip($string)
 	{
@@ -399,40 +401,27 @@ final class Stringify
 	}
 
 	/**
-	 * Format URL
-	 *
+	 * Escape URL.
+	 * 
+	 * Filter: clean_url
+	 * Filter: wp_allowed_protocols
+	 * 
 	 * @access public
 	 * @param string $url
+	 * @param mixed $protocols
+	 * @param string $context
 	 * @return string
 	 */
-	public static function formatUrl($url)
+	public static function escapeURL($url, $protocols = null, $context = 'display')
 	{
-		return esc_url((string)$url);
+		return esc_url((string)$url,$protocols,$context);
 	}
 
 	/**
-	 * Escape SQL URL
-	 *
-	 * @access public
-	 * @param string $url
-	 * @return string
-	 */
-	public static function escapeUrl($url)
-	{
-		return esc_url_raw((string)$url);
-	}
-
-	/**
-	 * @access public
-	 * @param string $string
-	 * @return string
-	 */
-	public static function sanitizeText($string)
-	{
-		return sanitize_text_field((string)$string);
-	}
-
-	/**
+	 * Escape HTML.
+	 * 
+	 * Filter: esc_html
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -443,6 +432,25 @@ final class Stringify
 	}
 
 	/**
+	 * Escape XML.
+	 * 
+	 * Filter: esc_xml
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function escapeXML($string)
+	{
+		return esc_xml((string)$string);
+	}
+
+	/**
+	 * Escape JS,
+	 * Escape single quotes and fixes line endings.
+	 * 
+	 * Filter: js_escape
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -453,6 +461,10 @@ final class Stringify
 	}
 
 	/**
+	 * Escape HTML attributes.
+	 * 
+	 * Filter: attribute_escape
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -463,6 +475,8 @@ final class Stringify
 	}
 
 	/**
+	 * Escape SQL.
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -473,38 +487,238 @@ final class Stringify
 	}
 
 	/**
-	 * Get an excerpt of text.
-	 *
+	 * Escape textarea.
+	 * 
+	 * Filter: esc_textarea
+	 * 
 	 * @access public
-	 * @param string $content
-	 * @param int $length
-	 * @param string $more
+	 * @param string $string
 	 * @return string
 	 */
-	public static function excerpt($content, $length = 40, $more = '[...]')
+	public static function escapeTextarea($string)
 	{
-		$excerpt = strip_tags(trim($content));
-		$words = str_word_count( $excerpt, 2 );
-		if ( count($words) > $length ) {
-			$words = array_slice($words,0,$length,true);
-			end($words);
-			$position = key($words) + strlen(current($words));
-			$excerpt = substr($excerpt,0,$position) . ' ' . $more;
-		}
-		return $excerpt;
+		return esc_textarea((string)$string);
 	}
-	
+
 	/**
+	 * Sanitize text.
+	 * 
+	 * Filter: sanitize_text_field
+	 * 
 	 * @access public
-	 * @param mixed $number
-	 * @param int $decimals
-	 * @param string $dSep Decimals Separator
-	 * @param string $tSep Thousands Separator
-	 * @return float
+	 * @param string $string
+	 * @return string
 	 */
-	public static function toMoney($number, $decimals = 2, $dSep = '.', $tSep = ' ')
+	public static function sanitizeText($string)
 	{
-		return number_format((float)$number,$decimals,$dSep,$tSep);
+		return sanitize_text_field((string)$string);
+	}
+
+	/**
+	 * Sanitize textarea.
+	 * 
+	 * Filter: sanitize_textarea_field
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function sanitizeTextarea($string)
+	{
+		return sanitize_textarea_field((string)$string);
+	}
+
+	/**
+	 * Sanitize title.
+	 * 
+	 * Filter: sanitize_title
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @param string $fallback
+	 * @param string $context
+	 * @return string
+	 */
+	public static function sanitizeTitle($string, $fallback = '', $context = 'save')
+	{
+		return sanitize_title((string)$string,$fallback,$context);
+	}
+
+	/**
+	 * Sanitize key.
+	 * 
+	 * Filter: sanitize_key
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function sanitizeKey($string)
+	{
+		return sanitize_key((string)$string);
+	}
+
+	/**
+	 * Sanitize email.
+	 * 
+	 * Filter: sanitize_email
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function sanitizeEmail($string)
+	{
+		return sanitize_email((string)$string);
+	}
+
+	/**
+	 * Sanitize hex color (with #).
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @return mixed
+	 */
+	public static function sanitizeColor($string)
+	{
+		return sanitize_hex_color((string)$string);
+	}
+
+	/**
+	 * Sanitize HTML class.
+	 * 
+	 * Filter: sanitize_html_class
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @param string $fallback
+	 * @return mixed
+	 */
+	public static function sanitizeHtmlClass($string, $fallback = '')
+	{
+		return sanitize_html_class((string)$string,$fallback);
+	}
+
+	/**
+	 * Sanitize filename, replacing whitespace with dashes.
+	 * 
+	 * Filter: sanitize_file_name
+	 * Filter: sanitize_file_name_chars
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function sanitizeFilename($string)
+	{
+		return sanitize_file_name((string)$string);
+	}
+
+	/**
+	 * Sanitize mime type.
+	 * 
+	 * Filter: sanitize_mime_type
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function sanitizeMimeType($string)
+	{
+		return sanitize_mime_type((string)$string);
+	}
+
+	/**
+	 * Sanitize SQL 'order by' clause.
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function sanitizeSQL($string)
+	{
+		return sanitize_sql_orderby((string)$string);
+	}
+
+	/**
+	 * Sanitize value based on option.
+	 * 
+	 * Filter: sanitize_option_{$option}
+	 * 
+	 * @access public
+	 * @param string $option
+	 * @param string $value
+	 * @return string
+	 */
+	public static function sanitizeOption($option, $value)
+	{
+		return sanitize_option((string)$option,(string)$value);
+	}
+
+	/**
+	 * Sanitize meta.
+	 * 
+	 * Filter: sanitize_{$type}_meta_{$key}
+	 * 
+	 * @access public
+	 * @param string $key
+	 * @param mixed $value
+	 * @param string $type
+	 * @param string $subtype
+	 * @return mixed
+	 */
+	public static function sanitizeMeta($key, $value, $type = 'post', $subtype = '')
+	{
+		return sanitize_meta($key,$value,$type,$subtype);
+	}
+
+	/**
+	 * Sanitize username.
+	 * 
+	 * Filter: sanitize_user
+	 * 
+	 * @access public
+	 * @param string $username
+	 * @param bool $strict
+	 * @return mixed
+	 */
+	public static function sanitizeUser($username, $strict = false)
+	{
+		return sanitize_user((string)$username,$strict);
+	}
+
+	/**
+	 * Sanitize URL,
+	 * For database, redirection, non-encoded usage.
+	 * 
+	 * Filter: wp_allowed_protocols
+	 * 
+	 * @access public
+	 * @param string $url
+	 * @param mixed $protocols
+	 * @return string
+	 */
+	public static function sanitizeURL($url, $protocols = null)
+	{
+		return sanitize_url((string)$url,$protocols);
+	}
+
+	/**
+	 * Sanitize HTML content,
+	 * Expect unslashed content.
+	 * 
+	 * Filter: wp_kses_allowed_html
+	 * Filter: wp_allowed_protocols
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @param mixed $html
+	 * @param mixed $protocols
+	 * @return string
+	 */
+	public static function sanitizeHTML($string, $html = 'post', $protocols = [])
+	{
+		return wp_kses((string)$string,$html,$protocols);
 	}
 
 	/**
@@ -522,7 +736,7 @@ final class Stringify
 		if ( $index === -1 ) {
 			return $matches;
 		}
-		return isset($matches[$index]) ? $matches[$index] : false;
+		return $matches[$index] ?? false;
 	}
 
 	/**
@@ -540,25 +754,7 @@ final class Stringify
 		if ( $index === -1 ) {
 			return $matches;
 		}
-		return isset($matches[$index]) ? $matches[$index] : false;
-	}
-
-	/**
-	 * Get random string.
-	 * 
-	 * @access public
-	 * @param int $length
-	 * @param string $char
-	 * @return string
-	 */
-	public static function randomize($length = 10, $char = '')
-	{
-		if ( empty($char) ) {
-			$char  = implode(range('a','f'));
-			$char .= implode(range('0','9'));
-		}
-		$shuffled = self::shuffle((string)$char);
-		return substr($shuffled,0,$length);
+		return $matches[$index] ?? false;
 	}
 
 	/**
@@ -575,7 +771,7 @@ final class Stringify
 
 	/**
 	 * Parse string (URL toolkit).
-	 *
+	 * 
 	 * @access public
 	 * @param string $string
 	 * @param array $result
@@ -589,7 +785,7 @@ final class Stringify
 
 	/**
 	 * Parse URL (URL toolkit).
-	 *
+	 * 
 	 * @access public
 	 * @param string $url
 	 * @param int $component
@@ -627,20 +823,21 @@ final class Stringify
 	 * @param mixed $value
 	 * @param callable $callback
 	 * @return mixed
+	 * @todo use stripslashes_deep
 	 */
 	private static function deepMap($value, $callback)
 	{
 	    if ( TypeCheck::isArray($value) ) {
 	        foreach ( $value as $index => $item ) {
-	            $value[$index] = self::deepMap($item, $callback);
+	            $value[$index] = self::deepMap($item,$callback);
 	        }
 	    } elseif ( TypeCheck::isObject($value) ) {
 	        $vars = get_object_vars($value);
 	        foreach ($vars as $name => $content) {
-	            $value->$name = self::deepMap($content, $callback);
+	            $value->$name = self::deepMap($content,$callback);
 	        }
 	    } else {
-	        $value = call_user_func($callback, $value);
+	        $value = call_user_func($callback,$value);
 	    }
 	    return $value;
 	}

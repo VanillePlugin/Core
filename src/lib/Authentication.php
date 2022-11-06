@@ -14,12 +14,16 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\Encryption;
+use VanillePlugin\inc\Tokenizer;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\Server;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
+/**
+ * Built-in Authentication Class,
+ * @see Use JWT instead.
+ */
 final class Authentication extends PluginOptions
 {
 	/**
@@ -43,6 +47,8 @@ final class Authentication extends PluginOptions
     }
 
 	/**
+	 * Check whether user is allowed.
+	 * 
 	 * @access public
 	 * @param array $args
 	 * @return bool
@@ -50,7 +56,7 @@ final class Authentication extends PluginOptions
 	public function isAllowed($args = [])
 	{
 		// Get public key
-		if ( !($key = $this->getBearerToken()) ) {
+		if ( !($key = Server::getBearerToken()) ) {
 			return false;
 		}
 
@@ -63,13 +69,13 @@ final class Authentication extends PluginOptions
 				// Authenticate with public & secret
 				$public = $this->tokens[$id]['public'];
 				$secret = $this->tokens[$id]['secret'];
-				$prefix = isset($args['prefix']) ? $args['prefix'] : '';
+				$prefix = $args['prefix'] ?? '';
 				$authenticated = $this->doAuthentication($public,$secret,$prefix);
 
 				// Check authenticated user
 				if ( $authenticated ) {
 					// check role
-					$role = isset($args['role']) ? $args['role'] : 'administrator';
+					$role = $args['role'] ?? 'administrator';
 					if ( Stringify::contains($authenticated->caps,$role) ) {
 						return true;
 					}
@@ -80,6 +86,8 @@ final class Authentication extends PluginOptions
 	}
 
 	/**
+	 * Add user public key.
+	 * 
 	 * @access public
 	 * @param int $user
 	 * @param string $key
@@ -87,10 +95,12 @@ final class Authentication extends PluginOptions
 	 */
 	public function addPublicKey($user, $key)
 	{
-		add_user_meta(intval($user),"_{$this->getNameSpace()}_public_key",$key);
+		add_user_meta((int)$user,"_{$this->getNameSpace()}_public_key",$key);
 	}
 
 	/**
+	 * Update user public key.
+	 * 
 	 * @access public
 	 * @param int $user
 	 * @param string $key
@@ -98,64 +108,24 @@ final class Authentication extends PluginOptions
 	 */
 	public function updatePublicKey($user, $key)
 	{
-		update_user_meta(intval($user),"_{$this->getNameSpace()}_public_key",$key);
+		update_user_meta((int)$user,"_{$this->getNameSpace()}_public_key",$key);
 	}
 
 	/**
+	 * Delete user public key.
+	 * 
 	 * @access public
 	 * @param int $user
 	 * @return void
 	 */
 	public function deletePublicKey($user)
 	{
-		delete_user_meta(intval($user),"_{$this->getNameSpace()}_public_key");
+		delete_user_meta((int)$user,"_{$this->getNameSpace()}_public_key");
 	}
 
 	/**
-	 * @access public
-	 * @param string $user
-	 * @param string $password
-	 * @param string $prefix
-	 * @return array
-	 */
-	public function generateToken($user, $password, $prefix = '')
-	{
-		$secret = md5(microtime().rand());
-		$encryption = new Encryption("{$user}:{$password}",$secret);
-		$encryption->setPrefix($prefix);
-		return [
-			'public' => $encryption->encrypt(),
-			'secret' => $secret
-		];
-	}
-
-	/**
-	 * @access private
-	 * @param void
-	 * @return mixed
-	 */
-	public function getBearerToken()
-	{
-	    $headers = Server::getAuthorizationHeaders();
-	    if ( !empty($headers) ) {
-	        return Stringify::match('/Bearer\s(\S+)/',$headers);
-	    }
-	    return false;
-	}
-
-	/**
-	 * @access public
-	 * @param string $password
-	 * @param string $hash
-	 * @param int $user
-	 * @return bool
-	 */
-	public static function isValidPassword($password, $hash, $user = null)
-	{
-		return wp_check_password($password,$hash,$user);
-	}
-
-	/**
+	 * Get user Id using public key.
+	 * 
 	 * @access private
 	 * @param string $key
 	 * @return mixed
@@ -167,40 +137,26 @@ final class Authentication extends PluginOptions
 			'meta_value' => $key
 		]);
 		$user = Arrayify::shift($users);
-		if ($user) {
+		if ( $user ) {
 			return (int)$user->data->ID;
 		}
 		return false;
 	}
 
 	/**
+	 * Authenticate user using public and secret key.
+	 * 
 	 * @access private
 	 * @param string $public
 	 * @param string $secret
 	 * @param string $prefix
 	 * @return mixed
 	 */
-	private function doAuthentication($public = '', $secret = '', $prefix = '')
+	private function doAuthentication($public, $secret, $prefix = '')
 	{
-		$encryption = new Encryption($public,$secret);
-		$encryption->setPrefix($prefix);
-		$credentials = explode(':',$encryption->decrypt());
-		$username = isset($credentials[0]) ? $credentials[0] : '';
-		$password = isset($credentials[1]) ? $credentials[1] : '';
-		return $this->authenticate($username,$password);
+		if ( ($match = Tokenizer::match($public,$secret,$prefix)) ) {
+			return $this->authenticate($match['username'],$match['password']);
+		}
+		return false;
 	}
-
-    /**
-     * Get password.
-     *
-     * @access public
-     * @param int $length
-     * @param bool $special
-     * @param bool $extra
-     * @return string
-     */
-    public static function getPassword($length = 12, $special = true, $extra = false)
-    {
-        return wp_generate_password($length,$special,$extra);
-    }
 }

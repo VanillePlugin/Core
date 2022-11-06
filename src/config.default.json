@@ -28,7 +28,10 @@
         "modules": [],
         "php": "7.2.5"
     },
-    "ajax": [],
+    "ajax": {
+        "admin":[],
+        "front":[]
+    },
     "routes": {},
     "assets": {}
 }

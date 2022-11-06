@@ -16,7 +16,6 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\int\OrmInterface;
 use VanillePlugin\int\OrmQueryInterface;
-use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\inc\Stringify;
 
 /**
@@ -35,26 +34,26 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * SQL query.
+	 * Execute SQL query.
 	 *
 	 * @access public
 	 * @param string $sql
 	 * @return mixed
 	 */
-	public function query($sql = '')
+	public function query($sql)
 	{
 		return $this->db->query($sql);
 	}
 
 	/**
-	 * SQL query prepare.
+	 * Prepare SQL query.
 	 *
 	 * @access public
 	 * @param string $sql
 	 * @param mixed $args
 	 * @return mixed
 	 */
-	public function prepare($sql = '', $args = [])
+	public function prepare($sql, $args = [])
 	{
 		return $this->db->prepare($sql,$args);
 	}
@@ -64,10 +63,10 @@ class Orm extends Db implements OrmInterface
 	 *
 	 * @access public
 	 * @param string $sql
-	 * @param string $type
+	 * @param string $type, Output type
 	 * @return mixed
 	 */
-	public function fetchQuery($sql = '', $isRow = false, $type = 'ARRAY_A')
+	public function fetchQuery($sql = null, $isRow = false, $type = 'ARRAY_A')
 	{
 		if ( $isRow ) {
 			return $this->getRow($sql,$type);
@@ -121,10 +120,10 @@ class Orm extends Db implements OrmInterface
 	 * @access public
 	 * @param string $table
 	 * @param array $data
-	 * @param mixed $format
+	 * @param mixed $format, Data format
 	 * @return mixed
 	 */
-	public function insert($table, $data = [], $format = false)
+	public function insert($table, $data = [], $format = null)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		if ( $this->db->insert("{$prefix}{$table}",$data,$format) ) {
@@ -140,17 +139,33 @@ class Orm extends Db implements OrmInterface
 	 * @param string $table
 	 * @param array $data
 	 * @param array $where
-	 * @param mixed $format
+	 * @param mixed $format, Data format
+	 * @param mixed $f, Where format
 	 * @return bool
 	 */
-	public function update($table, $data = [], $where = [], $format = false)
+	public function update($table, $data = [], $where = [], $format = null, $f = null)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		return (bool)$this->db->update("{$prefix}{$table}",$data,$where,$format);
+		return (bool)$this->db->update("{$prefix}{$table}",$data,$where,$format,$f);
 	}
 
 	/**
-	 * Delete table content.
+	 * Delete query.
+	 *
+	 * @access public
+	 * @param string $table
+	 * @param array $where
+	 * @param string $format, Where format
+	 * @return bool
+	 */
+	public function delete($table, $where = [], $format = null)
+	{
+		$prefix = "{$this->prefix}{$this->getPrefix()}";
+		return (bool)$this->db->delete("{$prefix}{$table}",$where,$format);
+	}
+
+	/**
+	 * Delete all content of table.
 	 *
 	 * @access public
 	 * @param string $table
@@ -160,11 +175,10 @@ class Orm extends Db implements OrmInterface
 	public function deleteAll($table, $resetId = true)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "DELETE FROM {$prefix}{$table}";
-		if ( ($result = $this->db->query($sql)) ) {
+		$sql = "DELETE FROM {$prefix}{$table};";
+		if ( ($result = $this->query($sql)) ) {
 			if ( $resetId === true ) {
-				$sql = "ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = 1";
-				$this->db->query($sql);
+				$this->resetId($table);
 			}
 			return (bool)$result;
 		}
@@ -172,54 +186,55 @@ class Orm extends Db implements OrmInterface
 	}
 
 	/**
-	 * Delete query.
-	 *
-	 * @access public
-	 * @param string $table
-	 * @param array $where
-	 * @param string $format
-	 * @return bool
-	 */
-	public function delete($table = '', $where = [], $format = null)
-	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		return (bool)$this->db->delete("{$prefix}{$table}",$where,$format);
-	}
-
-	/**
-	 * Get query var.
+	 * Get variable from database.
 	 *
 	 * @access public
 	 * @param string $sql
+	 * @param int $x, Column index
+	 * @param int $y, Row index
 	 * @return mixed
 	 */
-	public function getVar($sql = '')
+	public function getVar($sql = null, $x = 0, $y = 0)
 	{
-		return $this->db->get_var($sql);
+		return $this->db->get_var($sql,$x,$y);
 	}
 
 	/**
-	 * Get query row.
+	 * Get column from database.
 	 *
 	 * @access public
 	 * @param string $sql
-	 * @param string $type
+	 * @param int $x, Column index
 	 * @return mixed
 	 */
-	public function getRow($sql = '', $type = 'ARRAY_A')
+	public function getCol($sql = null, $x = 0)
 	{
-		return $this->db->get_row($sql,$type);
+		return $this->db->get_col($sql,$x);
 	}
 
 	/**
-	 * Get query result.
+	 * Get row from database.
 	 *
 	 * @access public
 	 * @param string $sql
-	 * @param string $type
+	 * @param string $type, Output type
+	 * @param int $y, Row index
 	 * @return mixed
 	 */
-	public function getResult($sql = '', $type = 'ARRAY_A')
+	public function getRow($sql = null, $type = 'ARRAY_A', $y = 0)
+	{
+		return $this->db->get_row($sql,$type,$y);
+	}
+
+	/**
+	 * Get result from database.
+	 *
+	 * @access public
+	 * @param string $sql
+	 * @param string $type, Output type
+	 * @return mixed
+	 */
+	public function getResult($sql = null, $type = 'ARRAY_A')
 	{
 		return $this->db->get_results($sql,$type);
 	}
@@ -229,13 +244,13 @@ class Orm extends Db implements OrmInterface
 	 *
 	 * @access public
 	 * @param string $table
-	 * @return mixed
+	 * @return bool
 	 */
-	public function resetId($table = '')
+	public function resetId($table)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "ALTER TABLE `{$prefix}{$table}` AUTO_INCREMENT = 1;";
-		return $this->db->query($sql);
+		return (bool)$this->query($sql);
 	}
 
 	/**
@@ -247,7 +262,7 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function getTables()
 	{
-		return (array)$this->db->query('show tables;');
+		return (array)$this->query('show tables;');
 	}
 
 	/**
@@ -257,11 +272,11 @@ class Orm extends Db implements OrmInterface
 	 * @param string $table
 	 * @return bool
 	 */
-	public function hasTable($table = '')
+	public function hasTable($table)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "SHOW TABLES LIKE '{$prefix}{$table}';";
-		return (bool)$this->db->query($sql);
+		return (bool)$this->query($sql);
 	}
 
 	/**
@@ -272,11 +287,11 @@ class Orm extends Db implements OrmInterface
 	 * @param string $field
 	 * @return mixed
 	 */
-	public function min($table = '', $field = '')
+	public function min($table, $field)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "SELECT min({$field}) FROM `{$prefix}{$table}`;";
-		return $this->db->query($sql);
+		return $this->query($sql);
 	}
 
 	/**
@@ -287,11 +302,11 @@ class Orm extends Db implements OrmInterface
 	 * @param string $field
 	 * @return mixed
 	 */
-	public function max($table = '', $field = '')
+	public function max($table, $field)
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "SELECT max({$field}) FROM `{$prefix}{$table}`;";
-		return $this->db->query($sql);
+		return $this->query($sql);
 	}
 
 	/**
@@ -306,7 +321,7 @@ class Orm extends Db implements OrmInterface
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "SELECT avg({$field}) FROM `{$prefix}{$table}`;";
-		return $this->db->query($sql);
+		return $this->query($sql);
 	}
 
 	/**
@@ -321,6 +336,6 @@ class Orm extends Db implements OrmInterface
 	{
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		$sql = "SELECT sum({$field}) FROM `{$prefix}{$table}`;";
-		return $this->db->query($sql);
+		return $this->query($sql);
 	}
 }

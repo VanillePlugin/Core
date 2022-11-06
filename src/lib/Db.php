@@ -34,7 +34,7 @@ class Db extends PluginOptions
 	protected $db;
 
 	/**
-	 * Wrapp Wordpress database object.
+	 * Wrap Wordpress database object.
 	 *
 	 * @access protected
 	 * @param void

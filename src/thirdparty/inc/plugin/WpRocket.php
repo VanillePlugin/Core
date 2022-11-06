@@ -89,74 +89,10 @@ final class WpRocket
 	 */
 	public static function regenerateConfiguration()
 	{
-		if ( function_exists('rocket_generate_config_file') ) {
+		if ( function_exists('rocket_generate_config_file')
+		  && function_exists('get_rocket_cache_reject_uri') ) {
 			rocket_generate_config_file();
 		}
-	}
-
-	/**
-	 * Force enabling geolocation.
-	 * Action: activation
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
-	 */
-	public static function enableGeo()
-	{
-		if ( function_exists('flush_wp_rocket') ) {
-			add_filter('rocket_cache_dynamic_cookies',function($cookies){
-				return $cookies;
-			});
-
-		}
-	}
-
-	/**
-	 * Force disabling geolocation.
-	 * Action: deactivation
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
-	 */
-	public static function disableGeo()
-	{
-		if ( function_exists('flush_wp_rocket') ) {
-			add_filter('rocket_cache_dynamic_cookies',function($cookies){
-				return $cookies;
-			});
-
-
-		}
-	}
-
-	/**
-	 * Add dynamic cookies.
-	 * Filter: rocket_cache_dynamic_cookies
-	 * 
-	 * @access public
-	 * @param array $cookies
-	 * @return array
-	 */
-	public static function addDynamicCookies($cookies)
-	{
-		$cookies[] = '--country';
-		return $cookies;
-	}
-
-	/**
-	 * Set mandatory cookies.
-	 * Filter: rocket_cache_mandatory_cookies
-	 * 
-	 * @access public
-	 * @param array $cookies
-	 * @return array
-	 */
-	public static function setMandatoryCookies($cookies)
-	{
-		$cookies[] = '--country';
-		return $cookies;
 	}
 
 	/**
@@ -169,6 +105,79 @@ final class WpRocket
 	 */
 	public static function disableRewrite()
 	{
-		add_filter('rocket_htaccess_mod_rewrite','__return_false');
+		add_filter('rocket_htaccess_mod_rewrite','__return_false',80);
+	}
+
+	/**
+	 * Enable plugin rewrite.
+	 * Filter: rocket_htaccess_mod_rewrite
+	 * 
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public static function enableRewrite()
+	{
+		remove_filter('rocket_htaccess_mod_rewrite','__return_false',80);
+	}
+
+	/**
+	 * Force enabling geolocation through cache using cookies.
+	 * Action: activation
+	 * Filter: rocket_cache_dynamic_cookies
+	 * Filter: rocket_cache_mandatory_cookies
+	 * 
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
+	public static function enableGeo($name)
+	{
+		// Disable plugin rewrite
+		self::disableRewrite();
+
+		// Creates cache file for each value of a specified cookie
+		add_filter('rocket_cache_dynamic_cookies', function($cookies) use ($name) {
+			$cookies[] = $name;
+			return $cookies;
+		});
+
+		// Prevents caching until the specified cookie is set
+		add_filter('rocket_cache_mandatory_cookies', function($cookies) use ($name) {
+			$cookies[] = $name;
+			return $cookies;
+		});
+
+		// Reset rewrite & configuration
+		self::reset();
+	}
+
+	/**
+	 * Disabling cache geolocation.
+	 * Action: deactivation
+	 * 
+	 * @access public
+	 * @param string $name
+	 * @return void
+	 */
+	public static function disableGeo($name)
+	{
+		// Enable plugin rewrite
+		self::enableRewrite();
+		
+		// Remove dynamic cookies
+		remove_filter('rocket_cache_dynamic_cookies', function($cookies) use ($name) {
+			$cookies[] = $name;
+			return $cookies;
+		});
+
+		// Remove mandatory cookies
+		remove_filter('rocket_cache_mandatory_cookies', function($cookies) use ($name) {
+			$cookies[] = $name;
+			return $cookies;
+		});
+
+		// Reset rewrite & configuration
+		self::reset();
 	}
 }

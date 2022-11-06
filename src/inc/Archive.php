@@ -17,7 +17,6 @@ namespace VanillePlugin\inc;
 use \ZipArchive as ZIP;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
-use \WP_Filesystem;
 
 final class Archive
 {

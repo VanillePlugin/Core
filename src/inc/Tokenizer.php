@@ -14,26 +14,56 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
+/**
+ * Built-in Tokenizer Class,
+ * @see Using JWT instead is recommended.
+ */
 class Tokenizer
 {
     /**
      * Get token.
      * 
      * @access public
-     * @param string $user
+     * @param string $username
      * @param string $password
+     * @param string $prefix
      * @return array
      */
-    public static function get($user, $password)
+    public static function get($username, $password, $prefix = '')
     {
-        $tokens = [];
-        $secret = md5(microtime().rand());
-        $encryption = new Encryption(trim("{{$user}}:{{$password}}"),$secret);
-        $tokens = [
+        $secret = self::getUniqueId();
+        $encryption = new Encryption("{user:{$username}}{pswd:{$password}}",$secret);
+        $encryption->setPrefix($prefix);
+        return [
             'public' => $encryption->encrypt(),
             'secret' => $secret
         ];
-        return $tokens;
+    }
+
+    /**
+     * Match token.
+     * 
+     * @access public
+     * @param string $public
+     * @param string $secret
+     * @param string $prefix
+     * @return mixed
+     */
+    public static function match($public, $secret, $prefix = '')
+    {
+        $pattern = '/{user:(.*?)}{pswd:(.*?)}/';
+        $encryption = new Encryption($public,$secret);
+        $encryption->setPrefix($prefix);
+        $access = $encryption->decrypt();
+        $username = Stringify::match($pattern,$access,1);
+        $password = Stringify::match($pattern,$access,2);
+        if ( $username && $password ) {
+            return [
+                'username' => $username,
+                'password' => $password
+            ];
+        }
+        return false;
     }
 
     /**

@@ -29,8 +29,8 @@ trait VanillePluginConfig
 	 * @var string $namespace
 	 */
 	private $path = '/core/storage/config/global.json';
-	private $global = false;
-	private $namespace = false;
+	private $global;
+	private $namespace;
 
 	/**
 	 * Get static instance.

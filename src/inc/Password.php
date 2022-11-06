@@ -17,16 +17,31 @@ namespace VanillePlugin\inc;
 final class Password extends Tokenizer
 {
     /**
-     * Validate password.
+     * Generate random password.
+     *
+     * @access public
+     * @param int $length
+     * @param bool $special, Special chars
+     * @param bool $extra, Extra chars
+     * @return string
+     */
+    public static function generate($length = 12, $special = true, $extra = false)
+    {
+        return wp_generate_password($length,$special,$extra);
+    }
+
+    /**
+     * Validate password against the encrypted password.
      * 
      * @access public
      * @param string $password
      * @param string $hash
+     * @param mixed $user
      * @return bool
      */
-    public static function isValid($password, $hash)
+    public static function isValid($password, $hash, $user = '')
     {
-        return password_verify($password,$hash);
+        return wp_check_password($password,$hash,$user);
     }
 
     /**
@@ -34,13 +49,11 @@ final class Password extends Tokenizer
      * 
      * @access public
      * @param string $password
-     * @param string $algo
-     * @param string $options
-     * @return mixed
+     * @return string
      */
-    public static function hash($password, $algo = PASSWORD_BCRYPT, $options = [])
+    public static function hash($password)
     {
-        return password_hash($password,$algo,$options);
+        return wp_hash_password($password);
     }
 
     /**
@@ -63,10 +76,10 @@ final class Password extends Tokenizer
         $special   = Stringify::match('@[^\w]@',$password);
 
         if ( !$uppercase 
-            || !$lowercase 
-            || !$number 
-            || !$special 
-            || strlen($password) < $length 
+          || !$lowercase 
+          || !$number 
+          || !$special 
+          || strlen($password) < $length 
         ) {
             return false;
         }

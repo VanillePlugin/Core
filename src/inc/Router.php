@@ -14,10 +14,11 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
+use VanillePlugin\int\RouterInterface;
 use \RuntimeException;
 use \Traversable;
 
-class Router
+class Router implements RouterInterface
 {
     /**
      * @access protected
@@ -108,22 +109,22 @@ class Router
     }
 
     /**
-     * Map route to target,
+     * Map route to target (controller),
      * (GET|POST|PATCH|PUT|DELETE),
-     * Custom regex must start with an @.
+     * Custom regex must start with an '@'.
      *
      * @access public
      * @param string $method
      * @param string $route
-     * @param mixed $target
+     * @param mixed $controller
      * @param string $name
      * @param string $permissions
      * @return void
      * @throws RuntimeException
      */
-    public function map($method, $route, $target, $name = null, $permissions = null)
+    public function map($method, $route, $controller, $name = null, $permissions = null)
     {
-        $this->routes[] = [$method,$route,$target,$name,$permissions];
+        $this->routes[] = [$method,$route,$controller,$name,$permissions];
         if ( $name ) {
             if ( isset($this->namedRoutes[$name]) ) {
                 throw new RuntimeException("Can not redeclare route '{$name}'");
@@ -175,12 +176,12 @@ class Router
     }
 
     /**
-     * Match a given Request Url against stored routes.
+     * Match given request URL against stored routes.
      *
      * @access public
      * @param string $requestUrl
      * @param string $requestMethod
-     * @return array|boolean
+     * @return mixed
      */
     public function match($requestUrl = null, $requestMethod = null)
     {
@@ -245,7 +246,7 @@ class Router
     }
 
     /**
-     * Compile the regex for a given route (EXPENSIVE).
+     * Compile regex for given route (Expensive).
      *
      * @access protected
      * @param $route
@@ -275,7 +276,7 @@ class Router
                         . ')'
                         . $optional;
 
-                $route = Stringify::replace($block, $pattern, $route);
+                $route = Stringify::replace($block,$pattern,$route);
             }
         }
         return "`^$route$`u";

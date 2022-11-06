@@ -134,14 +134,17 @@ final class Cache
 	 * Geolocation through cache.
 	 * 
 	 * @access public
-	 * @param void
+	 * @param string $name
 	 * @return bool
 	 * @internal
 	 */
-	public static function geolocate()
+	public static function geolocate($name)
 	{
-		if ( !self::isActive() ) {
-			return false;
+		if ( self::isActive() ) {
+			if ( WpRocket::isEnabled() ) {
+				WpRocket::enableGeo($name);
+				return true;
+			}
 		}
 		return false;
 	}

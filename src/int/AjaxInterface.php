@@ -17,20 +17,36 @@ namespace VanillePlugin\int;
 interface AjaxInterface
 {
     /**
-     * Ajax Controller.
+     * Ajax init hook.
      *
-     * @param object $callable
+     * @param AdminAjaxInterface $callable
      * @param PluginNameSpaceInterface $plugin
+     *
+     * Action: wp_ajax_{namespace}-{action} (admin)
+     * Action: wp_ajax_nopriv_{namespace}-{action} (front)
      */
     function __construct(AdminAjaxInterface $callable, PluginNameSpaceInterface $plugin);
-    
+
     /**
+     * Ajax admin action callback.
+     *
      * @param void
      * @return void
      */
-    function callback();
+    function adminCallback();
 
     /**
+     * Ajax front action callback.
+     *
+     * @param void
+     * @return void
+     */
+    function frontCallback();
+
+    /**
+     * Validate Ajax action,
+     * Accept both POST & GET methods.
+     *
      * @param string $action
      * @return bool
      */

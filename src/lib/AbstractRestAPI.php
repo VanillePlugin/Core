@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\TypeCheck;
+use VanillePlugin\inc\Converter;
 use VanillePlugin\int\RestApiInterface;
 use \WP_REST_Server as WPRestServer;
 
@@ -99,8 +99,12 @@ abstract class AbstractRestAPI extends PluginOptions implements RestApiInterface
 	 */
 	public function addParameters($args = false)
 	{
-		$this->args = TypeCheck::isArray($args)
-		? Stringify::toObject($args) : $args;
+		if ( TypeCheck::isArray($args) ) {
+			$this->args = Converter::toObject($args);
+
+		} elseif ( TypeCheck::isObject($args) ) {
+			$this->args = $args;
+		}
 	}
 
 	/**

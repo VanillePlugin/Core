@@ -256,6 +256,33 @@ final class Shortcode
 	}
 
 	/**
+	 * Search shortcodes in content,
+	 * And filter shortcodes through their hooks.
+	 *
+	 * @access public
+	 * @param string $content
+	 * @param bool $ignore, Ignore HTML
+	 * @return string
+	 */
+	public static function do($content, $ignore = false)
+	{
+		return do_shortcode($content,$ignore);
+	}
+
+	/**
+	 * Render shortcodes.
+	 *
+	 * @access public
+	 * @param string $content
+	 * @param bool $ignore, Ignore HTML
+	 * @return void
+	 */
+	public static function render($content, $ignore = false)
+	{
+		echo self::do($content,$ignore);
+	}
+	
+	/**
 	 * Checks whether content contains shortcode.
 	 *
 	 * @access public
@@ -269,7 +296,7 @@ final class Shortcode
 	}
 
 	/**
-	 * Checks whether content contains shortcode.
+	 * strip content from shortcodes.
 	 *
 	 * @access public
 	 * @param string $content

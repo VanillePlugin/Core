@@ -121,4 +121,32 @@ final class ShortcodeTest extends TestCase
         $this->assertFalse(Shortcode::isEnabled($atts,'att-3')); // Disabled
         $this->assertFalse(Shortcode::isEnabled($atts,'att-4')); // Bool
     }
+
+    public function testDo()
+    {
+        add_shortcode('shortcode',function(){
+            return 'shortcode';
+        });
+        $this->assertSame(Shortcode::do('content [shortcode]'),'content shortcode');
+    }
+
+    public function testRender()
+    {
+        add_shortcode('shortcode',function(){
+            return 'shortcode';
+        });
+        $this->expectOutputString('content shortcode');
+        Shortcode::render('content [shortcode]');
+    }
+
+    public function testHas()
+    {
+        $this->assertTrue(Shortcode::has('content [shortcode]','shortcode'));
+        $this->assertFalse(Shortcode::has('content [shortcode]','[shortcode]'));
+    }
+
+    public function testStrip()
+    {
+        $this->assertSame(Shortcode::strip('content.[shortcode]'),'content.');
+    }
 }

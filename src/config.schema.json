@@ -68,7 +68,16 @@
       }
     },
     "ajax": {
-      "type": "array"
+      "type": "object",
+      "required": ["admin","front"],
+      "properties":{
+        "admin":{
+          "type": "array"
+        },
+        "front":{
+          "type": "array"
+        }
+      }
     },
     "requirement": {
       "type": "object",

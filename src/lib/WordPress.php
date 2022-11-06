@@ -16,6 +16,7 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\GlobalConst;
 use VanillePlugin\inc\Stringify;
+use \WP_User;
 
 /**
  * Wrapper Class for Advanced WordPress Global Functions,
@@ -30,12 +31,12 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $file
-	 * @param callable $method
+	 * @param callable $callback
 	 * @return void
 	 */
-	protected function registerActivation($file, $method)
+	protected function registerActivation($file, $callback)
 	{
-		register_activation_hook($file,$method);
+		register_activation_hook($file,$callback);
 	}
 
 	/**
@@ -43,32 +44,32 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $file
-	 * @param callable $method
+	 * @param callable $callback
 	 * @return void
 	 */
-	protected function registerDeactivation($file, $method)
+	protected function registerDeactivation($file, $callback)
 	{
-		register_deactivation_hook($file,$method);
+		register_deactivation_hook($file,$callback);
 	}
 
 	/**
 	 * Set the uninstallation hook for a plugin,
-	 * use class name instead of object ['Plugin','uninstall'].
+	 * Use class name instead of object ['Plugin','uninstall'].
 	 *
 	 * @access protected
 	 * @param string $file
-	 * @param callable $method
+	 * @param callable $callback
 	 * @return void
 	 */
-	protected function registerUninstall($file, $method)
+	protected function registerUninstall($file, $callback)
 	{
 		if ( $this->isAdmin() ) {
-			register_uninstall_hook($file,$method);
+			register_uninstall_hook($file,$callback);
 		}
 	}
 	
 	/**
-	 * Register a shortcode handler.
+	 * Add a shortcode.
 	 *
 	 * @access protected
 	 * @param string $tag
@@ -81,35 +82,7 @@ class WordPress
 	}
 
 	/**
-	 * Search content for shortcodes,
-	 * and filter shortcodes through their hooks.
-	 *
-	 * @access protected
-	 * @param string $content
-	 * @param bool $ignore, Ignore HTML false
-	 * @return void
-	 */
-	protected function renderShortcode($content, $ignore = false)
-	{
-		echo $this->doShortcode($content,$ignore);
-	}
-
-	/**
-	 * Search content for shortcodes,
-	 * and filter shortcodes through their hooks.
-	 *
-	 * @access protected
-	 * @param string $content
-	 * @param bool $ignore, Ignore HTML false
-	 * @return string
-	 */
-	protected function doShortcode($content, $ignore = false)
-	{
-		return do_shortcode($content,$ignore);
-	}
-
-	/**
-	 * Removes hook for shortcode.
+	 * Remove a shortcode.
 	 *
 	 * @access protected
 	 * @param string $tag
@@ -121,7 +94,7 @@ class WordPress
 	}
 
 	/**
-	 * Checks Whether a registered shortcode exists named $tag.
+	 * Checks Whether a shortcode exists.
 	 *
 	 * @access protected
 	 * @param string $tag
@@ -133,16 +106,16 @@ class WordPress
 	}
 
 	/**
-	 * Hook a method on a specific action.
+	 * Hook a callback on a specific action hook.
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param callable $method
+	 * @param callable $callback
 	 * @param int $priority
 	 * @param int $args
 	 * @return true
 	 */
-	protected function addAction($hook, $method, $priority = 10, $args = 1)
+	protected function addAction($hook, $callback, $priority = 10, $args = 1)
 	{
 		switch ( Stringify::lowercase($hook) ) {
 			case 'head':
@@ -158,19 +131,19 @@ class WordPress
 				$hook = 'the_content';
 				break;
 		}
-		return add_action($hook,$method,$priority,$args);
+		return add_action($hook,$callback,$priority,$args);
 	}
 
 	/**
-	 * Remove a method from a specified action hook.
+	 * Remove a callback from a specified action hook.
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param callable $method
+	 * @param callable $callback
 	 * @param int $priority
 	 * @return bool
 	 */
-	protected function removeAction($hook, $method, $priority = 10)
+	protected function removeAction($hook, $callback, $priority = 10)
 	{
 		switch ( Stringify::lowercase($hook) ) {
 			case 'head':
@@ -186,33 +159,46 @@ class WordPress
 				$hook = 'the_content';
 				break;
 		}
-		return remove_action($hook,$method,$priority);
+		return remove_action($hook,$callback,$priority);
 	}
 
 	/**
-	 * Add a method from a specified action hook.
+	 * Call the callback from a specified action hook.
 	 *
 	 * @access protected
-	 * @param string $tag
+	 * @param string $hook
 	 * @param mixed $args
 	 * @return void
 	 */
-	protected function doAction($tag, $args = null)
+	protected function doAction($hook, $args = null)
 	{
-		do_action($tag,$args);
+		do_action($hook,$args);
 	}
 
 	/**
-	 * Hook a function or method to a specific filter action.
+	 * Check whether any action has been registered for a hook.
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param callable $method
+	 * @param callable $callback
+	 * @return mixed
+	 */
+	protected function hasAction($hook, $callback = false)
+	{
+		return has_action($hook,$callback);
+	}
+
+	/**
+	 * Hook a callback to a specific filter action.
+	 *
+	 * @access protected
+	 * @param string $hook
+	 * @param callable $callback
 	 * @param int $priority
 	 * @param int $args
 	 * @return true
 	 */
-	protected function addFilter($hook, $method, $priority = 10, $args = 1)
+	protected function addFilter($hook, $callback, $priority = 10, $args = 1)
 	{
 		switch ( Stringify::lowercase($hook) ) {
 			case 'head':
@@ -228,26 +214,25 @@ class WordPress
 				$hook = 'the_content';
 				break;
 		}
-		return add_filter($hook,$method,$priority,$args);
+		return add_filter($hook,$callback,$priority,$args);
 	}
 
 	/**
-	 * Remove a function from a specified filter hook.
+	 * Remove a callback from a specified filter hook.
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param callable $method
+	 * @param callable $callback
 	 * @param int $priority
 	 * @return bool
 	 */
-	protected function removeFilter($hook, $method, $priority = 10)
+	protected function removeFilter($hook, $callback, $priority = 10)
 	{
-		return remove_filter($hook,$method,$priority);
+		return remove_filter($hook,$callback,$priority);
 	}
 
 	/**
-	 * Calls the callback functions,
-	 * that have been added to a filter hook.
+	 * Calls the callback from a specified filter hook.
 	 *
 	 * @access protected
 	 * @param string $hook
@@ -265,12 +250,12 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $hook
-	 * @param callable $method
+	 * @param callable $callback
 	 * @return bool
 	 */
-	protected function hasFilter($hook, $method = false)
+	protected function hasFilter($hook, $callback = false)
 	{
-		return has_filter($hook,$method);
+		return has_filter($hook,$callback);
 	}
 
 	/**
@@ -390,11 +375,11 @@ class WordPress
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
-	 * @return inherit
+	 * @return bool
 	 */
 	protected function addOption($option, $value)
 	{
-		return add_option($option, Stringify::serialize($value));
+		return add_option($option,Stringify::serialize($value));
 	}
 
 	/**
@@ -417,7 +402,7 @@ class WordPress
 	 * @access protected
 	 * @param string $option
 	 * @param mixed $value
-	 * @return inherit
+	 * @return bool
 	 */
 	protected function updateOption($option, $value)
 	{
@@ -429,7 +414,7 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $option
-	 * @return inherit
+	 * @return bool
 	 */
 	protected function removeOption($option)
 	{
@@ -468,7 +453,7 @@ class WordPress
 	 * @param string $cap
 	 * @param string $slug
 	 * @param callable $cb callback
-	 * @return inherit
+	 * @return mixed
 	 */
 	protected function addSubMenuPage($parent, $title, $menu, $cap, $slug, $cb)
 	{
@@ -483,12 +468,12 @@ class WordPress
 	 * @param string $menu
 	 * @param string $cap
 	 * @param string $slug
-	 * @param callable $callable
-	 * @return inherit
+	 * @param callable $cb callback
+	 * @return mixed
 	 */
-	protected function addOptionPage($title, $menu, $cap, $slug, $method)
+	protected function addOptionPage($title, $menu, $cap, $slug, $cb)
 	{
-		return add_options_page($title,$menu,$cap,$slug,$method);
+		return add_options_page($title,$menu,$cap,$slug,$cb);
 	}
 
 	/**
@@ -504,8 +489,8 @@ class WordPress
 	 * @param array $args
 	 * @return void
 	 *
-	 * action : add_meta_boxes
-	 * action : add_meta_boxes_{type}
+	 * Action: add_meta_boxes
+	 * Action: add_meta_boxes_{type}
 	 */
 	protected function addMetabox($id, $title, $cb, $screen, $context = 'advanced', $p = 'high', $args = null)
 	{
@@ -538,7 +523,7 @@ class WordPress
 	}
 
 	/**
-	 * Retrieves current theme url.
+	 * Retrieves current theme URL.
 	 *
 	 * @access protected
 	 * @param void
@@ -562,7 +547,7 @@ class WordPress
 	}
 
 	/**
-	 * Check is WordPress Admin.
+	 * Check whether current page is admin.
 	 *
 	 * @access protected
 	 * @param void
@@ -570,14 +555,35 @@ class WordPress
 	 */
 	protected function isAdmin()
 	{
-		if ( is_admin() ) {
-			return true;
-		}
-		return false;
+		return is_admin();
 	}
 
 	/**
-	 * Check user logged in.
+	 * Get current user Id.
+	 *
+	 * @access protected
+	 * @param void
+	 * @return int
+	 */
+	protected function getCurrentUserId()
+	{
+		return get_current_user_id();
+	}
+
+	/**
+	 * Get current user.
+	 *
+	 * @access protected
+	 * @param void
+	 * @return object
+	 */
+	protected function getCurrentUser()
+	{
+		return wp_get_current_user();
+	}
+
+	/**
+	 * Check whether user is logged-in.
 	 *
 	 * @access protected
 	 * @param void
@@ -589,19 +595,7 @@ class WordPress
 	}
 
 	/**
-	 * Check mobile.
-	 *
-	 * @access protected
-	 * @param void
-	 * @return bool
-	 */
-	protected function isMobile()
-	{
-		return wp_is_mobile();
-	}
-
-	/**
-	 * Check user exists.
+	 * Check whether user exists.
 	 *
 	 * @access protected
 	 * @param mixed $user
@@ -618,54 +612,39 @@ class WordPress
 				return email_exists($user);
 				break;
 			case 'id':
-				$id = intval($user);
-				$user = new \WP_User($id);
+				$id = (int)$user;
+				$user = new WP_User($id);
 				return $user->exists();
 				break;
 		}
 	}
 
 	/**
-	 * Get user permission.
+	 * Get user role(s).
 	 *
 	 * @access protected
-	 * @param mixed $id null
-	 * @param string $cap
-	 * @param mixed $args
-	 * @return bool
-	 */
-	protected function hasPermission($id = null, $cap = 'edit_posts', $args = [])
-	{
-		$id = ($id) ? intval($id) : get_current_user_id();
-		return user_can($id,$cap,$args);
-	}
-
-	/**
-	 * Get role.
-	 *
-	 * @access protected
-	 * @param mixed $id null
+	 * @param mixed $id, User Id
 	 * @return array
 	 */
 	protected function getRole($id = null)
 	{
-		$id = ($id) ? intval($id) : get_current_user_id();
-		$user = new \WP_User($id);
+		$id = ($id) ? (int)$id : $this->getCurrentUserId();
+		$user = new WP_User($id);
 		return (array)$user->roles;
 	}
 
 	/**
-	 * Add role.
+	 * Add role(s) to user.
 	 *
 	 * @access protected
 	 * @param string $display
-	 * @param string $role null
+	 * @param string $role
 	 * @param array $cap
-	 * @return inherit
+	 * @return mixed
 	 */
 	protected function addRole($display, $role = null, $cap = [])
 	{
-		$role = ($role) ? $role : Stringify::slugify($display);
+		$role = ($role) ? (string)$role : Stringify::slugify($display);
 		$role = Stringify::replace('-','_',$role);
 		return add_role($role,$display,$cap);
 	}
@@ -683,35 +662,22 @@ class WordPress
 	}
 
 	/**
-	 * Add capability.
+	 * Add user capability.
 	 *
 	 * @access protected
 	 * @param string $role
 	 * @param string $cap
-	 * @param bool $grant true
+	 * @param bool $grant
 	 * @return void
 	 */
 	protected function addCapability($role, $cap, $grant = true)
 	{
-		$role = get_role($role);
-		$role->add_cap($cap,$grant);
+		$user = get_role($role);
+		$user->add_cap($cap,$grant);
 	}
 
 	/**
-	 * Check capability.
-	 *
-	 * @access public
-	 * @param string $cap
-	 * @param mixed $args
-	 * @return bool
-	 */
-	public function hadCapability($cap = 'edit_posts', $args = null)
-	{
-		return current_user_can($cap,$args);
-	}
-
-	/**
-	 * Remove capability.
+	 * Remove user capability.
 	 *
 	 * @access protected
 	 * @param string $role
@@ -720,8 +686,36 @@ class WordPress
 	 */
 	protected function removeCapability($role, $cap)
 	{
-		$role = get_role($role);
-		$role->remove_cap($cap);
+		$user = get_role($role);
+		$user->remove_cap($cap);
+	}
+
+	/**
+	 * Check whether current user has capability.
+	 *
+	 * @access public
+	 * @param string $cap
+	 * @param mixed $args
+	 * @return bool
+	 */
+	public function hasCapability($cap = 'edit_posts', $args = null)
+	{
+		return current_user_can($cap,$args);
+	}
+
+	/**
+	 * Check user permission (Capability).
+	 *
+	 * @access protected
+	 * @param string $cap
+	 * @param int $user
+	 * @param mixed $args
+	 * @return bool
+	 */
+	protected function hasPermission($cap = 'edit_posts', $user = null, $args = null)
+	{
+		$user = ($user) ? (int)$user : $this->getCurrentUserId();
+		return user_can($user,$cap,$args);
 	}
 
 	/**
@@ -729,7 +723,7 @@ class WordPress
 	 *
 	 * @access protected
 	 * @param string $location
-	 * @param int $status 301
+	 * @param int $status
 	 * @return void
 	 */
 	protected function redirect($location, $status = 301)
@@ -739,16 +733,16 @@ class WordPress
 	}
 
 	/**
-	 * WordPress Authentication.
+	 * Authentication.
 	 *
 	 * @access protected
-	 * @param string $username
+	 * @param string $user
 	 * @param string $password
 	 * @return mixed
 	 */
-	protected function authenticate($username = '', $password = '')
+	protected function authenticate($user, $password)
 	{
-		return wp_authenticate($username,$password);
+		return wp_authenticate($user,$password);
 	}
 
 	/**
@@ -765,7 +759,7 @@ class WordPress
 	}
 
 	/**
-	 * Check if Multisite is enabled.
+	 * Check whether multisite is enabled.
 	 *
 	 * @access protected
 	 * @param void
@@ -774,5 +768,17 @@ class WordPress
 	protected function isMultisite()
 	{
 		return is_multisite();
+	}
+
+	/**
+	 * Check mobile.
+	 *
+	 * @access protected
+	 * @param void
+	 * @return bool
+	 */
+	protected function isMobile()
+	{
+		return wp_is_mobile();
 	}
 }

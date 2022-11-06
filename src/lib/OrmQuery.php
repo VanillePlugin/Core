@@ -20,7 +20,7 @@ use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\inc\Stringify;
 
 /**
- * Helper Class for ORM queries.
+ * Helper Class for ORM query.
  */
 final class OrmQuery implements OrmQueryInterface
 {
