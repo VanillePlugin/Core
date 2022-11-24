@@ -131,20 +131,53 @@ final class Cache
 	}
 
 	/**
-	 * Geolocation through cache.
+	 * Enable geotargeting through cache.
+	 * Action: activation
+	 * Action: load
 	 * 
 	 * @access public
-	 * @param string $name
+	 * @param string $name, Cookie name
 	 * @return bool
 	 * @internal
 	 */
-	public static function geolocate($name)
+	public static function enableGeotargeting($name)
 	{
 		if ( self::isActive() ) {
+
+			/**
+			 * WP Rocket Geotargeting.
+			 */
 			if ( WpRocket::isEnabled() ) {
-				WpRocket::enableGeo($name);
+				WpRocket::enableGeotargeting($name);
 				return true;
 			}
+
+		}
+		return false;
+	}
+
+	/**
+	 * Disable geotargeting through cache.
+	 * Action: deactivation
+	 * Action: load
+	 * 
+	 * @access public
+	 * @param string $name, Cookie name
+	 * @return bool
+	 * @internal
+	 */
+	public static function disableGeotargeting($name)
+	{
+		if ( self::isActive() ) {
+
+			/**
+			 * WP Rocket Geotargeting.
+			 */
+			if ( WpRocket::isEnabled() ) {
+				WpRocket::disableGeotargeting($name);
+				return true;
+			}
+
 		}
 		return false;
 	}

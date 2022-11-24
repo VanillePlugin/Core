@@ -25,14 +25,25 @@ final class Converter
 	 */
 	public static function toObject($array)
 	{
-	    if ( empty($array) || !TypeCheck::isArray($array) ) {
-	    	return (object)$array;
-	    }
-	    $obj = new \stdClass;
-	    foreach ( $array as $key => $value ) {
-	        $obj->{$key} = $value;
-	    }
-	    return (object)$obj;
+	    return (object)Json::decode(
+	    	Json::encode($array),
+	    	false
+	    );
+	}
+
+	/**
+	 * Convert object to array.
+	 * 
+	 * @access public
+	 * @param object $object
+	 * @return array
+	 */
+	public static function toArray($object)
+	{
+	    return (array)Json::decode(
+	    	Json::encode($object),
+	    	true
+	    );
 	}
 	
 	/**
@@ -47,6 +58,7 @@ final class Converter
 	 */
 	public static function toMoney($number, $decimals = 2, $dSep = '.', $tSep = ' ')
 	{
-		return number_format((float)$number,$decimals,$dSep,$tSep);
+		$number = number_format((float)$number,$decimals,$dSep,$tSep);
+		return (float)$number;
 	}
 }

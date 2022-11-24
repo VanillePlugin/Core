@@ -17,35 +17,7 @@ namespace VanillePlugin\inc;
 final class Image extends File
 {
 	/**
-	 * Upload image file.
-	 *
-	 * @access public
-	 * @param array $files
-	 * @param array $args
-	 * @return mixed
-	 */
-	public static function upload($file = null, $args = [])
-	{
-		if ( !$file ) {
-			if ( Upload::isSetted('file') ) {
-				$file = Upload::get('file');
-			}
-		}
-
-		// Check valid image
-		if ( self::validate($file) ) {
-			return false;
-		}
-
-		// Set image upload data
-		$data = Upload::handle($file,$args);
-
-		// Insert image attachment
-		return Attachment::insert($data['path'],$data);
-	}
-
-	/**
-	 * Import image from url.
+	 * Import image from URL.
 	 *
 	 * @access public
 	 * @param array $url
@@ -63,10 +35,10 @@ final class Image extends File
 		$data = self::getMime($name);
 		$mime = $data['type'];
 		$dir  = Upload::dir();
-		$path = "{$dir['path']}/{$name}";
+		$path = "{$dir['path']}/{$name}"; // Keep non formated path
 
-		// Get existing image from gallery by name (Title)
-		if ( ($id = Attachment::getIdByTitle(self::getFileName($path))) ) {
+		// Get existing image from gallery by filename (Title)
+		if ( ($id = Attachment::getIdByTitle(self::getName($path))) ) {
 
 		    return [
 		    	'id'  => $id,
@@ -79,7 +51,7 @@ final class Image extends File
 			if ( !$override ) {
 				if ( self::exists($path) ) {
 					$ext  = $data['ext'];
-					$tmp  = self::getFileName($name);
+					$tmp  = self::getName($name);
 					$id   = Tokenizer::getUniqueId();
 					$name = "{$tmp}-{$id}.{$ext}";
 					$path = "{$dir['path']}/{$name}";
@@ -87,7 +59,7 @@ final class Image extends File
 			}
 
 			// Import image
-			if ( !self::import($url,$path) ) {
+			if ( !parent::import($url,$path) ) {
 				return false;
 			}
 
@@ -100,34 +72,59 @@ final class Image extends File
 	}
 
 	/**
-	 * Verify image file.
+	 * Upload image using post.
 	 *
 	 * @access public
-	 * @param string $file
 	 * @param array $args
 	 * @return mixed
 	 */
-	public static function validate($file, $args = [])
+	public static function upload($args = [])
 	{
-		// Check filename
-		if ( empty($name = basename($file)) ) {
+		// Get file from global
+		$file = Upload::isSetted('file') 
+		? (array)Upload::get('file') : [];
+
+		// Check valid image mime
+		if ( !self::validate($file['name']) ) {
 			return false;
 		}
 
-		// Basic security check by mime type
-		$allowed = [
+		// Set image upload data
+		$data = Upload::handle($file,$args);
+
+		// Insert image attachment
+		return Attachment::insert($data['file'],$data);
+	}
+
+	/**
+	 * Validate image file mime.
+	 *
+	 * @access public
+	 * @param string $file
+	 * @param array $allowed
+	 * @return mixed
+	 */
+	public static function validate($file, $allowed = [])
+	{
+		$allowed = self::getAllowedMimes($allowed);
+		return parent::validate($file,$allowed);
+	}
+
+	/**
+	 * Get allowed images mimes.
+	 *
+	 * @access public
+	 * @param array $allowed
+	 * @return array
+	 */
+	public static function getAllowedMimes($allowed = [])
+	{
+		return Arrayify::merge([
 			'jpg'  => 'image/jpeg',
 			'jpeg' => 'image/jpeg',
 			'bmp'  => 'image/bmp',
 			'png'  => 'image/png',
 			'gif'  => 'image/gif'
-		];
-		$allowed = Arrayify::merge($allowed,$args);
-
-		if ( Validator::isValidMime($name,$allowed) ) {
-			return $name;
-		}
-
-		return false;
+		], $allowed);
 	}
 }

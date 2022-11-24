@@ -32,11 +32,11 @@ final class Cookie
 	/**
 	 * @access public
 	 * @param string $key
-	 * @param mixed $value
+	 * @param string $value
 	 * @param array $options
 	 * @return bool
 	 */
-	public static function set($key, $value = null, $options = [])
+	public static function set($key, $value = '', $options = [])
 	{
 		return setcookie($key,$value,$options);
 	}

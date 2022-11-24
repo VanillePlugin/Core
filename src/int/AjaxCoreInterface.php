@@ -14,15 +14,21 @@ declare(strict_types=1);
 
 namespace VanillePlugin\int;
 
-interface PluginNameSpaceInterface
+interface AjaxCoreInterface
 {
     /**
-     * Get plugin namespace (slug),
-     * Should be the same as '{pluginDir}/{pluginMain}.php'.
+     * Init plugin Ajax.
+     *
+     * @param AjaxInterface $callable
+     * @param PluginNameSpaceInterface $plugin
+     */
+    function __construct(AjaxInterface $callable, PluginNameSpaceInterface $plugin);
+
+    /**
+     * Ajax action callback.
      *
      * @param void
-     * @return string
-     * @throws NamepsaceException
+     * @return void
      */
-    function getNameSpace();
+    function callback();
 }

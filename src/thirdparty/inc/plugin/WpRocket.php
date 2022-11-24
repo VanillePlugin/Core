@@ -21,6 +21,8 @@ namespace VanillePlugin\thirdparty\inc\plugin;
  */
 final class WpRocket
 {
+	public static $options = [];
+
 	/**
 	 * Check whether plugin is enabled.
 	 * 
@@ -48,6 +50,72 @@ final class WpRocket
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Force enabling geotargeting through cache using cookies.
+	 * 
+	 * @access public
+	 * @param string $name
+	 * @return void
+	 */
+	public static function enableGeotargeting($name)
+	{
+		// Set options
+		static::$options['geotargeting'] = $name;
+
+		// Disable plugin rewrite
+		self::disableRewrite();
+
+		// Creates cache file for each value of a specified cookie
+		add_filter('rocket_cache_dynamic_cookies',[new self,'setCookies'],80);
+
+		// Prevents caching until the specified cookie is set
+		add_filter('rocket_cache_mandatory_cookies',[new self,'setCookies'],80);
+
+		// Reset rewrite & configuration
+		self::reset();
+	}
+
+	/**
+	 * Disabling cache geotargeting.
+	 * 
+	 * @access public
+	 * @param string $name
+	 * @return void
+	 */
+	public static function disableGeotargeting($name)
+	{
+		// Set options
+		static::$options['geotargeting'] = $name;
+
+		// Enable plugin rewrite
+		self::enableRewrite();
+		
+		// Remove dynamic cookies
+		remove_filter('rocket_cache_dynamic_cookies',[new self,'setCookies'],80);
+
+		// Remove mandatory cookies
+		remove_filter('rocket_cache_mandatory_cookies',[new self,'setCookies'],80);
+
+		// Reset rewrite & configuration
+		self::reset();
+	}
+
+	/**
+	 * Cache dynamic cookies.
+	 * Filter: rocket_cache_dynamic_cookies
+	 * Filter: rocket_cache_mandatory_cookies
+	 * 
+	 * @access public
+	 * @param array $cookies
+	 * @return array
+	 */
+	public static function setCookies($cookies)
+	{
+		$name = static::$options['geotargeting'] ?? '--default-country';
+		$cookies[] = $name;
+		return $cookies;
 	}
 
 	/**
@@ -119,65 +187,5 @@ final class WpRocket
 	public static function enableRewrite()
 	{
 		remove_filter('rocket_htaccess_mod_rewrite','__return_false',80);
-	}
-
-	/**
-	 * Force enabling geolocation through cache using cookies.
-	 * Action: activation
-	 * Filter: rocket_cache_dynamic_cookies
-	 * Filter: rocket_cache_mandatory_cookies
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
-	 */
-	public static function enableGeo($name)
-	{
-		// Disable plugin rewrite
-		self::disableRewrite();
-
-		// Creates cache file for each value of a specified cookie
-		add_filter('rocket_cache_dynamic_cookies', function($cookies) use ($name) {
-			$cookies[] = $name;
-			return $cookies;
-		});
-
-		// Prevents caching until the specified cookie is set
-		add_filter('rocket_cache_mandatory_cookies', function($cookies) use ($name) {
-			$cookies[] = $name;
-			return $cookies;
-		});
-
-		// Reset rewrite & configuration
-		self::reset();
-	}
-
-	/**
-	 * Disabling cache geolocation.
-	 * Action: deactivation
-	 * 
-	 * @access public
-	 * @param string $name
-	 * @return void
-	 */
-	public static function disableGeo($name)
-	{
-		// Enable plugin rewrite
-		self::enableRewrite();
-		
-		// Remove dynamic cookies
-		remove_filter('rocket_cache_dynamic_cookies', function($cookies) use ($name) {
-			$cookies[] = $name;
-			return $cookies;
-		});
-
-		// Remove mandatory cookies
-		remove_filter('rocket_cache_mandatory_cookies', function($cookies) use ($name) {
-			$cookies[] = $name;
-			return $cookies;
-		});
-
-		// Reset rewrite & configuration
-		self::reset();
 	}
 }

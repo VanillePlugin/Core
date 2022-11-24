@@ -139,6 +139,7 @@ final class Asset extends PluginOptions
 			if ( $api->getStatusCode() == 200 ) {
 				$archive = "{$this->dir}/{$this->getFileName($this->remote)}";
 				if ( File::w($archive,$api->getBody()) ) {
+					$this->reset();
 					$this->extract($archive);
 					if ( $this->check() ) {
 						$cdn = false;
@@ -236,9 +237,10 @@ final class Asset extends PluginOptions
 	{
 		// Secured removing
 		foreach ($this->getAssets() as $asset => $files) {
-			if ( Stringify::contains("{$this->dir}/{$asset}",$this->getRoot()) ) {
-				File::clearDir("{$this->dir}/{$asset}");
-				File::removeDir("{$this->dir}/{$asset}");
+			$dir = "{$this->dir}/{$asset}";
+			if ( File::isDir($dir) && Stringify::contains($dir,"/{$this->getNameSpace()}/") ) {
+				File::clearDir($dir);
+				File::removeDir($dir);
 			}
 		}
 	}

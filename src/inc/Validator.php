@@ -42,7 +42,7 @@ class Validator
 	 */
 	public static function isValidMime($filename = '', $mimes = null)
 	{
-		$data = File::getMime($filename,$mimes);
+		$data = wp_check_filetype($filename,$mimes);
 		if ( $data['ext'] && $data['type'] ) {
 			return true;
 		}

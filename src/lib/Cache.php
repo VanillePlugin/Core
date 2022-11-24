@@ -158,13 +158,13 @@ final class Cache extends PluginOptions
 	}
 
 	/**
-	 * @access public
+	 * @access private
 	 * @param int|string $key
 	 * @return string
 	 */
 	private function formatKey($key)
 	{
-		$key = Stringify::formatKey($key);
+		$key = Stringify::sanitizeKey($key);
 		return "{$this->getNameSpace()}-{$key}";
 	}
 }

@@ -25,7 +25,7 @@ class Notice extends View implements NoticeInterface
 	 * @param array $callable
 	 * @return void
 	 * 
-	 * Action : admin_notices
+	 * Action: admin_notices
 	 */
 	public function init($callable = [])
 	{

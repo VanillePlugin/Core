@@ -21,7 +21,7 @@ namespace VanillePlugin\inc;
 class File
 {
 	/**
-	 * Init filesystem.
+	 * Init WP filesystem.
 	 *
 	 * @access public
 	 * @param void
@@ -86,7 +86,7 @@ class File
 	}
 
 	/**
-	 * Get file name.
+	 * Get file name without extension.
 	 *
 	 * @access public
 	 * @param string $path
@@ -94,9 +94,7 @@ class File
 	 */
 	public static function getName($path)
 	{
-		$path = self::getFileName($path);
-		$ext = self::getExtension($path);
-		return Stringify::replace(".{$ext}",'',$path);
+		return Stringify::replaceRegex('/\.[^.]+$/','',basename($path));
 	}
 
 	/**
@@ -591,12 +589,13 @@ class File
 	}
 
 	/**
-	 * Import file from url.
+	 * Import file from URL.
 	 * 
 	 * @access public
 	 * @param string $url
 	 * @param string $path
 	 * @return bool
+	 * @todo getAllowedMimes
 	 */
 	public static function import($url, $path)
 	{
@@ -631,6 +630,29 @@ class File
 	}
 
 	/**
+	 * Validate file.
+	 *
+	 * @access public
+	 * @param string $file
+	 * @param array $args
+	 * @return mixed
+	 */
+	public static function validate($file, $args = [])
+	{
+		// Check filename
+		if ( empty($name = self::getFileName($file)) ) {
+			return false;
+		}
+
+		// Basic security check by mime type
+		if ( Validator::isValidMime($name,$args) ) {
+			return $name;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get file mime type.
 	 * 
 	 * @access public
@@ -641,5 +663,17 @@ class File
 	public static function getMime($filename, $mimes = null)
 	{
 		return wp_check_filetype($filename,$mimes);
+	}
+
+	/**
+	 * Get allowed files mimes types.
+	 *
+	 * @access public
+	 * @param void
+	 * @return array
+	 */
+	public static function getAllowedMimes()
+	{
+		return get_allowed_mime_types();
 	}
 }

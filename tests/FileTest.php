@@ -11,6 +11,7 @@
  */
 
 use VanillePlugin\inc\File;
+use VanillePlugin\inc\Image;
 use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\TypeCheck;
 use PHPUnit\Framework\TestCase;
@@ -235,12 +236,25 @@ final class FileTest extends TestCase
         File::remove(__DIR__ . '/temp');
     }
 
+    public function testValidate()
+    {
+        $this->assertSame(
+            File::validate('image.png',Image::getAllowedMimes()),
+            'image.png'
+        );
+    }
+
     public function testGetMime()
     {
         $this->assertEquals(File::getMime('temp.txt'), [
             'ext'  => 'txt',
             'type' => 'text/plain'
         ]);
+    }
+
+    public function testGetAllowedMimes()
+    {
+        $this->assertTrue(is_array(File::getAllowedMimes()));
     }
 
     public function testAnalyse()

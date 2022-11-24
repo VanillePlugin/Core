@@ -20,14 +20,15 @@ use VanillePlugin\inc\Stringify;
 /**
  * Basic helper class for queuing requests.
  */
-class Queue extends Logger
+class Queue extends PluginOptions
 {
     /**
      * @param PluginNameSpaceInterface $plugin
      */
     public function __construct(PluginNameSpaceInterface $plugin)
 	{
-		parent::__construct($plugin);
+        // Init plugin config
+        $this->initConfig($plugin);
 	}
 
 	/**
@@ -42,14 +43,11 @@ class Queue extends Logger
 	{
 		$queue = $this->get($name);
 		$queue[] = $item;
-		if ( $this->isDebug(true) ) {
-			$this->debug("Added '{$item}' to '{$name}' queue");
-		}
 		return $this->set($queue,$name);
 	}
 
 	/**
-	 * Check if item exists.
+	 * Check whether item exists.
 	 * 
 	 * @access public
 	 * @param string $item
@@ -58,13 +56,7 @@ class Queue extends Logger
 	 */
 	public function has($item = '', $name = 'in')
 	{
-		if ( Stringify::contains($this->get($name),$item) ) {
-			if ( $this->isDebug(true) ) {
-				$this->debug("'{$item}' in '$name' queue");
-			}
-			return true;
-		}
-		return false;
+		return Stringify::contains($this->get($name),$item) ;
 	}
 
 	/**
@@ -76,9 +68,6 @@ class Queue extends Logger
 	 */
 	public function delete($name = 'in')
 	{
-		if ( $this->isDebug(true) ) {
-			$this->debug("'{$name}' queue deleted");
-		}
 		return $this->setTransient("{$name}-queue",[]);
 	}
 

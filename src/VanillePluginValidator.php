@@ -18,6 +18,8 @@ use VanillePlugin\inc\Validator;
 use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\GlobalConst;
+use VanillePlugin\exc\NamepsaceException;
+use VanillePlugin\exc\ConfigurationException;
 use JsonSchema\Validator as JsonValidator;
 
 final class VanillePluginValidator extends Validator
@@ -26,7 +28,7 @@ final class VanillePluginValidator extends Validator
 	 * @access public
 	 * @var mixed $plugin
 	 * @return void
-	 * @throws VanillePluginException
+	 * @throws NamepsaceException
 	 */
 	public static function checkNamespace($plugin)
 	{
@@ -39,28 +41,29 @@ final class VanillePluginValidator extends Validator
 			} else {
 				$namespace = (string)$namespace;
 			}
-	        throw new VanillePluginException(
-	            VanillePluginException::invalidPluginNamepsace($namespace)
+	        throw new NamepsaceException(
+	            NamepsaceException::invalidPluginNamepsace($namespace)
 	        );
 		}
 	}
 
 	/**
 	 * @access public
-	 * @var mixed $json
+	 * @var object $global,
+	 * @var string $file
 	 * @return void
-	 * @throws VanillePluginException
+	 * @throws ConfigurationException
 	 */
-	public static function checkConfig($json)
+	public static function checkConfig($global, $file = null)
 	{
-		$error = self::isValidConfig($json);
+		$error = self::isValidConfig($global);
 		if ( TypeCheck::isString($error) ) {
-	        throw new VanillePluginException(
-	            VanillePluginException::InvalidPluginConfiguration($error)
+	        throw new ConfigurationException(
+	            ConfigurationException::invalidPluginConfiguration($error,$file)
 	        );
 		} elseif ( $error === false ) {
-	        throw new VanillePluginException(
-	            VanillePluginException::InvalidPluginConfiguration()
+	        throw new ConfigurationException(
+	            ConfigurationException::invalidPluginConfigurationFormat($file)
 	        );
 		}
 	}

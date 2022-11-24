@@ -40,7 +40,7 @@ interface PluginInterface
     function __wakeup();
 
     /**
-     * Plugin setup action.
+     * Plugin start action.
      *
      * @param void
      * @return void

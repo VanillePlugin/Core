@@ -18,6 +18,10 @@ use VanillePlugin\int\RouterInterface;
 use \RuntimeException;
 use \Traversable;
 
+/**
+ * Built-in HTTP router class,
+ * @see Heavily inspired by https://altorouter.com/
+ */
 class Router implements RouterInterface
 {
     /**

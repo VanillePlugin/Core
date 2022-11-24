@@ -43,7 +43,7 @@ final class Rewrite extends PluginOptions
     }
 
     /**
-     * Set rules
+     * Set rules.
      *
      * @access public
      * @param string $rules
@@ -55,15 +55,14 @@ final class Rewrite extends PluginOptions
     }
 
     /**
-     * Add rules
+     * Add rules.
+     * Action: init
      *
      * @access public
      * @param string $regex
      * @param string $query
      * @param string $after
      * @return void
-     *
-     * Action : init
      */
     public function addRules($regex, $query, $after = 'bottom')
     {
@@ -71,16 +70,16 @@ final class Rewrite extends PluginOptions
     }
 
     /**
-     * Add endpoint
+     * Add endpoint.
+     * Action: init
+     * 
+     * EP_ALL: 8191
      *
      * @access public
      * @param string $name
      * @param int $places
      * @param mixed $query true
      * @return void
-     *
-     * Action : init
-     * EP_ALL : 8191
      */
     public function addEndpoint($name, $places = 8191, $query = true)
     {
@@ -98,13 +97,12 @@ final class Rewrite extends PluginOptions
     }
 
     /**
-     * Apply rules
+     * Apply rules.
+     * Action: admin_init
      *
      * @access public
      * @param int $priority
      * @return void
-     *
-     * Action : admin_init
      */
     public function applyRules($priority = 10)
     {
@@ -112,13 +110,12 @@ final class Rewrite extends PluginOptions
     }
 
     /**
-     * Remove rules
+     * Remove rules.
+     * Action: admin_init
      *
      * @access public
      * @param int $priority
      * @return void
-     *
-     * Action : admin_init
      */
     public function removeRules($priority = 10)
     {
@@ -126,11 +123,12 @@ final class Rewrite extends PluginOptions
     }
 
     /**
+     * Get riles.
+     * Filter: mod_rewrite_rules
+     * 
      * @access public
      * @param string $rules
      * @return string
-     *
-     * Filter : mod_rewrite_rules
      */
     public function getRules($rules)
     {

@@ -12,19 +12,8 @@
 
 declare(strict_types=1);
 
-namespace VanillePlugin;
+namespace VanillePlugin\exc;
 
 use VanillePlugin\inc\Exception;
 
-class VanillePluginException extends Exception
-{
-	public static function invalidPluginNamepsace($namepsace = 'Empty')
-	{
-		return "Invalid Plugin Namepsace '{$namepsace}'";
-	}
-
-	public static function InvalidPluginConfiguration($config = 'Unknown')
-	{
-		return "Invalid Plugin Configuration '{$config}'";
-	}
-}
+class VanillePluginException extends Exception {}

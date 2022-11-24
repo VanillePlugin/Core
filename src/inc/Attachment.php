@@ -27,38 +27,38 @@ final class Attachment
 	 */
 	public static function insert($path, $data)
 	{
-		$data = self::defaultArgs($data);
 		if ( ($id = self::preInsert($path,$data)) ) {
-			self::update($id);
-		    return [
-		    	'id'  => $id,
-		    	'url' => $data['url']
-		    ];
+			self::update($id); // Should not be tested
+			return [
+				'id'  => $id,
+				'url' => $data['url']
+			];
 		}
 		return false;
 	}
 
 	/**
 	 * Pre-insert attachment,
-	 * Returns attachment Id if success.
+	 * Returns attachment Id on success.
 	 *
 	 * @access public
 	 * @param string $path
 	 * @param array $data
 	 * @return int
 	 */
-	public static function preInsert($path, $data)
+	public static function preInsert($path, $data = [])
 	{
-		$data = self::defaultArgs($data);
+		$data = self::getDefaultData($data);
 		if ( empty($data['title']) ) {
-			$data['title'] = File::getFileName($path);
+			$data['title'] = File::getName($path);
 		}
 		$attachment = [
 	        'guid'           => $data['url'],
 	        'post_title'     => Stringify::sanitizeText($data['title']),
 	        'post_content'   => Stringify::sanitizeText($data['content']),
 	        'post_excerpt'   => Stringify::sanitizeText($data['excerpt']),
-	        'post_mime_type' => $data['type']
+	        'post_mime_type' => $data['type'],
+	        'post_status'    => $data['status']
 		];
 		return (int)wp_insert_attachment($attachment,$path,$data['parent']);
 	}
@@ -183,26 +183,26 @@ final class Attachment
 	public static function getImageById($id, $size = 'thumbnail')
 	{
 		$src = wp_get_attachment_image_src($id,$size);
-		return isset($src[0]) ? $src[0] : '';
+		return $src[0] ?? '';
 	}
 
 	/**
-	 * Insert attachment.
+	 * Get default attachment data.
 	 *
 	 * @access public
-	 * @param array $args
+	 * @param array $data
 	 * @return array
 	 */
-	public static function defaultArgs($args)
+	public static function getDefaultData($data = [])
 	{
-		$default = [
+		return Arrayify::merge([
 			'url'     => '',
 			'title'   => '',
 			'content' => '',
 			'excerpt' => '',
 			'type'    => '',
+			'status'  => 'inherit',
 			'parent'  => 0
-		];
-		return Arrayify::merge($default,$args);
+		],$data);
 	}
 }

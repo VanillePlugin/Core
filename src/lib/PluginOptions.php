@@ -17,6 +17,7 @@ namespace VanillePlugin\lib;
 use VanillePlugin\VanillePluginConfig;
 use VanillePlugin\inc\Stringify;
 use VanillePlugin\inc\TypeCheck;
+use VanillePlugin\inc\Arrayify;
 use VanillePlugin\inc\HttpRequest;
 use VanillePlugin\inc\HttpGet;
 use VanillePlugin\inc\File;
@@ -27,8 +28,7 @@ use VanillePlugin\thirdparty\Translator;
 
 /**
  * Wrapper class for advanced Plugin Options API,
- * Defines only base functions used by plugins (PluginNameSpaceInterface),
- * Notice: Multiple instances of this class have no impact on performance.
+ * Defines only base functions used by plugins (PluginNameSpaceInterface).
  * 
  * @see https://developer.wordpress.org/plugins/
  */
@@ -225,7 +225,7 @@ class PluginOptions extends WordPress
 	 * @param string $option
 	 * @param mixed $value
 	 * @param mixed $lang
-	 * @return mixed
+	 * @return bool
 	 */
 	protected function addPluginOption($option, $value, $lang = null)
 	{
@@ -304,8 +304,7 @@ class PluginOptions extends WordPress
 	 */
 	protected function removePluginOptions()
 	{
-		$prefix = $this->getNameSpace();
-		if ( empty($prefix) ) {
+		if ( empty($prefix = $this->getNameSpace()) ) {
 			return false;
 		}
 		$db = new Orm();
@@ -667,17 +666,19 @@ class PluginOptions extends WordPress
 	 * Deletes all transients (Under namespace).
 	 *
 	 * @access protected
-	 * @param void
+	 * @param string $name
 	 * @return bool
 	 */
-	protected function deleteTransients()
+	protected function deleteTransients($name = null)
 	{
-		$prefix = $this->getNameSpace();
-		if ( empty($prefix) ) {
+		if ( empty($prefix = $this->getNameSpace()) ) {
 			return false;
 		}
+		if ( $name ) {
+			$prefix = "{$prefix}-{$name}";
+		}
 		$db = new Orm();
-		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_transient_{$prefix}_%';";
+		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_transient_{$prefix}%';";
 		return (bool)$db->query($query);
 	}
 
@@ -688,14 +689,16 @@ class PluginOptions extends WordPress
 	 * @param void
 	 * @return bool
 	 */
-	protected function deleteSiteTransients()
+	protected function deleteSiteTransients($name = null)
 	{
-		$prefix = $this->getNameSpace();
-		if ( empty($prefix) ) {
+		if ( empty($prefix = $this->getNameSpace()) ) {
 			return false;
 		}
+		if ( $name ) {
+			$prefix = "{$prefix}-{$name}";
+		}
 		$db = new Orm();
-		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_site_transient_{$prefix}_%';";
+		$query = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_site_transient_{$prefix}%';";
 		return (bool)$db->query($query);
 	}
 
@@ -1011,24 +1014,24 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Load plugin translated strings.
+	 * Load plugin text domain.
 	 *
 	 * @access public
 	 * @param void
 	 * @return void
 	 *
-	 * Action : init
+	 * Action: init
 	 */
 	public function translate()
 	{
 		// Set overriding path
 		$override = "{$this->getThemeDir()}/{$this->getNameSpace()}/languages";
-		$override = $this->applyPluginFilter('override-translate-path', $override);
+		$override = $this->applyPluginFilter('override-translate-path',$override);
         if ( File::isDir($override) ) {
         	$override .= sprintf('/%1$s-%2$s.mo',$this->getNameSpace(),$this->getLocale(true));
             load_textdomain($this->getNameSpace(),$override);
         } else {
-        	load_plugin_textdomain($this->getNameSpace(), false, "{$this->getNameSpace()}/languages");
+        	load_plugin_textdomain($this->getNameSpace(),false,"{$this->getNameSpace()}/languages");
         }
 	}
 
@@ -1046,7 +1049,7 @@ class PluginOptions extends WordPress
 	}
 
 	/**
-	 * Translate string using variables,
+	 * Translate string including variables,
 	 * May require quotes escaping.
 	 *
 	 * @access public
@@ -1066,6 +1069,49 @@ class PluginOptions extends WordPress
 			$vars = Stringify::replaceRegex('/\s+/', $this->translateString('{Empty}'), $vars);
 			return sprintf($this->translateString(Stringify::replace($vars,'%s',$string)), $vars);
 		}
+	}
+
+	/**
+	 * Translate deep strings.
+	 *
+	 * @access public
+	 * @param array $strings
+	 * @return array
+	 */
+	public function translateDeepStrings($strings)
+	{
+		Arrayify::walkRecursive($strings, function(&$string) {
+			if ( TypeCheck::isString($string) ) {
+				$string = $this->translateString($string);
+			}
+		});
+		return $strings;
+	}
+
+	/**
+	 * Load translated strings (admin/front).
+	 *
+	 * @access public
+	 * @param string $type
+	 * @return array
+	 */
+	public function loadStrings($type = '')
+	{
+		$strings = $this->getStrings();
+		switch ($type) {
+			case 'admin':
+				return $this->translateDeepStrings(
+					$strings['admin']
+				);
+				break;
+
+			case 'front':
+				return $this->translateDeepStrings(
+					$strings['front']
+				);
+				break;
+		}
+		return $this->translateDeepStrings($strings);
 	}
 
 	/**
@@ -1149,10 +1195,7 @@ class PluginOptions extends WordPress
 	    	if ( $strict ) {
 	    		die($this->translateString('Invalid token'));
 	    	}
-	    	$code = 200;
-	    	if ( $this->isDebug() ) {
-	    		$code = 400;
-	    	}
+	    	$code = ($this->isDebug()) ? 400 : 200;
 	    	$this->setResponse('Invalid token',[],'error',$code);
 	    }
 	}
@@ -1172,10 +1215,7 @@ class PluginOptions extends WordPress
 	    	if ( $strict ) {
 	    		die($this->translateString('Invalid token'));
 	    	}
-	    	$code = 200;
-	    	if ( $this->isDebug() ) {
-	    		$code = 400;
-	    	}
+	    	$code = ($this->isDebug()) ? 400 : 200;
 	    	$this->setResponse('Invalid token',[],'error',$code);
 	  	}
 	}

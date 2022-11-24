@@ -11,6 +11,7 @@
  */
 
 use VanillePlugin\inc\Arrayify;
+use VanillePlugin\inc\Stringify;
 use PHPUnit\Framework\TestCase;
 
 final class ArrayifyTest extends TestCase
@@ -164,5 +165,16 @@ final class ArrayifyTest extends TestCase
         $this->assertSame([['id' => 1],['id' => 2],['id' => 3],['id' => 4]], $sorted);
         $sorted = Arrayify::sort($default,'id','desc');
         $this->assertSame([['id' => 4],['id' => 3],['id' => 2],['id' => 1]], $sorted);
+    }
+
+    public function testWalkRecursive()
+    {
+        $arrays = [['1' => 'test-1'],['2' => 'test-2'],['3' => 'test-3']];
+        Arrayify::walkRecursive($arrays, function(&$array) {
+            $array = Stringify::replace('test-','tested-',$array);
+        });
+        $this->assertSame($arrays[0]['1'],'tested-1');
+        $this->assertSame($arrays[1]['2'],'tested-2');
+        $this->assertSame($arrays[2]['3'],'tested-3');
     }
 }

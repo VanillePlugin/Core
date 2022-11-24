@@ -12,17 +12,13 @@
 
 declare(strict_types=1);
 
-namespace VanillePlugin\int;
+namespace VanillePlugin\exc;
 
-interface PluginNameSpaceInterface
+class NamepsaceException extends VanillePluginException
 {
-    /**
-     * Get plugin namespace (slug),
-     * Should be the same as '{pluginDir}/{pluginMain}.php'.
-     *
-     * @param void
-     * @return string
-     * @throws NamepsaceException
-     */
-    function getNameSpace();
+	public static function invalidPluginNamepsace($namepsace)
+	{
+        $namepsace = ($namepsace) ? $namepsace : 'Undefined';
+        return "Invalid plugin namepsace: '{$namepsace}'";
+	}
 }

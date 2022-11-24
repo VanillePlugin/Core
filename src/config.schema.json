@@ -174,11 +174,23 @@
         }
       }
     },
+    "assets": {
+      "type": "object"
+    },
     "routes": {
       "type": "object"
     },
-    "assets": {
-      "type": "object"
+    "strings": {
+      "type": "object",
+      "required": ["admin","front"],
+      "properties":{
+        "admin":{
+          "type": "array"
+        },
+        "front":{
+          "type": "array"
+        }
+      }
     }
   },
   "required": [
@@ -190,7 +202,8 @@
     "options",
     "ajax",
     "requirement",
+    "assets",
     "routes",
-    "assets"
+    "strings"
   ]
 }

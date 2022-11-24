@@ -32,12 +32,15 @@ final class Archive extends File
 	public static function compress($path = '', $to = '', $archive = '')
 	{
 		if ( TypeCheck::isClass('ZipArchive') && !empty($path) ) {
+
 			if ( empty($archive) ) {
 				$archive = basename($path);
 			}
+
 			if ( empty($to) ) {
 				$to = dirname($path);
 			}
+			
 			$to = Stringify::formatPath($to,true);
 			$to = "{$to}/{$archive}.zip";
 			$zip = new ZIP();
@@ -76,6 +79,8 @@ final class Archive extends File
 	{
 		if ( self::exists($archive) ) {
 
+			$status = false;
+
 			if ( empty($to) ) {
 				$to = dirname($archive);
 			}
@@ -86,23 +91,24 @@ final class Archive extends File
 				if ( $resource === true ) {
 			  		$zip->extractTo($to);
 			  		$zip->close();
-			  		return true;
+			  		$status = true;
 				}
 
 			} elseif ( self::isGzip($archive) ) {
-				return self::unGzip($archive);
+				$status = self::unGzip($archive);
 
 			} else {
 				self::init();
-				$result = unzip_file($archive,$to);
-				if ( $result && !Exception::isError($result) ) {
-					return true;
+				$unzip = unzip_file($archive,$to);
+				if ( !Exception::isError($unzip) ) {
+					$status = true;
 				}
 			}
 
 			if ( $remove ) {
 				self::remove($archive);
 			}
+			return $status;
 		}
 		return false;
 	}
@@ -134,9 +140,10 @@ final class Archive extends File
 	 * @access public
 	 * @param string $archive
 	 * @param int $length
+	 * @param bool $remove
 	 * @return bool
 	 */
-	public static function unGzip($archive, $length = 4096) : bool
+	public static function unGzip($archive, $length = 4096, $remove = false) : bool
 	{
 		$status = false;
 		if ( ($gz = gzopen($archive,'rb')) ) {
@@ -149,6 +156,7 @@ final class Archive extends File
 			fclose($to);
 		}
 		gzclose($gz);
+		if ($remove) self::remove($archive);
 		return $status;
 	}
 }

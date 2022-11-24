@@ -62,17 +62,17 @@ final class Arrayify
 
 	/**
 	 * @access public
-	 * @param callable $callable
+	 * @param callable $callback
 	 * @param array $array
 	 * @param array $arrays
 	 * @return array
 	 */
-	public static function map($callable, $array, $arrays = null)
+	public static function map($callback, $array, $arrays = null)
 	{
 		if ( !TypeCheck::isNull($arrays) ) {
-			return array_map($callable,(array)$array,$arrays);
+			return array_map($callback,(array)$array,$arrays);
 		}
-		return array_map($callable,(array)$array);
+		return array_map($callback,(array)$array);
 	}
 
 	/**
@@ -141,37 +141,6 @@ final class Arrayify
 	/**
 	 * @access public
 	 * @param array $array
-	 * @return array
-	 */
-	public static function uniqueMultiple($array)
-	{
-		return self::map('unserialize',self::unique(
-			self::map('serialize',(array)$array)
-		));
-	}
-
-	/**
-	 * @access public
-	 * @param array $array
-	 * @param string $key
-	 * @return array
-	 * @todo improve
-	 */
-	public static function uniqueMultipleByKey($array, $key = '')
-	{
-		$temp = [];
-		foreach ($array as &$val) {
-			if ( !isset($temp[$val[$key]]) ) {
-				$temp[$val[$key]] =& $val;
-			}
-		}
-       	$array = self::values($temp);
-       	return $array;
-	}
-
-	/**
-	 * @access public
-	 * @param array $array
 	 * @param int $num
 	 * @return mixed
 	 */
@@ -196,14 +165,14 @@ final class Arrayify
 	/**
 	 * @access public
 	 * @param array $array
-	 * @param callable $callable
+	 * @param callable $callback
 	 * @param int $mode
 	 * @return array
 	 */
-	public static function filter($array, $callable = null, $mode = 0)
+	public static function filter($array, $callback = null, $mode = 0)
 	{
-		if ( !TypeCheck::isNull($callable) ) {
-			return array_filter($array,$callable,$mode);
+		if ( !TypeCheck::isNull($callback) ) {
+			return array_filter($array,$callback,$mode);
 		}
 		return array_filter($array);
 	}
@@ -219,12 +188,45 @@ final class Arrayify
 		return array_change_key_case((array)$array,$case);
 	}
 
+	/**
+	 * @access public
+	 * @param array|object &$array
+	 * @param callable $callback
+	 * @param mixed $arg
+	 * @return bool
+	 */
+	public static function walkRecursive(&$array, $callback, $arg = null)
+	{
+		return array_walk_recursive($array,$callback,$arg);
+	}
+
+	/**
+	 * @access public
+	 * @param array $array
+	 * @return array
+	 */
+	public static function uniqueMultiple($array)
+	{
+		return self::map('unserialize',self::unique(
+			self::map('serialize',(array)$array)
+		));
+	}
+
+	/**
+	 * @access public
+	 * @param array $array
+	 * @param string $key
+	 * @return array
+	 * @todo improve
+	 */
+	public static function uniqueMultipleByKey($array, $key) {}
+	
     /**
      * @access public
      * @param array $array
      * @param mixed $orderby
      * @param string $order
-     * @param bool $preserve
+     * @param bool $preserve, Preserve keys
      * @return array
      */
     public static function sort($array = [], $orderby = [], $order = 'ASC', $preserve = false)

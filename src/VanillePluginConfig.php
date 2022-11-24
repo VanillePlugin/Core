@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin;
 
 use VanillePlugin\int\PluginNameSpaceInterface;
+use VanillePlugin\exc\ConfigurationException;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Json;
 use VanillePlugin\inc\Stringify;
@@ -51,6 +52,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
+	 * @throws ConfigurationException
 	 */
 	protected function initConfig(PluginNameSpaceInterface $plugin)
 	{
@@ -65,18 +67,17 @@ trait VanillePluginConfig
 		if ( File::exists($json) ) {
 
 			$this->global = Json::parse($json);
-			VanillePluginValidator::checkConfig($this->global);
+			VanillePluginValidator::checkConfig($this->global,$json);
 
 		} else {
-
-			// Parse VanillePLugin Default Config
-			$json = dirname(__FILE__).'/config.default.json';
-			$this->global = Json::parse($json);
+	        throw new ConfigurationException(
+	            ConfigurationException::invalidPluginConfigurationFile($json)
+	        );
 		}
 	}
 
 	/**
-	 * Update Custom Options.
+	 * Update global custom options.
 	 *
 	 * @access protected
 	 * @param array $options
@@ -99,7 +100,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get global.
+	 * Get global option.
 	 *
 	 * @access protected
 	 * @param string $var
@@ -114,7 +115,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Set config path.
+	 * Set global config path.
 	 *
 	 * @access protected
 	 * @param string $path
@@ -393,6 +394,30 @@ trait VanillePluginConfig
 	}
 
 	/**
+	 * Get Ajax admin actions.
+	 *
+	 * @access public
+	 * @param void
+	 * @return array
+	 */
+	public function getAdminAjax()
+	{
+		return $this->getAjax()->admin;
+	}
+
+	/**
+	 * Get Ajax front actions.
+	 *
+	 * @access public
+	 * @param void
+	 * @return array
+	 */
+	public function getFrontAjax()
+	{
+		return $this->getAjax()->front;
+	}
+
+	/**
 	 * Get api routes.
 	 *
 	 * @access protected
@@ -429,6 +454,19 @@ trait VanillePluginConfig
 	{
 		$assets = $this->loadConfig('assets');
 		return ($assets) ? (array)$assets : (array)$this->global->assets;
+	}
+
+	/**
+	 * Get strings.
+	 *
+	 * @access protected
+	 * @param void
+	 * @return array
+	 */
+	protected function getStrings()
+	{
+		$strings = $this->loadConfig('strings',true);
+		return ($strings) ? (array)$strings : (array)$this->global->strings;
 	}
 
 	/**
@@ -475,15 +513,16 @@ trait VanillePluginConfig
 	/**
 	 * Load configuration file.
 	 *
-	 * @access private
+	 * @access protected
 	 * @param string $config
+	 * @param bool $isArray
 	 * @return mixed
 	 */
-	private function loadConfig($config)
+	protected function loadConfig($config, $isArray = false)
 	{
 		$dir = dirname("{$this->getRoot()}{$this->path}");
 		if ( File::exists( ($json = "{$dir}/{$config}.json") ) ) {
-			return Json::decode(File::r($json));
+			return Json::decode(File::r($json),$isArray);
 		}
 		return false;
 	}

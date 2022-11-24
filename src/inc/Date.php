@@ -79,8 +79,11 @@ final class Date extends DateTime
 	 */
 	public static function toString($date, $format, $to = 'Y-m-d H:i:s')
 	{
-        $datetime = self::create($date,$format)->format($to);
-        return self::i18n($datetime,$to);
+        $to = Stringify::replaceArray([
+            'Ghi' => 'G\hi',
+            'min' => '\m\i\n'
+        ],$to);
+        return self::create($date,$format)->format($to);
 	}
 
     /**

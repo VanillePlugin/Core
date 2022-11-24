@@ -14,15 +14,4 @@ declare(strict_types=1);
 
 namespace VanillePlugin\int;
 
-interface PluginNameSpaceInterface
-{
-    /**
-     * Get plugin namespace (slug),
-     * Should be the same as '{pluginDir}/{pluginMain}.php'.
-     *
-     * @param void
-     * @return string
-     * @throws NamepsaceException
-     */
-    function getNameSpace();
-}
+interface FrontAjaxInterface extends AjaxInterface {}

@@ -58,8 +58,9 @@ final class Upload
 	 * @param string $upload
 	 * @param string $file
 	 * @return mixed
+	 * @todo getAllowedMimes
 	 */
-	public static function doUpload($upload, $file = null)
+	public static function do($upload, $file = null)
 	{
 		if ( self::isSetted() ) {
 			if ( !$_FILES['file']['error'] ) {
@@ -73,10 +74,13 @@ final class Upload
 	}
 
 	/**
+	 * Move uploaded file.
+	 * 
 	 * @access public
 	 * @param string $tmp
 	 * @param string $file
 	 * @return bool
+	 * @todo getAllowedMimes
 	 */
 	public static function moveUploadedFile($tmp, $file)
 	{
@@ -84,20 +88,35 @@ final class Upload
 	}
 
 	/**
+	 * Handle uploaded file.
+	 * 
 	 * @access public
-	 * @param string $file
-	 * @param array $args
+	 * @param array $file, $_FILES
+	 * @param array $args, Override default args
 	 * @param string $time
-	 * @return array
+	 * @return mixed
 	 */
 	public static function handle($file, $args = [], $time = null)
 	{
+		// Validate global file
+		if ( !TypeCheck::isArray($file) ) {
+			return false;
+		}
+
+		// Include upload handler
 		if ( !TypeCheck::isFunction('wp_handle_upload') ) {
-		    require_once(GlobalConst::rootDir('wp-admin/includes/file.php'));
+		    require_once(
+		    	GlobalConst::rootDir('wp-admin/includes/file.php')
+		    );
 		}
-		if ( empty($args) ) {
-			$args = ['test_form' => false];
+
+		// Set defaut handler args
+		if ( !$args ) {
+			$args = [
+				'test_form' => false
+			];
 		}
+
 		return wp_handle_upload($file,$args,$time);
 	}
 

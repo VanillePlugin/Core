@@ -52,7 +52,7 @@ abstract class AbstractShortcode extends View implements ShortcodeInterface
 	 * @param array $atts
 	 * @return array
 	 */
-	protected function formatAtts($atts = [])
+	protected function formatAttributes($atts = [])
 	{
 		return Shortcode::formatAttributes($atts);
 	}

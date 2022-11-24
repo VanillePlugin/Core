@@ -126,6 +126,16 @@ class Updater extends PluginOptions implements UpdaterInterface
 		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkTranslation']);
 
 		/**
+		 * Clear plugin updates cache.
+		 * Filter: upgrader_process_complete
+		 *
+		 * @see clearCache@self
+		 * @property priority 10
+		 * @property count 2
+		 */
+		$this->addFilter('upgrader_process_complete', [$this,'clearCache'], 10, 2);
+
+		/**
 		 * Filter updater args.
 		 * Filter: http_request_args
 		 *
@@ -252,6 +262,30 @@ class Updater extends PluginOptions implements UpdaterInterface
 		}
 
 		return $transient;
+	}
+
+	/**
+	 * Clear plugin updates cache.
+	 * Filter: upgrader_process_complete
+	 *
+	 * @access public
+	 * @param object $upgrader
+	 * @param array $options
+	 * @return void
+	 */
+	public function clearCache($upgrader, $options)
+	{
+	    if ( $options['action'] == 'update' && $options['type'] == 'plugin' ) {
+	    	if ( isset($options['plugins']) ) {
+		        foreach($options['plugins'] as $plugin){
+			        if ( $plugin == $this->getMainFile() ) {
+						$this->deleteTransients('get-info');
+						$this->deleteTransients('check-update');
+						$this->deleteTransients('check-translation');
+			        }
+		        }
+	    	}
+	    }
 	}
 
 	/**
