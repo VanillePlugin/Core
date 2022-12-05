@@ -33,8 +33,6 @@ final class ConverterTest extends TestCase
 
     public function testToMoney()
     {
-        $this->assertTrue(is_float(
-            Converter::toMoney('15.1')
-        ));
+        $this->assertSame(Converter::toMoney('15'),'15.00');
     }
 }
