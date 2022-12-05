@@ -53,6 +53,25 @@ final class WpRocket
 	}
 
 	/**
+	 * Force loading geotargeting rules through cache using cookies.
+	 * 
+	 * @access public
+	 * @param string $name
+	 * @return void
+	 */
+	public static function loadGeotargeting($name)
+	{
+		// Set options
+		static::$options['geotargeting'] = $name;
+
+		// Creates cache file for each value of a specified cookie
+		add_filter('rocket_cache_dynamic_cookies',[new self,'setCookies'],80);
+
+		// Prevents caching until the specified cookie is set
+		add_filter('rocket_cache_mandatory_cookies',[new self,'setCookies'],80);
+	}
+
+	/**
 	 * Force enabling geotargeting through cache using cookies.
 	 * 
 	 * @access public
@@ -64,17 +83,20 @@ final class WpRocket
 		// Set options
 		static::$options['geotargeting'] = $name;
 
-		// Disable plugin rewrite
-		self::disableRewrite();
-
 		// Creates cache file for each value of a specified cookie
 		add_filter('rocket_cache_dynamic_cookies',[new self,'setCookies'],80);
 
 		// Prevents caching until the specified cookie is set
 		add_filter('rocket_cache_mandatory_cookies',[new self,'setCookies'],80);
 
-		// Reset rewrite & configuration
-		self::reset();
+		// Update rewrite
+		self::updateRewrite();
+
+		// Regenerate configuration file
+		self::regenerateConfiguration();
+
+		// Clear cache
+		self::purge();
 	}
 
 	/**
@@ -88,9 +110,6 @@ final class WpRocket
 	{
 		// Set options
 		static::$options['geotargeting'] = $name;
-
-		// Enable plugin rewrite
-		self::enableRewrite();
 		
 		// Remove dynamic cookies
 		remove_filter('rocket_cache_dynamic_cookies',[new self,'setCookies'],80);
@@ -98,8 +117,14 @@ final class WpRocket
 		// Remove mandatory cookies
 		remove_filter('rocket_cache_mandatory_cookies',[new self,'setCookies'],80);
 
-		// Reset rewrite & configuration
-		self::reset();
+		// Update rewrite
+		self::updateRewrite();
+
+		// Regenerate configuration file
+		self::regenerateConfiguration();
+
+		// Clear cache
+		self::purge();
 	}
 
 	/**
@@ -116,22 +141,6 @@ final class WpRocket
 		$name = static::$options['geotargeting'] ?? '--default-country';
 		$cookies[] = $name;
 		return $cookies;
-	}
-
-	/**
-	 * Reset rewrite & configuration.
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
-	 */
-	public static function reset()
-	{
-		// Update rewrite
-		self::updateRewrite();
-
-		// Regenerate configuration file
-		self::regenerateConfiguration();
 	}
 
 	/**
@@ -161,31 +170,5 @@ final class WpRocket
 		  && function_exists('get_rocket_cache_reject_uri') ) {
 			rocket_generate_config_file();
 		}
-	}
-
-	/**
-	 * Disable plugin rewrite.
-	 * Filter: rocket_htaccess_mod_rewrite
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
-	 */
-	public static function disableRewrite()
-	{
-		add_filter('rocket_htaccess_mod_rewrite','__return_false',80);
-	}
-
-	/**
-	 * Enable plugin rewrite.
-	 * Filter: rocket_htaccess_mod_rewrite
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
-	 */
-	public static function enableRewrite()
-	{
-		remove_filter('rocket_htaccess_mod_rewrite','__return_false',80);
 	}
 }

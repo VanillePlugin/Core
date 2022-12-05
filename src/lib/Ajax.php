@@ -21,7 +21,7 @@ use VanillePlugin\int\AjaxInterface;
 use VanillePlugin\int\PluginNameSpaceInterface;
 
 /**
- * Wrapper class for Ajax inside plugins(PluginNameSpaceInterface).
+ * Wrapper class for Ajax inside plugins (PluginNameSpaceInterface).
  * @see Front actions requires admin hook for authenticated users.
  */
 final class Ajax extends PluginOptions implements AjaxCoreInterface

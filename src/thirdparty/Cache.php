@@ -131,9 +131,34 @@ final class Cache
 	}
 
 	/**
+	 * Load geotargeting cookie before cache.
+	 * Action: init
+	 * Action: load
+	 * 
+	 * @access public
+	 * @param string $name, Cookie name
+	 * @return bool
+	 * @internal
+	 */
+	public static function loadGeotargeting($name)
+	{
+		if ( self::isActive() ) {
+
+			/**
+			 * WP Rocket Geotargeting.
+			 */
+			if ( WpRocket::isEnabled() ) {
+				WpRocket::loadGeotargeting($name);
+				return true;
+			}
+
+		}
+		return false;
+	}
+
+	/**
 	 * Enable geotargeting through cache.
 	 * Action: activation
-	 * Action: load
 	 * 
 	 * @access public
 	 * @param string $name, Cookie name
@@ -159,7 +184,6 @@ final class Cache
 	/**
 	 * Disable geotargeting through cache.
 	 * Action: deactivation
-	 * Action: load
 	 * 
 	 * @access public
 	 * @param string $name, Cookie name

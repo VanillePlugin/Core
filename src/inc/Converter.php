@@ -54,11 +54,10 @@ final class Converter
 	 * @param int $decimals
 	 * @param string $dSep Decimals Separator
 	 * @param string $tSep Thousands Separator
-	 * @return float
+	 * @return mixed
 	 */
 	public static function toMoney($number, $decimals = 2, $dSep = '.', $tSep = ' ')
 	{
-		$number = number_format((float)$number,$decimals,$dSep,$tSep);
-		return (float)$number;
+		return number_format((float)$number,$decimals,$dSep,$tSep);
 	}
 }

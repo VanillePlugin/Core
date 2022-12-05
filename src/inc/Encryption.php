@@ -16,7 +16,7 @@ namespace VanillePlugin\inc;
 
 /**
  * Built-in encryption class,
- * @see Using JWT for external use is recommended.
+ * @see JWT for external use is recommended.
  */
 class Encryption
 {
