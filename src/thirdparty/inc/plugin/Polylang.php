@@ -64,7 +64,7 @@ final class Polylang
 	}
 
 	/**
-	 * Get current language.
+	 * Get current language (slug).
 	 * 
 	 * @access public
 	 * @param void
@@ -72,6 +72,12 @@ final class Polylang
 	 */
 	public static function getCurrentLanguage()
 	{
+		if ( ($url = wp_get_referer()) ) {
+			$id = url_to_postid($url);
+			if ( ($lang = pll_get_post_language($id)) ) {
+				return $lang;
+			}
+		}
 		return pll_current_language();
 	}
 }

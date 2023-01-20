@@ -73,17 +73,15 @@ final class Date extends DateTime
 	/**
 	 * @access public
 	 * @param string $date
-	 * @param string $format
-	 * @param string $to
+	 * @param string $format, Current format
+	 * @param string $to, To format
 	 * @return string
 	 */
 	public static function toString($date, $format, $to = 'Y-m-d H:i:s')
 	{
-        $to = Stringify::replaceArray([
-            'Ghi' => 'G\hi',
-            'min' => '\m\i\n'
-        ],$to);
-        return self::create($date,$format)->format($to);
+        return self::create($date, $format)->format(
+            self::sanitizeFormat($to)
+        );
 	}
 
     /**
@@ -95,7 +93,23 @@ final class Date extends DateTime
      */
     public static function i18n($date, $format = 'Y-m-d H:i:s', $gmt = false)
     {
-        return date_i18n($format,strtotime($date),$gmt);
+        if ( empty($date) ) {
+            $date = self::get('now', $format);
+        }
+        return date_i18n(self::sanitizeFormat($format), strtotime($date), $gmt);
+    }
+
+    /**
+     * @access public
+     * @param string $format
+     * @return string
+     */
+    public static function sanitizeFormat($format)
+    {
+        return Stringify::replaceArray([
+            'Ghi' => 'G\hi',
+            'min' => '\m\i\n'
+        ], $format);
     }
     
     /**

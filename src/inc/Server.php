@@ -111,7 +111,7 @@ final class Server
 	 */
 	public static function getProtocol()
 	{
-		return Server::isSSL() ? 'https://' : 'http://';
+		return self::isSSL() ? 'https://' : 'http://';
 	}
 
 	/**

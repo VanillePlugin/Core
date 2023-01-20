@@ -74,6 +74,6 @@ final class Wpml
 	 */
 	public static function getCurrentLanguage()
 	{
-		return apply_filters('wpml_current_language',null);
+		return apply_filters('wpml_current_language', null);
 	}
 }
