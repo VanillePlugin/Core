@@ -716,43 +716,50 @@ class PluginOptions extends WordPress
 		$request = Server::get('REQUEST_URI');
 		$url = "{$protocol}{$host}{$request}";
 		$current = ($slug) ? $slug : "?page={$this->getNameSpace()}";
-		if ( Stringify::contains($url,$current) ) {
+		if ( Stringify::contains($url, $current) ) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Get current used local.
+	 * Get current locale.
 	 *
 	 * @access protected
-	 * @param bool $local
+	 * @param mixed $user
 	 * @return string
 	 */
-	protected function getLocale($local = false)
+	protected function getLocale($user = null)
 	{
-		$lang = get_user_locale();
-		if ( $local ) {
-			return $lang;
+		if ( $user ) {
+			$locale = get_user_locale($user);
+		} else {
+			$locale = get_locale();
 		}
-		return substr($lang,0,strpos($lang,'_'));
+		return $locale;
 	}
 
 	/**
-	 * Get current used lang.
+	 * Get current language.
 	 *
 	 * @access protected
-	 * @param void
+	 * @param bool $country
 	 * @return string
 	 */
-	protected function getLanguage()
+	protected function getLanguage($country = true)
 	{
 		if ( $this->hasMultilingual() ) {
-			$lang = Translator::getCurrentLanguage();
+			$locale = Translator::getLocale();
 		} else {
-			$lang = $this->getLocale();
+			$locale = $this->getLocale();
 		}
-		return ($lang) ? $lang : $this->getLocale();
+		if ( !$locale ) {
+			$locale = $this->getLocale();
+		}
+		if ( $country ) {
+			return Translator::getCountry($locale);
+		}
+		return Translator::getLanguage($locale);
 	}
 
 	/**
@@ -1026,12 +1033,12 @@ class PluginOptions extends WordPress
 	{
 		// Set overriding path
 		$override = "{$this->getThemeDir()}/{$this->getNameSpace()}/languages";
-		$override = $this->applyPluginFilter('override-translate-path',$override);
+		$override = $this->applyPluginFilter('override-translate-path', $override);
         if ( File::isDir($override) ) {
-        	$override .= sprintf('/%1$s-%2$s.mo',$this->getNameSpace(),$this->getLocale(true));
-            load_textdomain($this->getNameSpace(),$override);
+        	$override .= sprintf('/%1$s-%2$s.mo', $this->getNameSpace(), $this->getLocale());
+            load_textdomain($this->getNameSpace(), $override);
         } else {
-        	load_plugin_textdomain($this->getNameSpace(),false,"{$this->getNameSpace()}/languages");
+        	load_plugin_textdomain($this->getNameSpace(), false, "{$this->getNameSpace()}/languages");
         }
 	}
 

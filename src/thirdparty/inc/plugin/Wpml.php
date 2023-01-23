@@ -66,13 +66,13 @@ final class Wpml
 	}
 
 	/**
-	 * Get current language.
+	 * Get current locale.
 	 * 
 	 * @access public
 	 * @param void
 	 * @return mixed
 	 */
-	public static function getCurrentLanguage()
+	public static function getLocale()
 	{
 		return apply_filters('wpml_current_language', null);
 	}

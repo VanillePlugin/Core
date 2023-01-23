@@ -64,20 +64,23 @@ final class Polylang
 	}
 
 	/**
-	 * Get current language (slug).
+	 * Get current locale.
 	 * 
 	 * @access public
 	 * @param void
 	 * @return mixed
 	 */
-	public static function getCurrentLanguage()
+	public static function getLocale()
 	{
 		if ( ($url = wp_get_referer()) ) {
-			$id = url_to_postid($url);
-			if ( ($lang = pll_get_post_language($id)) ) {
-				return $lang;
+			if ( strpos($url, 'admin.php') == false ) {
+				if ( ($id = url_to_postid($url)) ) {
+					if ( ($lang = pll_get_post_language($id, 'locale')) ) {
+						return $lang;
+					}
+				}
 			}
 		}
-		return pll_current_language();
+		return pll_current_language('locale');
 	}
 }

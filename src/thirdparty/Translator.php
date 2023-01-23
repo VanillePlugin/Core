@@ -80,22 +80,97 @@ final class Translator
 	}
 
 	/**
-	 * Get translator current language.
+	 * Get current translator locale.
 	 * 
 	 * @access public
 	 * @param void
 	 * @return mixed
 	 */
-	public static function getCurrentLanguage()
+	public static function getLocale()
 	{
 		if ( ($plugin = self::isActive()) ) {
 			if ( $plugin == 'wpml' ) {
-				return Wpml::getCurrentLanguage();
+				return Wpml::getLocale();
 			}
 			if ( $plugin == 'polylang' ) {
-				return Polylang::getCurrentLanguage();
+				return Polylang::getLocale();
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Sanitize current translator locale.
+	 * 
+	 * @access public
+	 * @param string $locale
+	 * @return string
+	 */
+	public static function sanitizeLocale($locale)
+	{
+		$locale = strtolower($locale);
+		$locale = str_replace('-', '_', $locale);
+		return $locale;
+	}
+
+	/**
+	 * Get normalized country code.
+	 * 
+	 * @access public
+	 * @param string $locale
+	 * @return string
+	 */
+	public static function getCountry($locale)
+	{
+		$locale = self::sanitizeLocale($locale);
+		if ( strpos($locale, '_') !== false ) {
+			$locale = explode('_', $locale);
+		}
+
+		if ( is_array($locale) ) {
+			if ( count($locale) == 2 ) {
+				$country = $locale[1];
+			} else {
+				$country = $locale[0];
+			}
+		} else {
+			$country = $locale;
+		}
+
+		switch ($country) {
+			case 'gb':
+			case 'en':
+			case 'en-gb':
+				$country = 'uk';
+				break;
+			case 'en-us':
+				$country = 'us';
+				break;
+		}
+
+		return $country;
+	}
+
+	/**
+	 * Get normalized language code.
+	 * 
+	 * @access public
+	 * @param string $locale
+	 * @return string
+	 */
+	public static function getLanguage($locale)
+	{
+		$locale = self::sanitizeLocale($locale);
+		if ( strpos($locale, '_') !== false ) {
+			$locale = explode('_', $locale);
+		}
+
+		if ( is_array($locale) ) {
+			$lang = $locale[0];
+		} else {
+			$lang = $locale;
+		}
+
+		return $lang;
 	}
 }

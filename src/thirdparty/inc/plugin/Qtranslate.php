@@ -62,4 +62,16 @@ final class Qtranslate
 	{
 		return $GLOBALS['q_config']['enabled_languages'] ?? false;
 	}
+
+	/**
+	 * Get current locale.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return mixed
+	 */
+	public static function getLocale()
+	{
+		return false;
+	}
 }
