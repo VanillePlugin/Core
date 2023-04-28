@@ -13,7 +13,7 @@
 use VanillePlugin\thirdparty\Editor;
 use PHPUnit\Framework\TestCase;
 
-final class AmpTest extends TestCase
+final class EditorTest extends TestCase
 {
     public function testIsClassic()
     {
