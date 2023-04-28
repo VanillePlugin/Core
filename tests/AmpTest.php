@@ -10,8 +10,13 @@
  * This file if a part of VanillePlugin Framework.
  */
 
-declare(strict_types=1);
+use VanillePlugin\thirdparty\AMP;
+use PHPUnit\Framework\TestCase;
 
-namespace VanillePlugin\int;
-
-interface FrontAjaxInterface extends AjaxInterface {}
+final class AmpTest extends TestCase
+{
+    public function testIsActive()
+    {
+        $this->assertIsBool(AMP::isActive());
+    }
+}

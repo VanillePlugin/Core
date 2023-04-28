@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.9.5
+ * @version   : 0.9.6
  * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -22,6 +22,18 @@ namespace VanillePlugin\thirdparty\inc\module;
 final class Opcache
 {
 	/**
+	 * Check module plugin is enabled.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return bool
+	 */
+	public static function isEnabled()
+	{
+		return function_exists('opcache_reset');
+	}
+	
+	/**
 	 * Purge cache.
 	 * 
 	 * @access public
@@ -30,9 +42,6 @@ final class Opcache
 	 */
 	public static function purge()
 	{
-		if ( function_exists('opcache_reset') ) {
-			return opcache_reset();
-		}
-		return false;
+		return opcache_reset();
 	}
 }

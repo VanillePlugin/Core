@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.9.5
+ * @version   : 0.9.6
  * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\thirdparty\inc\plugin;
 
 /**
- * Redis plugin helper class.
+ * Redis Object Cache plugin helper class.
  * 
  * @see https://github.com/rhubarbgroup/redis-cache
  */
@@ -30,7 +30,7 @@ final class Redis
 	 */
 	public static function isEnabled()
 	{
-		return defined('WP_REDIS_VERSION');
+		return class_exists('\Rhubarb\RedisCache\Plugin');
 	}
 
 	/**
@@ -43,9 +43,9 @@ final class Redis
 	 */
 	public static function purge()
 	{
-		if ( function_exists('wp_cache_flush') ) {
-			wp_cache_flush();
-			return true;
+		global $wp_object_cache;
+		if ( method_exists($wp_object_cache, 'redis_instance') ) {
+			return $wp_object_cache->redis_instance()->flushall();
 		}
 		return false;
 	}

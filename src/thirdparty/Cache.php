@@ -2,7 +2,7 @@
 /**
  * @author    : JIHAD SINNAOUR
  * @package   : VanillePlugin
- * @version   : 0.9.5
+ * @version   : 0.9.6
  * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
@@ -16,6 +16,7 @@ namespace VanillePlugin\thirdparty;
 
 use VanillePlugin\thirdparty\inc\module\Opcache;
 use VanillePlugin\thirdparty\inc\module\Apcu;
+use VanillePlugin\thirdparty\inc\plugin\Redis;
 use VanillePlugin\thirdparty\inc\plugin\WpRocket;
 use VanillePlugin\thirdparty\inc\plugin\LiteSpeed;
 use VanillePlugin\thirdparty\inc\plugin\WpOptimize;
@@ -40,10 +41,19 @@ final class Cache
 	 */
 	public static function isActive()
 	{
-		if ( !defined('WP_CACHE') || WP_CACHE == false ) {
-			return false;
+		if ( defined('WP_CACHE') && WP_CACHE == true ) {
+			return true;
+
+		} elseif ( Opcache::isEnabled() ) {
+			return true;
+
+		} elseif ( Apcu::isEnabled() ) {
+			return true;
+			
+		} elseif ( Redis::isEnabled() ) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -64,12 +74,23 @@ final class Cache
 		/**
 		 * Purge Opcache.
 		 */
-		Opcache::purge();
+		if ( Opcache::isEnabled() ) {
+			Opcache::purge();
+		}
  
 		/**
 		 * Purge APCu.
 		 */
-		Apcu::purge();
+		if ( Apcu::isEnabled() ) {
+			Apcu::purge();
+		}
+ 
+		/**
+		 * Purge Redis.
+		 */
+		if ( Redis::isEnabled() ) {
+			Redis::purge();
+		}
 
 		/**
 		 * Purge WP Rocket.
