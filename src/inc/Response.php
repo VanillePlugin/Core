@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,31 +17,35 @@ namespace VanillePlugin\inc;
 final class Response extends Status
 {
 	/**
-	 * @param string $message
-	 * @param array $content
+	 * Set HTTP response (JSON).
+	 * 
+	 * @param string $msg
+	 * @param mixed $content
 	 * @param string $status
-	 * @param int $code 200
-	 * @return string
+	 * @param int $code
+	 * @return void
 	 */
-	public static function set($message = '', $content = [], $status = 'success', $code = 200)
+	public static function set(string $msg, $content = [], string $status = 'success', int $code = 200)
 	{
 		self::setHttpHeaders($code);
 		echo Json::encode([
 			'status'  => $status,
 			'code'    => $code,
-			'message' => $message,
+			'message' => $msg,
 			'content' => $content
 		]);
 		die();
 	}
 
 	/**
+	 * Set HTTP response header.
+	 * 
 	 * @access public 
 	 * @param int $code
 	 * @param string $type
 	 * @return void
 	 */
-	public static function setHttpHeaders($code, $type = 'application/json')
+	public static function setHttpHeaders(int $code, string $type = 'application/json')
 	{
 		$status = self::getMessage($code);
 		$protocol = Server::get('server-protocol');

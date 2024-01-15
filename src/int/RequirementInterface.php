@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -19,47 +19,41 @@ interface RequirementInterface
 	/**
 	 * Check plugin paths.
 	 * 
-	 * @param void
 	 * @return void
 	 */
 	function requirePath();
 
 	/**
-	 * Requires plugins.
+	 * Check required plugins.
 	 * 
-	 * @param void
 	 * @return void
 	 */
 	function requirePlugins();
 
 	/**
-	 * Requires options.
+	 * Check required options.
 	 * 
-	 * @param void
 	 * @return void
 	 */
 	function requireOptions();
 
 	/**
-	 * Requires templates.
+	 * Check required templates.
 	 * 
-	 * @param void
 	 * @return void
 	 */
 	function requireTemplates();
 
 	/**
-	 * Requires modules.
+	 * Check required modules.
 	 * 
-	 * @param void
 	 * @return void
 	 */
 	function requireModules();
 
 	/**
-	 * Requires PHP version.
+	 * Check required PHP version.
 	 * 
-	 * @param void
 	 * @return void
 	 */
 	function php();

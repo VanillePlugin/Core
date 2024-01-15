@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,11 +17,13 @@ namespace VanillePlugin\inc;
 class Status
 {
 	/**
+	 * Get status code message.
+	 * 
 	 * @access public
 	 * @param int $code
 	 * @return string
 	 */
-	public static function getMessage($code = '')
+	public static function getMessage(int $code = 500) : string
 	{
 		$status = [
 			100 => 'Continue',

@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,21 +16,23 @@ namespace VanillePlugin\int;
 
 interface ShortcodeInterface
 {
-    /**
-     * Init shortcode(s).
-     *
-     * @param void
-     * @return void
-     */
-    function init();
+	/**
+	 * Init shortcode(s).
+	 * [Action: init].
+	 *
+	 * @return void
+	 */
+	function init();
 
-    /**
-     * Do shortcode main callable.
-     * 
-     * @param array $atts
-     * @param string $content
-     * @param string $tag
-     * @return string
-     */
-    function doCallable($atts = [], $content = null, $tag = '');
+	/**
+	 * Do shortcode(s) callable.
+	 * [slug].
+	 *
+	 * @access public
+	 * @param array $atts
+	 * @param string $content
+	 * @param string $tag
+	 * @return string
+	 */
+	function doCallable(array $atts = [], ?string $content = null, ?string $tag = null) : string;
 }

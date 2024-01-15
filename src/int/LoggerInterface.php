@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,87 +17,88 @@ namespace VanillePlugin\int;
 interface LoggerInterface
 {
     /**
-     * Get debug status.
-     *
-     * @param bool $global
-     * @return bool
+     * Init logger.
+     * 
+     * @param string $path
+     * @param string $filename
+     * @param string $extension
      */
-    function isDebug($global = false);
+    function __construct(?string $path = '/', string $file = 'debug', string $ext = 'log');
 
     /**
-     * Set logger path.
+     * Set log path.
      *
      * @param string $path
-     * @return void
+     * @return object
      */
-    function setPath($path);
+    function setPath(string $path) : self;
 
     /**
-     * Set logger filename.
+     * Set log filename.
      *
      * @param string $filename
-     * @return void
+     * @return object
      */
-    function setFilename($filename);
+    function setFilename(string $filename) : self;
 
     /**
-     * Set logger extension.
+     * Set log extension.
      *
      * @param string $extension
-     * @return void
+     * @return object
      */
-    function setExtension($extension);
+    function setExtension(string $extension) : self;
 
     /**
-     * Set logger debug.
+     * Log debug message.
      *
-     * @param string $message
+     * @param mixed $message
      * @param bool $isArray
-     * @return void
+     * @return bool
      */
-    function debug($message = '', $isArray = false);
+    function debug($message, bool $isArray = false) : bool;
 
     /**
-     * Set logger error.
+     * Log error message.
      *
      * @param string $message
-     * @return void
+     * @return bool
      */
-    function error($message = '');
+    function error(string $message) : bool;
 
     /**
-     * Set logger warning.
+     * Log warning message.
      *
      * @param string $message
-     * @return void
+     * @return bool
      */
-    function warning($message = '');
+    function warning(string $message) : bool;
 
     /**
-     * Set logger info.
+     * Log info message.
      *
      * @param string $message
-     * @return void
+     * @return bool
      */
-    function info($message = '');
+    function info(string $message) : bool;
 
     /**
-     * Set logger custom message.
+     * Log custom message.
      *
      * @param string $message
      * @param string $type
-     * @return void
+     * @return bool
      */
-    function custom($message = '', $type = 'custom');
+    function custom(string $message, string $type = 'custom') : bool;
 
     /**
-     * Log natif PHP errors.
+     * Log natif error.
      *
      * @param string $message
      * @param int $type 0
      * @param string $path
      * @param string $headers
-     * @return void
+     * @return bool
      */
-    function log($message = '', $type = 0, $path = null, $headers = null);
+    static function log(string $message, int $type = 0, ?string $path = null, ?string $headers = null) : bool;
 }

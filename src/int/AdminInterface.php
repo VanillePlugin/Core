@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,59 +17,86 @@ namespace VanillePlugin\int;
 interface AdminInterface
 {
     /**
-     * Admin setup.
+     * Setup plugin admin.
+     * [Action: plugins-loaded].
      *
      * @param MenuInterface $menu
      * @param SettingsInterface $settings
-     * @see isAdmin()
+     * @uses isAdmin()
      */
-    function __construct(MenuInterface $menu = null, SettingsInterface $settings = null);
+    function __construct(?MenuInterface $menu = null, ?SettingsInterface $settings = null);
 
     /**
-     * Add admin CSS.
-     * 
-     * @param void
-     * @return void
-     */
+	 * Init plugin admin.
+     * [Action: plugins-loaded].
+	 * 
+	 * @return void
+	 * @uses isPluginAdmin()
+	 */
+	function init();
+
+	/**
+	 * Add admin CSS.
+	 * [Action: admin-enqueue-scripts].
+	 *
+	 * @return void
+	 */
     function initCSS();
 
-    /**
-     * Add admin JS.
-     * 
-     * @param void
+	/**
+	 * Add admin JS.
+	 * [Action: admin-enqueue-scripts].
+	 * 
      * @return void
      */
     function initJS();
 
     /**
      * Add global admin CSS.
+     * [Action: admin-enqueue-scripts].
      * 
-     * @param void
      * @return void
      */
     function globalCSS();
 
     /**
      * Add global admin JS.
+     * [Action: admin-enqueue-scripts].
      * 
-     * @param void
      * @return void
      */
     function globalJS();
 
     /**
-     * Override WordPress about and version.
+     * Add plugin admin footer.
+     * [Action: admin-init].
      * 
-     * @param void
      * @return void
      */
-    function copyright();
+    function footer();
 
-    /**
-     * Add admin body class.
+	/**
+	 * Add admin body class.
+	 * [Action: admin-body-class].
      * 
-     * @param string $classes
-     * @return string
-     */
-    function addClass($classes = '');
+	 * @param string $classes
+	 * @return string
+	 */
+	function addClass(string $classes) : string;
+
+	/**
+	 * Display plugin about.
+	 * [Filter: admin-footer-text].
+	 * 
+	 * @return string
+	 */
+	function about();
+
+	/**
+	 * Display plugin version.
+	 * [Filter: update-footer].
+	 * 
+	 * @return string
+	 */
+	function version();
 }

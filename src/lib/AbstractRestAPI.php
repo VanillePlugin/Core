@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,153 +14,214 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\inc\Converter;
 use VanillePlugin\int\RestApiInterface;
-use \WP_REST_Server as WPRestServer;
+use \WP_REST_Server;
 
 /**
- * Wrapper class for RestAPI.
+ * Wrapper class for internal REST API.
+ * @uses JWT is recommended for external use.
  */
-abstract class AbstractRestAPI extends PluginOptions implements RestApiInterface
+abstract class AbstractRestAPI implements RestApiInterface
 {
-	/**
-	 * @access protected
-	 * @var object $auth Authentication
-	 * @var string $version
-	 * @var object $args
-	 */
-	protected $auth;
-	protected $endpoint = 'default';
-	protected $version = 'v1';
-	protected $args = false;
+    use \VanillePlugin\VanillePluginConfig,
+		\VanillePlugin\tr\TraitRequestable,
+		\VanillePlugin\tr\TraitAuthenticatable,
+		\VanillePlugin\tr\TraitHookable;
 
 	/**
 	 * @access private
-	 * @var boolean $isOverridable
+	 * @var string ENDPOINT Default REST endpoint
+	 * @var string VERSION Default REST version
+	 * @var string KEY Default REST public key
+	 * @var mixed METHOD Default REST method
 	 */
-	private $isOverridable = false;
-
-	/**
-	 * Register routes
-	 *
-	 * @access public
-	 * @param WpRestServer $server
-	 * @return void
-	 */
-	abstract public function registerRoutes(WpRestServer $server);
-
-	/**
-	 * Init api hook.
-	 *
-	 * @access public
-	 * @param string $method
-	 * @return void
-	 */
-	public function init()
-	{
-		$this->addAction('rest_api_init',[$this,'registerRoutes']);
-	}
-
-	/**
-	 * @access public
-	 * @param bool $override
-	 * @return void
-	 */
-	public function setOverride($override = false)
-	{
-		$this->override = $override;
-	}
-
-	/**
-	 * @access public
-	 * @param string $endpoint
-	 * @return void
-	 */
-	public function setEndpoint($endpoint = 'default')
-	{
-		$this->endpoint = $endpoint;
-	}
-
-	/**
-	 * @access public
-	 * @param string $version
-	 * @return void
-	 */
-	public function setVersion($version = 'v1')
-	{
-		$this->version = $version;
-	}
-
-	/**
-	 * @access public
-	 * @param object $args
-	 * @return void
-	 */
-	public function addParameters($args = false)
-	{
-		if ( TypeCheck::isArray($args) ) {
-			$this->args = Converter::toObject($args);
-
-		} elseif ( TypeCheck::isObject($args) ) {
-			$this->args = $args;
-		}
-	}
-
-	/**
-	 * @access public
-	 * @param object $plugin
-	 * @return void
-	 */
-	public function setAuthentication($plugin)
-	{
-		$this->auth = new Authentication($plugin);
-	}
+	private const ENDPOINT = 'api';
+	private const VERSION = 'v1';
+	private const KEY = 'public-key';
+	private const METHOD = 'GET';
 
 	/**
 	 * @access protected
-	 * @param string $route
-	 * @param mixed $methods
-	 * @param string $cb, Register callback
-	 * @param string $p, Permission callback
-	 * @return void
+	 * @var string $endpoint
+	 * @var string $version
+	 * @var array $tokens
+	 * @var array $routes
+	 * @var bool $override
 	 */
-	protected function register($route, $methods = 'GET', $cb = 'defaultCallback', $p = 'isPermitted')
-	{
-		// Override default routes using custom plugin settings
-		if ( $this->args ) {
-			$route = !empty($this->args->{$cb}['route'])
-			? $this->args->{$cb}['route'] : $route;
-		}
-
-		// Register rest route
-	    register_rest_route("{$this->endpoint}/{$this->version}",$route, [
-	        'methods'             => $methods,
-	        'callback'            => [$this,$cb],
-	        'permission_callback' => [$this,$p]
-	    ], $this->isOverridable);
-	}
+	protected $endpoint;
+	protected $version;
+	protected $auth;
+	protected $tokens = [];
+	protected $routes = [];
+	protected $override = false;
 
 	/**
+	 * Init endpoint action.
+	 * 
 	 * @access protected
-	 * @param void
-	 * @return true
+	 * @return mixed
 	 */
-	protected function defaultCallback()
-	{
-		return true;
-	}
+	abstract protected function initAction();
 
 	/**
+	 * Init endpoint permission.
+	 * 
 	 * @access protected
 	 * @param array $args
 	 * @return bool
 	 */
-	protected function isPermitted($args = [])
+	abstract protected function initPermission(array $args = []) : bool;
+
+	/**
+	 * @inheritdoc
+	 */
+	public function addRoutes(WP_REST_Server $server)
 	{
-		if ( $this->auth && $this->auth->isAllowed($args) ) {
-         	return true;
+		foreach ($this->getRoutes() as $callback => $args) {
+			$this->register($args->route, $args->methods, $callback, "{$callback}Permission");
+		}
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function initTokens()
+	{
+		$key = $this->applyNamespace('tokens');
+		if ( !($this->tokens = $this->getOption("--{$key}", false)) ) {
+			$this->updateOption("--{$key}", []);
+		}
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function addPublicKey(int $user, string $public)
+	{
+		$key = $this->applyNamespace(self::KEY);
+		$this->addUserMeta("--{$key}", $public, $user);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function updatePublicKey(int $user, string $public)
+	{
+		$key = $this->applyNamespace(self::KEY);
+		$this->updateUserMeta("--{$key}", $public, $user);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function deletePublicKey(int $user)
+	{
+		$key = $this->applyNamespace(self::KEY);
+		$this->deleteUserMeta("--{$key}", $user);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function registerRoute(string $endpoint, string $route, array $args, bool $override) : bool
+	{
+	    return register_rest_route($endpoint, $route, $args, $override);
+	}
+
+	/**
+	 * Init REST,
+	 * [Action: rest_api_init].
+	 * 
+	 * @access protected
+	 * @param string $version
+	 * @param string $endpoint
+	 * @return void
+	 */
+	protected function initRest(?string $version = self::VERSION, ?string $endpoint = self::ENDPOINT)
+	{
+		$this->version = $version;
+		$this->endpoint = $endpoint;
+		$this->routes = $this->getRoutes();
+		$this->addAction('rest_api_init', [$this, 'addRoutes']);
+	}
+
+	/**
+	 * Register plugin route.
+	 * 
+	 * @access protected
+	 * @param string $route
+	 * @param mixed $method
+	 * @param string $a, Endpoint action
+	 * @param string $p, Endpoint permission
+	 * @return void
+	 */
+	protected function register(string $route, $method = self::METHOD, $a = 'initAction', $p = 'initPermission')
+	{
+		$endpoint = $this->formatPath(
+			"{$this->endpoint}/{$this->version}"
+		);
+	    self::registerRoute($endpoint, $route, [
+	        'methods'             => $method,
+	        'callback'            => [$this, $a],
+	        'permission_callback' => [$this, $p]
+	    ], $this->override);
+	}
+
+	/**
+	 * Check whether user is authenticated.
+	 * 
+	 * @access protected
+	 * @param array $args
+	 * @return bool
+	 */
+	protected function isAuthenticated(array $args = []) : bool
+	{
+		// Get public key
+		if ( !($key = $this->getBearerToken()) ) {
+			return false;
+		}
+
+		// Get user id by public key
+		if ( ($id = $this->getUserId($key)) ) {
+
+			// Validate public key
+			if ( isset($this->tokens[$id]) ) {
+
+				// Authenticate with public & secret
+				$public = $this->tokens[$id]['public'];
+				$secret = $this->tokens[$id]['secret'];
+				$prefix = $args['prefix'] ?? '';
+
+				$authenticated = false;
+				if ( ($match = $this->matchToken($public, $secret, $prefix)) ) {
+					$authenticated = $this->authenticate($match['username'], $match['password']);
+				}
+
+				// Check authenticated user
+				if ( $authenticated ) {
+					// check role
+					$role = $args['role'] ?? 'administrator';
+					if ( $this->hasString($authenticated->caps,$role) ) {
+						return true;
+					}
+				}
+			}
 		}
 		return false;
+	}
+
+	/**
+	 * Get user Id using public key.
+	 * 
+	 * @access private
+	 * @param string $public
+	 * @return mixed
+	 */
+	private function getUserId(string $public)
+	{
+		$key   = $this->applyNamespace(self::KEY);
+		$users = $this->getUserByMeta($key, $public);
+		$user  = $this->shiftArray($users);
+		return $user['id'] ?? false;
 	}
 }

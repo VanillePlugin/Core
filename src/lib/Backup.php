@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,14 +14,14 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\Encryption;
-use VanillePlugin\inc\File;
-use VanillePlugin\inc\Json;
-use VanillePlugin\inc\Date;
-use VanillePlugin\int\PluginNameSpaceInterface;
-
+/**
+ * Plugin backups manager.
+ */
 final class Backup extends Orm
 {
+	use \VanillePlugin\tr\TraitSecurable,
+		\VanillePlugin\tr\TraitDatable;
+
 	/**
 	 * @access private
 	 * @var array $tables
@@ -31,33 +31,34 @@ final class Backup extends Orm
 	private $options = [];
 
     /**
-     * @param PluginNameSpaceInterface $plugin
+	 * Init backup.
      */
-	public function __construct(PluginNameSpaceInterface $plugin)
+	public function __construct()
 	{
-        // Init plugin config
-        $this->initConfig($plugin);
-		
-		// Init plugin db
-		$this->init();
+		// Init orm
+		parent::__construct();
 	}
 
 	/**
+	 * Set backup tables.
+	 * 
 	 * @access public
 	 * @param array $tables
 	 * @return void
 	 */
-	public function setTables($tables)
+	public function setTables(array $tables)
 	{
 		$this->tables = $tables;
 	}
 
 	/**
+	 * Set backup options.
+	 * 
 	 * @access public
 	 * @param array $options
 	 * @return void
 	 */
-	public function setOptions($options)
+	public function setOptions(array $options)
 	{
 		$this->options = $options;
 	}
@@ -69,12 +70,14 @@ final class Backup extends Orm
 	 * @param bool $file
 	 * @return mixed
 	 */
-	public function export($asFile = false)
+	public function export(bool $asFile = false)
 	{
 		// Init options
 		if ( $this->options ) {
-			foreach ($this->options as $option => $type) {
-				$wrapper['options'][$option] = $this->getPluginOption($option, $type);
+			foreach ($this->options as $key => $type) {
+				$temp  = $this->applyNamespace($key);
+				$value = $this->getOption($temp, $type);
+				$wrapper['options'][$key] = $value;
 			}
 		}
 
@@ -82,24 +85,22 @@ final class Backup extends Orm
 		if ( $this->tables ) {
 			foreach ($this->tables as $table) {
 				if ( $this->hasTable($table) ) {
-					$wrapper['tables'][$table] = $this->select(new OrmQuery([
-						'table' => $table
-					]));
+					$wrapper['tables'][$table] = $this->all($table);
 				}
 			}
 		}
 
 		// Encrypt backup
-		$encrypt = new Encryption(Json::encode($wrapper));
-		$encrypt->setPrefix("[{$this->getNameSpace()}-backup]");
+		$encrypt = $this->getCryptor($wrapper);
+		$prefix  = $this->applyNameSpace('backup');
+		$encrypt->setPrefix($prefix);
 		$backup = $encrypt->encrypt();
+
 		if ( $asFile ) {
-			$date = Date::get('now', 'd-m-Y');
-			$filename = "{$this->getTempPath()}/{$this->getNameSpace()}-backup-{$date}";
-			if ( File::w($filename, $backup) ) {
-				return $filename;
-			}
-			return false;
+			$date = $this->getDate('now', 'd-m-Y');
+			$file = $this->applyNameSpace("backup-{$date}");
+			$file = $this->getTempPath($file);
+			return $this->writeFile($file, $backup);
 		}
 
 		return $backup;
@@ -113,37 +114,38 @@ final class Backup extends Orm
 	 * @param bool $file
 	 * @return bool
 	 */
-	public function import($backup, $isFile = false)
+	public function import(string $backup, bool $isFile = false) : bool
 	{
 		$count = 0;
 		if ( $isFile ) {
-			if ( File::exists("{$this->getTempPath()}/{$backup}") ) {
-				$backup = File::r(
-					"{$this->getTempPath()}/{$backup}"
-				);
+			$file = "{$this->getTempPath()}/{$backup}";
+			if ( $this->isFile($file) ) {
+				$backup = $this->readFile($file);
 			}
 		}
 
 		if ( !empty($backup) ) {
 
-			$encrypt = new Encryption($backup);
-			$encrypt->setPrefix("[{$this->getNameSpace()}-backup]");
+			$encrypt = $this->getCryptor($backup);
+			$prefix  = $this->applyNameSpace('backup');
+			$encrypt->setPrefix($prefix);
 
-			if ( ($backup = Json::decode($encrypt->decrypt(), true)) ) {
+			if ( ($backup = $encrypt->decrypt()) ) {
 
 				// Backup options
 				if ( isset($backup['options']) ) {
-					foreach ($backup['options'] as $option => $value) {
-						$count += (int)$this->updatePluginOption($option, $value);
+					foreach ($backup['options'] as $key => $value) {
+						$key = $this->applyNamespace($key);
+						$count += (int)$this->updateOption($key, $value);
 					}
 				}
 
 				// Backup tables
 				if ( isset($backup['tables']) ) {
 					foreach ($backup['tables'] as $table => $value) {
-						$this->deleteAll($table);
+						$this->clear($table);
 						foreach ($value as $entry) {
-							$count += (int)$this->insert($table, $entry);
+							$count += (int)$this->create($table, $entry);
 						}
 					}
 				}

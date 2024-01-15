@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,29 +16,30 @@ namespace VanillePlugin\int;
 
 interface ViewInterface
 {
-    /**
-     * Define custom callables.
-     *
+	/**
+	 * Set custom view callables.
+	 *
      * @param array $callables
-     * @return void
-     */
-    function setCallables($callables = []);
+	 * @return void
+	 */
+	function setCallables(array $callables = []);
     
     /**
      * Render view.
      *
+     * @param string $tpl
      * @param array $content
-     * @param string $template
+     * @param bool $end
      * @return void
      */
-    function render($content = [], $template = 'default');
+    function render(string $tpl = 'default', array $content = [], bool $end = false);
 
     /**
      * Aassign content to view.
      *
+     * @param string $tpl
      * @param array $content
-     * @param string $template
      * @return mixed
      */
-    function assign($content = [], $template = 'default');
+    function assign(string $tpl = 'default', array $content = []);
 }

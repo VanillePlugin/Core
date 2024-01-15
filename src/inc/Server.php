@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,60 +17,77 @@ namespace VanillePlugin\inc;
 final class Server
 {
 	/**
-	 * Get global server variable.
-	 *
+	 * Get _SERVER value.
+	 * 
 	 * @access public
-	 * @param string $item
+	 * @param string $key
 	 * @param bool $format
 	 * @return mixed
 	 */
-	public static function get($item = null, $format = true)
+	public static function get(?string $key = null, $format = true)
 	{
-		if ( $item ) {
+		if ( $key ) {
 			if ( $format ) {
-				$item = self::formatArgs($item);
+				$key = Stringify::undash($key, true);
 			}
-			return self::isSetted($item) ? $_SERVER[$item] : null;
+			return self::isSetted($key) ? $_SERVER[$key] : null;
 		}
 		return self::isSetted() ? $_SERVER : null;
 	}
 
 	/**
-	 * Set global server variable.
-	 *
+	 * Set _SERVER value.
+	 * 
 	 * @access public
-	 * @param string $item
+	 * @param string $key
 	 * @param mixed $value
 	 * @param bool $format
 	 * @return void
 	 */
-	public static function set($item, $value = null, $format = true)
+	public static function set(string $key, $value = null, $format = true)
 	{
 		if ( $format ) {
-			$value = self::formatArgs($value);
+			$value = Stringify::undash($key, true);
 		}
-		$_SERVER[$item] = $value;
+		$_SERVER[$key] = $value;
 	}
 
 	/**
-	 * Check is global server variable setted.
-	 *
+	 * Check _SERVER value.
+	 * 
 	 * @access public
-	 * @param string $item
+	 * @param string $key
 	 * @param bool $format
 	 * @return bool
 	 */
-	public static function isSetted($item = null, $format = true)
+	public static function isSetted(?string $key = null, $format = true) : bool
 	{
-		if ( $item ) {
+		if ( $key ) {
 			if ( $format ) {
-				$item = self::formatArgs($item);
+				$key = Stringify::undash($key, true);
 			}
-			return isset($_SERVER[$item]);
+			return isset($_SERVER[$key]);
 		}
 		return isset($_SERVER) && !empty($_SERVER);
 	}
-	
+
+	/**
+	 * Unset _SERVER value.
+	 * 
+	 * @access public
+	 * @param string $key
+	 * @return void
+	 */
+	public static function unset(?string $key = null)
+	{
+		if ( $key ) {
+			unset($_SERVER[$key]);
+
+		} else {
+			$_SERVER = [];
+		}
+	}
+
 	/**
 	 * Get remote IP address.
 	 *
@@ -78,12 +95,13 @@ final class Server
 	 * @param string $domain
 	 * @return mixed
 	 */
-	public static function getIP($domain = null)
+	public static function getIp(?string $domain = null)
 	{
 		if ( $domain ) {
 			$ip = gethostbyname($domain);
-			return Validator::isValidIP($ip);
+			return Validator::isValidIp($ip);
 		}
+
 		if ( self::isSetted('http-x-real-ip') ) {
 			$ip = self::get('http-x-real-ip');
 			return Stringify::stripSlash($ip);
@@ -92,13 +110,21 @@ final class Server
 			$ip = self::get('http-x-forwarded-for');
 			$ip = Stringify::stripSlash($ip);
 			$ip = Stringify::split($ip, ['regex' => '/,/']);
-			$ip = (string) trim(current($ip));
- 			return Validator::isValidIP($ip);
+			$ip = (string)trim(current($ip));
+ 			return Validator::isValidIp($ip);
+
+		} elseif ( self::isSetted('http-cf-connecting-ip') ) {
+			$ip = self::get('http-cf-connecting-ip');
+			$ip = Stringify::stripSlash($ip);
+			$ip = Stringify::split($ip, ['regex' => '/,/']);
+			$ip = (string)trim(current($ip));
+ 			return Validator::isValidIp($ip);
 
 		} elseif ( self::isSetted('remote-addr') ) {
 			$ip = self::get('remote-addr');
 			return Stringify::stripSlash($ip);
 		}
+
 		return false;
 	}
 
@@ -106,19 +132,17 @@ final class Server
 	 * Get prefered protocol.
 	 *
 	 * @access public
-	 * @param void
 	 * @return string
 	 */
 	public static function getProtocol()
 	{
-		return self::isSSL() ? 'https://' : 'http://';
+		return self::isSsl() ? 'https://' : 'http://';
 	}
 
 	/**
 	 * Get country code from request headers.
 	 *
 	 * @access public
-	 * @param void
 	 * @return string
 	 */
 	public static function getCountryCode()
@@ -143,18 +167,16 @@ final class Server
 	}
 	
 	/**
-	 * Redirect URL.
+	 * Redirect request.
 	 *
 	 * @access public
-	 * @param string $url
-	 * @param int $code
-	 * @param string $message
+	 * @param string $location
+	 * @param int $status
 	 * @return void
 	 */
-	public static function redirect($url = '/', $code = 301, $message = 'Moved Permanently')
+	public static function redirect(string $location, int $status = 301)
 	{
-		header("Status: {$code} {$message}",false,$code);
-		header("Location: {$url}");
+		wp_redirect($location, $status);
 		exit();
 	}
 
@@ -162,17 +184,15 @@ final class Server
 	 * Get base URL.
 	 *
 	 * @access public
-	 * @param void
 	 * @return string
 	 */
-	public static function getBaseUrl()
+	public static function getBaseUrl() : string
 	{
 		$url = self::get('http-host');
-		if ( self::isSSL() ) {
+		if ( self::isSsl() ) {
 			return "https://{$url}";
-		} else {
-			return "http://{$url}";
 		}
+		return "http://{$url}";
 	}
 
 	/**
@@ -182,7 +202,7 @@ final class Server
 	 * @param bool $escape
 	 * @return string
 	 */
-	public static function getCurrentUrl($escape = false)
+	public static function getCurrentUrl($escape = false) : string
 	{
 		$url = self::getBaseUrl() . self::get('request-uri');
 		if ( $escape ) {
@@ -226,7 +246,7 @@ final class Server
 	 * @param array $args
 	 * @return bool
 	 */
-	public static function isDown($url = '', $args = [])
+	public static function isDown(string $url, $args = [])
 	{
 		// Set overridden args
 		$args = Arrayify::merge([
@@ -240,7 +260,7 @@ final class Server
 			'http'     => [
 				'timeout'     => 30,
 				'redirection' => 0,
-				'sslverify'   => self::isSSL()
+				'sslverify'   => self::isSsl()
 			]
 		], self::maybeRequireSSL($args));
 
@@ -256,7 +276,7 @@ final class Server
 		}
 
 		// Init request
-		$request = new API();
+		$request = new Request();
 		$request->setMethod($args['method']);
 		$request->setArgs($args['http']);
 		$request->setBaseUrl($url);
@@ -266,9 +286,17 @@ final class Server
 			if ( TypeCheck::isArray($args['auth']) ) {
 				$user = $args['auth'][0] ?? '';
 				$pswd = $args['auth'][1] ?? '';
-				$request->setBasicAuthentication($user,$pswd);
+				$token = Tokenizer::base64("{$user}:{$pswd}");
+				$request->addHeader(
+					'Authorization',
+					sprintf('Basic %s', $token)
+				);
+
 			} else {
-				$request->setAuthentication($args['auth']);
+				$request->addHeader(
+					'Authorization',
+					sprintf('Bearer %s', $args['auth'])
+				);
 			}
 		}
 
@@ -315,13 +343,12 @@ final class Server
 	}
 
 	/**
-	 * Check is authenticated.
+	 * Check basic authentication.
 	 *
 	 * @access public
-	 * @param void
 	 * @return bool
 	 */
-	public static function isBasicAuth()
+	public static function isBasicAuth() : bool
 	{
 		if ( self::isSetted('php-auth-user') && self::isSetted('php-auth-pw') ) {
 			return true;
@@ -330,25 +357,23 @@ final class Server
 	}
 
 	/**
-	 * Get authentication user.
+	 * Get basic authentication user.
 	 *
 	 * @access public
-	 * @param void
 	 * @return string
 	 */
-	public static function getBasicAuthUser()
+	public static function getBasicAuthUser() : string
 	{
 		return self::isSetted('php-auth-user') ? self::get('php-auth-user') : '';
 	}
 
 	/**
-	 * Get authentication password.
+	 * Get get basic authentication password.
 	 *
 	 * @access public
-	 * @param void
 	 * @return string
 	 */
-	public static function getBasicAuthPwd()
+	public static function getBasicAuthPwd() : string
 	{
 		return self::isSetted('php-auth-pw') ? self::get('php-auth-pw') : '';
 	}
@@ -356,14 +381,13 @@ final class Server
 	/**
 	 * Get authorization header.
 	 *
-	 * @access private
-	 * @param void
+	 * @access public
 	 * @return mixed
 	 */
 	public static function getAuthorizationHeaders()
 	{
-        if ( self::isSetted('Authorization',false) ) {
-            return trim(self::get('Authorization',false));
+        if ( self::isSetted('Authorization', false) ) {
+            return trim(self::get('Authorization', false));
 
         } elseif ( self::isSetted('http-authorization') ) {
             return trim(self::get('http-authorization'));
@@ -371,7 +395,7 @@ final class Server
         } elseif ( function_exists('apache_request_headers') ) {
             $requestHeaders = apache_request_headers();
             $requestHeaders = Arrayify::combine(
-            	Arrayify::map('ucwords',Arrayify::keys($requestHeaders)),
+            	Arrayify::map('ucwords', Arrayify::keys($requestHeaders)),
             	Arrayify::values($requestHeaders)
             );
             if ( isset($requestHeaders['Authorization']) ) {
@@ -384,26 +408,25 @@ final class Server
 	/**
 	 * Get authorization token.
 	 *
-     * @access private
-     * @param void
-     * @return mixed
+     * @access public
+     * @return string
      */
-    public static function getBearerToken()
+    public static function getBearerToken() : string
     {
+		$token = false;
         if ( ($headers = self::getAuthorizationHeaders()) ) {
-            return Stringify::match('/Bearer\s(\S+)/',$headers,1);
+            $token = Stringify::match('/Bearer\s(\S+)/', $headers, 1);
         }
-        return false;
+        return (string)$token;
     }
 
 	/**
-	 * Check protocol is HTTPS (SSL).
+	 * Check whether protocol is HTTPS (SSL).
 	 *
 	 * @access public
-	 * @param void
 	 * @return bool
 	 */
-	public static function isSSL()
+	public static function isSsl() : bool
 	{
 		return is_ssl();
 	}
@@ -412,12 +435,12 @@ final class Server
      * Check if SSL verify is required in request,
      * Maybe remote server requires (SNI),
      * Fix (SNI) SSL verification.
-     * 
+     *
      * @access public
      * @param array $args, Request args
      * @return array
      */
-    public static function maybeRequireSSL($args)
+    public static function maybeRequireSSL(array $args) : array
     {
     	$hasCurl = TypeCheck::isFunction('curl_init');
 		if ( isset($args['sslverify']) && !$args['sslverify'] ) {
@@ -428,18 +451,4 @@ final class Server
 		}
     	return $args;
     }
-
-	/**
-	 * Format args.
-	 *
-	 * @access private
-	 * @param string $arg
-	 * @return string
-	 * @internal
-	 */
-	private static function formatArgs($arg)
-	{
-	    $arg = Stringify::replace('-','_',$arg);
-	    return Stringify::uppercase($arg);
-	}
 }

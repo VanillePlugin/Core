@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -19,107 +19,143 @@ use \DateInterval;
 
 final class Date extends DateTime
 {
-	/**
-	 * @access public
-	 * @param string $date
-	 * @param string $format
-	 * @return mixed
-	 */
-	public static function get($date = 'now', $format = 'Y-m-d H:i:s', $object = false)
-	{
-		$date = new self($date);
-        if ( $object ) {
-            $date->format($format);
-            return $date;
-        }
-        return $date->format($format);
-	}
-
     /**
      * @access public
-     * @param mixed $date
-     * @param mixed $expire
-     * @param string $format
-     * @return int
+     * @var string FORMAT, Date format
      */
-    public static function difference($date, $expire, $format = null)
-    {
-        if ( TypeCheck::isString($date) ) {
-            $date = new self($date);
-        }
-        if ( TypeCheck::isString($expire) ) {
-            $expire = new self($expire);
-        }
-        if ( $format ) {
-            // '%R%a'
-            $interval = $date->diff($expire)->format($format);
-        } else {
-            $interval = $expire->getTimestamp() - $date->getTimestamp();
-        }
-        return intval($interval);
-    }
-
-	/**
-	 * @access public
-	 * @param string $date
-	 * @param string $format
-	 * @return object
-	 */
-	public static function create($date, $format = 'Y-m-d H:i:s')
-	{
-		return self::createFromFormat($format,$date);
-	}
-
-	/**
-	 * @access public
-	 * @param string $date
-	 * @param string $format, Current format
-	 * @param string $to, To format
-	 * @return string
-	 */
-	public static function toString($date, $format, $to = 'Y-m-d H:i:s')
-	{
-        return self::create($date, $format)->format(
-            self::sanitizeFormat($to)
-        );
-	}
+    public const FORMAT = 'Y-m-d H:i:s';
 
     /**
+     * Get date (Default current).
+     *
+     * @access public
+     * @param string $date
+     * @param string $to
+     * @param bool $isObject
+     * @return mixed
+     */
+    public static function get(string $date = 'now', string $to = self::FORMAT, bool $isObject = false)
+    {
+    	$date = new self($date);
+        $formatted = $date->format($to);
+        if ( $isObject ) {
+            return $date;
+        }
+        return $formatted;
+    }
+
+    /**
+     * Create date object from string.
+     * 
      * @access public
      * @param string $date
      * @param string $format
-     * @param string $gmt
-     * @return string
+     * @param string $to
+     * @return object
      */
-    public static function i18n($date, $format = 'Y-m-d H:i:s', $gmt = false)
+    public static function create(string $date, string $format, string $to = self::FORMAT) : object
     {
-        if ( empty($date) ) {
-            $date = self::get('now', $format);
-        }
-        return date_i18n(self::sanitizeFormat($format), strtotime($date), $gmt);
+    	$date = self::createFromFormat($format, $date);
+    	$date->format($to);
+    	return $date;
     }
 
     /**
+     * Convert date format.
+     * 
      * @access public
+     * @param string $date
      * @param string $format
+     * @param string $to
      * @return string
      */
-    public static function sanitizeFormat($format)
+    public static function convert(string $date, string $format, string $to = self::FORMAT) : string
     {
-        return Stringify::replaceArray([
-            'Ghi' => 'G\hi',
-            'min' => '\m\i\n'
-        ], $format);
+    	return self::create($date, $format)->format($to);
+    }
+
+    /**
+     * Convert date object to string.
+     * 
+     * @access public
+     * @param object $date
+     * @param string $to
+     * @return string
+     */
+    public static function toString(DateTime $date, string $to = self::FORMAT) : string
+    {
+        return $date->format($to);
+    }
+
+    /**
+     * Get date difference interval,
+     * Returns -1 if invalid date or expire.
+     * 
+     * @access public
+     * @param mixed $date
+     * @param mixed $expire
+     * @param string $i Interval format '%R%a'
+     * @param string $to
+     * @return int
+     */
+    public static function difference($date, $expire, ?string $i = null, string $to = self::FORMAT) : int
+    {
+        // Check date
+        if ( !Validator::isValidDate($date) || !Validator::isValidDate($expire) ) {
+            return -1;
+        }
+
+        // Set beginning date
+        if ( !self::isObject($date) ) {
+            $date = new self($date);
+        }
+        $date->format($to);
+
+        // Set expiring date
+        if ( !self::isObject($expire) ) {
+            $expire = new self($expire);
+        }
+        $expire->format($to);
+
+        // Format difference interval
+        if ( $i ) {
+            $interval = $date->diff($expire)->format($i);
+
+        } else {
+            $interval = ($expire->getTimestamp() - $date->getTimestamp());
+        }
+
+        return (int)$interval;
     }
     
     /**
-     * Return current time
+     * Order dates.
+     * 
+     * @access public
+     * @param array $dates
+     * @param string $format
+     * @return array
+     */
+    public static function order(array $dates, $sort = 'asc', string $format = self::FORMAT) : array
+    {
+        usort($dates, function($a, $b) use ($sort, $format) {
+            if ( Stringify::lowercase($sort) == 'asc' ) {
+                return self::create($a, $format) <=> self::create($b, $format);
+
+            } elseif ( Stringify::lowercase($sort) == 'desc' ) {
+                return self::create($b, $format) <=> self::create($a, $format);
+            }
+        });
+        return $dates;
+    }
+
+    /**
+     * Get current time.
      *
      * @access public
-     * @param void
      * @return int
      */
-    public static function timeNow()
+    public static function timeNow() : int
     {
         $currentHour = date('H');
         $currentMin  = date('i');
@@ -138,18 +174,18 @@ final class Date extends DateTime
     }
 
     /**
-     * Generates new time
+     * Generate new time.
      *
      * @access public
-     * @param int $h
-     * @param int $m
-     * @param int $s
-     * @param int $mt
-     * @param int $d
-     * @param int $y
+     * @param int $h, Hour
+     * @param int $m, Minut
+     * @param int $s, Second
+     * @param int $mt, Month
+     * @param int $d, Day
+     * @param int $y, Year
      * @return int
      */
-    public static function newTime($h = 0, $m = 0, $s = 0, $mt = 0, $d = 0, $y = 0)
+    public static function newTime($h = 0, $m = 0, $s = 0, $mt = 0, $d = 0, $y = 0) : int
     {
         $currentHour = date('H');
         $currentMin  = date('i');
@@ -159,23 +195,38 @@ final class Date extends DateTime
         $currentYear = date('y');
         return mktime(
             ($currentHour + $h),
-            ($currentMin + $m),
-            ($currentSec + $s),
-            ($currentMon + $mt),
-            ($currentDay + $d),
+            ($currentMin  + $m),
+            ($currentSec  + $s),
+            ($currentMon  + $mt),
+            ($currentDay  + $d),
             ($currentYear + $y)
         );
     }
 
     /**
+     * Get date expiring interval using duration string,
+     * Returns -1 if invalid date or duration.
+     * 
      * @access public
      * @param string $duration
-     * @param string $date
+     * @param mixed $date
      * @return int
+     * @see https://www.php.net/manual/fr/dateinterval.construct.php
      */
-    public static function expireIn($duration = 'P1Y', $date = 'now')
+    public static function expireIn(string $duration = 'P1Y', $date = 'now') : int
     {
-        $date = new self($date);
+        // Check date
+        if ( !self::maybeDuration($duration) 
+          || !Validator::isValidDate($date) ) {
+            return -1;
+        }
+
+        // Get date
+        if ( !self::isObject($date) ) {
+            $date = new self($date);
+        }
+        
+        // Set now
         $now = mktime(
             (int)$date->format('H'),
             (int)$date->format('i'),
@@ -184,6 +235,8 @@ final class Date extends DateTime
             (int)$date->format('d'),
             (int)$date->format('Y')
         );
+
+        // Get limit
         $expire = $date->add(new DateInterval($duration));
         $limit = mktime(
             (int)$expire->format('H'),
@@ -193,16 +246,88 @@ final class Date extends DateTime
             (int)$expire->format('d'),
             (int)$expire->format('Y')
         );
+
         return (int)$limit - $now;
     }
 
     /**
+     * Check date object.
+     * 
+     * @access public
+     * @param mixed $date
+     * @return bool
+     */
+    public static function isObject($date) : bool
+    {
+        return ($date instanceof DateTime);
+    }
+
+    /**
+     * Check date duration.
+     * 
+     * @access public
+     * @param string $duration
+     * @return bool
+     */
+    public static function maybeDuration(string $duration) : bool
+    {
+        $duration = Stringify::lowercase($duration);
+        return (strpos($duration, 'p', 0) !== false);
+    }
+
+    /**
+     * Set default date timezone.
+     * 
      * @access public
      * @param string $timezone
-     * @return void
+     * @return bool
      */
-    public static function setDefaultTimezone($timezone = '')
+    public static function setDefaultTimezone(string $timezone) : bool
     {
-        date_default_timezone_set($timezone);
+        return date_default_timezone_set($timezone);
+    }
+
+    /**
+     * Get date timezone.
+     * 
+     * @access public
+     * @return string
+     */
+    public static function getDefaultTimezone() : string
+    {
+        return wp_timezone_string();
+    }
+    
+    /**
+     * Translate date format.
+     * 
+     * @access public
+     * @param string $date
+     * @param string $to
+     * @param bool $gmt
+     * @return string
+     */
+    public static function translate(string $date, string $to = self::FORMAT, bool $gmt = false) : string
+    {
+        if ( empty($date) ) {
+            $date = self::get('now', $to);
+        }
+        $to = self::sanitizeFormat($to);
+        return date_i18n($to, strtotime($date), $gmt);
+    }
+
+    /**
+     * Sanitize date format.
+     * 
+     * @access public
+     * @param string $format
+     * @return string
+     */
+    public static function sanitizeFormat(string $format) : string
+    {
+        return Stringify::replaceArray([
+            'Ghi' => 'G\hi',
+            'min' => '\m\i\n'
+        ], $format);
     }
 }

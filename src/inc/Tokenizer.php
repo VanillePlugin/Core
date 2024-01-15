@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -24,16 +24,17 @@ class Tokenizer
      * Get token.
      * 
      * @access public
-     * @param string $username
-     * @param string $password
+     * @param string $user
+     * @param string $pswd
      * @param string $prefix
      * @return array
      */
-    public static function get($username, $password, $prefix = '')
+    public static function get(string $user, string $pswd, ?string $prefix = null) : array
     {
         $secret = self::getUniqueId();
-        $encryption = new Encryption("{user:{$username}}{pswd:{$password}}",$secret);
-        $encryption->setPrefix($prefix);
+        $token = trim("{user:{$user}}{pswd:{$pswd}}");
+        $encryption = new Encryption($token, $secret);
+        $encryption->setPrefix((string)$prefix);
         return [
             'public' => $encryption->encrypt(),
             'secret' => $secret
@@ -49,18 +50,18 @@ class Tokenizer
      * @param string $prefix
      * @return mixed
      */
-    public static function match($public, $secret, $prefix = '')
+    public static function match(string $public, string $secret, ?string $prefix = null)
     {
         $pattern = '/{user:(.*?)}{pswd:(.*?)}/';
-        $encryption = new Encryption($public,$secret);
-        $encryption->setPrefix($prefix);
+        $encryption = new Encryption($public, $secret);
+        $encryption->setPrefix((string)$prefix);
         $access = $encryption->decrypt();
-        $username = Stringify::match($pattern,$access,1);
-        $password = Stringify::match($pattern,$access,2);
-        if ( $username && $password ) {
+        $user = Stringify::match($pattern, $access, 1);
+        $pswd = Stringify::match($pattern, $access, 2);
+        if ( $user && $pswd ) {
             return [
-                'username' => $username,
-                'password' => $password
+                'username' => $user,
+                'password' => $pswd
             ];
         }
         return false;
@@ -74,18 +75,18 @@ class Tokenizer
      * @param int $max
      * @return int
      */
-    public static function range($min = 5, $max = 10)
+    public static function range(int $min = 5, int $max = 10) : int
     {
         $range = $max - $min;
         if ( $range < 0 ) {
             return $min;
         }
-        $log = log($range,2);
-        $bytes = (int) ($log / 8) + 1;
-        $bits = (int) $log + 1;
+        $log = log($range, 2);
+        $bytes = (int)($log / 8) + 1;
+        $bits = (int)$log + 1;
         $filter = (1 << $bits) - 1;
         do {
-            $randomBytes = (string) openssl_random_pseudo_bytes($bytes);
+            $randomBytes = (string)openssl_random_pseudo_bytes($bytes);
             $rand = hexdec(bin2hex($randomBytes));
             $rand = $rand & $filter;
         } while ($rand >= $range);
@@ -98,38 +99,35 @@ class Tokenizer
      * @access public
      * @param int $length
      * @param bool $special
-     * @param string $seeds
      * @return string
      */
-    public static function generate($length = 32, $special = false, $seeds = '')
+    public static function generate(int $length = 16, bool $special = false) : string
     {
         $token = '';
-        if ( empty($seeds) ) {
-            $seeds  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            $seeds .= 'abcdefghijklmnopqrstuvwxyz';
-            $seeds .= '0123456789';
-            if ( $special ) {
-                $seeds .= '!#$%&()*+,-.:;<>?@[]^{}~';
-            }
+        $chars  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $chars .= 'abcdefghijklmnopqrstuvwxyz';
+        $chars .= '0123456789';
+        if ( $special ) {
+            $chars .= '!#$%&()*+,-.:;<>?@[]^{}~';
         }
         for ($i = 0; $i < $length; $i++) {
-            $token .= $seeds[self::range(0,strlen($seeds))];
+            $token .= $chars[self::range(0, strlen($chars))];
         }
         return $token;
     }
 
     /**
-     * base64 encode.
+     * Encode base64.
      *
      * @access public
-     * @param string $data
+     * @param string $value
      * @param int $loop
      * @return string
      */
-    public static function base64($data = '', $loop = 1)
+    public static function base64(string $value, int $loop = 1) : string
     {
-        $encode = base64_encode($data);
-        $loop = ($loop > 10) ?? 10;
+        $encode = base64_encode($value);
+        $loop = ($loop > 5) ? 5 : $loop;
         for ($i = 1; $i < $loop; $i++) {
             $encode = base64_encode($encode);
         }
@@ -137,17 +135,17 @@ class Tokenizer
     }
 
     /**
-     * base64 decode.
+     * Decode base64.
      *
      * @access public
-     * @param string $data
+     * @param string $value
      * @param int $loop
      * @return string
      */
-    public static function unbase64($data = '', $loop = 1)
+    public static function unbase64(string $value, int $loop = 1) : string
     {
-        $decode = base64_decode($data);
-        $loop = ($loop > 10) ?? 10;
+        $decode = base64_decode($value);
+        $loop = ($loop > 5) ? 5 : $loop;
         for ($i = 1; $i < $loop; $i++) {
             $decode = base64_decode($decode);
         }
@@ -155,13 +153,12 @@ class Tokenizer
     }
 
     /**
-     * Get random unique Id.
+     * Get unique Id.
      *
      * @access public
-     * @param void
      * @return string
      */
-    public static function getUniqueId()
+    public static function getUniqueId() : string
     {
         return md5(
             uniqid((string)time())
@@ -169,18 +166,55 @@ class Tokenizer
     }
 
     /**
-     * Get random UUID (4).
+     * Get UUID (4).
      *
      * @access public
      * @param bool $format
      * @return string
      */
-    public static function getUUID($format = false)
+    public static function getUuid(bool $format = false) : string
     {
         $uuid = wp_generate_uuid4();
         if ( $format ) {
-            return Stringify::replace('-','',$uuid);
+            return Stringify::remove('-', $uuid);
         }
         return $uuid;
     }
+	/**
+	 * Create nonce.
+	 *
+	 * @access public
+	 * @param mixed $action
+	 * @return string
+	 */
+	public static function createNonce($action = -1) : string
+	{
+	  	return wp_create_nonce($action);
+	}
+
+	/**
+	 * Check nonce.
+	 *
+	 * @access public
+	 * @param string $nonce
+	 * @param mixed $action
+	 * @return bool
+	 */
+	public static function checkNonce(string $nonce, $action = -1) : bool
+	{
+	  	return (bool)wp_verify_nonce($nonce, $action);
+	}
+
+	/**
+	 * Check AJAX nonce.
+	 *
+	 * @access public
+	 * @param mixed $action
+	 * @param mixed $arg Query nonce
+	 * @return bool
+	 */
+	public static function checkAjaxNonce($action = -1, $arg = 'nonce') : bool
+	{
+	  	return (bool)check_ajax_referer($action, $arg, false);
+	}
 }

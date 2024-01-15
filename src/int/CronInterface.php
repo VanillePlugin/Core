@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,45 +16,56 @@ namespace VanillePlugin\int;
 
 interface CronInterface
 {
-    /**
-     * Apply schedulers.
-     * Filter: cron_schedules
-     *
-     * @param array $schedules
-     * @return array
-     */
-    function apply($schedules);
+	/**
+	 * Init scheduler.
+	 */
+	function __construct();
 
-    /**
-     * Start schedulers.
-     *
-     * @param void
-     * @return void
-     */
-    function start();
+	/**
+	 * Apply schedules,
+	 * [Filter: cron_schedules].
+	 *
+	 * @param array $schedules
+	 * @return array
+	 */
+	function apply(array $schedules) : array;
 
-    /**
-     * Check scheduled waitlist.
-     *
-     * @param string $name
-     * @return bool
-     */
-    function next($name);
+	/**
+	 * Start schedules.
+	 *
+	 * @return void
+	 */
+	function start();
 
-    /**
-     * Check scheduled waitlist.
-     *
-     * @param int $interval
-     * @param string $hook
-     * @return mixed
-     */
-    function schedule($interval,$hook);
+	/**
+	 * Check scheduled waitlist.
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	function next($name);
 
-    /**
-     * Clear hooked schedulers.
-     *
-     * @param string $name
-     * @return mixed
-     */
-    function clear($name);
+	/**
+	 * Check scheduled waitlist.
+	 *
+	 * @param string $interval
+	 * @param string $hook
+	 * @return mixed
+	 */
+	function schedule(string $interval, string $hook);
+
+	/**
+	 * Clear hooked schedules.
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	function clear(string $name);
+
+	/**
+	 * Remove schedules.
+	 *
+	 * @return void
+	 */
+	function remove();
 }

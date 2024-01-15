@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -20,54 +20,54 @@ final class Json extends File
 	 * Parse JSON file.
 	 *
 	 * @access public
+	 * @param string $file
 	 * @param bool $isArray
 	 * @return mixed
 	 */
-	public static function parse($file, $isArray = false)
+	public static function parse(string $file, bool $isArray = false)
 	{
-		return self::decode(self::r($file),$isArray);
+		return self::decode(self::r($file), $isArray);
 	}
 
 	/**
 	 * Decode JSON.
 	 *
 	 * @access public
-	 * @param string $content
+	 * @param string $value
 	 * @param bool $isArray
 	 * @return mixed
 	 */
-	public static function decode($content, $isArray = false)
+	public static function decode(string $value, bool $isArray = false)
 	{
-		return json_decode((string)$content,(bool)$isArray);
+		return json_decode($value, $isArray);
 	}
 
 	/**
-	 * Encode JSON.
+	 * Encode JSON without flags.
 	 *
 	 * @access public
-	 * @param mixen $value
-	 * @return string
+	 * @param mixed $value
+	 * @return mixed
 	 */
 	public static function encode($value)
 	{
-		return self::format($value,0);
+		return self::format($value, 0);
 	}
 
 	/**
-	 * Format JSON for WordPress.
+	 * Encode JSON using flags,
+	 * [SLASHES: 64],
+	 * [PRETTY: 128],
+	 * [UNICODE: 256].
 	 * 
-	 * JSON_UNESCAPED_UNICODE: 256
-	 * JSON_PRETTY_PRINT: 128
-	 * JSON_UNESCAPED_SLASHES: 64
-	 *
 	 * @access public
 	 * @param mixed $value
 	 * @param int $flags
 	 * @param int $depth
 	 * @return mixed
 	 */
-	public static function format($value, $flags = 64|256, $depth = 512)
+	public static function format($value, int $flags = 64|256, int $depth = 512)
 	{
-		return json_encode($value,$flags,$depth);
+		return json_encode($value, $flags, $depth);
 	}
 }

@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -19,27 +19,36 @@ use Twig\Environment as Environment;
 use Twig\TwigFunction as Module;
 
 /**
- * Wrapper class for Twig.
+ * Wrapper class for Twig template engine.
+ * @see https://twig.symfony.com
  */
 final class Template
 {
     /**
+     * Get view environment.
+     * Used single path for security.
+     * 
+     * @access public
      * @param string $path
-     * @param array $settings
+     * @param array $options
      * @return object
      */
-    public static function getEnvironment($path, $settings = [])
+    public static function getEnvironment(string $path, array $options = []) : Environment
     {
-        return new Environment(new Loader($path),$settings);
+        return new Environment(new Loader($path), $options);
     }
 
     /**
+     * Add view callable.
+     * 
+     * @access public
      * @param string $name
-     * @param callable $function
+     * @param callable $callable
+     * @param array $options
      * @return object
      */
-    public static function extend($name, $function)
+    public static function extend(string $name, $callable = null, array $options = []) : Module
     {
-        return new Module($name,$function);
+        return new Module($name, $callable, $options);
     }
 }

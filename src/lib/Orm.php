@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,328 +14,518 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\OrmInterface;
-use VanillePlugin\int\OrmQueryInterface;
-use VanillePlugin\inc\Stringify;
+use VanillePlugin\int\{
+	OrmInterface, OrmQueryInterface
+};
 
 /**
- * Helper class for database Object uses ORM query style.
+ * Helper class for database CRUD architecture,
+ * Using secured ORM style.
  */
 class Orm extends Db implements OrmInterface
 {
+	use \VanillePlugin\VanillePluginConfig;
+
 	/**
-	 * Init db object.
-	 *
-	 * @param void
+	 * @access private
+	 * @var bool $hasPrepare, Query prepare status
+	 * @var bool $hasType, Data type status
+	 */
+	private $hasPrepare = true;
+	private $hasType = true;
+
+	/**
+	 * @access protected
+	 * @var string $table, Table name
+	 * @var string $key, Primary key
+	 */
+	protected $table;
+	protected $key;
+
+	/**
+	 * Init orm.
 	 */
 	public function __construct()
 	{
-		$this->init();
+		// Init config
+		$this->initConfig();
+		
+		// Init db
+		parent::__construct();
+
+		// Display error
+		if ( !$this->hasDebug() ) {
+			$this->silent();
+		}
 	}
 
 	/**
-	 * Execute SQL query.
-	 *
-	 * @access public
-	 * @param string $sql
-	 * @return mixed
+	 * @inheritdoc
 	 */
-	public function query($sql)
+	public function __set(string $field, $value)
 	{
+		$this->{$field} = $value;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function __get(string $field)
+	{
+		return $this->{$field};
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function noPrepare() : self
+	{
+		$this->hasPrepare = false;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function noType() : self
+	{
+		$this->hasType = false;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setTable(string $table) : self
+	{
+		$this->table = $table;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setKey(string $key) : self
+	{
+		$this->key = $key;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function create(array $data, ?string $table = null)
+	{
+		$data  = $this->sanitizeData($data);
+		$table = $this->getTable($table);
+		$types = $this->getTypes($data);
+
+		return $this->db->insert($table, $data, $types);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function read($id = null, ?string $key = null, ?string $table = null) : array
+	{
+		$this->hasPrepare = true;
+
+		$id    = $this->getId($id);
+		$key   = $this->getKey($key);
+		$table = $this->getTable($table);
+
+		$sql = "SELECT * FROM `{$table}` WHERE `{$this->key}` = {{id}} LIMIT 1;";
+		return $this->getRow($sql, ['id' => $id]);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function update(array $data, array $where = [], ?string $table = null) : int
+	{
+		$data  = $this->sanitizeData($data);
+		$where = $this->sanitizeData($where);
+		$table = $this->getTable($table);
+		$key   = $this->getKey();
+
+		if ( isset($data[$key]) ) {
+			unset($data[$key]);
+		}
+
+		$types = [
+			'data'  => $this->getTypes($data),
+			'where' => $this->getTypes($where)
+		];
+
+		return (int)$this->db->update($table, $data, $where, $types['data'], $types['where']);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function delete(array $where = [], ?string $table = null) : int
+	{
+		$table = $this->getTable($table);
+		$types = $this->getTypes($where);
+
+		if ( empty($where) ) {
+			$key = $this->getKey();
+			$where[$key] = $this->key;
+		}
+
+		return (int)$this->db->delete($table, $where, $types);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function execute(string $sql, array $data = [])
+	{
+		$sql = $this->prepareQuery($sql, $data);
 		return $this->db->query($sql);
 	}
-
+	
 	/**
-	 * Prepare SQL query.
-	 *
-	 * @access public
-	 * @param string $sql
-	 * @param mixed $args
-	 * @return mixed
+	 * @inheritdoc
 	 */
-	public function prepare($sql, $args = [])
+	public function getResult(string $sql, array $data = []) : array
 	{
-		return $this->db->prepare($sql,$args);
+		$sql = $this->prepareQuery($sql, $data);
+		return $this->db->get_results($sql, 'ARRAY_A');
 	}
 
 	/**
-	 * Fetch SQL query.
+	 * @inheritdoc
+	 */
+	public function getField(string $sql, array $data = [], int $x = 0, int $y = 0)
+	{
+		$sql = $this->prepareQuery($sql, $data);
+		return $this->db->get_var($sql, $x, $y);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getRow(string $sql, array $data = [], $y = 0) : array
+	{
+		$sql = $this->prepareQuery($sql, $data);
+		return (array)$this->db->get_row($sql, 'ARRAY_A', $y);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getColumn(string $sql, array $data = [], int $x = 0) : array
+	{
+		$sql = $this->prepareQuery($sql, $data);
+		return (array)$this->db->get_col($sql, $x);
+	}
+
+	/**
+	 * Get min value.
 	 *
 	 * @access public
-	 * @param string $sql
-	 * @param string $type, Output type
+	 * @param string $column
+	 * @param string $table
 	 * @return mixed
 	 */
-	public function fetchQuery($sql = null, $isRow = false, $type = 'ARRAY_A')
+	public function min(string $column, ?string $table = null)
 	{
-		if ( $isRow ) {
-			return $this->getRow($sql,$type);
+		$sql = "SELECT MIN(`{$column}`) FROM `{$this->getTable($table)}`;";
+		return $this->getField($sql);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function max(string $column, ?string $table = null)
+	{
+		$sql = "SELECT MAX(`{$column}`) FROM `{$this->getTable($table)}`;";
+		return $this->getField($sql);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function avg(string $column, ?string $table = null)
+	{
+		$sql = "SELECT AVG(`{$column}`) FROM `{$this->getTable($table)}`;";
+		return $this->getField($sql);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function sum(string $column, ?string $table = null)
+	{
+		$sql = "SELECT SUM(`{$column}`) FROM `{$this->getTable($table)}`;";
+		return $this->getField($sql);
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function all(?string $table = null) : array
+	{
+		$sql  = "SELECT * FROM `{$this->getTable($table)}`;";
+		return $this->getResult($sql);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function count(?string $table = null) : int
+	{
+		$sql = "SELECT COUNT(*) FROM `{$this->getTable($table)}`;";
+		return (int)$this->getField($sql);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+    public function insertId() : int
+    {
+        return (int)$this->db->insert_id;
+    }
+
+	/**
+	 * @inheritdoc
+	 */
+	public function clear(?string $table = null, bool $reset = true) : int
+	{
+		$sql = "DELETE FROM `{$this->getTable($table)}`;";
+		$count = $this->execute($sql);
+		if ( $reset ) $this->resetId($table);
+		return $count;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function resetId(?string $table = null) : bool
+	{
+		$sql = "ALTER TABLE `{$this->getTable($table)}` AUTO_INCREMENT = 1;";
+		return (bool)$this->execute($sql);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function hasTable(bool $wildcard = false, ?string $table = null) : bool
+	{
+		if ( !$wildcard ) {
+			$table = $this->getTable($table);
+
+		} else {
+			$table = "%{$this->prefix}$table%";
 		}
-		return $this->getResult($sql,$type);
+		
+		$sql = "SHOW TABLES LIKE '{$table}';";
+		return (bool)$this->execute($sql);
 	}
 
 	/**
-	 * Custom select query.
-	 *
-	 * @access public
-	 * @param OrmQueryInterface $data
-	 * @return mixed
+	 * @inheritdoc
 	 */
-	public function select(OrmQueryInterface $data)
+	public function hasColumn(string $column, ?string $table = null) : bool
 	{
-		extract($data->query);
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$table = Stringify::replace('_prefix_',$prefix,$table);
-		$sql  = trim("SELECT {$column} FROM {$table} {$where} {$orderby} {$limit}");
-		$sql .= ';';
-		if ( $isSingle ) {
-			return $this->getVar($sql);
-
-		} elseif ( $isRow ) {
-			return $this->getRow($sql,$type);
-		}
-		return $this->getResult($sql,$type);
+		$table = $this->getTable($table);
+		$sql = "SHOW COLUMNS FROM `{$table}` LIKE '{$column}';";
+		return (bool)$this->execute($sql);
 	}
 
 	/**
-	 * Custom select count query.
-	 *
-	 * @access public
-	 * @param OrmQueryInterface $data
-	 * @return int
+	 * @inheritdoc
 	 */
-	public function count(OrmQueryInterface $data)
+	public function columns(?string $table = null) : array
 	{
-		extract($data->query);
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$table = Stringify::replace('_prefix_',$prefix,$table);
-		$sql  = trim("SELECT COUNT(*) FROM {$table} {$where}");
-		$sql .= ';';
-		return (int)$this->getVar($sql);
+		$sql  = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS ";
+		$sql .= "WHERE TABLE_NAME = '{$this->getTable($table)}' ";
+		$sql .= "ORDER BY ORDINAL_POSITION;";
+		$columns = $this->getColumn($sql);
+		return $this->uniqueArray($columns);
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function tables() : array
+	{
+		return $this->getColumn('SHOW TABLES;');
 	}
 
 	/**
-	 * Insert query.
-	 *
-	 * @access public
-	 * @param string $table
-	 * @param array $data
-	 * @param mixed $format, Data format
-	 * @return mixed
+	 * @inheritdoc
 	 */
-	public function insert($table, $data = [], $format = null)
+	public function query(OrmQueryInterface $builder)
 	{
+		$builder->setTable($this->table);
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		if ( $this->db->insert("{$prefix}{$table}",$data,$format) ) {
-			return $this->db->insert_id;
-		}
-		return false;
-	}
+		if ( ($query = $builder->getQuery($prefix)) ) {
 
-	/**
-	 * Update query.
-	 *
-	 * @access public
-	 * @param string $table
-	 * @param array $data
-	 * @param array $where
-	 * @param mixed $format, Data format
-	 * @param mixed $f, Where format
-	 * @return bool
-	 */
-	public function update($table, $data = [], $where = [], $format = null, $f = null)
-	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		return (bool)$this->db->update("{$prefix}{$table}",$data,$where,$format,$f);
-	}
-
-	/**
-	 * Delete query.
-	 *
-	 * @access public
-	 * @param string $table
-	 * @param array $where
-	 * @param string $format, Where format
-	 * @return bool
-	 */
-	public function delete($table, $where = [], $format = null)
-	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		return (bool)$this->db->delete("{$prefix}{$table}",$where,$format);
-	}
-
-	/**
-	 * Delete all content of table.
-	 *
-	 * @access public
-	 * @param string $table
-	 * @param bool $resetId
-	 * @return bool
-	 */
-	public function deleteAll($table, $resetId = true)
-	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "DELETE FROM {$prefix}{$table};";
-		if ( ($result = $this->query($sql)) ) {
-			if ( $resetId === true ) {
-				$this->resetId($table);
+			if ( $builder->result == 'any' ) {
+				return $this->getResult($query);
 			}
-			return (bool)$result;
+
+			if ( $builder->result == 'field' ) {
+				return $builder->format(
+					$this->getField($query)
+				);
+			}
+
+			if ( $builder->result == 'row' ) {
+				return $this->getRow($query);
+			}
+			
+			if ( $builder->result == 'column' ) {
+				return $this->getColumn($query);
+			}
+
+			return $this->execute($query);
 		}
-		return false;
 	}
 
 	/**
-	 * Get variable from database.
-	 *
-	 * @access public
-	 * @param string $sql
-	 * @param int $x, Column index
-	 * @param int $y, Row index
-	 * @return mixed
-	 */
-	public function getVar($sql = null, $x = 0, $y = 0)
-	{
-		return $this->db->get_var($sql,$x,$y);
-	}
-
-	/**
-	 * Get column from database.
-	 *
-	 * @access public
-	 * @param string $sql
-	 * @param int $x, Column index
-	 * @return mixed
-	 */
-	public function getCol($sql = null, $x = 0)
-	{
-		return $this->db->get_col($sql,$x);
-	}
-
-	/**
-	 * Get row from database.
-	 *
-	 * @access public
-	 * @param string $sql
-	 * @param string $type, Output type
-	 * @param int $y, Row index
-	 * @return mixed
-	 */
-	public function getRow($sql = null, $type = 'ARRAY_A', $y = 0)
-	{
-		return $this->db->get_row($sql,$type,$y);
-	}
-
-	/**
-	 * Get result from database.
-	 *
-	 * @access public
-	 * @param string $sql
-	 * @param string $type, Output type
-	 * @return mixed
-	 */
-	public function getResult($sql = null, $type = 'ARRAY_A')
-	{
-		return $this->db->get_results($sql,$type);
-	}
-
-	/**
-	 * Reset table Id.
-	 *
-	 * @access public
+	 * Get plugin table name.
+	 * 
+	 * @access protected
 	 * @param string $table
-	 * @return bool
+	 * @return string
 	 */
-	public function resetId($table)
+	protected function getTable(?string $table = null) : string
 	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "ALTER TABLE `{$prefix}{$table}` AUTO_INCREMENT = 1;";
-		return (bool)$this->query($sql);
+		$temp = (string)$this->table;
+		if ( $table ) $temp = $table;
+		return "{$this->prefix}{$this->applyPrefix($temp)}";
+	}
+	
+	/**
+	 * Get table key.
+	 * 
+	 * @access protected
+	 * @param string $key
+	 * @return string
+	 */
+	protected function getKey(?string $key = null) : string
+	{
+		$temp = (string)$this->key;
+		if ( $key ) $temp = $key;
+		return $temp;
+	}
+	
+	/**
+	 * Get table Id.
+	 * 
+	 * @access protected
+	 * @param mixed $id
+	 * @return mixed
+	 */
+	protected function getId($id = null)
+	{
+		$temp = $this->{$this->key};
+		if ( $id ) $temp = $id;
+		return $temp;
 	}
 
 	/**
-	 * Get tables.
+	 * Prepare query.
 	 *
-	 * @access public
-	 * @param void
+	 * @access protected
+	 * @param string $sql
+	 * @param array $data
+	 * @return string
+	 */
+	protected function prepareQuery(string $sql, array $data) : string
+	{
+		if ( $this->hasPrepare && $data ) {
+			foreach ($data as $key => $value) {
+				if ( $this->isType('int', $value) ) {
+					$sql = $this->replaceString("{{{$key}}}", '%d', $sql);
+	
+				} elseif ( $this->isType('float', $value) ) {
+					$sql = $this->replaceString("{{{$key}}}", '%f', $sql);
+	
+				} else {
+					$sql = $this->replaceString("{{{$key}}}", '%s', $sql);
+				}
+			}
+	
+			$prepare = $this->db->prepare($sql, $data);
+			if ( $prepare ) {
+				$sql = $prepare;
+			}
+		}
+		return $this->formatQuery($sql);
+	}
+
+	/**
+	 * Get data types.
+	 *
+	 * @access protected
+	 * @param array $data
+	 * @return mixed
+	 */
+	protected function getTypes(array $data)
+	{
+		if ( $this->hasType && $data ) {
+			$types = [];
+			foreach ($data as $key => $value) {
+				if ( $this->isType('int', $value) ) {
+					$types[] = '%d';
+	
+				} elseif ( $this->isType('float', $value) ) {
+					$types[] = '%f';
+					
+				} else {
+					$types[] = '%s';
+				}
+			}
+			return $types;
+		}
+		return null;
+	}
+
+	/**
+	 * Format query.
+	 *
+	 * @access protected
+	 * @param string $sql
+	 * @return string
+	 */
+	protected function formatQuery(string $sql) : string
+	{
+		$sql = $this->formatSpace($sql);
+		if ( substr($sql, -1) !== ';' ) {
+			$sql .= ';';
+		}
+		return $sql;
+	}
+
+	/**
+	 * Sanitize data.
+	 *
+	 * @access protected
+	 * @param array $data
 	 * @return array
 	 */
-	public function getTables()
+	protected function sanitizeData(array $data) : array
 	{
-		return (array)$this->query('show tables;');
+		foreach ($data as $key => $value) {
+			if ( !$this->isType('string', $key) ) {
+				unset($data[$key]);
+			}
+		}
+		return $data;
 	}
 
 	/**
-	 * Check table.
+	 * Hide error.
 	 *
-	 * @access public
-	 * @param string $table
-	 * @return bool
+	 * @access protected
+	 * @return void
 	 */
-	public function hasTable($table)
+	protected function silent()
 	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "SHOW TABLES LIKE '{$prefix}{$table}';";
-		return (bool)$this->query($sql);
-	}
-
-	/**
-	 * Get field min.
-	 *
-	 * @access public
-	 * @param string $table
-	 * @param string $field
-	 * @return mixed
-	 */
-	public function min($table, $field)
-	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "SELECT min({$field}) FROM `{$prefix}{$table}`;";
-		return $this->query($sql);
-	}
-
-	/**
-	 * Get field max.
-	 *
-	 * @access public
-	 * @param string $table
-	 * @param string $field
-	 * @return mixed
-	 */
-	public function max($table, $field)
-	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "SELECT max({$field}) FROM `{$prefix}{$table}`;";
-		return $this->query($sql);
-	}
-
-	/**
-	 * Get field avg.
-	 *
-	 * @access public
-	 * @param string $table
-	 * @param string $field
-	 * @return mixed
-	 */
-	public function avg($table = '', $field = '')
-	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "SELECT avg({$field}) FROM `{$prefix}{$table}`;";
-		return $this->query($sql);
-	}
-
-	/**
-	 * Get field sum.
-	 *
-	 * @access public
-	 * @param string $table
-	 * @param string $field
-	 * @return mixed
-	 */
-	public function sum($table = '', $field = '')
-	{
-		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		$sql = "SELECT sum({$field}) FROM `{$prefix}{$table}`;";
-		return $this->query($sql);
+		$this->db->hide_errors();
 	}
 }

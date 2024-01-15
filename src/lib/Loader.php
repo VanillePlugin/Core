@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,30 +14,32 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\PluginNameSpaceInterface;
-use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\File;
-
 /**
- * Class loader for custom functions and shortcodes.
+ * Plugin custom functions loader.
  * @internal
  */
-final class Loader extends PluginOptions
+class Loader
 {
-	/**
-	 * @access private
-	 * @var string $regex
-	 */
-	private $regex = '/^.*\.(php)$/i';
+	use \VanillePlugin\VanillePluginConfig;
 
-    /**
-     * @param PluginNameSpaceInterface $plugin
-     */
-    public function __construct(PluginNameSpaceInterface $plugin)
+	private const BASEDIR = 'core/system/functions';
+	private const PATTERN = '/^.*\.(php)$/i';
+
+	/**
+	 * @access protected
+	 * @var string $baseDir
+	 * @var string $pattern
+	 */
+	protected $baseDir;
+	protected $pattern;
+
+	/**
+	 * Init loader.
+	 */
+	public function __construct(string $baseDir = self::BASEDIR, string $pattern = self::PATTERN)
 	{
-        // Init plugin config
-        $this->initConfig($plugin);
+		$this->baseDir = $this->formatPath($baseDir);
+		$this->pattern = $pattern;
 	}
 
 	/**
@@ -52,16 +54,15 @@ final class Loader extends PluginOptions
 	 */
 	public function instance($path, $className, $arg1 = null, $arg2 = null)
 	{
-		$path = ltrim($path,'/');
-		$path = ltrim($path,'\\');
-		$dir = "{$this->getRoot()}/core/system/functions/{$path}";
-		if ( File::isDir($dir) ) {
-			$files = $this->scan($dir);
-			$className = Stringify::lowercase($className);
+		$path = $this->formatPath($path);
+		$dir = "{$this->getRoot()}/{$this->baseDir}/{$path}";
+		if ( $this->isDir($dir) ) {
+			$files = $this->scan($dir, $path);
+			$className = $this->lowercase($className);
 			if ( isset($files[$className]) ) {
-				if ( TypeCheck::isClass($files[$className]) ) {
+				if ( $this->isType('class', $files[$className]) ) {
 					$class = $files[$className];
-					return new $class($arg1,$arg2);
+					return new $class($arg1, $arg2);
 				}
 			}
 		}
@@ -80,41 +81,50 @@ final class Loader extends PluginOptions
 	 */
 	public function i($path, $className, $arg1 = null, $arg2 = null)
 	{
-		return $this->instance($path,$className,$arg1,$arg2);
-	}
-
-	/**
-	 * Set regex.
-	 * 
-	 * @access public
-	 * @param string $regex
-	 * @return void
-	 */
-	public function setRegex($regex)
-	{
-		$this->regex = $regex;
+		return $this->instance($path, $className, $arg1, $arg2);
 	}
 
 	/**
 	 * Scan classes files.
 	 * 
-	 * @access public
-	 * @param string $path
+	 * @access protected
+	 * @param string $dir
+	 * @param string $base
 	 * @return array
 	 */
-	private function scan($path)
+	protected function scan(string $dir, string $base)
 	{
-		$files = File::scanDir($path);
-		$base = basename($path);
-		$namespace = "{$this->getNameSpace()}\\core\\system\\functions\\{$base}";
+		$files = $this->scanDir($dir);
+		$namespace = $this->formatPath("{$this->baseDir}/{$base}", true);
 		foreach ($files as $key => $name) {
-			if ( Stringify::match($this->regex,$name) ) {
-				$name = substr($name,0,strrpos($name,'.php'));
-				$slug = Stringify::lowercase($name);
+			if ( $this->matchString($this->pattern, $name) ) {
+				$name = substr($name, 0, strrpos($name, '.php'));
+				$slug = $this->lowercase($name);
 				$files[$slug] = "{$namespace}\\{$name}";
 			}
 			unset($files[$key]);
 		}
 		return $files;
+	}
+
+	/**
+	 * Format path.
+	 * 
+	 * @access protected
+	 * @param string $path
+	 * @param bool $namespace
+	 * @return string
+	 */
+	protected function formatPath(string $path, bool $namespace = false)
+	{
+        $path = ltrim($path, '/');
+        $path = rtrim($path, '/');
+        $path = ltrim($path, '\\');
+        $path = rtrim($path, '\\');
+        if ( $namespace ) {
+        	$path = $this->replaceString('/', '\\', $path);
+			$path = $this->applyNameSpace($path, '\\');
+        }
+        return $path;
 	}
 }

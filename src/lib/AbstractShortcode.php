@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -23,36 +23,28 @@ use VanillePlugin\inc\Shortcode;
 abstract class AbstractShortcode extends View implements ShortcodeInterface
 {
 	/**
-	 * Do shortcode main callable.
-	 * 
-	 * @access public
-	 * @param array $atts
-	 * @param string $content
-	 * @param string $tag
-	 * @return string
+	 * @inheritdoc
 	 */
-	abstract public function doCallable($atts = [], $content = null, $tag = '');
+	abstract public function doCallable(array $atts = [], ?string $content = null, ?string $tag = null) : string;
 
 	/**
+	 * Get shortcode attributes.
+	 * 
 	 * @access protected
-	 * @param array $default
-	 * @param array $atts
-	 * @param string $tag
-	 * @return array
+	 * @inheritdoc
 	 */
-	protected function attributes($default = [], $atts = [], $tag = '')
+	protected function attributes(array $default = [], array $atts = [], ?string $tag = null) : array
 	{
-		return Shortcode::attributes($default,$atts,$tag);
+		return Shortcode::attributes($default, $atts, $tag);
 	}
 
 	/**
 	 * Format shortcode attributes.
 	 * 
 	 * @access protected
-	 * @param array $atts
-	 * @return array
+	 * @inheritdoc
 	 */
-	protected function formatAttributes($atts = [])
+	protected function formatAttributes(array $atts = []) : array
 	{
 		return Shortcode::formatAttributes($atts);
 	}

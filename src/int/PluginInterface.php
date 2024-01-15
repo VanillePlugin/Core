@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -18,81 +18,64 @@ interface PluginInterface
 {
     /**
      * Setup plugin.
-     *
-     * @param void
      */
     function __construct();
 
-    /**
-     * Prevent object clone.
-     *
-     * @param void
-     * @return void
-     */
-    function __clone();
+	/**
+	 * Plugin start action.
+	 *
+	 * @return void
+	 */
+	static function start();
 
-    /**
-     * Prevent object unserialize.
-     *
-     * @param void
-     * @return void
-     */
-    function __wakeup();
+	/**
+	 * Plugin load action.
+	 * [Action: plugins-loaded].
+	 *
+	 * @return void
+	 */
+	function load();
 
-    /**
-     * Plugin start action.
-     *
-     * @param void
-     * @return void
-     */
-    static function start();
+	/**
+	 * Plugin activation action.
+	 * [Action: activate_{pluginMain}.php].
+	 *
+	 * @return void
+	 */
+	function activate();
 
-    /**
-     * Plugin load action.
-     *
-     * @param void
-     * @return void
-     */
-    function load();
+	/**
+	 * Plugin deactivation action.
+	 * [Action: deactivate_{pluginMain}.php].
+	 *
+	 * @return void
+	 */
+	function deactivate();
 
-    /**
-     * Plugin activation action.
-     *
-     * @param void
-     * @return void
-     */
-    function activate();
+	/**
+	 * Plugin upgrade action.
+	 * [Action: upgrader-process-complete].
+	 *
+	 * @param object $upgrader
+	 * @param array $options
+	 * @return void
+	 */
+	function upgrade(object $upgrader, array $options);
 
-    /**
-     * Plugin deactivation action.
-     *
-     * @param void
-     * @return void
-     */
-    function deactivate();
+	/**
+	 * Plugin uninstall action.
+	 *
+	 * @return void
+	 */
+	static function uninstall();
 
-    /**
-     * Plugin upgrade action.
-     *
-     * @param object $upgrader
-     * @param array $options
-     * @return void
-     */
-    function upgrade($upgrader, $options);
-
-    /**
-     * Plugin uninstall action.
-     *
-     * @param void
-     * @return void
-     */
-    static function uninstall();
-
-    /**
-     * Add plugin action links.
-     *
-     * @param array $links
-     * @return array
-     */
-    function action($links);
+	/**
+	 * Add plugin action links.
+	 * [Filter: plugin_action_links_{pluginMain}.php].
+	 * [Filter: network_admin_plugin_action_links_{pluginMain}.php].
+	 *
+	 * @param array $links
+	 * @return array
+	 */
+	function action(array $links) : array;
 }

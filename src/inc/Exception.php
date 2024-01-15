@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -19,26 +19,26 @@ use \WP_Error;
 /**
  * Exception and error handler helper.
  */
-class Exception extends \Exception
+final class Exception extends \Exception
 {
 	/**
 	 * Handle shutdown exception.
 	 *
 	 * @access public
-	 * @var array $callable
-	 * @return void
+	 * @param callable $callback
+	 * @param array $args
+	 * @return bool
 	 */
-	public static function handle($callable)
+	public static function handle(callable $callback, ?array $args = null) : bool
 	{
-		register_shutdown_function($callable);
+		return (bool)register_shutdown_function($callback, $args);
 	}
 
 	/**
 	 * Get last error.
 	 *
 	 * @access public
-	 * @var void
-	 * @return string
+	 * @return mixed
 	 */
 	public static function getLastError()
 	{
@@ -49,7 +49,6 @@ class Exception extends \Exception
 	 * Clear last error.
 	 *
 	 * @access public
-	 * @var void
 	 * @return void
 	 */
 	public static function clearLastError()
@@ -61,41 +60,53 @@ class Exception extends \Exception
 	 * Trigger user error.
 	 *
 	 * @access public
-	 * @var string $message
-	 * @var int $type
+	 * @param string $error
+	 * @param int $type
 	 * @return bool
 	 */
-	public static function trigger($message, $type = E_USER_NOTICE)
+	public static function trigger(string $error, int $type = E_USER_NOTICE) : bool
 	{
-		return trigger_error($message,$type);
+		return trigger_error($error, $type);
 	}
 
 	/**
 	 * Return WordPress error object.
 	 *
 	 * @access public
-	 * @param string $code
+	 * @param mixed $code
 	 * @param string $message
 	 * @param array $args
 	 * @return object
 	 */
-	public static function error($code = '', $message = '', $args = [])
+	public static function error($code, ?string $message = null, array $args = []) : object
 	{
-	    return new WP_Error($code,$message,$args);
+	    return new WP_Error($code, $message, $args);
 	}
 
 	/**
-	 * Kill WordPress execution and display HTML message with error message.
+	 * Kill WordPress execution,
+	 * Display optional message.
 	 *
 	 * @access public
-	 * @param string $message
-	 * @param string $title
-	 * @param array $args
+	 * @param mixed $message
+	 * @param mixed $title
+	 * @param mixed $args
 	 * @return void
 	 */
-	public static function except($message = '', $title = '', $args = [])
+	public static function throw($message = '', $title = '', $args = [])
 	{
-		wp_die($message,$title,$args);
+		wp_die($message, $title, $args);
+	}
+
+	/**
+	 * Kill WordPress execution.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public static function die()
+	{
+		self::throw();
 	}
 
 	/**
@@ -105,7 +116,7 @@ class Exception extends \Exception
 	 * @param mixed $object
 	 * @return bool
 	 */
-	public static function isError($object)
+	public static function isError($object) : bool
 	{
 		return is_wp_error($object);
 	}

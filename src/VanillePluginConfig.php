@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,66 +14,128 @@ declare(strict_types=1);
 
 namespace VanillePlugin;
 
-use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\exc\ConfigurationException;
-use VanillePlugin\inc\File;
-use VanillePlugin\inc\Json;
-use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\GlobalConst;
 
+/**
+ * Define base configuration used by plugin.
+ *
+ * - Configuration
+ * - Translation
+ * - Formatting
+ * - IO
+ * 
+ * @see https://developer.wordpress.org/plugins/
+ */
 trait VanillePluginConfig
 {
-	/**
-	 * @access private
-	 * @var string $path
-	 * @var object $global
-	 * @var string $namespace
-	 */
-	private $path = '/core/storage/config/global.json';
-	private $global;
-	private $namespace;
+	use \VanillePlugin\tr\TraitConfigurable,
+		\VanillePlugin\tr\TraitTranslatable,
+		\VanillePlugin\tr\TraitFormattable,
+		\VanillePlugin\tr\TraitIO;
 
 	/**
-	 * Get static instance.
+	 * @access private
+	 * @var int $depth, Base path depth
+	 * @var string $config, Config path
+	 * @var object $global, Config global
+	 */
+	private $depth = 5;
+	private $config = '/core/storage/config/global.json';
+	private $global;
+
+	/**
+	 * Init configuration.
+	 */
+	public function __construct()
+	{
+		$this->initConfig();
+	}
+
+	/**
+	 * Prevent object clone.
+	 */
+    public function __clone()
+    {
+        die(__METHOD__ . ': Clone denied');
+    }
+
+	/**
+	 * Prevent object serialization.
+	 */
+    public function __wakeup()
+    {
+        die(__METHOD__ . ': Unserialize denied');
+    }
+
+	/**
+	 * Get static instance,
+	 * Allows access to plugin config.
 	 *
-	 * @access public
-	 * @param void
+	 * @access protected
 	 * @return object
 	 */
-	public static function getStatic()
+	protected static function getStatic() : object
 	{
 		return new static;
 	}
 	
 	/**
 	 * Set configuration JSON File,
-	 * Allows access to parent config.
+	 * Allows access to plugin config.
 	 *
 	 * @access protected
-	 * @param PluginNameSpaceInterface $plugin
 	 * @return void
 	 * @throws ConfigurationException
 	 */
-	protected function initConfig(PluginNameSpaceInterface $plugin)
+	protected function initConfig()
 	{
-		// Check Namespace
-		VanillePluginValidator::checkNamespace($plugin);
-
-		// Define plugin internal namespace
-		$this->namespace = Stringify::slugify($plugin->getNameSpace());
+		// Override config
+		if ( defined('VanillePluginDepth') ) {
+			$this->depth = (int)constant('VanillePluginDepth');
+		}
+		if ( defined('VanillePluginConfigPath') ) {
+			$this->config = (string)constant('VanillePluginConfigPath');
+		}
 
 		// Parse plugin config
-		$json = "{$this->getRoot()}{$this->path}";
-		if ( File::exists($json) ) {
+		$json = $this->getRoot($this->config);
+		if ( $this->isFile($json) ) {
 
-			$this->global = Json::parse($json);
-			VanillePluginValidator::checkConfig($this->global,$json);
+			$this->global = $this->parseJson($json);
+			VanillePluginValidator::checkConfig($this->global, $json);
 
 		} else {
 	        throw new ConfigurationException(
 	            ConfigurationException::invalidPluginConfigurationFile($json)
 	        );
 		}
+	}
+
+	/**
+	 * Reset config objects.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function resetConfig()
+	{
+		unset($this->global);
+		unset($this->routes);
+	}
+
+	/**
+	 * Get global config option.
+	 *
+	 * @access protected
+	 * @param string $key
+	 * @return mixed
+	 */
+	protected function getConfig(?string $key = null)
+	{
+		if ( $key ) {
+			return $this->global->{$key} ?? null;
+		}
+		return $this->global;
 	}
 
 	/**
@@ -86,8 +148,8 @@ trait VanillePluginConfig
 	 */
 	protected function updateConfig($options = [], $args = 64|128|256)
 	{
-		$json = "{$this->getRoot()}{$this->path}";
-		$update = Json::parse($json,true);
+		$json = $this->getRoot($this->config);
+		$update = $this->parseJson($json, true);
 		foreach ($options as $option => $value) {
 			if ( isset($update['options'][$option]) ) {
 				$update['options'][$option] = $value;
@@ -95,23 +157,8 @@ trait VanillePluginConfig
 		}
 		$update['routes'] = (object)$update['routes'];
 		$update['assets'] = (object)$update['assets'];
-		$update = Json::format($update,$args);
-		File::w("{$this->getRoot()}{$this->path}",$update);
-	}
-
-	/**
-	 * Get global option.
-	 *
-	 * @access protected
-	 * @param string $var
-	 * @return mixed
-	 */
-	protected function getConfig($var = null)
-	{
-		if ( $var ) {
-			return $this->global->$var ?? null;
-		}
-		return $this->global;
+		$update = $this->formatJson($update, $args);
+		$this->writeFile($this->getRoot($this->config), $update);
 	}
 
 	/**
@@ -123,29 +170,48 @@ trait VanillePluginConfig
 	 */
 	protected function setConfigPath($path = '/global.json')
 	{
-		$this->path = $path;
+		$this->config = $path;
 	}
 
 	/**
-	 * Get static namespace.
+	 * Get dynamic root.
 	 *
 	 * @access protected
-	 * @param void
+	 * @param string $sub
 	 * @return string
 	 */
-	protected function getNameSpace()
+	protected function getRoot(?string $sub = null) : string
 	{
-		return $this->namespace;
+		$path = __DIR__;
+		for ($i=0; $i < $this->depth; $i++) {
+			$path = dirname($path);
+		}
+		if ( $sub ) {
+			$path .= "/{$sub}";
+		}
+		return $this->formatPath($path);
 	}
 
 	/**
-	 * Get static namespace.
+	 * Get dynamic namespace.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getPluginName()
+	protected function getNameSpace() : string
+	{
+		return $this->slugify(
+			basename($this->getRoot())
+		);
+	}
+
+	/**
+	 * Get static name.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getPluginName() : string
 	{
 		return $this->global->name;
 	}
@@ -154,34 +220,42 @@ trait VanillePluginConfig
 	 * Get static description.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getPluginDescription()
+	protected function getPluginDescription() : string
 	{
 		return $this->global->description;
 	}
 
 	/**
-	 * Get static namespace.
+	 * Get static author.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getPluginAuthor()
+	protected function getPluginAuthor() : string
 	{
 		return $this->global->author;
+	}
+
+	/**
+	 * Get static link.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getPluginLink() : string
+	{
+		return $this->global->link;
 	}
 
 	/**
 	 * Get static version.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getPluginVersion()
+	protected function getPluginVersion() : string
 	{
 		return $this->global->version;
 	}
@@ -190,204 +264,185 @@ trait VanillePluginConfig
 	 * Get static prefix.
 	 *
 	 * @access protected
-	 * @param void
+	 * @param bool $sep, Separator
 	 * @return string
 	 */
-	protected function getPrefix()
+	protected function getPrefix(bool $sep = true) : string
 	{
-		$prefix = Stringify::replace('-', '_', $this->getNameSpace());
-		return "{$prefix}_";
+		$prefix = $this->undash(
+			$this->getNameSpace()
+		);
+		if ( $sep ) {
+			$prefix = "{$prefix}_";
+		}
+		return $prefix;
 	}
 
 	/**
 	 * Get static assets url.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getAssetUrl()
+	protected function getAssetUrl() : string
 	{
 		return "{$this->getBaseUrl()}{$this->global->path->asset}";
+	}
+	
+	/**
+	 * Get static assets relative path.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getAsset() : string
+	{
+		return "/{$this->getNameSpace()}{$this->global->path->asset}";
 	}
 	
 	/**
 	 * Get static assets path.
 	 *
 	 * @access protected
-	 * @param void
+	 * @param string $sub
 	 * @return string
 	 */
-	protected function getAsset()
+	protected function getAssetPath(?string $sub = null) : string
 	{
-		return "/{$this->getNameSpace()}{$this->global->path->asset}";
+		$path = $this->getRoot($this->global->path->asset);
+		if ( $sub ) {
+			$path .= "/{$sub}";
+		}
+		return $this->formatPath($path);
 	}
 
 	/**
 	 * Get static migrate path.
 	 *
 	 * @access protected
-	 * @param void
+	 * @param string $sub
 	 * @return string
 	 */
-	protected function getMigrate()
+	protected function getMigratePath(?string $sub = null) : string
 	{
-		return "{$this->getRoot()}{$this->global->path->migrate}";
+		$path = $this->getRoot($this->global->path->migrate);
+		if ( $sub ) {
+			$path .= "/{$sub}";
+		}
+		return $this->formatPath($path);
 	}
 
 	/**
 	 * Get static cache path.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getCachePath()
+	protected function getCachePath() : string
 	{
-		return "{$this->getRoot()}{$this->global->path->cache}";
+		return $this->getRoot($this->global->path->cache);
 	}
 
 	/**
 	 * Get static temp path.
 	 *
 	 * @access protected
-	 * @param void
+	 * @param string $sub
 	 * @return string
 	 */
-	protected function getTempPath()
+	protected function getTempPath(?string $sub = null) : string
 	{
-		return "{$this->getRoot()}{$this->global->path->temp}";
+		$path = $this->getRoot($this->global->path->temp);
+		if ( $sub ) {
+			$path .= "/{$sub}";
+		}
+		return $this->formatPath($path);
 	}
 
 	/**
 	 * Get static expire.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return int
 	 */
-	protected function getExpireIn()
+	protected function getExpireIn() : int
 	{
-		return intval($this->global->options->ttl);
+		return (int)$this->global->options->ttl;
 	}
 	
 	/**
 	 * Get static view path.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getViewPath()
+	protected function getViewPath() : string
 	{
-		return "{$this->getRoot()}{$this->global->path->view}";
+		return $this->getRoot($this->global->path->view);
 	}
 
 	/**
 	 * Get static logs path.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getLoggerPath()
+	protected function getLoggerPath() : string
 	{
-		return "{$this->getRoot()}{$this->global->path->logs}";
+		return $this->getRoot($this->global->path->logs);
 	}
 
 	/**
 	 * Get static view extension.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getViewExtension()
+	protected function getViewExtension() : string
 	{
 		return $this->global->options->view->extension;
-	}
-
-	/**
-	 * Get static root.
-	 *
-	 * @access protected
-	 * @param void
-	 * @return string
-	 */
-	protected function getRoot()
-	{
-		return GlobalConst::pluginDir("{$this->getNameSpace()}");
 	}
 
 	/**
 	 * Get main filename.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getMainFile()
+	protected function getMainFile() : string
 	{
-		return  "{$this->getNameSpace()}/{$this->getNameSpace()}.php";
+		return "{$this->getNameSpace()}/{$this->getNameSpace()}.php";
 	}
 
 	/**
 	 * Get main file path.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getMainFilePath()
+	protected function getMainFilePath() : string
 	{
-		return "{$this->getRoot()}/{$this->getNameSpace()}.php";
+		return $this->getRoot("{$this->getNameSpace()}.php");
 	}
 
 	/**
 	 * Get static Base url.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getBaseUrl()
+	protected function getBaseUrl() : string
 	{
-		return GlobalConst::pluginUrl("{$this->getNameSpace()}");
-	}
-
-	/**
-	 * Get ajax url.
-	 *
-	 * @access protected
-	 * @param string $scheme
-	 * @return string
-	 */
-	protected function getAjaxUrl($scheme = 'admin')
-	{
-		return $this->getAdminUrl('admin-ajax.php', $scheme);
-	}
-
-	/**
-	 * Get admin url.
-	 *
-	 * @access protected
-	 * @param string $url
-	 * @param string $scheme
-	 * @return string
-	 */
-	protected function getAdminUrl($url = null, $scheme = 'admin')
-	{
-		return admin_url($url,$scheme);
+		return $this->getPluginUrl("{$this->getNameSpace()}");
 	}
 
 	/**
 	 * Get ajax actions.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return object
 	 */
-	protected function getAjax()
+	protected function getAjax() : object
 	{
 		$ajax = $this->loadConfig('ajax');
 		return ($ajax) ? $ajax : $this->global->ajax;
@@ -396,11 +451,10 @@ trait VanillePluginConfig
 	/**
 	 * Get Ajax admin actions.
 	 *
-	 * @access public
-	 * @param void
+	 * @access protected
 	 * @return array
 	 */
-	public function getAdminAjax()
+	protected function getAdminAjax() : array
 	{
 		return $this->getAjax()->admin;
 	}
@@ -408,75 +462,93 @@ trait VanillePluginConfig
 	/**
 	 * Get Ajax front actions.
 	 *
-	 * @access public
-	 * @param void
+	 * @access protected
 	 * @return array
 	 */
-	public function getFrontAjax()
+	protected function getFrontAjax() : array
 	{
 		return $this->getAjax()->front;
+	}
+
+	/**
+	 * Get cron actions.
+	 *
+	 * @access protected
+	 * @return array
+	 */
+	protected function getCron() : array
+	{
+		$cron = $this->loadConfig('cron', true);
+		return ($cron) ? $cron : $this->global->cron;
 	}
 
 	/**
 	 * Get api routes.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return object
 	 */
-	protected function getRoutes()
+	protected function getRoutes() : object
 	{
 		$routes = $this->loadConfig('routes');
-		return ($routes) ? $routes : $this->global->routes;
+		if ( !$routes ) {
+			$routes = $this->global->routes;
+		}
+		return $routes;
 	}
 
 	/**
 	 * Get requirements.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return object
 	 */
-	protected function getRequirement()
+	protected function getRequirements() : object
 	{
-		$requirement = $this->loadConfig('requirement');
-		return ($requirement) ? $requirement : $this->global->requirement;
+		$requirements = $this->loadConfig('requirements');
+		if ( !$requirements ) {
+			$requirements = $this->global->requirements;
+		}
+		return $requirements;
 	}
 	
 	/**
 	 * Get remote assets.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return array
 	 */
-	protected function getRemoteAsset()
+	protected function getRemoteAssets() : array
 	{
 		$assets = $this->loadConfig('assets');
-		return ($assets) ? (array)$assets : (array)$this->global->assets;
+		if ( !$assets ) {
+			$assets = $this->global->assets;
+		}
+		return (array)$assets;
 	}
 
 	/**
 	 * Get strings.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return array
 	 */
-	protected function getStrings()
+	protected function getStrings() : array
 	{
-		$strings = $this->loadConfig('strings',true);
-		return ($strings) ? (array)$strings : (array)$this->global->strings;
+		$strings = $this->loadConfig('strings', true);
+		if ( !$strings ) {
+			$strings = $this->global->strings;
+		}
+		return (array)$strings;
 	}
 
 	/**
 	 * Get multilingual status.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return bool
 	 */
-	protected function isMultilingual()
+	protected function isMultilingual() : bool
 	{
 		return $this->global->options->multilingual;
 	}
@@ -485,28 +557,21 @@ trait VanillePluginConfig
 	 * Get multisite status.
 	 *
 	 * @access protected
-	 * @param void
 	 * @return bool
 	 */
-	protected function allowedMultisite()
+	protected function allowedMultisite() : bool
 	{
 		return $this->global->options->multisite;
 	}
 
 	/**
-	 * Get debug status.
+	 * Get plugin debug status.
 	 *
 	 * @access protected
-	 * @param bool $global
 	 * @return bool
 	 */
-	protected function isDebug($global = false)
+	protected function hasDebug() : bool
 	{
-		if ( $global ) {
-			if ( $this->global->options->debug || GlobalConst::debug() ) {
-				return true;
-			}
-		}
 		return $this->global->options->debug;
 	}
 
@@ -518,12 +583,109 @@ trait VanillePluginConfig
 	 * @param bool $isArray
 	 * @return mixed
 	 */
-	protected function loadConfig($config, $isArray = false)
+	protected function loadConfig(string $config, bool $isArray = false)
 	{
-		$dir = dirname("{$this->getRoot()}{$this->path}");
-		if ( File::exists( ($json = "{$dir}/{$config}.json") ) ) {
-			return Json::decode(File::r($json),$isArray);
+		$dir = dirname($this->getRoot($this->config));
+		if ( $this->isFile( ($json = "{$dir}/{$config}.json") ) ) {
+			return $this->decodeJson($this->readfile($json), $isArray);
 		}
 		return false;
+	}
+
+	/**
+	 * Apply plugin namespace.
+	 *
+	 * @access protected
+	 * @param string $key
+	 * @param string $sep
+	 * @return string
+	 */
+	protected function applyNamespace(string $key, string $sep = '-') : string
+	{
+		return "{$this->getNameSpace()}{$sep}{$key}";
+	}
+
+	/**
+	 * Apply plugin prefix.
+	 *
+	 * @access protected
+	 * @param string $key
+	 * @param bool $sep, Separator
+	 * @return string
+	 */
+	protected function applyPrefix(string $key, bool $sep = true) : string
+	{
+		$key = $this->undash($key);
+		return "{$this->getPrefix($sep)}{$key}";
+	}
+
+	/**
+	 * Apply plugin sufix.
+	 *
+	 * @access protected
+	 * @param string $key
+	 * @param bool $sep, Separator
+	 * @return string
+	 */
+	protected function applySufix(string $key, bool $sep = true) : string
+	{
+		$key = $this->undash($key);
+		if ( $sep ) {
+			$key = "{$key}_";
+		}
+		return "{$key}{$this->getPrefix(false)}";
+	}
+
+	/**
+	 * Apply plugin asset path.
+	 *
+	 * @access protected
+	 * @param string $path
+	 * @return string
+	 */
+	protected function applyAsset(string $path) : string
+	{
+		return "{$this->getAsset()}{$path}";
+	}
+
+	/**
+	 * Get plugin multilingual status.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function hasMultilingual() : bool
+	{
+		return ($this->isMultilingual() && $this->hasTranslator());
+	}
+
+	/**
+	 * Get plugin language.
+	 *
+	 * @access protected
+	 * @param bool $country
+	 * @return string
+	 */
+	protected function getLang(bool $country = true) : string
+	{
+		// Get from system
+		$locale = $default = $this->getLocale();
+
+		// Get from third-party
+		if ( $this->hasMultilingual() ) {
+			$locale = $this->getTranslatorLocale();
+		}
+
+		// Get from default
+		if ( !$locale ) {
+			$locale = $default;
+		}
+
+		// Convert to country code
+		if ( $country ) {
+			return $this->getTranslatorCountry($locale);
+		}
+
+		return $this->getLanguage($locale);
 	}
 }

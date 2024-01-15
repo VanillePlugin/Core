@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -29,9 +29,9 @@ final class Archive extends File
 	 * @param string $archive
 	 * @return bool
 	 */
-	public static function compress($path = '', $to = '', $archive = '')
+	public static function compress(string $path, string $to = '', string $archive = '') : bool
 	{
-		if ( TypeCheck::isClass('ZipArchive') && !empty($path) ) {
+		if ( TypeCheck::isClass('ZipArchive') && self::exists($path) ) {
 
 			if ( empty($archive) ) {
 				$archive = basename($path);
@@ -41,7 +41,7 @@ final class Archive extends File
 				$to = dirname($path);
 			}
 			
-			$to = Stringify::formatPath($to,true);
+			$to = Stringify::formatPath($to);
 			$to = "{$to}/{$archive}.zip";
 			$zip = new ZIP();
 			if ( $zip->open($to, ZIP::CREATE | ZIP::OVERWRITE) ) {
@@ -51,13 +51,13 @@ final class Archive extends File
 					    RecursiveIteratorIterator::LEAVES_ONLY
 					);
 					foreach ($files as $name => $file) {
-					    if ( !$file->isDir() ){
+					    if ( !$file->isDir() ) {
 					        $p = $file->getRealPath();
-					        $zip->addFile($p,basename($name));
+					        $zip->addFile($p, basename($name));
 					    }
 					}
 				} elseif ( self::isFile($path) ) {
-					$zip->addFile($path,basename($path));
+					$zip->addFile($path, basename($path));
 				}
 				$zip->close();
 				return true;
@@ -75,9 +75,9 @@ final class Archive extends File
 	 * @param bool $remove
 	 * @return bool
 	 */
-	public static function uncompress($archive = '', $to = '', $remove = false)
+	public static function uncompress(string $archive, string $to = '', bool $remove = false) : bool
 	{
-		if ( self::exists($archive) ) {
+		if ( self::isFile($archive) ) {
 
 			$status = false;
 
@@ -99,7 +99,7 @@ final class Archive extends File
 
 			} else {
 				self::init();
-				$unzip = unzip_file($archive,$to);
+				$unzip = unzip_file($archive, $to);
 				if ( !Exception::isError($unzip) ) {
 					$status = true;
 				}
@@ -108,8 +108,10 @@ final class Archive extends File
 			if ( $remove ) {
 				self::remove($archive);
 			}
+
 			return $status;
 		}
+
 		return false;
 	}
 
@@ -121,12 +123,13 @@ final class Archive extends File
 	 * @param int $length
 	 * @return bool
 	 */
-	public static function isGzip($archive, $length = 4096) : bool
+	public static function isGzip(string $archive, int $length = 4096) : bool
 	{
-		if ( self::isFile($archive) ) {
+		if ( self::isFile($archive) 
+		  && self::getExtension($archive) == 'gz' ) {
 			$status = false;
-			if ( ($gz = gzopen($archive,'r')) ) {
-				$status = (bool)gzread($gz,$length);
+			if ( ($gz = gzopen($archive, 'r')) ) {
+				$status = (bool)gzread($gz, $length);
 			}
 			gzclose($gz);
 			return $status;
@@ -143,20 +146,45 @@ final class Archive extends File
 	 * @param bool $remove
 	 * @return bool
 	 */
-	public static function unGzip($archive, $length = 4096, $remove = false) : bool
+	public static function unGzip(string $archive, int $length = 4096, bool $remove = false) : bool
 	{
 		$status = false;
-		if ( ($gz = gzopen($archive,'rb')) ) {
-			$filename = Stringify::replace('.gz','',$archive);
-			$to = fopen($filename,'wb');
-			while ( !gzeof($gz) ) {
-			    fwrite($to,gzread($gz,$length));
+		if ( self::isFile($archive) ) {
+			if ( ($gz = gzopen($archive, 'rb')) ) {
+				$filename = Stringify::replace('.gz', '', $archive);
+				$to = fopen($filename, 'wb');
+				while ( !gzeof($gz) ) {
+				    fwrite($to, gzread($gz, $length));
+				}
+				$status = true;
+				fclose($to);
 			}
-			$status = true;
-			fclose($to);
+			gzclose($gz);
+			if ($remove) {
+				self::remove($archive);
+			}
 		}
-		gzclose($gz);
-		if ($remove) self::remove($archive);
 		return $status;
+	}
+
+	/**
+	 * Validate ZIP archive.
+	 * 
+	 * @access public
+	 * @param string $archive
+	 * @return bool
+	 */
+	public static function isValid(string $archive) : bool
+	{
+		if ( TypeCheck::isClass('ZipArchive') && self::isFile($archive) ) {
+			$zip = new ZIP();
+			if ( $zip->open($archive) === true ) {
+				if ( $zip->numFiles ) {
+					$zip->close();
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

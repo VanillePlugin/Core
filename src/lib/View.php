@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,169 +15,200 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\ViewInterface;
-use VanillePlugin\inc\Template;
-use VanillePlugin\inc\Json;
-use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\File;
-use VanillePlugin\inc\Session;
-use VanillePlugin\inc\Exception as ErrorHandler;
-use \Exception;
 
-class View extends PluginOptions implements ViewInterface
+/**
+ * Plugin view controller.
+ *
+ * - Hooking
+ * - Rendering
+ * - Authentication
+ * - Configuration
+ * - Translation
+ * - Formatting
+ * - IO
+ * - Caching
+ * - Requesting
+ * - Viewing
+ * - Throwing
+ */
+class View implements ViewInterface
 {
+    use \VanillePlugin\VanillePluginOption,
+        \VanillePlugin\tr\TraitViewable,
+        \VanillePlugin\tr\TraitThrowable;
+
     /**
      * @access private
      * @var array $callables
      */
-    private $callables = false;
+    private $callables = [];
 
 	/**
-	 * Define custom callables.
-	 *
-	 * @access public
-     * @param array $callables
-	 * @return void
+	 * @inheritdoc
 	 */
-	public function setCallables($callables = [])
+	public function setCallables(array $callables = [])
 	{
-		$this->callables = $callables;
+		$this->callables = $this->mergeArray(
+            $this->getDefaultCallables(),
+            $callables
+        );
 	}
 
     /**
-     * Render view.
-     *
-     * @access public
-     * @param array $content
-     * @param string $template
-     * @return void
+     * @inheritdoc
      */
-    public function render($content = [], $template = 'default')
+    public function render(string $tpl = 'default', array $content = [], bool $end = false)
     {
-        echo $this->assign($content,$template);
+        echo $this->assign($tpl, $content);
+        if ( $end ) {
+            die;
+        }
     }
 
 	/**
-	 * Aassign content to view.
-	 *
-     * @access public
-	 * @param array $content
-     * @param string $template
-	 * @return mixed
+	 * @inheritdoc
 	 */
-	public function assign($content = [], $template = 'default')
+	public function assign(string $tpl = 'default', array $content = [])
 	{
-        // Set View environment
-        $env = Template::getEnvironment($this->getPath($template),[
+        // Get View environment
+        $env = $this->getEnvironment($this->getPath($tpl), [
             'cache' => $this->getCachePath(),
-            'debug' => $this->isDebug()
+            'debug' => $this->hasDebug()
         ]);
 
-        // Set custom callables
-        if ($this->callables) {
-            foreach ($this->callables as $name => $callable) {
-                $env->addFunction(Template::extend($name,$callable));
-            }
+        // Set callables
+        if ( !$this->callables ) {
+            $this->setCallables();
         }
-    
-		// Add view global functions
-        $env->addFunction(Template::extend('dump', function($var) {
-            var_dump($var);
-        }));
-        $env->addFunction(Template::extend('exit', function($status = null) {
-            exit($status);
-        }));
-        $env->addFunction(Template::extend('getSession', function($var = null) {
-            return Session::get($var);
-        }));
-        $env->addFunction(Template::extend('settingsFields', function($group) {
-            settings_fields($group);
-        }));
-        $env->addFunction(Template::extend('settingsSections', function($group) {
-            do_settings_sections($group);
-        }));
-        $env->addFunction(Template::extend('submitButton', function() {
-            submit_button();
-        }));
-        $env->addFunction(Template::extend('isLoggedIn', function() {
-            return $this->isLoggedIn();
-        }));
-        $env->addFunction(Template::extend('isDebug', function($global = false) {
-            return $this->isDebug($global);
-        }));
-        $env->addFunction(Template::extend('getConfig', function($config) {
-            return $this->getConfig($config);
-        }));
-        $env->addFunction(Template::extend('getPluginOption', function($o, $t = 'array', $d = false, $l = null) {
-            return $this->getPluginOption($o,$t,$d,$l);
-        }));
-        $env->addFunction(Template::extend('getOption', function($option) {
-            return $this->getOption($option);
-        }));
-        $env->addFunction(Template::extend('getRoot', function() {
-            return $this->getRoot();
-        }));
-        $env->addFunction(Template::extend('getBaseUrl', function() {
-            return $this->getBaseUrl();
-        }));
-        $env->addFunction(Template::extend('getAssetUrl', function() {
-            return $this->getAssetUrl();
-        }));
-        $env->addFunction(Template::extend('nonce', function($action = -1) {
-            return $this->createNonce($action);
-        }));
-        $env->addFunction(Template::extend('translate', function($string) {
-            return $this->translateString($string);
-        }));
-        $env->addFunction(Template::extend('decodeJSON', function($json = '') {
-            return Json::decode($json);
-        }));
-        $env->addFunction(Template::extend('encodeJSON', function($array = []) {
-            return Json::encode($array);
-        }));
-        $env->addFunction(Template::extend('serialize', function($data) {
-            return Stringify::serialize($data);
-        }));
-        $env->addFunction(Template::extend('unserialize', function($string) {
-            return Stringify::unserialize($string);
-        }));
-        $env->addFunction(Template::extend('hasFilter', function($hook) {
-            return $this->hasPluginFilter($hook);
-        }));
-        $env->addFunction(Template::extend('applyFilter', function($hook, $value) {
-            return $this->applyPluginFilter($hook,$value);
-        }));
-        $env->addFunction(Template::extend('doAction', function($hook, $args = null) {
-            $this->doPluginAction($hook,$args);
-        }));
+
+        // Load callables
+        foreach ($this->callables as $name => $callable) {
+            $env->addFunction($this->extend($name, $callable));
+        }
 
         // Return rendered view
         try {
-            $view = $env->load("{$template}{$this->getViewExtension()}");
+            $view = $env->load("{$tpl}{$this->getViewExtension()}");
             return $view->render($content);
-        } catch (Exception $e) {
-            ErrorHandler::clearLastError();
+
+        } catch (\Exception $e) {
+            if ( $this->hasDebug() ) {
+                die($e);
+            }
+            $this->clearLastError();
         }
 
         return false;
 	}
 
     /**
-     * Get view path (Overridden).
+     * Get default callables.
      *
      * @access protected
-     * @param string $template
+     * @return array
+     */
+    protected function getDefaultCallables() : array
+    {
+		return [
+			'dump' => function($var) {
+                var_dump($var);
+            },
+			'exit' => function(?int $status = null) {
+                exit($status);
+            },
+			'getSession' => function(?string $key = null) {
+                return $this->getSession($key);
+            },
+			'settingsFields' => function(string $group) {
+                $this->doSettingsFields($group);
+            },
+			'settingsSections' => function(string $page) {
+                $this->doSettingsSections($page);
+            },
+			'submitButton' => function(?string $text = null) {
+                $this->doSettingsSubmit($text);
+            },
+			'isLoggedIn' => function() : bool {
+                return $this->isLoggedIn();
+            },
+			'hasDebug' => function() : bool {
+                return $this->hasDebug();
+            },
+			'isDebug' => function() : bool {
+                return $this->isDebug();
+            },
+			'getConfig' => function($key) {
+                return $this->getConfig($key);
+            },
+			'getRoot' => function() : string {
+                return $this->getRoot();
+            },
+			'getNameSpace' => function() : string {
+                return $this->getNameSpace();
+            },
+			'getBaseUrl' => function() : string {
+                return $this->getBaseUrl();
+            },
+			'getAssetUrl' => function() : string {
+                return $this->getAssetUrl();
+            },
+			'nonce' => function($action = -1) : string {
+                return $this->createToken($action);
+            },
+			'translate' => function(string $string) : string {
+                return $this->trans($string);
+            },
+			'unJson' => function(string $value, bool $isArray = false) {
+                return $this->decodeJson($value, $isArray);
+            },
+			'toJson' => function($value) {
+                return $this->encodeJson($value);
+            },
+			'serialize' => function($value) {
+                return $this->serialize($value);
+            },
+			'unserialize' => function(string $value) {
+                return $this->unserialize($value);
+            },
+			'limitString' => function(string $string, int $limit) {
+                return $this->limitString($string, $limit);
+            },
+			'getOption' => function(string $key, $default = false) {
+                return $this->getOption($key, $default);
+            },
+			'getPluginOption' => function($k, $t = 'array', $d = false, $l = null) {
+                return $this->getPluginOption($k, $t, $d, $l);
+            },
+			'hasFilter' => function(string $hook, $callback = false) {
+                return $this->hasPluginFilter($hook, $callback);
+            },
+			'applyFilter' => function(string $hook, $value, $args = null) {
+                return $this->applyPluginFilter($hook, $value, $args);
+            },
+			'hasAction' => function(string $hook, $callback = false) {
+                return $this->hasPluginAction($hook, $callback);
+            },
+			'doAction' => function(string $hook, $args = null) {
+                $this->doPluginAction($hook, $args);
+            }
+        ];
+    }
+
+    /**
+     * Get view path (Overridden),
+     * [Filter: {plugin}-template-path].
+     *
+     * @access private
+     * @param string $tpl
      * @return string
      */
-    protected function getPath($template = '')
+    private function getPath(string $tpl) : string
     {
-        // Set overriding path
-        $override = "{$this->getThemeDir()}/{$this->getNameSpace()}/";
-        $override = $this->applyFilter(
-            "{$this->getNameSpace()}-override-template-path",
-            $override
-        );
-        if ( File::exists("{$override}{$template}{$this->getViewExtension()}") ) {
-            return $override;
+        $path = $this->getThemeDir($this->getNameSpace());
+        $path = $this->applyPluginFilter('template-path', $path);
+        $file = "{$path}{$tpl}{$this->getViewExtension()}";
+        if ( $this->isFile($file) ) {
+            return $path;
         }
         return $this->getViewPath();
     }

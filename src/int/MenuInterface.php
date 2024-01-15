@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,11 +16,28 @@ namespace VanillePlugin\int;
 
 interface MenuInterface
 {
-    /**
-     * Construct plugin and include page settings.
-     *
-     * @param void
-     * @return void
-     */
-    function init();
+	/**
+	 * Construct plugin and include page settings.
+	 * [Action: admin_menu].
+	 *
+	 * @return void
+	 */
+	function init();
+
+	/**
+	 * Add menu to admin bar.
+	 * [Action: admin_bar_menu].
+	 *
+	 * @param object $bar
+	 * @return void
+	 */
+	function bar(object $bar);
+
+	/**
+	 * Add help menu.
+	 * [Action: load-{page}].
+	 * 
+	 * @return void
+	 */
+	function help();
 }

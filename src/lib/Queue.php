@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,21 +14,22 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\PluginNameSpaceInterface;
-use VanillePlugin\inc\Stringify;
-
 /**
- * Basic helper class for queuing requests.
+ * Helper class for tasks queueing.
+ * @uses Batch queueing is recommended.
  */
-class Queue extends PluginOptions
+class Queue
 {
+    use \VanillePlugin\VanillePluginConfig,
+        \VanillePlugin\tr\TraitCacheable;
+
     /**
-     * @param PluginNameSpaceInterface $plugin
+	 * Init queue.
      */
-    public function __construct(PluginNameSpaceInterface $plugin)
+    public function __construct()
 	{
-        // Init plugin config
-        $this->initConfig($plugin);
+		// Init config
+		$this->initConfig();
 	}
 
 	/**
@@ -39,24 +40,24 @@ class Queue extends PluginOptions
 	 * @param string $name
 	 * @return bool
 	 */
-	public function add($item = '', $name = 'in')
+	public function add(string $item, string $name = 'in') : bool
 	{
 		$queue = $this->get($name);
 		$queue[] = $item;
-		return $this->set($queue,$name);
+		return $this->set($queue, $name);
 	}
 
 	/**
-	 * Check whether item exists.
+	 * Check whether item in queue.
 	 * 
 	 * @access public
 	 * @param string $item
 	 * @param string $name
 	 * @return bool
 	 */
-	public function has($item = '', $name = 'in')
+	public function has(string $item, string $name = 'in') : bool
 	{
-		return Stringify::contains($this->get($name),$item) ;
+		return $this->inArray($item, $this->get($name)) ;
 	}
 
 	/**
@@ -64,11 +65,12 @@ class Queue extends PluginOptions
 	 * 
 	 * @access public
 	 * @param string $name
-	 * @return void
+	 * @return bool
 	 */
-	public function delete($name = 'in')
+	public function delete(string $name = 'in') : bool
 	{
-		return $this->setTransient("{$name}-queue",[]);
+		$name = $this->applyNamespace("{$name}-queue");
+		return $this->setTransient($name, []);
 	}
 
 	/**
@@ -78,11 +80,12 @@ class Queue extends PluginOptions
 	 * @param string $name
 	 * @return array
 	 */
-	private function get($name = 'in')
+	private function get(string $name = 'in') : array
 	{
-		if ( !($queue = $this->getTransient("{$name}-queue")) ) {
+		$name = $this->applyNamespace("{$name}-queue");
+		if ( !($queue = $this->getTransient($name)) ) {
 			$queue = [];
-			$this->set($queue,$name);
+			$this->set($queue, $name);
 		}
 		return $queue;
 	}
@@ -91,12 +94,13 @@ class Queue extends PluginOptions
 	 * Set queue.
 	 * 
 	 * @access private
-	 * @param array $value
+	 * @param array $queue
 	 * @param string $name
 	 * @return bool
 	 */
-	private function set($value = [], $name = 'in')
+	private function set(array $queue = [], string $name = 'in') : bool
 	{
-		return $this->setTransient("{$name}-queue",$value);
+		$name = $this->applyNamespace("{$name}-queue");
+		return $this->setTransient($name, $queue);
 	}
 }

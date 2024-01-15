@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,39 +17,62 @@ namespace VanillePlugin\inc;
 final class HttpPost
 {
 	/**
+	 * Get _POST value.
+	 * 
 	 * @access public
-	 * @param string $item
+	 * @param string $key
 	 * @return mixed
 	 */
-	public static function get($item = null)
+	public static function get(?string $key = null)
 	{
-		if ( $item ) {
-			return self::isSetted($item) ? $_POST[$item] : null;
+		if ( $key ) {
+			return self::isSetted($key) ? $_POST[$key] : null;
 		}
 		return self::isSetted() ? $_POST : null;
 	}
 
 	/**
+	 * Set _POST value.
+	 * 
 	 * @access public
-	 * @param string $item
+	 * @param string $key
 	 * @param mixed $value
 	 * @return void
 	 */
-	public static function set($item, $value = null)
+	public static function set(?string $key = null, $value = null)
 	{
-		$_POST[$item] = $value;
+		$_POST[$key] = $value;
 	}
 
 	/**
+	 * Check _POST value.
+	 * 
 	 * @access public
-	 * @param string $item
+	 * @param string $key
 	 * @return bool
 	 */
-	public static function isSetted($item = null)
+	public static function isSetted(?string $key = null) : bool
 	{
-		if ( $item ) {
-			return isset($_POST[$item]);
+		if ( $key ) {
+			return isset($_POST[$key]);
 		}
 		return isset($_POST) && !empty($_POST);
+	}
+
+	/**
+	 * Unset _POST value.
+	 * 
+	 * @access public
+	 * @param string $key
+	 * @return void
+	 */
+	public static function unset(?string $key = null)
+	{
+		if ( $key ) {
+			unset($_POST[$key]);
+
+		} else {
+			$_POST = [];
+		}
 	}
 }

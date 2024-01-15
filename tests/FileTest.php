@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -20,22 +20,22 @@ final class FileTest extends TestCase
 {
     public function testGetParentDir()
     {
-        $this->assertSame(basename(File::getParentDir(__FILE__)),'tests');
+        $this->assertSame(basename(File::getParentDir(__FILE__)), 'tests');
     }
 
     public function testGetExtension()
     {
-        $this->assertSame(File::getExtension(__FILE__),'php');
+        $this->assertSame(File::getExtension(__FILE__), 'php');
     }
 
     public function testGetName()
     {
-        $this->assertSame(File::getName(__FILE__),'FileTest');
+        $this->assertSame(File::getName(__FILE__), 'FileTest');
     }
 
     public function testGetFileName()
     {
-        $this->assertSame(File::getFileName(__FILE__),'FileTest.php');
+        $this->assertSame(File::getFileName(__FILE__), 'FileTest.php');
     }
 
     public function testGetLastAccess()
@@ -60,7 +60,7 @@ final class FileTest extends TestCase
 
     public function testGetPermissions()
     {
-        $this->assertSame(File::getPermissions(__FILE__),'0666');
+        $this->assertSame(File::getPermissions(__FILE__), '0666');
     }
 
     public function testW()
@@ -73,24 +73,24 @@ final class FileTest extends TestCase
     public function testR()
     {
         File::w(__DIR__ . '/temp');
-        File::addString(__DIR__ . '/temp','test');
-        $this->assertSame(File::r(__DIR__ . '/temp'),'test');
+        File::addString(__DIR__ . '/temp', 'test');
+        $this->assertSame(File::r(__DIR__ . '/temp'), 'test');
     }
 
     public function testAddString()
     {
         File::w(__DIR__ . '/temp');
-        File::addString(__DIR__ . '/temp','test');
-        $this->assertSame(File::r(__DIR__ . '/temp'),'test');
-        File::addString(__DIR__ . '/temp',' 123');
-        $this->assertSame(File::r(__DIR__ . '/temp'),'test 123');
+        File::addString(__DIR__ . '/temp', 'test');
+        $this->assertSame(File::r(__DIR__ . '/temp'), 'test');
+        File::addString(__DIR__ . '/temp', ' 123');
+        $this->assertSame(File::r(__DIR__ . '/temp'), 'test 123');
         File::remove(__DIR__ . '/temp');
     }
 
     public function testAddBreak()
     {
         File::w(__DIR__ . '/temp');
-        File::addBreak(__DIR__ . '/temp',' 123');
+        File::addBreak(__DIR__ . '/temp', ' 123');
         $this->assertSame(File::r(__DIR__ . '/temp'),PHP_EOL);
         File::remove(__DIR__ . '/temp');
     }
@@ -216,7 +216,7 @@ final class FileTest extends TestCase
     public function testParseIni()
     {
         File::w(__DIR__ . '/temp');
-        File::addString(__DIR__ . '/temp','test = 123;');
+        File::addString(__DIR__ . '/temp', 'test = 123;');
         $this->assertEquals(File::parseIni(__DIR__ . '/temp'), [
             'test' => '123'
         ]);
@@ -225,7 +225,7 @@ final class FileTest extends TestCase
 
     public function testImport()
     {
-        $this->assertTrue(File::import('https://example.com/',__DIR__ . '/temp'));
+        $this->assertTrue(File::import('https://example.com/', __DIR__ . '/temp'));
         File::remove(__DIR__ . '/temp');
     }
 
@@ -239,7 +239,7 @@ final class FileTest extends TestCase
     public function testValidate()
     {
         $this->assertSame(
-            File::validate('image.png',Image::getAllowedMimes()),
+            File::validate('image.png',Image::mimes()),
             'image.png'
         );
     }
@@ -254,7 +254,7 @@ final class FileTest extends TestCase
 
     public function testGetAllowedMimes()
     {
-        $this->assertTrue(is_array(File::getAllowedMimes()));
+        $this->assertTrue(is_array(File::mimes()));
     }
 
     public function testAnalyse()

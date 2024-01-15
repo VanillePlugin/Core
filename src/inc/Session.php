@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,17 +16,19 @@ namespace VanillePlugin\inc;
 
 use VanillePlugin\inc\Date;
 
+/**
+ * Built-in tokenizer class,
+ * @see Using WP_Session_Tokens is recommended.
+ */
 final class Session
 {
     /**
      * Start session.
-     *
-     * @param void
      */
     public function __construct()
     {
         if ( !self::isActive() ) {
-            session_start();
+            @session_start();
         }
     }
     
@@ -37,7 +39,7 @@ final class Session
      * @param int $time
      * @return void
      */
-    public static function register($time = 60)
+    public static function register(int $time = 60)
     {
         self::set('--session-id', session_id());
         self::set('--session-time', intval($time));
@@ -45,13 +47,12 @@ final class Session
     }
 
     /**
-     * Check if session is registered.
+     * Check whether session is registered.
      *
      * @access public
-     * @param void
      * @return bool
      */
-    public static function isRegistered()
+    public static function isRegistered() : bool
     {
         if ( !empty(self::get('--session-id')) ) {
             return true;
@@ -60,8 +61,23 @@ final class Session
     }
 
     /**
-     * Set session value.
-     *
+     * Get _SESSION value.
+     * 
+     * @access public
+     * @param string $key
+     * @return mixed
+     */
+    public static function get(?string $key = null)
+    {
+        if ( $key ) {
+            return self::isSetted($key) ? $_SESSION[$key] : null;
+        }
+        return self::isSetted() ? $_SESSION : null;
+    }
+
+    /**
+     * Set _SESSION value.
+     * 
      * @access public
      * @param mixed $key
      * @param mixed $value
@@ -73,40 +89,13 @@ final class Session
     }
 
     /**
-     * Retrieve session value.
-     *
-     * @access public
-     * @param string $item
-     * @return mixed
-     */
-    public static function get($item = null)
-    {
-        if ( $item ) {
-            return self::isSetted($item) ? $_SESSION[$item] : null;
-        }
-        return self::isSetted() ? $_SESSION : null;
-    }
-
-    /**
-     * Retrieve session name.
-     *
-     * @access public
-     * @param void
-     * @return mixed
-     */
-    public static function getName()
-    {
-        return session_name();
-    }
-
-    /**
-     * Check session key exists.
-     *
+     * Check _SESSION value.
+     * 
      * @access public
      * @param string $key
      * @return bool
      */
-    public static function isSetted($key = null)
+    public static function isSetted(?string $key = null) : bool
     {
         if ( $key ) {
             return isset($_SESSION[$key]);
@@ -115,22 +104,26 @@ final class Session
     }
 
     /**
-     * Get current session id.
-     *
+     * Unset _SESSION value.
+     * 
      * @access public
-     * @param void
-     * @return int
+     * @param string $key
+     * @return void
      */
-    public static function getSessionId()
+    public static function unset(?string $key = null)
     {
-        return self::get('--session-id');
+        if ( $key ) {
+            unset($_SESSION[$key]);
+
+        } else {
+            $_SESSION = [];
+        }
     }
 
     /**
-     * Check if session is expired.
+     * Check whether session is expired.
      *
      * @access public
-     * @param void
      * @return bool
      */
     public static function isExpired() : bool
@@ -142,58 +135,83 @@ final class Session
      * Renew session when the given time is not up.
      *
      * @access public
-     * @param void
      * @return void
      */
     public static function renew()
     {
         self::set('--session-start', Date::newTime(0, 0, self::get('--session-time')));
     }
-
+    
     /**
-     * Check session is active.
+     * Get current session id.
      *
      * @access public
-     * @param void
-     * @return bool
-     * 
-     * PHP_SESSION_DISABLED 0
-     * PHP_SESSION_NONE 1
-     * PHP_SESSION_ACTIVE 2
+     * @return int
      */
-    public static function isActive()
+    public static function getSessionId() : int
     {
-        return (session_status() === PHP_SESSION_ACTIVE);
+        return (int)self::get('--session-id');
+    }
+
+    /**
+     * Get session name.
+     *
+     * @access public
+     * @return mixed
+     */
+    public static function getName()
+    {
+        return session_name();
+    }
+
+    /**
+     * Get session status,
+     * [Disabled: 0],
+     * [None: 1],
+     * [Active: 2].
+     * 
+     * @access public
+     * @return int
+     */
+    public static function getStatus() : int
+    {
+        return session_status();
+    }
+
+    /**
+     * Check whether session is active.
+     *
+     * @access public
+     * @return bool
+     */
+    public static function isActive() : bool
+    {
+        return (self::getStatus() == 2);
     }
     
     /**
-     * Close session.
+     * Close session (Write data).
      *
      * @access public
-     * @param void
      * @return bool
      */
-    public static function close()
+    public static function close() : bool
     {
         return session_write_close();
     }
 
     /**
-     * End session.
+     * End session (Destroy data).
      *
      * @access public
-     * @param bool $destroy
      * @return bool
      */
-    public static function end($destroy = true)
+    public static function end() : bool
     {
-        if ( self::isActive() ) {
-            if ( $destroy ) {
-                return session_destroy();
-            }
-            $_SESSION = [];
-            return true;
+        if ( !self::isActive() ) {
+            new self();
         }
-        return false;
+        self::unset();
+        return @session_destroy();
     }
 }

@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,157 +14,267 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\PluginNameSpaceInterface;
-use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\thirdparty\Cache as ThirdPartyCache;
+use VanillePlugin\exc\CacheException;
+use VanillePlugin\inc\Cache as ObjectCache;
+use VanillePlugin\third\Cache as ThirdCache;
+use VanilleCache\Cache as FileCache;
 
 /**
- * Wrapper class for cache object (non-persistent).
+ * Plugin cache manager.
  */
-final class Cache extends PluginOptions
+final class Cache
 {
-	/**
-	 * @access private
-	 * @var int $ttl, cache TTL
-	 */
-	private static $ttl = false;
+	use \VanillePlugin\VanillePluginConfig;
 
 	/**
-	 * @param PluginNameSpaceInterface $plugin
+	 * @access private
+	 * @var string FILECACHE, File cache
 	 */
-	public function __construct(PluginNameSpaceInterface $plugin)
+	private const FILECACHE = 'VanilleCache\Cache';
+
+	/**
+	 * @access private
+	 * @var string $key, Cache key
+	 * @var string $tag, Cache tag
+	 * @var array $path, Cache path
+	 */
+	private $key;
+	private $tag;
+	private $path;
+
+	/**
+	 * Init cache path.
+     */
+	public function __construct()
 	{
 		// Init plugin config
-		$this->initConfig($plugin);
+		$this->initConfig();
 
-		// Set default ttl
-		if ( !self::$ttl ) {
-			self::expireIn($this->getExpireIn());
+		// Set cache path
+		$this->path[] = $this->getTempPath();
+		$this->path[] = $this->getCachePath();
+
+		// Reset config
+		$this->resetConfig();
+	}
+
+	/**
+	 * Set cache key.
+	 * 
+	 * @access public
+	 * @param string $key
+	 * @return object
+	 */
+	public function setKey(string $key) : self
+	{
+		$this->key = $key;
+		$this->tag = $this->getTag($key);
+
+		if ( ThirdCache::isActive() ) {
+			$this->key = $this->applyNamespace($this->key);
+			$this->tag = $this->applyNamespace($this->tag);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Get cache value.
+	 * 
+	 * @access public
+	 * @return mixed
+	 * @throws CacheException
+	 */
+	public function get()
+	{
+		if ( !$this->key ) {
+	        throw new CacheException(
+	            CacheException::undefinedCacheKey()
+	        );
+		}
+
+		if ( ThirdCache::isActive() ) {
+			return ObjectCache::get($this->key);
+		}
+
+		if ( $this->isType('class', self::FILECACHE) ) {
+			return (new FileCache())->get($this->key);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check cache.
+	 *
+	 * @access public
+	 * @return bool
+	 * @throws CacheException
+	 */
+	public function isCached() : bool
+	{
+		if ( !$this->key ) {
+	        throw new CacheException(
+	            CacheException::undefinedCacheKey()
+	        );
+		}
+
+		if ( ThirdCache::isActive() ) {
+			return (ObjectCache::get($this->key) !== false);
+		}
+
+		if ( $this->isType('class', self::FILECACHE) ) {
+			return (new FileCache())->setKey($this->key)->isCached();
+		}
+
+		return false;
+	}
+
+	/**
+	 * Set cache value.
+	 *
+	 * @access public
+	 * @param mixed $value
+	 * @param int $ttl
+	 * @return bool
+	 * @throws CacheException
+	 */
+	public function set($value, ?int $ttl = null) : bool
+	{
+		if ( !$this->key ) {
+	        throw new CacheException(
+	            CacheException::undefinedCacheKey()
+	        );
+		}
+
+		if ( ThirdCache::isActive() ) {
+			return ObjectCache::set($this->key, $value, $this->tag, (int)$ttl);
+		}
+
+		if ( $this->isType('class', self::FILECACHE) ) {
+			return (new FileCache())->setKey($this->key)->set($value, $this->tag, $ttl);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Delete cache.
+	 * 
+	 * @access public
+	 * @return bool
+	 * @throws CacheException
+	 */
+	public function delete() : bool
+	{
+		if ( !$this->key ) {
+	        throw new CacheException(
+	            CacheException::undefinedCacheKey()
+	        );
+		}
+
+		if ( ThirdCache::isActive() ) {
+			return ObjectCache::delete($this->key);
+		}
+
+		if ( $this->isType('class', self::FILECACHE) ) {
+			return (new FileCache())->delete($this->key);
+		}
+
+		return false;
+	}
+	
+	/**
+	 * Delete cache by tag(s).
+	 * 
+	 * @access public
+	 * @param mixed $tag
+	 * @return bool
+	 */
+	public function deleteByTag($tag) : bool
+	{
+		if ( $this->isType('class', self::FILECACHE) ) {
+			return (new FileCache())->deleteByTag($tag);
 		}
 	}
 
 	/**
-	 * Retrieves the cache contents from the cache by key and group.
+	 * Purge any cache.
 	 * 
 	 * @access public
-	 * @param int|string $key
-	 * @param string $group
 	 * @param bool $force
-	 * @param bool $found
-	 * @return mixed|false
-	 */
-	public function get($key, $group = '', $force = false, $found = null)
-	{
-		return wp_cache_get($this->formatKey($key),$group,$force,$found);
-	}
-
-	/**
-	 * Saves the value to the cache.
-	 * 
-	 * @access public
-	 * @param int|string $key
-	 * @param mixed $value
-	 * @param string $group
-	 * @param int $expire
 	 * @return bool
 	 */
-	public function set($key, $value, $group = '', $expire = null)
+	public function purge(bool $force = false) : bool
 	{
-		if ( TypeCheck::isNull($expire) ) {
-			$expire = self::$ttl;
+		$stauts = 0;
+		
+		if ( ThirdCache::isActive() ) {
+			$stauts += (int)ThirdCache::purge();
+			$stauts += (int)ObjectCache::purge();
 		}
-		return wp_cache_set($this->formatKey($key),$value,$group,$expire);
-	}
 
-	/**
-	 * Adds value to the cache, if the cache key doesn’t already exist.
-	 * 
-	 * @access public
-	 * @param int|string $key
-	 * @param mixed $value
-	 * @param string $group
-	 * @param int $expire
-	 * @return bool
-	 */
-	public function add($key, $value, $group = '', $expire = null)
-	{
-		if ( TypeCheck::isNull($expire) ) {
-			$expire = self::$ttl;
+		if ( $this->isType('class', self::FILECACHE) ) {
+			$stauts += (int)(new FileCache())->purge();
 		}
-		return wp_cache_add($this->formatKey($key),$value,$group,$expire);
-	}
 
-	/**
-	 * Replaces the contents of the cache with new value.
-	 * 
-	 * @access public
-	 * @param int|string $key
-	 * @param mixed $value
-	 * @param string $group
-	 * @param int $expire
-	 * @return bool
-	 */
-	public function update($key, $value, $group = '', $expire = null)
-	{
-		if ( TypeCheck::isNull($expire) ) {
-			$expire = self::$ttl;
+		if ( $force ) {
+			foreach ($this->path as $path) {
+				$stauts += (int)$this->clearDir($path, [
+					$this->getNameSpace()
+				]);
+			}
 		}
-		return wp_cache_replace($this->formatKey($key),$value,$group,$expire);
+
+		return (bool)$stauts;
 	}
 
 	/**
-	 * Removes the cache contents matching key and group.
+	 * Generate cache key.
 	 * 
 	 * @access public
-	 * @param int|string $key
-	 * @param string $group
-	 * @return bool
-	 */
-	public function delete($key, $group = '')
-	{
-		return wp_cache_delete($this->formatKey($key),$group);
-	}
-
-	/**
-	 * @access public
-	 * @param void
-	 * @return void
-	 */
-	public function flush()
-	{
-		wp_cache_flush();
-	}
-
-	/**
-	 * @access public
-	 * @param int $ttl 30
-	 * @return void
-	 */
-	public static function expireIn($ttl = 30)
-	{
-		self::$ttl = intval($ttl);
-	}
-
-	/**
-	 * @access public
-	 * @param void
-	 * @return void
-	 */
-	public static function removeThirdParty()
-	{
-		// Clear WordPress 3rd-party cache
-		ThirdPartyCache::purge();
-	}
-
-	/**
-	 * @access private
-	 * @param int|string $key
+	 * @param string $item
+	 * @param array $args
 	 * @return string
 	 */
-	private function formatKey($key)
+	public function generateKey(string $item, array $args = []) : string
 	{
-		$key = Stringify::sanitizeKey($key);
-		return "{$this->getNameSpace()}-{$key}";
+		$key = $item;
+		
+		foreach ($args as $name => $value) {
+
+			if ( $this->isType('array', $value) 
+			  || $this->isType('null', $value) 
+			  || $this->isType('empty', $value) ) {
+				continue;
+			}
+
+			if ( $value === 0 ) {
+				$value = '0';
+
+			} elseif ( $this->isType('false', $value) ) {
+				$value = 'false';
+
+			} elseif ( $this->isType('true', $value) ) {
+				$value = 'true';
+			}
+
+			$key .= "-{$name}-{$value}";
+		}
+
+		return $key;
+	}
+
+	/**
+	 * Get cache tag.
+	 * 
+	 * @access private
+	 * @param string $key
+	 * @return string
+	 */
+	private function getTag(string $key) : string
+	{
+		$tag = explode('-', $key);
+		return $tag[0] ?? $this->getNameSpace();
 	}
 }

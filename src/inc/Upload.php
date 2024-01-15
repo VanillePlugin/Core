@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,74 +17,76 @@ namespace VanillePlugin\inc;
 final class Upload
 {
 	/**
+	 * Get _FILES value.
+	 * 
 	 * @access public
-	 * @param string $item
+	 * @param string $key
 	 * @return mixed
 	 */
-	public static function get($item = null)
+	public static function get(?string $key = null)
 	{
-		if ( $item ) {
-			return self::isSetted($item) ? $_FILES[$item] : null;
+		if ( $key ) {
+			return self::isSetted($key) ? $_FILES[$key] : null;
 		}
 		return self::isSetted() ? $_FILES : null;
 	}
 
 	/**
+	 * Set _FILES value.
+	 * 
 	 * @access public
-	 * @param string $item
+	 * @param string $key
 	 * @param mixed $value
 	 * @return void
 	 */
-	public static function set($item, $value = null)
+	public static function set(string $key, $value = null)
 	{
-		$_FILES[$item] = $value;
+		$_FILES[$key] = $value;
 	}
 	
 	/**
+	 * Check _FILES value.
+	 * 
 	 * @access public
-	 * @param string $item
+	 * @param string $key
 	 * @return bool
 	 */
-	public static function isSetted($item = null)
+	public static function isSetted(?string $key = null) : bool
 	{
-		if ( $item ) {
-			return isset($_FILES[$item]);
+		if ( $key ) {
+			return isset($_FILES[$key]);
 		}
 		return isset($_FILES) && !empty($_FILES);
 	}
 
-	/**
-	 * @access public
-	 * @param string $upload
-	 * @param string $file
-	 * @return mixed
-	 * @todo getAllowedMimes
-	 */
-	public static function do($upload, $file = null)
-	{
-		if ( self::isSetted() ) {
-			if ( !$_FILES['file']['error'] ) {
-				$tmp = ($file) ? $file : $_FILES['file']['tmp_name'];
-				$name = ($file) ? basename($file) : $_FILES['file']['name'];
-				self::moveUploadedFile($tmp,"{$upload}/{$name}");
-				return "{$upload}/{$name}";
-			}
-		}
-		return false;
-	}
+    /**
+     * Unset _FILES value.
+     * 
+     * @access public
+     * @param string $key
+     * @return void
+     */
+    public static function unset(?string $key = null)
+    {
+        if ( $key ) {
+            unset($_FILES[$key]);
+
+        } else {
+            $_FILES = [];
+        }
+    }
 
 	/**
 	 * Move uploaded file.
 	 * 
 	 * @access public
-	 * @param string $tmp
-	 * @param string $file
+	 * @param string $temp
+	 * @param string $path
 	 * @return bool
-	 * @todo getAllowedMimes
 	 */
-	public static function moveUploadedFile($tmp, $file)
+	public static function moveUploadedFile(string $temp, string $path) : bool
 	{
-		return move_uploaded_file($tmp,$file);
+		return move_uploaded_file($temp, $path);
 	}
 
 	/**
@@ -117,7 +119,7 @@ final class Upload
 			];
 		}
 
-		return wp_handle_upload($file,$args,$time);
+		return wp_handle_upload($file, $args, $time);
 	}
 
 	/**
@@ -129,6 +131,6 @@ final class Upload
 	 */
 	public static function dir($time = null, $create = true, $refresh = false)
 	{
-		return wp_upload_dir($time,$create,$refresh);
+		return wp_upload_dir($time, $create, $refresh);
 	}
 }

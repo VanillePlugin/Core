@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -21,43 +21,50 @@ final class Converter
 	 * 
 	 * @access public
 	 * @param array $array
+	 * @param bool $strict
 	 * @return object
 	 */
-	public static function toObject($array)
+	public static function toObject(array $array, $strict = false) : object
 	{
-	    return (object)Json::decode(
-	    	Json::encode($array),
-	    	false
-	    );
+		if ( $strict ) {
+		    return (object)Json::decode(
+		    	Json::encode($array)
+		    );
+		}
+	    $object = new \stdClass;
+	    foreach ( $array as $item => $val ) {
+	        $object->{$item} = $val;
+	    }
+	    return (object)$object;
 	}
 
 	/**
 	 * Convert object to array.
-	 * 
+	 *
 	 * @access public
 	 * @param object $object
 	 * @return array
 	 */
-	public static function toArray($object)
+	public static function toArray(object $object) : array
 	{
 	    return (array)Json::decode(
 	    	Json::encode($object),
 	    	true
 	    );
 	}
-	
+
 	/**
 	 * Convert number to money.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $number
 	 * @param int $decimals
 	 * @param string $dSep Decimals Separator
 	 * @param string $tSep Thousands Separator
-	 * @return mixed
+	 * @return string
 	 */
-	public static function toMoney($number, $decimals = 2, $dSep = '.', $tSep = ' ')
+	public static function toMoney($number, int $decimals = 2, string $dSep = '.', string $tSep = ' ') : string
 	{
-		return number_format((float)$number,$decimals,$dSep,$tSep);
+		return number_format((float)$number, $decimals, $dSep, $tSep);
 	}
 }

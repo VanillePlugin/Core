@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,184 +14,136 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\PluginNameSpaceInterface;
 use VanillePlugin\int\LoggerInterface;
-use VanillePlugin\inc\File;
 
-class Logger extends PluginOptions implements LoggerInterface
+/**
+ * Plugin logger.
+ */
+class Logger implements LoggerInterface
 {
+	use \VanillePlugin\VanillePluginConfig;
+
     /**
-     * @access protected
+     * @access private
      * @var string $path
      * @var string $filename
      * @var string $extension
      */
-    protected $path;
-    protected $filename;
-    protected $extension;
+    private $path;
+    private $filename;
+    private $extension;
 
     /**
-     * @param PluginNameSpaceInterface $plugin
+     * @inheritdoc
      */
-    public function __construct(PluginNameSpaceInterface $plugin)
+    public function __construct(?string $path = '/', string $file = 'debug', string $ext = 'log')
     {
-        // Init plugin config
-        $this->initConfig($plugin);
+		// Init plugin config
+		$this->initConfig();
         
-        // Init logger
-        $this->setPath($this->getLoggerPath());
-        $this->setFilename('debug');
-        $this->setExtension('log');
+        $this->setPath($this->getLoggerPath($path));
+        $this->setFilename($file);
+        $this->setExtension($ext);
+
+        // Reset plugin config
+        $this->resetConfig();
     }
 
     /**
-     * Get debug status.
-     *
-     * @access public
-     * @param bool $global
-     * @return bool
+     * @inheritdoc
      */
-    public function isDebug($global = false)
-    {
-        return parent::isDebug($global);
-    }
-
-    /**
-     * Set logger path.
-     *
-     * @access public
-     * @param string $path
-     * @return void
-     */
-    public function setPath($path)
+    public function setPath(string $path) : self
     {
         $this->path = $path;
-        if ( !File::isDir($this->path) ) {
-            File::addDir($this->path);
+        if ( !$this->isDir($this->path) ) {
+            $this->addDir($this->path);
         }
+        return $this;
     }
 
     /**
-     * Set logger filename.
-     *
-     * @access public
-     * @param string $filename
-     * @return void
+     * @inheritdoc
      */
-    public function setFilename($filename)
+    public function setFilename(string $filename) : self
     {
         $this->filename = $filename;
+        return $this;
     }
 
     /**
-     * Set logger extension.
-     *
-     * @access public
-     * @param string $extension
-     * @return void
+     * @inheritdoc
      */
-    public function setExtension($extension)
+    public function setExtension(string $extension) : self
     {
         $this->extension = $extension;
+        return $this;
     }
 
     /**
-     * Set logger debug.
-     *
-     * @access public
-     * @param string $message
-     * @param bool $isArray
-     * @return void
+     * @inheritdoc
      */
-    public function debug($message = '', $isArray = false)
+    public function debug($message, bool $isArray = false) : bool
     {
         if ( $isArray ) {
-            $message = print_r($message,true);
+            $message = print_r($message, true);
         }
-        $this->write('debug',$message);
+        return $this->write('debug', $message);
     }
 
     /**
-     * Set logger error.
-     *
-     * @access public
-     * @param string $message
-     * @return void
+     * @inheritdoc
      */
-    public function error($message = '')
+    public function error(string $message) : bool
     {
-        $this->write('error',$message);
+        return $this->write('error', $message);
     }
 
     /**
-     * Set logger warning.
-     *
-     * @access public
-     * @param string $message
-     * @return void
+     * @inheritdoc
      */
-    public function warning($message = '')
+    public function warning(string $message) : bool
     {
-        $this->write('warning',$message);
+        return $this->write('warning', $message);
     }
 
     /**
-     * Set logger info.
-     *
-     * @access public
-     * @param string $message
-     * @return void
+     * @inheritdoc
      */
-    public function info($message = '')
+    public function info(string $message) : bool
     {
-        $this->write('info',$message);
+        return $this->write('info', $message);
     }
 
     /**
-     * Set logger custom message.
-     *
-     * @access public
-     * @param string $message
-     * @param string $type
-     * @return void
+     * @inheritdoc
      */
-    public function custom($message = '', $type = 'custom')
+    public function custom(string $message, string $type = 'custom') : bool
     {
-        $this->write($type,$message);
+        return $this->write($type, $message);
     }
 
     /**
-     * Log natif PHP errors.
-     *
-     * @access public
-     * @param string $message
-     * @param int $type 0
-     * @param string $path
-     * @param string $headers
-     * @return void
+     * @inheritdoc
      */
-    public function log($message = '', $type = 0, $path = null, $headers = null)
+    public static function log(string $message, int $type = 0, ?string $path = null, ?string $headers = null) : bool
     {
-        error_log($message,$type,$path,$headers);
+        return error_log($message, $type, $path, $headers);
     }
 
     /**
-     * Write logger message.
+     * Write message.
      *
      * @access protected
      * @param string $status 
      * @param string $message 
      * @return bool
      */
-    protected function write($status, $message)
+    protected function write(string $status, string $message) : bool
     {
-        if ( File::isDir($this->path) && File::isWritable($this->path) ) {
-            $date = date('[d-m-Y]');
-            $file = "{$this->path}/{$this->filename}-{$date}.{$this->extension}";
-            $date = date('[d-m-Y H:i:s]');
-            $msg  = "{$date} : [{$status}] - {$message}" . PHP_EOL;
-            return File::w($file,$msg,true);
-        }
-        return false;
+        $date = date('[d-m-Y]');
+        $log  = "{$this->path}/{$this->filename}-{$date}.{$this->extension}";
+        $date = date('[d-m-Y H:i:s]');
+        $msg  = "{$date} : [{$status}] - {$message}" . PHP_EOL;
+        return $this->writeFile($log, $msg, true);
     }
 }

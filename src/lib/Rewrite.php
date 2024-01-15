@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,12 +14,14 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\File;
-use VanillePlugin\inc\Stringify;
-use VanillePlugin\int\PluginNameSpaceInterface;
-
-final class Rewrite extends PluginOptions
+/**
+ * Plugin rewrite.
+ */
+final class Rewrite
 {
+    use \VanillePlugin\VanillePluginConfig,
+        \VanillePlugin\tr\TraitHookable;
+    
     /**
      * @access private
      * @var string $rules
@@ -29,17 +31,21 @@ final class Rewrite extends PluginOptions
     private $vars = [];
 
     /**
-     * @param PluginNameSpaceInterface $plugin
+     * Init rewrite.
      */
-    public function __construct(PluginNameSpaceInterface $plugin)
+    public function __construct()
     {
-        // Init plugin config
-        $this->initConfig($plugin);
+		// Init config
+		$this->initConfig();
 
         // Load default rewrite
-        if ( ($rewrite = File::r("{$this->getRoot()}/core/storage/config/rewrite")) ) {
-            $this->rules = $rewrite;
+        $dir = "{$this->getRoot()}/core/storage/config/";
+        if ( $this->isFile( $rewrite = "{$dir}/.rewrite" ) ) {
+            $this->rules = $this->writeFile($rewrite);
         }
+
+		// Reset config
+		$this->resetConfig();
     }
 
     /**
@@ -49,44 +55,45 @@ final class Rewrite extends PluginOptions
      * @param string $rules
      * @return void
      */
-    public function setRules($rules = '')
+    public function setRules(string $rules)
     {
         $this->rules = $rules;
     }
 
     /**
-     * Add rules.
-     * Action: init
+     * Add rules,
+     * [Action: init].
      *
      * @access public
      * @param string $regex
-     * @param string $query
+     * @param mixed $query
      * @param string $after
      * @return void
      */
-    public function addRules($regex, $query, $after = 'bottom')
+    public function addRules(string $regex, $query, string $after = 'bottom')
     {
-        add_rewrite_rule($regex,$query,$after);
+        add_rewrite_rule($regex, $query, $after);
     }
 
     /**
-     * Add endpoint.
-     * Action: init
-     * 
-     * EP_ALL: 8191
+     * Add endpoint,
+     * [Action: init],
+     * [EP_ALL: 8191].
      *
      * @access public
      * @param string $name
      * @param int $places
-     * @param mixed $query true
+     * @param mixed $query
      * @return void
      */
-    public function addEndpoint($name, $places = 8191, $query = true)
+    public function addEndpoint(string $name, int $places = 8191, $query = true)
     {
-        add_rewrite_endpoint($name,$places,$query);
+        add_rewrite_endpoint($name, $places, $query);
     }
 
     /**
+     * Add vars.
+     * 
      * @access public
      * @param array $vars
      * @return void
@@ -97,80 +104,85 @@ final class Rewrite extends PluginOptions
     }
 
     /**
-     * Apply rules.
-     * Action: admin_init
+     * Apply rules,
+     * [Action: admin_init].
      *
      * @access public
      * @param int $priority
      * @return void
      */
-    public function applyRules($priority = 10)
+    public function applyRules(int $priority = 10)
     {
-        $this->addFilter('mod_rewrite_rules',[$this,'getRules'],$priority);
+        $this->addFilter('mod_rewrite_rules', [$this, 'getRules'], $priority);
     }
 
     /**
-     * Remove rules.
-     * Action: admin_init
+     * Remove rules,
+     * [Action: admin_init].
      *
      * @access public
      * @param int $priority
-     * @return void
+     * @return bool
      */
-    public function removeRules($priority = 10)
+    public function removeRules(int $priority = 10) : bool
     {
-        $this->removeFilter('mod_rewrite_rules',[$this,'getRules'],$priority);
+        return $this->removeFilter('mod_rewrite_rules', [$this, 'getRules'], $priority);
     }
 
     /**
-     * Get riles.
-     * Filter: mod_rewrite_rules
+     * Get rules,
+     * [Filter: mod_rewrite_rules].
      * 
      * @access public
      * @param string $rules
      * @return string
      */
-    public function getRules($rules)
+    public function getRules(string $rules) : string
     {
-        $this->rules = Stringify::replaceArray($this->vars,$this->rules);
-        $this->rules = Stringify::replace('{root}',site_url('','relative'),$this->rules);
+        $this->rules = $this->replaceStringArray($this->vars, $this->rules);
+        $this->rules = $this->replaceString('{root}', $this->geSiteUrl(), $this->rules);
         $rules = "{$rules}{$this->rules}";
         return $rules;
     }
 
     /**
+     * Check rules.
+     * 
      * @access public
      * @param string $rules
      * @return bool
      */
-    public static function hasRules($rules)
+    public function hasRules(string $rules) : bool
     {
-        if ( File::exists( $htaccess = ABSPATH . '/.htaccess') ) {
-            return Stringify::contains(File::r($htaccess), $rules);
+        if ( $this->isFile( $htaccess = ABSPATH . '/.htaccess' ) ) {
+            return $this->hasString($this->writeFile($htaccess), $rules);
         }
         return false;
     }
 
     /**
+     * Flush rules.
+     * 
      * @access public
      * @param bool $force
      * @return void
      */
-    public static function flush($force = true)
+    public static function flush(bool $force = true)
     {
         flush_rewrite_rules($force);
     }
 
     /**
+     * Backup rules.
+     * 
      * @access public
-     * @param void
      * @return bool
      */
-    public static function backup()
+    public function backup() : bool
     {
-        if ( File::exists( $htaccess = ABSPATH . '/.htaccess') ) {
-            if ( !File::exists( $backup = ABSPATH . '.htaccess.backup') ){
-                return File::w($backup, File::r($htaccess));
+        if ( $this->isFile( $htaccess = ABSPATH . '/.htaccess' ) ) {
+            if ( !$this->isFile( $backup = ABSPATH . '.htaccess.backup' ) ){
+                return $this->writeFile($backup, $this->writeFile($htaccess));
             }
         }
         return false;

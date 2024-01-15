@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,27 +14,30 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\File;
-use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\Arrayify;
-use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\inc\Archive;
-use VanillePlugin\inc\API;
-use VanillePlugin\int\PluginNameSpaceInterface;
-
-final class Asset extends PluginOptions
+/**
+ * Plugin custom assets manager.
+ */
+final class Asset
 {
-	/**
-	 * @access public
-	 */
-	const CDN = 'https://cdnjs.cloudflare.com/ajax/libs';
+	use \VanillePlugin\VanillePluginConfig,
+		\VanillePlugin\tr\TraitRequestable;
 
 	/**
 	 * @access private
-	 * @var string $dir
-	 * @var string $cdn
-	 * @var string $remote
-	 * @var object $assets
+	 * @var string DIR
+	 * @var string LOCK
+	 * @var string CDN
+	 */
+	private const DIR = 'vendor';
+	private const LOCK = 'asset.lock';
+	private const CDN = 'https://cdnjs.cloudflare.com/ajax/libs';
+
+	/**
+	 * @access private
+	 * @var string $dir, Assets base directory
+	 * @var string $cdn, Public assets provider
+	 * @var string $remote, Private asset provider
+	 * @var object $assets, Assets list
 	 */
 	private $dir;
 	private $cdn;
@@ -42,50 +45,67 @@ final class Asset extends PluginOptions
 	private $assets;
 
     /**
-     * @param PluginNameSpaceInterface $plugin
+	 * Init asset.
      */
-    public function __construct(PluginNameSpaceInterface $plugin)
+    public function __construct(string $dir = self::DIR)
 	{
-        // Init plugin config
-        $this->initConfig($plugin);
+		// Init config
+		$this->initConfig();
+
+		// Set base dir
+		$this->dir = $this->getAssetPath(basename($dir));
+
 		// Set remote assets
-		$this->assets = $this->getRemoteAsset();
+		$this->assets = $this->getRemoteAssets();
+		
 		// Set cdn url
 		$this->cdn = self::CDN;
+		
+		// Reset config
+		$this->resetConfig();
 	}
 
 	/**
-	 * Check whether has asset lock.
+	 * Check asset lock.
 	 *
 	 * @access public
-	 * @param void
 	 * @return bool
 	 */
-	public function hasAssets()
+	public function hasAsset() : bool
 	{
-		return File::exists("{$this->dir}/asset.lock");
+		return $this->isFile($this->dir . '/' . self::LOCK);
 	}
 
 	/**
 	 * Lock asset.
 	 *
 	 * @access public
-	 * @param void
-	 * @return void
+	 * @return bool
 	 */
-	public function lock()
+	public function lock() : bool
 	{
-		File::w("{$this->dir}/asset.lock");
+		return $this->writeFile($this->dir . '/' . self::LOCK);
+	}
+
+	/**
+	 * Unlock asset.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function unlock() : bool
+	{
+		return $this->removeFile($this->dir . '/' . self::LOCK);
 	}
 
 	/**
 	 * Set remote URL.
 	 *
 	 * @access public
-	 * @param string $remote
+	 * @param string $url
 	 * @return object
 	 */
-	public function setRemote($url)
+	public function setRemote(string $url) : self
 	{
 		$this->remote = $url;
 		return $this;
@@ -98,22 +118,9 @@ final class Asset extends PluginOptions
 	 * @param string $url
 	 * @return object
 	 */
-	public function setCDN($url)
+	public function setCdn(string $url) : self
 	{
 		$this->cdn = $url;
-		return $this;
-	}
-
-	/**
-	 * Set assets dir.
-	 *
-	 * @access public
-	 * @param string $dir
-	 * @return object
-	 */
-	public function setDir($dir)
-	{
-		$this->dir = "{$this->getRoot()}/{$dir}";
 		return $this;
 	}
 
@@ -121,7 +128,6 @@ final class Asset extends PluginOptions
 	 * Download remote assets.
 	 *
 	 * @access public
-	 * @param void
 	 * @return void
 	 */
 	public function download()
@@ -131,14 +137,14 @@ final class Asset extends PluginOptions
 
 		// Get from remote
 		if ( $this->remote ) {
-			$api = new API('GET',[
+			$api = $this->getHttpClient('GET', [
 				'timeout'     => 30,
 				'redirection' => 1
 			]);
 			$api->send($this->remote);
 			if ( $api->getStatusCode() == 200 ) {
 				$archive = "{$this->dir}/{$this->getFileName($this->remote)}";
-				if ( File::w($archive,$api->getBody()) ) {
+				if ( $this->writeFile($archive, $api->getBody()) ) {
 					$this->reset();
 					$this->extract($archive);
 					if ( $this->check() ) {
@@ -151,7 +157,7 @@ final class Asset extends PluginOptions
 
 		// Get from CDN
 		if ( $cdn ) {
-			$this->downloadCDN();
+			$this->downloadCdn();
 		}
 	}
 
@@ -159,12 +165,11 @@ final class Asset extends PluginOptions
 	 * Download CDN assets.
 	 *
 	 * @access private
-	 * @param void
 	 * @return void
 	 */
-	private function downloadCDN()
+	private function downloadCdn()
 	{
-		$api = new API('GET',[
+		$api = $this->getHttpClient('GET', [
 			'timeout'     => 10,
 			'redirection' => 1
 		]);
@@ -174,8 +179,8 @@ final class Asset extends PluginOptions
 				if ( !$this->check($filename) ) {
 					$api->send("{$this->cdn}/{$file}");
 					if ( $api->getStatusCode() == 200 ) {
-						File::addDir("{$this->dir}/{$asset}");
-						File::w($filename,$api->getBody());
+						$this->addDir("{$this->dir}/{$asset}");
+						$this->writeFile($filename, $api->getBody());
 					}
 				}
 			}
@@ -192,10 +197,10 @@ final class Asset extends PluginOptions
 	 * @param string $archive
 	 * @return bool
 	 */
-	private function extract($archive)
+	private function extract(string $archive) : bool
 	{
-		if ( Archive::uncompress($archive,$this->dir) ) {
-			File::remove("{$this->dir}/assets.zip");
+		if ( $this->uncompressArchive($archive, $this->dir, false) ) {
+			$this->removeFile("{$this->dir}/assets.zip");
 			return true;
 		}
 		return false;
@@ -208,21 +213,23 @@ final class Asset extends PluginOptions
 	 * @param string $path
 	 * @return bool
 	 */
-	private function check($path = false)
+	private function check(?string $path = null) : bool
 	{
 		// Check for single asset
-		if ( TypeCheck::isString($path) && !empty($path) ) {
-			return File::exists($path);
+		if ( $this->isType('string', $path) && !empty($path) ) {
+			return $this->isFile($path);
 		}
+
 		// Check for all assets
-		foreach ($this->getAssets() as $asset => $files) {
+		foreach ($this->get() as $asset => $files) {
 			foreach ($files as $file) {
-				if ( !File::exists("{$this->dir}/{$asset}/{$file}") ) {
+				if ( !$this->isFile("{$this->dir}/{$asset}/{$file}") ) {
 					return false;
 					break;
 				}
 			}
 		}
+
 		return true;
 	}
 
@@ -230,17 +237,18 @@ final class Asset extends PluginOptions
 	 * Reset assets.
 	 *
 	 * @access private
-	 * @param void
 	 * @return void
 	 */
 	private function reset()
 	{
 		// Secured removing
-		foreach ($this->getAssets() as $asset => $files) {
+		foreach ($this->get() as $asset => $files) {
 			$dir = "{$this->dir}/{$asset}";
-			if ( File::isDir($dir) && Stringify::contains($dir,"/{$this->getNameSpace()}/") ) {
-				File::clearDir($dir);
-				File::removeDir($dir);
+			if ( $this->isDir($dir) ) {
+				if ( $this->hasString($dir, "/{$this->getNameSpace()}/") ) {
+					$this->clearDir($dir);
+					$this->removeDir($dir);
+				}
 			}
 		}
 	}
@@ -261,14 +269,13 @@ final class Asset extends PluginOptions
 	 * Get assets.
 	 *
 	 * @access private
-	 * @param void
 	 * @return array
 	 */
-	private function getAssets()
+	private function get()
 	{
 		$wrapper = [];
 		foreach ($this->assets as $asset => $files) {
-			$wrapper[$asset] = Arrayify::map(function($file){
+			$wrapper[$asset] = $this->mapArray(function($file){
 				return $this->getFileName($file);
 			}, $files);
 		}

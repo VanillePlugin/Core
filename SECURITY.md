@@ -4,8 +4,8 @@
 
 |   Version    |  Supported  |
 | ------------ | ----------- |
-| **>= 7.2.5** |   **Yes**   |
-| **< 7.2.5**  |   **No**    |
+| **>= 7.4**   |   **Yes**   |
+| **< 7.4**    |   **No**    |
 
 ## Reporting a Vulnerability
 

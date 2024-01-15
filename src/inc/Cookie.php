@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,11 +17,13 @@ namespace VanillePlugin\inc;
 final class Cookie
 {
 	/**
+	 * Get _COOKIE value.
+	 * 
 	 * @access public
 	 * @param string $key
 	 * @return mixed
 	 */
-	public static function get($key = null)
+	public static function get(?string $key = null)
 	{
         if ( $key ) {
             return self::isSetted($key) ? $_COOKIE[$key] : null;
@@ -30,36 +32,58 @@ final class Cookie
 	}
 
 	/**
+	 * Sey _COOKIE value.
+	 * 
 	 * @access public
 	 * @param string $key
-	 * @param string $value
+	 * @param mixed $value
 	 * @param array $options
 	 * @return bool
 	 */
-	public static function set($key, $value = '', $options = [])
+	public static function set(string $key, $value = '', $options = [])
 	{
-		return setcookie($key,$value,$options);
+		return setcookie($key, $value, $options);
 	}
 	
 	/**
+	 * Check _COOKIE value.
+	 * 
 	 * @access public
 	 * @param string $key
 	 * @return bool
 	 */
-	public static function isSetted($key = null)
+	public static function isSetted(?string $key = null) : bool
 	{
         if ( $key ) {
             return isset($_COOKIE[$key]);
         }
         return isset($_COOKIE) && !empty($_COOKIE);
 	}
+	
+	/**
+	 * Unset _COOKIE value.
+	 * 
+	 * @access public
+	 * @param string $key
+	 * @return void
+	 */
+	public static function unset(?string $key = null)
+	{
+		if ( $key ) {
+			unset($_COOKIE[$key]);
+
+		} else {
+			$_COOKIE = [];
+		}
+	}
 
 	/**
+	 * Clear session cookie.
+	 * 
 	 * @access public
-	 * @param void
 	 * @return bool
 	 */
-	public static function clear()
+	public static function clear() : bool
 	{
         if ( System::getIni('session.use_cookies') ) {
             $params = session_get_cookie_params();

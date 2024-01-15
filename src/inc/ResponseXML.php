@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,58 +14,42 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-final class ResponseXML
+final class ResponseXml extends Status
 {
 	/**
-	 * @access public 
-	 * @param string $xml
-	 * @return string
-	 */
-	public static function format($xml)
-	{
-		$xml = Stringify::replace('<?xml version="1.0" encoding="utf-8" ?>','',(string)$xml);
-		$xml = Stringify::replace('</xml>','',$xml);
-		return $xml;
-	}
-	
-	/**
-	 * Parse XML string.
+	 * Set HTTP response (XML).
 	 * 
-	 * LIBXML_NOCDATA: 16384
-	 * LIBXML_VERSION: 20908
-	 * 
-	 * @access public 
-	 * @param string $xml
-	 * @param int $args
-	 * @return mixed
+	 * @param string $msg
+	 * @param mixed $content
+	 * @param string $status
+	 * @param int $code
+	 * @return void
 	 */
-	public static function parse($xml, $args = 16384|20908)
+	public static function set(string $msg, $content = [], string $status = 'success', int $code = 200)
 	{
-		return @simplexml_load_string($xml,'SimpleXMLElement',$args);
+		self::setHttpHeaders($code);
+		echo Json::encode([
+			'status'  => $status,
+			'code'    => $code,
+			'message' => $msg,
+			'content' => $content
+		]);
+		die();
 	}
 
 	/**
-	 * Parse XML file.
+	 * Set HTTP response header.
 	 * 
 	 * @access public 
-	 * @param string $xml
-	 * @param int $args
-	 * @return mixed
+	 * @param int $code
+	 * @param string $type
+	 * @return void
 	 */
-	public static function parseFile($xml, $args = 16384|20908)
+	public static function setHttpHeaders(int $code, string $type = 'application/xml')
 	{
-		return @simplexml_load_file($xml,'SimpleXMLElement',$args);
-	}
-
-	/**
-	 * Ignore XML errors.
-	 * 
-	 * @access public 
-	 * @param bool $user, User errors
-	 * @return mixed
-	 */
-	public static function ignoreErrors($user = true)
-	{
-		return libxml_use_internal_errors($user);
+		$status = self::getMessage($code);
+		$protocol = Server::get('server-protocol');
+		header("Content-Type: {$type}");
+		header("{$protocol} {$code} {$status}");
 	}
 }

@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\RequirementInterface;
-use VanillePlugin\int\PluginNameSpaceInterface;
-use VanillePlugin\inc\File;
-use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\Arrayify;
-use VanillePlugin\inc\TypeCheck;
 
+/**
+ * Plugin requirements manager.
+ */
 class Requirement extends Notice implements RequirementInterface
 {
 	/**
@@ -32,24 +30,26 @@ class Requirement extends Notice implements RequirementInterface
 	private $strings;
 
 	/**
-	 * @param PluginNameSpaceInterface $plugin
+	 * Init requirement.
 	 */
-	public function __construct(PluginNameSpaceInterface $plugin)
+	public function __construct()
 	{
 		// Init plugin config
-		$this->initConfig($plugin);
-		$this->init([$this,'requirePath']);
-		$this->init([$this,'requirePlugins']);
-		$this->init([$this,'requireOptions']);
-		$this->init([$this,'requireTemplates']);
-		$this->init([$this,'requireModules']);
-		$this->init([$this,'php']);
+		$this->initConfig();
+
+		$this->add([$this, 'requirePath']);
+		$this->add([$this, 'requirePlugins']);
+		$this->add([$this, 'requireOptions']);
+		$this->add([$this, 'requireTemplates']);
+		$this->add([$this, 'requireModules']);
+		$this->add([$this, 'php']);
 
 		// Set template
-		$this->tpl = $this->applyPluginFilter('requirement-template','admin/inc/notice/requirement');
+		$this->tpl = 'admin/inc/notice/requirement';
+		$this->tpl = $this->applyPluginFilter('requirement-template', $this->tpl);
 		
 		// Set strings
-		$this->strings = $this->applyPluginFilter('requirement-strings',[
+		$this->strings = $this->applyPluginFilter('requirement-strings', [
 			'path'     => [
 				'exists'   => '%1$s requires path \'%2$s\''
 			],
@@ -76,11 +76,7 @@ class Requirement extends Notice implements RequirementInterface
 	}
 	
 	/**
-	 * Check plugin paths.
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function requirePath()
 	{
@@ -99,12 +95,12 @@ class Requirement extends Notice implements RequirementInterface
 		foreach ($paths as $path) {
 
 			// Check path
-			if ( !File::isDir($path) || !File::isWritable($path) ) {
+			if ( !$this->isDir($path) || !$this->isWritable($path) ) {
 
 		        // Try creating path
-				if ( !File::addDir(Stringify::formatPath($path)) ) {
+				if ( !$this->addDir($this->formatPath($path)) ) {
 
-					$message = $this->translateVars(
+					$message = $this->transVar(
 						$this->strings['path']['exists'],
 						[
 							$this->getPluginName(),
@@ -118,7 +114,7 @@ class Requirement extends Notice implements RequirementInterface
 					$notice .= '<p>';
 					$notice .= '<i class="icon-close"></i> ';
 					$notice .= '<strong>';
-					$notice .= $this->translateString('Warning') . ' : ';
+					$notice .= $this->trans('Warning') . ' : ';
 					$notice .= '</strong>';
 					$notice .= $message;
 					$notice .= '</p>';
@@ -136,133 +132,120 @@ class Requirement extends Notice implements RequirementInterface
 	}
 	
 	/**
-	 * Requires plugins.
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function requirePlugins()
 	{
 		// Check plugins
-		if ( !($plugins = $this->getConfig()->requirement->plugins) ) {
+		if ( !($plugins = $this->getConfig()->requirements->plugins) ) {
 			return;
 		}
 
 		// Requires plugins
-		foreach (Arrayify::uniqueMultiple($plugins) as $plugin) {
+		foreach ($this->uniqueMultiArray($plugins) as $plugin) {
 
-			$name = isset($plugin->name) ? $plugin->name : $plugin->slug;
+			$name = $plugin->name ?? $plugin->slug;
 			if ( !$this->isInstalled($plugin->slug) ) {
 				
-				$this->render([
+				$this->render($this->tpl, [
 					'item'   => $name,
-					'notice' => $this->translateString($this->strings['plugin']['install']) . '.'
-				],$this->tpl);
+					'notice' => $this->trans($this->strings['plugin']['install'])
+				]);
 
 			} else {
-
-				$callable = isset($plugin->callable) ? $plugin->callable : $plugin->slug;
+				$callable = $plugin->callable ?? $plugin->slug;
 				if ( !$this->isActivated($callable) ) {
-					$this->render([
+					$this->render($this->tpl, [
 						'item'   => $name,
-						'notice' => $this->translateString($this->strings['plugin']['activate']) . '.'
-					],$this->tpl);
+						'notice' => $this->trans($this->strings['plugin']['activate'])
+					]);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Requires options.
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function requireOptions()
 	{
 		// Check options
-		if ( !($options = $this->getConfig()->requirement->options) ) {
+		if ( !($options = $this->getConfig()->requirements->options) ) {
 			return;
 		}
 
 		// Requires options
-		foreach (Arrayify::uniqueMultiple($options) as $option) {
-			$name = isset($option->name) ? $option->name : $option->slug;
+		foreach ($this->uniqueMultiArray($options) as $option) {
+
+			$name = $option->name ?? $option->slug;
 			if ( $this->getOption($option->slug) !== $option->value ) {
-				$this->render([
+				$this->render($this->tpl, [
 					'item'   => $name,
-					'notice' => $this->translateString($this->strings['option']['missing']) . '.'
-				],$this->tpl);
+					'notice' => $this->trans($this->strings['option']['missing'])
+				]);
 
 			} elseif ( empty($this->getOption($option->slug)) ) {
-				$this->render([
+				$this->render($this->tpl, [
 					'item'   => $name,
-					'notice' => $this->translateString($this->strings['option']['empty']) . '.'
-				],$this->tpl);
+					'notice' => $this->trans($this->strings['option']['empty'])
+				]);
 			}
+
 		}
 	}
 
 	/**
-	 * Requires templates.
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function requireTemplates()
 	{
 		// Check templates
-		if ( !($templates = $this->getConfig()->requirement->templates) ) {
+		if ( !($templates = $this->getConfig()->requirements->templates) ) {
 			return;
 		}
 
 		// Requires templates
 		$slugs = [];
 		$names = [];
-		foreach (Arrayify::uniqueMultiple($templates) as $template) {
+
+		foreach ($this->uniqueMultiArray($templates) as $template) {
 			$slugs[] = $template->slug;
-			$names[] = isset($template->name) ? $template->name : $template->slug;
+			$names[] = $template->name ?? $template->slug;
 		}
 
-		if ( !Stringify::contains($slugs, $this->getOption('template')) ) {
-			if ( count($slugs) > 1 ) {
+		if ( !$this->hasString($slugs, $this->getOption('template')) ) {
 
+			if ( count($slugs) > 1 ) {
 				// Check for multiple templates
 				$item = implode(', ',$names);
-				$notice = $this->translateString($this->strings['template']['multiple']) . '.';
+				$notice = $this->trans($this->strings['template']['multiple']);
 
 			} else {
 				// Check for single template
 				$item = trim(implode('',$names));
-				$notice = $this->translateString($this->strings['template']['single']) . '.';
+				$notice = $this->trans($this->strings['template']['single']);
 			}
 
-			$this->render([
+			$this->render($this->tpl, [
 				'item'   => $item,
 				'notice' => $notice,
-			],$this->tpl);
+			]);
+
 		}
 	}
 
 	/**
-	 * Requires modules.
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function requireModules()
 	{
 		// Check modules
-		if ( !($modules = $this->getConfig()->requirement->modules) ) {
+		if ( !($modules = $this->getConfig()->requirements->modules) ) {
 			return;
 		}
 
 		// Requires modules
-		foreach (Arrayify::uniqueMultiple($modules) as $module) {
+		foreach ($this->uniqueMultiArray($modules) as $module) {
 
 			if ( isset($module->override) ) {
 
@@ -270,105 +253,88 @@ class Requirement extends Notice implements RequirementInterface
 				$name = $module->override->name ?? '';
 				$value = $module->override->value ?? '';
 
-				if ( !$this->isActivated($module->callable) && !$this->hasConfig($name,$value) ) {
-					$notice = $this->translateVars(
+				if ( !$this->isActivated($module->callable) && !$this->isConfig($name,$value) ) {
+					$notice = $this->transVar(
 						$this->strings['module']['config'],
-						[$name,$value]
-					) . '.';
-					$this->render([
+						[$name, $value]
+					);
+					$this->render($this->tpl, [
 						'item'   => $module->name,
 						'notice' => $notice
-					],$this->tpl);
+					]);
 				}
 
 			} else {
 				
 				// Single module check
 				if ( !$this->isActivated($module->callable) ) {
-					$this->render([
+					$this->render($this->tpl, [
 						'item'   => $module->name,
-						'notice' => $this->translateString($this->strings['module']['required']) . '.'
-					],$this->tpl);
+						'notice' => $this->trans($this->strings['module']['required'])
+					]);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Requires PHP version.
-	 * 
-	 * @access public
-	 * @param void
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function php()
 	{
 		// Check version
-		if ( !($version = $this->getConfig()->requirement->php) ) {
+		if ( !($version = $this->getConfig()->requirements->php) ) {
 			return;
 		}
 
-		if ( $this->versionCompare(phpversion(),$version,'<') ){
-			$this->render([
+		if ( $this->isVersion(phpversion(), $version, '<') ) {
+			$this->render($this->tpl, [
 				'item'   => "PHP {$version}",
-				'notice' => $this->translateString($this->strings['php']['required']) . '.'
-			],$this->tpl);
+				'notice' => $this->trans($this->strings['php']['required'])
+			]);
 		};
 	}
 
 	/**
-	 * Check if plugin installed.
+	 * Check whether plugin installed.
 	 * 
 	 * @access protected
 	 * @param string $slug
 	 * @return bool
 	 */
-	protected function isInstalled($slug)
+	protected function isInstalled(string $slug) : bool
 	{
-		if ( File::exists($this->getPluginDir("/{$slug}/{$slug}.php")) ) {
+		if ( $this->isFile($this->getPluginDir("/{$slug}/{$slug}.php")) ) {
 			return true;
 
-		} elseif ( File::exists($this->getPluginDir("/{$slug}.php")) ) {
+		} elseif ( $this->isFile($this->getPluginDir("/{$slug}.php")) ) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Check if plugin/module activated.
+	 * Check whether plugin or PHP module activated.
 	 * 
 	 * @access protected
 	 * @param string $callable
 	 * @return bool
 	 */
-	protected function isActivated($callable)
+	protected function isActivated(string $callable) : bool
 	{
 		if ( $this->isPlugin("{$callable}/{$callable}.php") ) {
 			return true;
 			
-		} elseif ( $this->isPluginClass($callable) || TypeCheck::isFunction($callable) ) {
+		} elseif ( $this->isPluginClass($callable) ) {
+			return true;
+
+		} elseif ( $this->isType('function', $callable) ) {
 			return true;
 
 		} elseif ( defined($callable) ) {
 			return true;
 
-		} elseif ( extension_loaded($callable) ) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Check server config.
-	 * 
-	 * @access protected
-	 * @param string $name
-	 * @param string $value
-	 * @return bool
-	 */
-	protected function hasConfig($name, $value)
-	{
-		if ( (string)ini_get($name) == (string)$value ) {
+		} elseif ( $this->isModule($callable) ) {
 			return true;
 		}
 		return false;

@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,20 +15,15 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\UpdaterInterface;
-use VanillePlugin\int\PluginNameSpaceInterface;
-use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\inc\Arrayify;
-use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\Server;
-use VanillePlugin\inc\GlobalConst;
-use VanillePlugin\inc\API;
 use \stdClass;
 
 /**
- * Wrapper class for Self-Hosted plugin.
+ * Wrapper class for self-hosted plugin.
  */
-class Updater extends PluginOptions implements UpdaterInterface
+class Updater implements UpdaterInterface
 {
+    use \VanillePlugin\VanillePluginOption;
+
 	/**
 	 * @access protected
 	 * @var string $updateUrl, Updater API update URL
@@ -49,23 +44,21 @@ class Updater extends PluginOptions implements UpdaterInterface
 	protected $assetUrl;
 	protected $version;
 	protected $wpVersion;
-	protected $license;
-	protected $headers;
+	protected $license = [];
+	protected $headers = [];
 	protected $auth;
-	protected $args;
-	protected $pluginHeader;
+	protected $args = [];
+	protected $pluginHeader = [];
 
 	/**
-	 * @param PluginNameSpaceInterface $plugin
-	 * @param string $host
-	 * @param array $args
-	 *
-	 * action : admin_init
+	 * @inheritdoc
 	 */
-	public function __construct(PluginNameSpaceInterface $plugin, $host, $args = [])
+	public function __construct(?string $host = null, array $args = [])
 	{
-		// Init plugin config
-		$this->initConfig($plugin);
+		// Init config
+		$this->initConfig();
+
+		if ( !$host ) return;
 
 		// Parse plugin version
 		$this->pluginHeader = $this->getPluginHeader($this->getMainFile());
@@ -73,7 +66,7 @@ class Updater extends PluginOptions implements UpdaterInterface
 		? $this->pluginHeader['Version'] : $this->getPluginVersion();
 
 		// Init updater config
-		$this->wpVersion = GlobalConst::version();
+		$this->wpVersion = $this->getVersion();
 		$this->updateUrl = $host;
 		
 		// Set updater request data
@@ -94,68 +87,62 @@ class Updater extends PluginOptions implements UpdaterInterface
 		unset($this->args['assetUrl']);
 
 		/**
-		 * Get plugin info.
-		 * Filter: plugins_api
+		 * Get plugin info,
+		 * [Filter: plugins_api].
 		 *
 		 * @see getInfo@self
 		 * @property priority 10
 		 * @property count 3
 		 */
-		$this->addFilter('plugins_api', [$this,'getInfo'], 10, 3);
+		$this->addFilter('plugins_api', [$this, 'getInfo'], 10, 3);
 
 		/**
-		 * Check plugin update.
-		 * Filter: pre_set_site_transient_{$transient}
-		 * Filter: site_transient_update_{$transient}
+		 * Check plugin update,
+		 * [Filter: pre_set_site_transient_{$transient}],
+		 * [Filter: site_transient_update_{$transient}].
 		 *
 		 * @see checkUpdate@self
 		 * @property priority 10
 		 * @property count 1
 		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkUpdate']);
+		$this->addFilter('pre_set_site_transient_update_plugins', [$this, 'checkUpdate']);
 
 		/**
-		 * Check plugin translation update.
-		 * Filter: pre_set_site_transient_{$transient}
-		 * Filter: site_transient_update_{$transient}
+		 * Check plugin translation update,
+		 * [Filter: pre_set_site_transient_{$transient}],
+		 * [Filter: site_transient_update_{$transient}].
 		 *
 		 * @see checkTranslation@self
 		 * @property priority 10
 		 * @property count 1
 		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this,'checkTranslation']);
+		$this->addFilter('pre_set_site_transient_update_plugins', [$this, 'checkTranslation']);
 
 		/**
-		 * Clear plugin updates cache.
-		 * Filter: upgrader_process_complete
+		 * Clear plugin updates cache,
+		 * [Filter: upgrader_process_complete].
 		 *
 		 * @see clearCache@self
 		 * @property priority 10
 		 * @property count 2
 		 */
-		$this->addFilter('upgrader_process_complete', [$this,'clearCache'], 10, 2);
+		$this->addFilter('upgrader_process_complete', [$this, 'clearCache'], 10, 2);
 
 		/**
-		 * Filter updater args.
-		 * Filter: http_request_args
+		 * Filter updater args,
+		 * [Filter: http_request_args].
 		 *
 		 * @see filterArgs@self
 		 * @property priority 20
 		 * @property count 1
 		 */
-		$this->addFilter('http_request_args', [$this,'filterArgs'], 20);
+		$this->addFilter('http_request_args', [$this, 'filterArgs'], 20);
 	}
 
 	/**
-	 * Get plugin info.
-	 * 
-	 * @access public
-	 * @param object $transient
-	 * @param string $action
-	 * @param object $args
-	 * @return mixed
+	 * @inheritdoc
 	 */
-	public function getInfo($transient, $action, $args)
+	public function getInfo($transient, string $action, object $args)
 	{
 		// Check action
 		if ( $action !== 'plugin_information' ) {
@@ -171,10 +158,10 @@ class Updater extends PluginOptions implements UpdaterInterface
 			}
 
 			// Fetch info
-			$info = $this->fetch('get-info',$this->infoUrl);
+			$info = $this->fetch('get-info', $this->infoUrl);
 
 			// Update transient
-			if ( $this->isValid('info',$info) ) {
+			if ( $this->isValid('info', $info) ) {
 				$transient = $info;
 
 			} else {
@@ -186,21 +173,17 @@ class Updater extends PluginOptions implements UpdaterInterface
 	}
 
 	/**
-	 * Check plugin update.
-	 * 
-	 * @access public
-	 * @param object $transient
-	 * @return object
+	 * @inheritdoc
 	 */
-	public function checkUpdate($transient)
+	public function checkUpdate($transient) : object
 	{
 		// Fix transient
-		if ( !TypeCheck::isObject($transient) ) {
+		if ( !$this->isType('object', $transient) ) {
 			$transient = new stdClass();
 		}
 
 		// Fetch update
-		$update = $this->fetch('check-update',$this->updateUrl);
+		$update = $this->fetch('check-update', $this->updateUrl);
 
 		// Update transient
 		if ( $this->isValid('update',$update) ) {
@@ -218,16 +201,12 @@ class Updater extends PluginOptions implements UpdaterInterface
 	}
 
 	/**
-	 * Check plugin translation update.
-	 * 
-	 * @access public
-	 * @param object $transient
-	 * @return object
+	 * @inheritdoc
 	 */
-	public function checkTranslation($transient)
+	public function checkTranslation($transient) : object
 	{
 		// Fix transient
-		if ( !TypeCheck::isObject($transient) ) {
+		if ( !$this->isType('object', $transient) ) {
 			$transient = new stdClass();
 		}
 
@@ -237,10 +216,10 @@ class Updater extends PluginOptions implements UpdaterInterface
 		}
 
 		// Fetch translation
-		$update = $this->fetch('check-translation',$this->translationUrl);
+		$update = $this->fetch('check-translation', $this->translationUrl);
 
 		// Update transient
-		if ( $this->isValid('translation',$update) ) {
+		if ( $this->isValid('translation', $update) ) {
 
 			// Fix translation transient
 			if ( !isset($transient->translations) ) {
@@ -265,23 +244,17 @@ class Updater extends PluginOptions implements UpdaterInterface
 	}
 
 	/**
-	 * Clear plugin updates cache.
-	 * Filter: upgrader_process_complete
-	 *
-	 * @access public
-	 * @param object $upgrader
-	 * @param array $options
-	 * @return void
+	 * @inheritdoc
 	 */
-	public function clearCache($upgrader, $options)
+	public function clearCache(object $upgrader, array $options)
 	{
 	    if ( $options['action'] == 'update' && $options['type'] == 'plugin' ) {
 	    	if ( isset($options['plugins']) ) {
-		        foreach($options['plugins'] as $plugin){
+		        foreach($options['plugins'] as $plugin) {
 			        if ( $plugin == $this->getMainFile() ) {
-						$this->deleteTransients('get-info');
-						$this->deleteTransients('check-update');
-						$this->deleteTransients('check-translation');
+						$this->deletePluginTransient($this->applyNamespace('get-info'));
+						$this->deletePluginTransient($this->applyNamespace('check-update'));
+						$this->deletePluginTransient($this->applyNamespace('check-translation'));
 			        }
 		        }
 	    	}
@@ -289,19 +262,30 @@ class Updater extends PluginOptions implements UpdaterInterface
 	}
 
 	/**
-	 * Filter updater args,
-	 * Allow unsafe updater URLs for non SSL.
-	 * 
-	 * @access public
-	 * @param array $args
-	 * @return array
+	 * @inheritdoc
 	 */
-	public function filterArgs($args)
+	public function filterArgs(array $args) : array
 	{
 		if ( isset($args['reject_unsafe_urls']) ) {
-			$args['reject_unsafe_urls'] = $this->isSSL();
+			$args['reject_unsafe_urls'] = $this->hasSsl();
 		}
 		return $args;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function isUpdated() : bool
+	{
+		return (bool)$this->getPluginTransient('updated');
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setAsUpdated() : bool
+	{
+		return (bool)$this->setPluginTransient('updated', 1);
 	}
 
 	/**
@@ -313,8 +297,10 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param string $url
 	 * @return mixed
 	 */
-	protected function fetch($action, $url)
+	protected function fetch(string $action, string $url)
 	{
+		$action = $this->applyNamespace($action);
+
 		// Get updater response from cache
 		$response = $this->getTransient(
 			"{$action}-{$this->version}"
@@ -323,37 +309,37 @@ class Updater extends PluginOptions implements UpdaterInterface
 		if ( !$response ) {
 
 			// Set updater API request args
-			$args = Arrayify::merge([
+			$args = $this->mergeArray([
 				'slug'      => $this->getNameSpace(),
 				'version'   => $this->version,
 				'wpversion' => $this->wpVersion,
 				'ua'        => $this->getUserAgent(),
-				'action'    => "{$this->getNameSpace()}-{$action}"
-			],$this->args);
+				'action'    => $action
+			], $this->args);
 
 			// Init updater API
 			$api = new API();
 			$api->setBaseUrl($url);
 			$api->setHeaders($this->headers);
-			$api->setArgs(Server::maybeRequireSSL([
+			$api->setArgs($this->maybeRequireSSL([
 				'timeout'    => $this->getTimeout(),
-				'sslverify'  => $this->isSSL(),
+				'sslverify'  => $this->hasSsl(),
 				'user-agent' => $this->getUserAgent()
 			]));
 
 			// Set updater API request body (Including license)
-			$body = ['request' => Stringify::serialize($args)];
+			$body = ['request' => $this->serialize($args)];
 			$body = $this->setLicense($body);
 			$api->setBody($body);
 
 			// Set updater API auth
 			if ( $this->auth ) {
-				if ( TypeCheck::isArray($this->auth) ) {
+				if ( $this->isType('array', $this->auth) ) {
 					$user = $this->auth[0] ?? '';
 					$pswd = $this->auth[1] ?? '';
-					$api->setBasicAuthentication($user,$pswd);
+					$api->setBasicAuthentication($user, $pswd);
 
-				} elseif ( TypeCheck::isString($this->auth) ) {
+				} elseif ( $this->isType('string', $this->auth) ) {
 					$api->setAuthentication($this->auth);
 				}
 			}
@@ -364,10 +350,10 @@ class Updater extends PluginOptions implements UpdaterInterface
 			// Cache on successful response
 			if ( $api->getStatusCode() == 200 && ($body = $api->getBody()) ) {
 				$response = unserialize($body);
-				$option = explode('-',$action);
+				$option = explode('-', $action);
 				$option = $option[1] ?? 'default';
-				$ttl = $this->applyPluginFilter("updater-{$option}-ttl",1800);
-				$this->setTransient("{$action}-{$this->version}",$response,$ttl);
+				$ttl = $this->applyPluginFilter("updater-{$option}-ttl", 1800);
+				$this->setTransient("{$action}-{$this->version}", $response, $ttl);
 			}
 		}
 
@@ -381,9 +367,9 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param array $body
 	 * @return array
 	 */
-	protected function setLicense($body)
+	protected function setLicense($body) : array
 	{
-		if ( TypeCheck::isArray($this->license) ) {
+		if ( $this->isType('array', $this->license) ) {
 			foreach ($this->license as $arg => $value) {
 				$body[$arg] = $value;
 			}
@@ -392,43 +378,36 @@ class Updater extends PluginOptions implements UpdaterInterface
 	}
 
 	/**
-	 * Get updater user-agent (ua),
-	 * "{slug}-wordpress/{version};"
+	 * Get updater user-agent (UA).
 	 *  
 	 * @access protected
-	 * @param void
 	 * @return string
 	 */
-	protected function getUserAgent()
+	protected function getUserAgent() : string
 	{
-		return "{$this->getNameSpace()}-wordpress/{$this->version};";
+		return "{$this->applyNameSpace('wordpress')}/{$this->version};";
 	}
 
 	/**
 	 * Get updater timeout.
 	 *  
 	 * @access protected
-	 * @param void
-	 * @return string
+	 * @return int
 	 */
-	protected function getTimeout()
+	protected function getTimeout() : int
 	{
-		return $this->applyPluginFilter('updater-timeout',10);
+		return (int)$this->applyPluginFilter('updater-timeout', 10);
 	}
 
 	/**
 	 * Check updater API SSL.
 	 *  
 	 * @access protected
-	 * @param void
 	 * @return bool
 	 */
-	protected function isSSL()
+	protected function hasSsl() : bool
 	{
-		return $this->applyPluginFilter(
-			'updater-ssl',
-			Server::isSSL()
-		);
+		return $this->applyPluginFilter('updater-ssl', $this->isSsl());
 	}
 
 	/**
@@ -439,16 +418,17 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param mixed $response
 	 * @return bool
 	 */
-	protected function isValid($action, $response)
+	protected function isValid(string $action, $response) : bool
 	{
 		if ( $action == 'update' || $action == 'info' ) {
-			if ( TypeCheck::isObject($response) && isset($response->plugin) ) {
+			if ( $this->isType('object', $response) && isset($response->plugin) ) {
 				if ( $response->plugin == $this->getMainFile() ) {
 					return true;
 				}
 			}
+
 		} elseif ( $action == 'translation' ) {
-			if ( TypeCheck::isObject($response) && isset($response->translations) ) {
+			if ( $this->isType('object', $response) && isset($response->translations) ) {
 				return true;
 			}
 		}
@@ -462,14 +442,14 @@ class Updater extends PluginOptions implements UpdaterInterface
 	 * @param string $action
 	 * @return object
 	 */
-	protected function getDefaultTransient($action)
+	protected function getDefaultTransient(string $action) : object
 	{
 		$transient = new stdClass();
 		$transient->name = $this->pluginHeader['Name'];
 		$transient->slug = $this->getNameSpace();
 
 		if ( $action == 'update' ) {
-			$transient->id            = Stringify::slugify($this->pluginHeader['Name']);
+			$transient->id            = $this->slugify($this->pluginHeader['Name']);
 			$transient->plugin        = $this->getMainFile();
 			$transient->new_version   = $this->version;
 			$transient->compatibility = new stdClass();
@@ -485,13 +465,14 @@ class Updater extends PluginOptions implements UpdaterInterface
 		    ];
 		    
 			if ( $this->assetUrl ) {
-				$this->assetUrl = rtrim((string)$this->assetUrl,'/');
+				$this->assetUrl = rtrim((string)$this->assetUrl, '/');
 				$transient->banners  = [
-					'low'  => "{$this->assetUrl}/banner/{$this->getNameSpace()}-772x250.png",
-					'high' => "{$this->assetUrl}/banner/{$this->getNameSpace()}-1544x500.png"
+					'low'  => "{$this->assetUrl}/banner/{$this->applyNameSpace('772x250.png')}",
+					'high' => "{$this->assetUrl}/banner/{$this->applyNameSpace('1544x500.png')}"
 			    ];
 			}
 		}
+
 		return $transient;
 	}
 }

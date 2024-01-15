@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,48 +16,46 @@ namespace VanillePlugin\int;
 
 interface FrontInterface
 {
-    /**
-     * Setup front.
-     *
-     * @param ShortcodeInterface $shortcode
-     * @see !isAdmin()
-     */
-    function __construct(ShortcodeInterface $shortcode = null);
+	/**
+	 * Setup plugin front.
+	 *
+	 * @param ShortcodeInterface $shortcode
+	 * @uses !isAdmin()
+	 * @uses !isLogin()
+	 */
+	function __construct(?ShortcodeInterface $shortcode = null);
 
-    /**
-     * Init plugin front.
-     * Action: wp
-     * 
-     * @param void
-     * @return void
-     * @see !AMP::isActive()
-     */
-    function init();
+	/**
+	 * Init plugin front.
+	 * [Action: wp].
+	 *
+	 * @return void
+	 * @uses !AMP::isActive()
+	 */
+	function init();
 
-    /**
-     * Add front plugin CSS.
-     * Action: wp_enqueue_scripts
-     * 
-     * @param void
-     * @return void
-     */
-    function initCSS();
+	/**
+	 * Add front plugin CSS.
+	 * [Action: wp-enqueue-scripts].
+	 *
+	 * @return void
+	 */
+	function initCSS();
 
-    /**
-     * Add front plugin JS.
-     * Action: wp_enqueue_scripts
-     * 
-     * @param void
-     * @return void
-     */
-    function initJS();
+	/**
+	 * Add front plugin JS.
+	 * [Action: wp-enqueue-scripts].
+	 * 
+	 * @return void
+	 */
+	function initJS();
 
-    /**
-     * Add front body class.
-     * Action: body_class
-     * 
-     * @param array $classes
-     * @return array
-     */
-    function addClass($classes);
+	/**
+	 * Add front body class.
+	 * [Filter: body-class].
+	 * 
+	 * @param array $classes
+	 * @return array
+	 */
+	function addClass(array $classes) : array;
 }

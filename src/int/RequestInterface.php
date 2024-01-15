@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,99 +16,217 @@ namespace VanillePlugin\int;
 
 interface RequestInterface
 {
-    /**
-     * @param string $method
-     * @param string $baseUrl
-     */
-    function __construct($method = 'GET', $params = [], $baseUrl = null);
+	/**
+	 * Set request method.
+	 *
+	 * @param string $method
+	 * @return object
+	 */
+	function setMethod(string $method) : self;
 
-    /**
-     * Set additional request args.
-     * 
-     * @param array $args
-     * @return object
-     */
-    function setArgs($args = []);
+	/**
+	 * Set request base URL.
+	 
+	 * @param string $url
+	 * @return object
+	 */
+	function setBaseUrl(string $url) : self;
 
-    /**
-     * @param string $arg
-     * @param mixed $value
-     * @return void
-     */
-    function addArg($arg,$value);
+	/**
+	 * Set additional request args.
+	 *
+	 * @param array $args
+	 * @return object
+	 */
+	function setArgs(array $args = []) : self;
 
-    /**
-     * @param array $headers
-     * @return object
-     */
-    function setHeaders($headers = []);
+	/**
+	 * Add/Override single request arg.
+	 *
+	 * @param string $arg
+	 * @param mixed $value
+	 * @return void
+	 */
+	function addArg(string $arg, $value = null);
 
-    /**
-     * @param array $cookies
-     * @return object
-     */
-    function setCookies($cookies = []);
+	/**
+	 * Set/Reset request headers.
+	 
+	 * @param array $headers
+	 * @return object
+	 */
+	function setHeaders(array $headers = []) : self;
 
-    /**
-     * @param array $body
-     * @return object
-     */
-    function setBody($body = []);
+	/**
+	 * Add/Override single request header.
+	 *
+	 * @param string $header
+	 * @param mixed $value
+	 * @return void
+	 */
+	function addHeader(string $header, $value = null);
 
-    /**
-     * @param string $method
-     * @return object
-     */
-    function setMethod($method);
+	/**
+	 * Set/Reset request cookies.
+	 
+	 * @param array $cookies
+	 * @return object
+	 */
+	function setCookies(array $cookies = []) : self;
 
-    /**
-     * @param string $url
-     * @return object
-     */
-    function setBaseUrl($url);
+	/**
+	 * Add/Override single request cookie.
+	 *
+	 * @param string $cookie
+	 * @param mixed $value
+	 * @return void
+	 */
+	function addCookie(string $cookie, $value = null);
 
-    /**
-     * @param void
-     * @return object
-     */
-    function send($url = null);
+	/**
+	 * Set/Reset request body.
+	 
+	 * @param array $body
+	 * @return object
+	 */
+	function setBody(array $body = []) : self;
 
-    /**
-     * @param string $url
-     * @param array $args
-     * @return object
-     */
-    function post($url, $args = []);
+	/**
+	 * Add/Override single request body.
+	 *
+	 * @param string $body
+	 * @param mixed $value
+	 * @return void
+	 */
+	function addBody(string $body, $value = null);
 
-    /**
-     * @param string $url
-     * @param array $args
-     * @return object
-     */
-    function get($url, $args = []);
+	/**
+	 * Send request.
+	 
+	 * @param string $url
+	 * @return object
+	 */
+	function send(?string $url = null) : self;
 
-    /**
-     * @param string $url
-     * @param array $args
-     * @return object
-     */
-    function head($url, $args = []);
+	/**
+	 * Standalone "GET" request.
+	 *
+	 * @param string $url
+	 * @param array $args
+	 * @return object
+	 */
+	function get(string $url, array $args = []) : self;
 
-    /**
-     * @param void
-     * @return int
-     */
-    function getStatusCode();
+	/**
+	 * Standalone "POST" request.
+	 *
+	 * @param string $url
+	 * @param array $args
+	 * @return object
+	 */
+	function post(string $url, array $args = []) : self;
 
-    /**
-     * @param void
-     * @return string
-     */
-    function getBody();
-    
-    /**
-     * @param void
-     * @return string
-     */
-    function hasError();
+	/**
+	 * Standalone "HEAD" request.
+	 *
+	 * @param string $url
+	 * @param array $args
+	 * @return object
+	 */
+	function head(string $url, array $args = []) : self;
+
+	/**
+	 * Standalone "PUT" request.
+	 *
+	 * @param string $url
+	 * @param array $args
+	 * @return object
+	 */
+	function put(string $url, array $args = []) : self;
+
+	/**
+	 * Standalone "PATCH" request.
+	 *
+	 * @param string $url
+	 * @param array $args
+	 * @return object
+	 */
+	function patch(string $url, array $args = []) : self;
+
+	/**
+	 * Standalone "DELETE" request.
+	 *
+	 * @param string $url
+	 * @param array $args
+	 * @return object
+	 */
+	function delete(string $url, array $args = []) : self;
+
+	/**
+	 * Get response code,
+	 * Return 0 if code is not retrieved.
+	 *
+	 * @return int
+	 */
+	function getStatusCode() : int;
+
+	/**
+	 * Get body from the raw response.
+	 *
+	 * @return string
+	 */
+	function getBody() : string;
+
+	/**
+	 * Get header from the raw response.
+	 *
+	 * @param string $header
+	 * @return string
+	 */
+	function getHeader(string $header) : string;
+
+	/**
+	 * Get headers from the raw response.
+	 *
+	 * @return mixed
+	 */
+	function getHeaders();
+
+	/**
+	 * Get message from the raw response.
+	 *
+	 * @return string
+	 */
+	function getMessage() : string;
+
+	/**
+	 * Check response error.
+	 *
+	 * @return bool
+	 */
+	function hasError() : bool;
+
+	/**
+	 * Get response error.
+	 *
+	 * @return mixed
+	 */
+	function getError();
+
+	/**
+	 * Add arg to query.
+	 *
+	 * @param mixed $arg
+	 * @param string $url
+	 * @return string
+	 */
+	static function addQueryArg($arg, string $url) : string;
+
+	/**
+	 * Build query args from string (Alias).
+	 *
+	 * @param array $args
+	 * @return string
+	 */
+	static function buildQuery(array $args) : string;
 }

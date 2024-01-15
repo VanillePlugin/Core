@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -17,45 +17,54 @@ namespace VanillePlugin\int;
 interface RestApiInterface
 {
 	/**
-	 * @param PluginNameSpaceInterface $plugin
-	 */
-	function __construct(PluginNameSpaceInterface $plugin);
-
-	/**
-	 * Init api hook
+	 * Add routes.
 	 *
-	 * @param string $method
+	 * @param WP_REST_Server $server
 	 * @return void
 	 */
-	function init();
-
+	function addRoutes(\WP_REST_Server $server);
+	
 	/**
-	 * @param bool $override
+	 * Init REST tokens.
+	 *
 	 * @return void
 	 */
-	function setOverride($override = false);
+	function initTokens();
+	
+	/**
+	 * Add public key.
+	 *
+	 * @param int $user
+	 * @param string $public
+	 * @return void
+	 */
+	function addPublicKey(int $user, string $public);
 
 	/**
+	 * Update public key.
+	 *
+	 * @param int $user
+	 * @param string $public
+	 * @return void
+	 */
+	function updatePublicKey(int $user, string $public);
+
+	/**
+	 * Delete public key.
+	 *
+	 * @param int $user
+	 * @return void
+	 */
+	function deletePublicKey(int $user);
+
+	/**
+	 * Register REST route.
+	 *
 	 * @param string $endpoint
-	 * @return void
+	 * @param string $route
+	 * @param array $args
+	 * @param bool $override
+	 * @return bool
 	 */
-	function setEndpoint($endpoint = 'default');
-
-	/**
-	 * @param string $version
-	 * @return void
-	 */
-	function setVersion($version = 'v1');
-
-	/**
-	 * @param object $args
-	 * @return void
-	 */
-	function addParameters($args = false);
-
-	/**
-	 * @param object $plugin
-	 * @return void
-	 */
-	function setAuthentication($plugin);
+	static function registerRoute(string $endpoint, string $route, array $args, bool $override) : bool;
 }

@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -20,14 +20,14 @@ final class Image extends File
 	 * Import image from URL.
 	 *
 	 * @access public
-	 * @param array $url
+	 * @param string $url
 	 * @param bool $override
 	 * @return mixed
 	 */
-	public static function import($url, $override = true)
+	public static function importUrl(string $url, bool $override = true)
 	{
 		// Check valid image
-		if ( !($name = self::validate($url)) ) {
+		if ( !($name = self::validateMime($url)) ) {
 			return false;
 		}
 
@@ -59,12 +59,12 @@ final class Image extends File
 			}
 
 			// Import image
-			if ( !parent::import($url,$path) ) {
+			if ( !self::import($url, $path) ) {
 				return false;
 			}
 
 			// Insert image attachment
-			return Attachment::insert($path,[
+			return Attachment::insert($path, [
 				'url'  => "{$dir['url']}/{$name}",
 				'type' => $mime
 			]);
@@ -78,53 +78,42 @@ final class Image extends File
 	 * @param array $args
 	 * @return mixed
 	 */
-	public static function upload($args = [])
+	public static function upload(array $args = [])
 	{
 		// Get file from global
 		$file = Upload::isSetted('file') 
 		? (array)Upload::get('file') : [];
 
 		// Check valid image mime
-		if ( !self::validate($file['name']) ) {
+		if ( !self::validateMime($file['name']) ) {
 			return false;
 		}
 
 		// Set image upload data
-		$data = Upload::handle($file,$args);
+		$data = Upload::handle($file, $args);
 
 		// Insert image attachment
-		return Attachment::insert($data['file'],$data);
+		return Attachment::insert($data['file'], $data);
 	}
 
 	/**
-	 * Validate image file mime.
+	 * Validate image mime.
 	 *
 	 * @access public
 	 * @param string $file
 	 * @param array $allowed
 	 * @return mixed
 	 */
-	public static function validate($file, $allowed = [])
+	public static function validateMime(string $file, array $allowed = [])
 	{
-		$allowed = self::getAllowedMimes($allowed);
-		return parent::validate($file,$allowed);
-	}
-
-	/**
-	 * Get allowed images mimes.
-	 *
-	 * @access public
-	 * @param array $allowed
-	 * @return array
-	 */
-	public static function getAllowedMimes($allowed = [])
-	{
-		return Arrayify::merge([
+		$allowed = self::mimes(Arrayify::merge([
 			'jpg'  => 'image/jpeg',
 			'jpeg' => 'image/jpeg',
 			'bmp'  => 'image/bmp',
 			'png'  => 'image/png',
 			'gif'  => 'image/gif'
-		], $allowed);
+		], $allowed));
+
+		return self::validate($file, $allowed);
 	}
 }

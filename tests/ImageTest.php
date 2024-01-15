@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,25 +14,26 @@ use VanillePlugin\inc\Image;
 use VanillePlugin\inc\File;
 use VanillePlugin\inc\Upload;
 use VanillePlugin\inc\Stringify;
+use VanillePlugin\inc\TypeCheck;
 use PHPUnit\Framework\TestCase;
 
 final class ImageTest extends TestCase
 {
-    public function testImport()
+    public function testImportUrl()
     {
         // First import
-        $data = Image::import('https://dummyimage.com/640x360/fff/test1.png');
-        $this->assertArrayHasKey('id',$data);
-        $this->assertTrue(is_int($data['id']));
-        $this->assertArrayHasKey('url',$data);
-        $this->assertTrue(is_string($data['url']));
+        $data = Image::importUrl('https://dummyimage.com/640x360/fff/test1.png');
+        $this->assertArrayHasKey('id', $data);
+        $this->assertTrue(TypeCheck::isInt($data['id']));
+        $this->assertArrayHasKey('url', $data);
+        $this->assertTrue(TypeCheck::isString($data['url']));
 
         // Second import
-        $data = Image::import('https://dummyimage.com/640x360/fff/test1.png');
-        $this->assertArrayHasKey('id',$data);
-        $this->assertTrue(is_int($data['id']));
-        $this->assertArrayHasKey('url',$data);
-        $this->assertTrue(is_string($data['url']));
+        $data = Image::importUrl('https://dummyimage.com/640x360/fff/test1.png');
+        $this->assertArrayHasKey('id', $data);
+        $this->assertTrue(TypeCheck::isInt($data['id']));
+        $this->assertArrayHasKey('url', $data);
+        $this->assertTrue(TypeCheck::isString($data['url']));
     }
 
     public function testUpload()
@@ -43,7 +44,7 @@ final class ImageTest extends TestCase
         File::import('https://dummyimage.com/640x360/fff/test2.png', $file);
 
         $mime = File::getMime($file);
-        Upload::set('file',[
+        Upload::set('file', [
             'name'     => File::getFileName($file),
             'tmp_name' => Stringify::formatPath($file),
             'type'     => $mime['type'],
@@ -54,22 +55,17 @@ final class ImageTest extends TestCase
             'test_form' => false,
             'action'    => 'wp_handle_mock_upload' // Test only
         ]);
-        $this->assertArrayHasKey('id',$data);
-        $this->assertTrue(is_int($data['id']));
-        $this->assertArrayHasKey('url',$data);
-        $this->assertTrue(is_string($data['url']));
+        $this->assertArrayHasKey('id', $data);
+        $this->assertTrue(TypeCheck::isInt($data['id']));
+        $this->assertArrayHasKey('url', $data);
+        $this->assertTrue(TypeCheck::isString($data['url']));
 
         File::remove($file);
         File::removeDir(__DIR__ . '/upload');
     }
 
-    public function testValidate()
+    public function testValidateMime()
     {
-        $this->assertSame(Image::validate('image.png'),'image.png');
-    }
-
-    public function testGetAllowedMimes()
-    {
-        $this->assertTrue(is_array(Image::getAllowedMimes()));
+        $this->assertSame(Image::validateMime('image.png'), 'image.png');
     }
 }

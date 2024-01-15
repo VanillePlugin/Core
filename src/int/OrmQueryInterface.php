@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,8 +16,49 @@ namespace VanillePlugin\int;
 
 interface OrmQueryInterface
 {
-    /**
-     * @param array $query
-     */
-	function __construct($query = []);
+	/**
+	 * Init query builder using array.
+	 * 
+	 * @param array $args
+	 */
+	function __construct(array $args = []);
+
+	/**
+	 * Set property.
+	 * 
+	 * @param string $property
+	 */
+	function __set(string $property, $value);
+
+	/**
+	 * Get property.
+	 * 
+	 * @param string $property
+	 * @param mixed
+	 */
+	function __get(string $property);
+
+	/**
+	 * Get complete query by type.
+	 * 
+	 * @param string $prefix
+	 * @return mixed
+	 */
+	function getQuery(?string $prefix = null);
+
+	/**
+	 * Format query single result value.
+	 * 
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	function format($value = null);
+
+	/**
+	 * Set table.
+	 * 
+	 * @param string $table
+	 * @return void
+	 */
+	function setTable(?string $table = null);
 }

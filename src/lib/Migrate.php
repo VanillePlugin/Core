@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,103 +14,123 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\File;
-use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\inc\Stringify;
-use VanillePlugin\inc\Arrayify;
-use VanillePlugin\int\PluginNameSpaceInterface;
-
+/**
+ * Plugin database manager.
+ */
 final class Migrate extends Orm
 {
 	/**
-	 * @param PluginNameSpaceInterface $plugin
+	 * @access private
+	 * @var string LOCK
+	 * @var string UPGRADE
+	 * @var string UNINSTALL
+	 * @var string ADD
+	 * @var string ALTER
 	 */
-	public function __construct(PluginNameSpaceInterface $plugin)
+	private const LOCK = 'migrate.lock';
+	private const UPGRADE = 'upgrade.sql';
+	private const UNINSTALL = 'uninstall.sql';
+	private const ADD = '/ADD\s`(.*)`\s/s';
+	private const ALTER = '/ALTER\sTABLE\s`(.*)`\sADD/s';
+
+	/**
+	 * Init migrate.
+	 */
+	public function __construct()
 	{
-		$this->initConfig($plugin);
-		$this->init();
+		// Init orm
+		parent::__construct();
 	}
 
 	/**
-	 * Create plugin tables.
+	 * Create plugin database tables.
 	 *
 	 * @access public
-	 * @param void
 	 * @return bool
 	 */
-	public function table()
+	public function table() : bool
 	{
+		if ( $this->isMigrated() ) {
+			return false;
+		}
+
 		if ( !($tables = $this->load()) ) {
 			return false;
 		}
+
+		$count = 0;
 		foreach ($tables as $table) {
-			$sql = File::r("{$this->getMigrate()}/{$table}");
+			$sql = $this->readFile(
+				$this->getMigratePath($table)
+			);
 			if ( !empty($sql) ) {
-				$sql = Stringify::replace('[DBPREFIX]', $this->prefix, $sql);
-				$sql = Stringify::replace('[PREFIX]', $this->getPrefix(), $sql);
-				$sql = Stringify::replace('[COLLATE]', $this->collate, $sql);
-				$this->query($sql);
+				$sql = $this->applyVars($sql);
+				$count += (int)$this->execute($sql);
 			}
 		}
+
 		$this->lock();
-		return true;
+		return (bool)$count;
 	}
 
 	/**
-	 * Upgrade plugin tables.
+	 * Remove plugin database tables.
 	 *
 	 * @access public
-	 * @param void
 	 * @return bool
 	 */
-	public function upgrade()
+	public function drop() : bool
 	{
-		if ( !File::exists($file = "{$this->getMigrate()}/upgrade.sql") ) {
+		$file = $this->getMigratePath(self::UNINSTALL);
+		if ( !$this->isFile($file) ) {
 			return false;
 		}
-		if ( File::r($file) ) {
-			$handle = fopen($file, 'r');
-			if ( $handle ) {
-			    while ( ($line = fgets($handle)) !== false ) {
-					$sql = Stringify::replace('[DBPREFIX]', $this->prefix, $line);
-					$sql = Stringify::replace('[PREFIX]', $this->getPrefix(), $sql);
-			    	if ( Stringify::contains($sql, 'ADD') ) {
-			    		$column = $this->parseColumn($sql);
-			    		$table = $this->parseTable($sql);
-			    		if ( !$this->query("SHOW COLUMNS FROM `{$table}` LIKE '{$column}';") ) {
-			    			$this->query($sql);
-			    		}
-			    	} else {
-			    		$this->query($sql);
-			    	}
-			    }
-			    fclose($handle);
-			    return true;
+
+		if ( !empty(($sql = $this->readFile($file))) ) {
+			$sql = $this->applyVars($sql);
+			return (bool)$this->execute($sql);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Upgrade plugin database tables.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function upgrade() : bool
+	{
+		if ( $this->isMigrated() ) {
+			return false;
+		}
+
+		$file = $this->getMigratePath(self::UPGRADE);
+		if ( !$this->isFile($file) ) {
+			return false;
+		}
+
+		$count = 0;
+		foreach ($this->getLines($file) as $line) {
+			$sql = $this->applyVars($line);
+			if ( $this->hasString($sql, 'ADD') ) {
+
+				$column = $this->parseColumn($sql);
+				$table  = $this->parseTable($sql);
+
+				if ( !$this->hasColumn($column, $table) ) {
+					$count += (int)$this->execute($sql);
+				}
+
+			} else {
+				$count += (int)$this->execute($sql);
 			}
 		}
-		return false;
-	}
 
-	/**
-	 * Remove plugin tables.
-	 *
-	 * @access public
-	 * @param void
-	 * @return bool
-	 */
-	public function rollback()
-	{
-		if ( !File::exists($file = "{$this->getMigrate()}/uninstall.sql") ) {
-			return false;
-		}
-		if ( !empty(($sql = File::r($file))) ) {
-			$sql = Stringify::replace('[DBPREFIX]', $this->prefix, $sql);
-			$sql = Stringify::replace('[PREFIX]', $this->getPrefix(), $sql);
-			return (bool)$this->query($sql);
-		}
-		return false;
+		return (bool)$count;
 	}
-
+	
 	/**
 	 * Migrate plugin options.
 	 *
@@ -118,28 +138,89 @@ final class Migrate extends Orm
 	 * @param array $options
 	 * @return bool
 	 */
-	public function options($options)
+	public function option(array $options) : bool
 	{
+		$count = 0;
 		foreach ($options as $old => $new) {
-			$temp = $this->getOption("{$this->getPrefix()}{$old}", null);
-			if ( !TypeCheck::isNull($temp) ) {
-				$this->updateOption("{$this->getPrefix()}{$new}", $temp);
-				$this->removeOption("{$this->getPrefix()}{$old}");
+			$temp = $this->getOption($this->applyPrefix($old), null);
+			if ( !$this->isType('null', $temp) ) {
+				$count += (int)$this->updateOption($this->applyPrefix($new), $temp);
+				$count += (int)$this->removeOption($this->applyPrefix($old));
 			}
 		}
-		return true;
+		return (bool)$count;
+	}
+
+	/**
+	 * Export plugin database table.
+	 *
+	 * @access public
+	 * @param string $table
+	 * @param mixed $column
+	 * @return mixed
+	 */
+	public function export(string $table, $column)
+	{
+		$file = $this->getTempPath("{$table}.csv");
+		$res = fopen($file, 'w');
+		fputcsv($res, explode(',', $column), ';');
+		$columns = explode(',', $column);
+		foreach ($columns as $key => $value) {
+			$value = trim($value);
+			$columns[$key] = "`{$value}`";
+		}
+		$data = $this->query(new OrmQuery([
+			'table'  => $table,
+			'column' => $columns
+		]));
+		if ( empty($data) ) {
+			fclose($res);
+			return false;
+		}
+		foreach ($data as $line) {
+			fputcsv($res, $line, ';');
+		}
+		fclose($res);
+		return $file;
+	}
+
+	/**
+	 * Import plugin database table.
+	 *
+	 * @access public
+	 * @param string $table
+	 * @param array $data
+	 * @return bool
+	 */
+	public function import(string $table, array $data = []) : bool
+	{
+		return false;
 	}
 
 	/**
 	 * Check whether plugin has migrate lock.
 	 *
 	 * @access public
-	 * @param void
 	 * @return bool
 	 */
-	public function isMigrated()
+	public function isMigrated() : bool
 	{
-		return File::exists("{$this->getMigrate()}/migrate.lock");
+		return $this->isFile(
+			$this->getMigratePath(self::LOCK)
+		);
+	}
+
+	/**
+	 * Remove lock file.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function unlock() : bool
+	{
+		return $this->removeFile(
+			$this->getMigratePath(self::LOCK)
+		);
 	}
 
 	/**
@@ -149,9 +230,9 @@ final class Migrate extends Orm
 	 * @param string $query
 	 * @return string
 	 */
-	private function parseTable($query)
+	private function parseTable(string $query) : string
 	{
-		return Stringify::match('/ALTER\sTABLE\s`(.*)`\sADD/s', $query);
+		return $this->matchString(self::ALTER, $query);
 	}
 
 	/**
@@ -161,38 +242,53 @@ final class Migrate extends Orm
 	 * @param string $query
 	 * @return string
 	 */
-	private function parseColumn($query)
+	private function parseColumn(string $query) : string
 	{
-		return Stringify::match('/ADD\s`(.*)`\s/s', $query);
+		return $this->matchString(self::ADD, $query);
 	}
 
 	/**
-	 * Create migrate lock file.
+	 * Apply query vars.
 	 *
 	 * @access private
-	 * @param void
-	 * @return void
+	 * @param string $sql
+	 * @param string $query
+	 * @return string
 	 */
-	private function lock()
+	private function applyVars(string $query) : string
 	{
-		File::w("{$this->getMigrate()}/migrate.lock");
+		$query = $this->replaceString('[DBPREFIX]', $this->prefix, $query);
+		$query = $this->replaceString('[COLLATE]', $this->collate, $query);
+		$query = $this->replaceString('[PREFIX]', $this->getPrefix(), $query);
+		return $query;
 	}
 
 	/**
-	 * Load SQL files.
+	 * Create lock file.
 	 *
 	 * @access private
-	 * @param void
+	 * @return bool
+	 */
+	private function lock() : bool
+	{
+		return $this->writeFile(
+			$this->getMigratePath(self::LOCK)
+		);
+	}
+
+	/**
+	 * Load files.
+	 *
+	 * @access private
 	 * @return array
 	 */
-	private function load()
+	private function load() : array
 	{
-		return Arrayify::diff(scandir($this->getMigrate()), [
-			'.',
-			'..',
-			'migrate.lock',
-			'uninstall.sql',
-			'upgrade.sql'
+		$path = $this->getMigratePath();
+		return $this->scanDir($path, 0, [
+			self::LOCK,
+			self::UNINSTALL,
+			self::UPGRADE
 		]);
 	}
 }

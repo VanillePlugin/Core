@@ -1,9 +1,9 @@
 <?php
 /**
- * @author    : JIHAD SINNAOUR
+ * @author    : Jakiboy
  * @package   : VanillePlugin
- * @version   : 0.9.6
- * @copyright : (c) 2018 - 2023 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @version   : 1.0.0
+ * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,11 +14,96 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-/**
- * Advanced shortcode helper.
- */
 final class Shortcode
 {
+	/**
+	 * Add shortcode.
+	 *
+	 * @access public
+	 * @param string $tag
+	 * @param callable $callback
+	 * @return void
+	 */
+	public static function add(string $tag, $callback)
+	{
+		add_shortcode($tag, $callback);
+	}
+
+	/**
+	 * Remove shortcode.
+	 *
+	 * @access public
+	 * @param string $tag
+	 * @return void
+	 */
+	public static function remove(string $tag)
+	{
+		remove_shortcode($tag);
+	}
+
+	/**
+	 * Check whether shortcode exists.
+	 *
+	 * @access public
+	 * @param string $tag
+	 * @return bool
+	 */
+	public static function exists(string $tag) : bool
+	{
+		return shortcode_exists($tag);
+	}
+
+	/**
+	 * Assign content to shortcode.
+	 *
+	 * @access public
+	 * @param string $content
+	 * @param bool $ignore, Ignore HTML
+	 * @return string
+	 */
+	public static function do(string $content, bool $ignore = false) : string
+	{
+		return do_shortcode($content, $ignore);
+	}
+
+	/**
+	 * Render shortcode.
+	 *
+	 * @access public
+	 * @param string $content
+	 * @param bool $ignore, Ignore HTML
+	 * @return void
+	 */
+	public static function render(string $content, bool $ignore = false)
+	{
+		echo self::do($content, $ignore);
+	}
+	
+	/**
+	 * Check whether content has shortcode.
+	 *
+	 * @access public
+	 * @param string $content
+	 * @param string $tag
+	 * @return bool
+	 */
+	public static function has(string $content, string $tag) : bool
+	{
+		return has_shortcode($content, $tag);
+	}
+
+	/**
+	 * Strip content from shortcodes.
+	 *
+	 * @access public
+	 * @param string $content
+	 * @return string
+	 */
+	public static function strip(string $content) : string
+	{
+		return Stringify::unShortcode($content);
+	}
+	
 	/**
 	 * Get shortcode attributes.
 	 * 
@@ -28,9 +113,9 @@ final class Shortcode
 	 * @param string $tag
 	 * @return array
 	 */
-	public static function attributes($default = [], $atts = [], $tag = '')
+	public static function attributes(array $default = [], array $atts = [], ?string $tag = null) : array
 	{
-		return shortcode_atts($default,$atts,$tag);
+		return shortcode_atts($default, $atts, (string)$tag);
 	}
 
 	/**
@@ -40,7 +125,7 @@ final class Shortcode
 	 * @param array $atts
 	 * @return array
 	 */
-	public static function formatAttributes($atts = [])
+	public static function formatAttributes(array $atts) : array
 	{
 		$attributes = [];
 		$atts = Arrayify::formatKeyCase($atts);
@@ -60,9 +145,11 @@ final class Shortcode
 	 * @param string $attr
 	 * @return string
 	 */
-	public static function formatAttributeName($attr = '')
+	public static function formatAttributeName(string $attr) : string
 	{
-		return Stringify::replace('-','_',Stringify::lowercase($attr));
+		return Stringify::undash(
+			Stringify::lowercase($attr)
+		);
 	}
 
 	/**
@@ -73,13 +160,13 @@ final class Shortcode
 	 * @param bool $strip, Strip space
 	 * @return string
 	 */
-	public static function formatSeparator($value = '', $strip = false)
+	public static function formatSeparator(string $value, bool $strip = false)
 	{
 		if ( $strip ) {
 			$value = Stringify::stripSpace($value);
 		}
-		$value = Stringify::replace(';',',',$value);
-		$value = Stringify::replace('|',',',$value);
+		$value = Stringify::replace(';', ',', $value);
+		$value = Stringify::replace('|', ',', $value);
 		return $value;
 	}
 
@@ -90,7 +177,7 @@ final class Shortcode
 	 * @param array $atts
 	 * @return array
 	 */
-	public static function setAttsValues($atts = [])
+	public static function setAttsValues(array $atts) : array
 	{
 		$values = [];
 		foreach ($atts as $key => $name) {
@@ -107,7 +194,7 @@ final class Shortcode
 	 * @param string $attr
 	 * @return bool
 	 */
-	public static function hasAttribute($atts = [], $attr = '')
+	public static function hasAttribute(array $atts, string $attr) : bool
 	{
 		$attr = self::formatAttributeName($attr);
 		$atts = self::formatAttributes($atts);
@@ -122,7 +209,7 @@ final class Shortcode
 	 * @param string $attr
 	 * @return bool
 	 */
-	public static function hasFlag($atts = [], $attr = '')
+	public static function hasFlag(array $atts, string $attr) : bool
 	{
 		$flags = [];
 		$attr = self::formatAttributeName($attr);
@@ -131,7 +218,7 @@ final class Shortcode
 				$flags[] = self::formatAttributeName($name);
 			}
 		}
-		return Arrayify::inArray($attr,$flags);
+		return Arrayify::inArray($attr, $flags);
 	}
 	
 	/**
@@ -143,7 +230,7 @@ final class Shortcode
 	 * @param string $type
 	 * @return mixed
 	 */
-	public static function getValue($atts = [], $attr = '', $type = null)
+	public static function getValue(array $atts, string $attr, ?string $type = null)
 	{
 		$attr = self::formatAttributeName($attr);
 		$atts = self::formatAttributes($atts);
@@ -182,7 +269,7 @@ final class Shortcode
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public static function hasValue($atts = [], $attr = '', $value = '')
+	public static function hasValue(array $atts, string $attr, $value) : bool
 	{
 		$attr = self::formatAttributeName($attr);
 		$atts = self::formatAttributes($atts);
@@ -207,7 +294,7 @@ final class Shortcode
 	 * @param string $attr
 	 * @return bool
 	 */
-	public static function isEmpty($atts = [], $attr = '')
+	public static function isEmpty(array $atts, string $attr) : bool
 	{
 		$attr = self::formatAttributeName($attr);
 		$atts = self::formatAttributes($atts);
@@ -228,13 +315,13 @@ final class Shortcode
 	 * @param string $attr
 	 * @return bool
 	 */
-	public static function isDisabled($atts = [], $attr = '')
+	public static function isDisabled(array $atts, string $attr) : bool
 	{
 		$attr = self::formatAttributeName($attr);
 		$atts = self::formatAttributes($atts);
 		if ( isset($atts[$attr]) ) {
-			$value = Stringify::lowercase($atts[$attr]);
-			return Stringify::contains(['off','no','non','false'],$value);
+			$value = Stringify::lowercase((string)$atts[$attr]);
+			return Stringify::contains(['off', 'no', 'non', 'false'], $value);
 		}
 		return false;
 	}
@@ -247,66 +334,14 @@ final class Shortcode
 	 * @param string $attr
 	 * @return bool
 	 */
-	public static function isEnabled($atts = [], $attr = '')
+	public static function isEnabled(array $atts, string $attr) : bool
 	{
 		$attr = self::formatAttributeName($attr);
 		$atts = self::formatAttributes($atts);
 		if ( isset($atts[$attr]) ) {
-			$value = Stringify::lowercase($atts[$attr]);
-			return Stringify::contains(['on','yes','oui','true'],$value);
+			$value = Stringify::lowercase((string)$atts[$attr]);
+			return Stringify::contains(['on', 'yes', 'oui', 'true'], $value);
 		}
 		return false;
-	}
-
-	/**
-	 * Search shortcodes in content,
-	 * And filter shortcodes through their hooks.
-	 *
-	 * @access public
-	 * @param string $content
-	 * @param bool $ignore, Ignore HTML
-	 * @return string
-	 */
-	public static function do($content, $ignore = false)
-	{
-		return do_shortcode($content,$ignore);
-	}
-
-	/**
-	 * Render shortcodes.
-	 *
-	 * @access public
-	 * @param string $content
-	 * @param bool $ignore, Ignore HTML
-	 * @return void
-	 */
-	public static function render($content, $ignore = false)
-	{
-		echo self::do($content,$ignore);
-	}
-	
-	/**
-	 * Checks whether content contains shortcode.
-	 *
-	 * @access public
-	 * @param string $content
-	 * @param string $tag
-	 * @return bool
-	 */
-	public static function has($content, $tag)
-	{
-		return has_shortcode($content,$tag);
-	}
-
-	/**
-	 * strip content from shortcodes.
-	 *
-	 * @access public
-	 * @param string $content
-	 * @return string
-	 */
-	public static function strip($content)
-	{
-		return strip_shortcodes($content);
 	}
 }
