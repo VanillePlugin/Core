@@ -942,10 +942,10 @@ final class Stringify
 	/**
 	 * Parse URL (URL toolkit).
 	 * 
-	 * [SCHEME: 0]
-	 * [HOST: 1]
-	 * [PATH: 5]
-	 * [QUERY: 6]
+	 * [SCHEME : 0]
+	 * [HOST   : 1]
+	 * [PATH   : 5]
+	 * [QUERY  : 6]
 	 * 
 	 * @access public
 	 * @param string $url
@@ -1013,5 +1013,19 @@ final class Stringify
 			$string = self::uppercase($string);
 		}
 	    return self::replace('-', '_', $string);
+	}
+
+	/**
+	 * Get basename with path format.
+	 *
+	 * @access public
+	 * @param string $path
+	 * @param string $suffix
+	 * @return string
+	 */
+	public static function basename(string $path, string $suffix = '') : string
+	{
+		$path = self::replace('\\', '/', $path);
+		return basename($path, $suffix);
 	}
 }

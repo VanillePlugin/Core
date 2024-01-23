@@ -201,7 +201,7 @@ trait VanillePluginConfig
 	protected function getNameSpace() : string
 	{
 		return $this->slugify(
-			basename($this->getRoot())
+			$this->basename($this->getRoot())
 		);
 	}
 

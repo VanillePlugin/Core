@@ -22,8 +22,8 @@ class Loader
 {
 	use \VanillePlugin\VanillePluginConfig;
 
-	private const BASEDIR = 'core/system/functions';
-	private const PATTERN = '/^.*\.(php)$/i';
+	protected const BASEDIR = 'core/system/functions';
+	protected const PATTERN = '/^.*\.(php)$/i';
 
 	/**
 	 * @access protected
@@ -38,7 +38,7 @@ class Loader
 	 */
 	public function __construct(string $baseDir = self::BASEDIR, string $pattern = self::PATTERN)
 	{
-		$this->baseDir = $this->formatPath($baseDir);
+		$this->baseDir = $this->format($baseDir);
 		$this->pattern = $pattern;
 	}
 
@@ -54,7 +54,7 @@ class Loader
 	 */
 	public function instance($path, $className, $arg1 = null, $arg2 = null)
 	{
-		$path = $this->formatPath($path);
+		$path = $this->format($path);
 		$dir = "{$this->getRoot()}/{$this->baseDir}/{$path}";
 		if ( $this->isDir($dir) ) {
 			$files = $this->scan($dir, $path);
@@ -95,7 +95,7 @@ class Loader
 	protected function scan(string $dir, string $base)
 	{
 		$files = $this->scanDir($dir);
-		$namespace = $this->formatPath("{$this->baseDir}/{$base}", true);
+		$namespace = $this->format("{$this->baseDir}/{$base}", true);
 		foreach ($files as $key => $name) {
 			if ( $this->matchString($this->pattern, $name) ) {
 				$name = substr($name, 0, strrpos($name, '.php'));
@@ -108,14 +108,14 @@ class Loader
 	}
 
 	/**
-	 * Format path.
+	 * Format loader path.
 	 * 
 	 * @access protected
 	 * @param string $path
 	 * @param bool $namespace
 	 * @return string
 	 */
-	protected function formatPath(string $path, bool $namespace = false)
+	protected function format(string $path, bool $namespace = false)
 	{
         $path = ltrim($path, '/');
         $path = rtrim($path, '/');

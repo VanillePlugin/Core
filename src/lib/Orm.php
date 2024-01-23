@@ -363,25 +363,30 @@ class Orm extends Db implements OrmInterface
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
 		if ( ($query = $builder->getQuery($prefix)) ) {
 
-			if ( $builder->result == 'any' ) {
-				return $this->getResult($query);
+			switch ( $builder->result ) {
+				case 'any':
+					return $this->getResult($query);
+					break;
+				
+				case 'field':
+					return $builder->format(
+						$this->getField($query)
+					);
+					break;
+				
+				case 'row':
+					return $this->getRow($query);
+					break;
+				
+				case 'column':
+					return $this->getColumn($query);
+					break;
+				
+				default:
+					return $this->execute($query);
+					break;
 			}
 
-			if ( $builder->result == 'field' ) {
-				return $builder->format(
-					$this->getField($query)
-				);
-			}
-
-			if ( $builder->result == 'row' ) {
-				return $this->getRow($query);
-			}
-			
-			if ( $builder->result == 'column' ) {
-				return $this->getColumn($query);
-			}
-
-			return $this->execute($query);
 		}
 	}
 

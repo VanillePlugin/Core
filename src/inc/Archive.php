@@ -31,6 +31,8 @@ final class Archive extends File
 	 */
 	public static function compress(string $path, string $to = '', string $archive = '') : bool
 	{
+		$path = Stringify::formatPath($path);
+
 		if ( TypeCheck::isClass('ZipArchive') && self::exists($path) ) {
 
 			if ( empty($archive) ) {
@@ -44,6 +46,7 @@ final class Archive extends File
 			$to = Stringify::formatPath($to);
 			$to = "{$to}/{$archive}.zip";
 			$zip = new ZIP();
+
 			if ( $zip->open($to, ZIP::CREATE | ZIP::OVERWRITE) ) {
 				if ( self::isDir($path) ) {
 					$files = new RecursiveIteratorIterator(
@@ -56,13 +59,16 @@ final class Archive extends File
 					        $zip->addFile($p, basename($name));
 					    }
 					}
+
 				} elseif ( self::isFile($path) ) {
 					$zip->addFile($path, basename($path));
 				}
+				
 				$zip->close();
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -77,6 +83,9 @@ final class Archive extends File
 	 */
 	public static function uncompress(string $archive, string $to = '', bool $remove = false) : bool
 	{
+		$archive = Stringify::formatPath($archive);
+		$to = Stringify::formatPath($to);
+
 		if ( self::isFile($archive) ) {
 
 			$status = false;
@@ -125,8 +134,7 @@ final class Archive extends File
 	 */
 	public static function isGzip(string $archive, int $length = 4096) : bool
 	{
-		if ( self::isFile($archive) 
-		  && self::getExtension($archive) == 'gz' ) {
+		if ( self::isFile($archive) && self::getExtension($archive) == 'gz' ) {
 			$status = false;
 			if ( ($gz = gzopen($archive, 'r')) ) {
 				$status = (bool)gzread($gz, $length);
@@ -176,6 +184,7 @@ final class Archive extends File
 	 */
 	public static function isValid(string $archive) : bool
 	{
+		$archive = Stringify::formatPath($archive);
 		if ( TypeCheck::isClass('ZipArchive') && self::isFile($archive) ) {
 			$zip = new ZIP();
 			if ( $zip->open($archive) === true ) {

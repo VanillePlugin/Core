@@ -93,7 +93,7 @@ final class OrmQuery implements OrmQueryInterface
 		$args = $this->mergeArray([
 			'table'     => '',       // Array | String
 			'type'      => 'select', // String
-			'result'    => 'any',    // String
+			'result'    => 'any',    // String (any, none, field, row, column)
 			'orderby'   => '',       // Array | String
 			'groupby'   => '',       // Array | String
 			'format'    => '',       // String

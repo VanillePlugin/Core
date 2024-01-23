@@ -53,7 +53,9 @@ final class Asset
 		$this->initConfig();
 
 		// Set base dir
-		$this->dir = $this->getAssetPath(basename($dir));
+		$this->dir = $this->getAssetPath(
+			$this->basename($dir)
+		);
 
 		// Set remote assets
 		$this->assets = $this->getRemoteAssets();
@@ -262,7 +264,7 @@ final class Asset
 	 */
 	private function getFileName($path)
 	{
-		return basename($path);
+		return $this->basename($path);
 	}
 
 	/**

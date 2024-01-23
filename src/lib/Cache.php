@@ -82,11 +82,14 @@ final class Cache
 	 * Get cache value.
 	 * 
 	 * @access public
+	 * @param mixed $default
 	 * @return mixed
 	 * @throws CacheException
 	 */
-	public function get()
+	public function get($default = null)
 	{
+		$data = null;
+
 		if ( !$this->key ) {
 	        throw new CacheException(
 	            CacheException::undefinedCacheKey()
@@ -94,14 +97,18 @@ final class Cache
 		}
 
 		if ( ThirdCache::isActive() ) {
-			return ObjectCache::get($this->key);
+			$data = ObjectCache::get($this->key);
 		}
 
 		if ( $this->isType('class', self::FILECACHE) ) {
-			return (new FileCache())->get($this->key);
+			$data = (new FileCache())->get($this->key);
 		}
 
-		return null;
+		if ( $this->isType('null', $data)) {
+			$data = $default;
+		}
+
+		return $data;
 	}
 
 	/**

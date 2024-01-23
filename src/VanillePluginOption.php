@@ -403,7 +403,7 @@ trait VanillePluginOption
 	 */
 	protected function addPluginJS(string $path, array $deps = [], $version = false, bool $footer = true)
 	{
-		$id = $this->removeString('.js', basename($path));
+		$id = $this->removeString('.js', $this->basename($path));
 		$id = $this->removeString('.min', $id);
 		$id = $this->applyNamespace($id);
 		$path = $this->applyAsset($path);
@@ -470,7 +470,7 @@ trait VanillePluginOption
 	 */
 	protected function addPluginCSS(string $path, array $deps = [], $version = false, string $media = 'all')
 	{
-		$id = $this->removeString('.css', basename($path));
+		$id = $this->removeString('.css', $this->basename($path));
 		$id = $this->removeString('.min', $id);
 		$id = $this->applyNamespace($id);
 		$path = $this->applyAsset($path);

@@ -93,7 +93,8 @@ class File
 	 */
 	public static function getName(string $path) : string
 	{
-		return Stringify::replaceRegex('/\.[^.]+$/', '', basename($path));
+		$path = Stringify::basename($path);
+		return Stringify::replaceRegex('/\.[^.]+$/', '', $path);
 	}
 
 	/**
@@ -105,7 +106,7 @@ class File
 	 */
 	public static function getFileName(string $path) : string
 	{
-		return basename(Stringify::formatPath($path));
+		return Stringify::basename($path);
 	}
 
 	/**
@@ -503,7 +504,7 @@ class File
 	}
 
 	/**
-	 * Check path exists (file|directory).
+	 * Check whether path exists (file|directory).
 	 *
 	 * @access public
 	 * @param string $path

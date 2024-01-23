@@ -104,7 +104,7 @@ class Requirement extends Notice implements RequirementInterface
 						$this->strings['path']['exists'],
 						[
 							$this->getPluginName(),
-							basename($path)
+							$this->basename($path)
 						]
 					);
 

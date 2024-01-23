@@ -240,6 +240,17 @@ trait TraitFormattable
 	}
 
 	/**
+	 * Get basename with path format.
+	 * 
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function basename(string $path, string $suffix = '') : string
+	{
+		return Stringify::basename($path, $suffix);
+	}
+
+	/**
 	 * Check array item.
 	 * 
 	 * @access protected
