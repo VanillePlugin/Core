@@ -55,9 +55,6 @@ class Updater implements UpdaterInterface
 	 */
 	public function __construct(?string $host = null, array $args = [])
 	{
-		// Init config
-		$this->initConfig();
-
 		if ( !$host ) return;
 
 		// Parse plugin version
@@ -349,7 +346,7 @@ class Updater implements UpdaterInterface
 
 			// Cache on successful response
 			if ( $api->getStatusCode() == 200 && ($body = $api->getBody()) ) {
-				$response = unserialize($body);
+				$response = $this->unserialize($body);
 				$option = explode('-', $action);
 				$option = $option[1] ?? 'default';
 				$ttl = $this->applyPluginFilter("updater-{$option}-ttl", 1800);

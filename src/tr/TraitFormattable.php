@@ -251,6 +251,17 @@ trait TraitFormattable
 	}
 
 	/**
+	 * Get break to line.
+	 * 
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function breakString() : string
+	{
+		return Stringify::break();
+	}
+
+	/**
 	 * Check array item.
 	 * 
 	 * @access protected
@@ -586,6 +597,7 @@ trait TraitFormattable
      * 
 	 * @access protected
 	 * @inheritdoc
+	 * @todo hasObject => hasItem
 	 */
     protected function hasObject($type, $object, $item) : bool
     {

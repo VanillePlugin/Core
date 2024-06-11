@@ -64,6 +64,28 @@ trait TraitPermissionable
 	}
 
 	/**
+	 * Check whether user has role.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function hasRole(string $role, $id = null) : bool
+	{
+		return User::hasRole($role, $id);
+	}
+
+	/**
+	 * Check whether user is administrator.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function isAdministrator($id = null) : bool
+	{
+		return User::hasRole('administrator', $id);
+	}
+
+	/**
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -76,26 +98,17 @@ trait TraitPermissionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removeCapability(string $role, string $cap) : bool
+	protected function removeCap(string $role, string $cap) : bool
 	{
-		return User::removeCapability($role, $cap);
+		return User::removeCap($role, $cap);
 	}
 
 	/**
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function hasCapability(string $cap = 'edit_posts', $args = null) : bool
+	protected function hasCap(string $cap = 'edit_posts', $args = null) : bool
 	{
-		return User::hasCapability($cap, $args);
-	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function hasPermission(string $cap = 'edit_posts', $args = null, $id = null) : bool
-	{
-		return User::hasPermission($cap, $args, $id);
+		return User::hasCap($cap, $args);
 	}
 }

@@ -35,9 +35,6 @@ final class Rewrite
      */
     public function __construct()
     {
-		// Init config
-		$this->initConfig();
-
         // Load default rewrite
         $dir = "{$this->getRoot()}/core/storage/config/";
         if ( $this->isFile( $rewrite = "{$dir}/.rewrite" ) ) {
@@ -174,7 +171,7 @@ final class Rewrite
 
     /**
      * Backup rules.
-     * 
+     *
      * @access public
      * @return bool
      */

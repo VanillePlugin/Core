@@ -15,11 +15,11 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\{
-	Shortcode, Arrayify
+	Arrayify, Shortcode as Core
 };
 use VanillePlugin\int\CallableInterface;
 
-class Shortcoder extends View
+class Shortcode extends View
 {
 	/**
 	 * @access protected
@@ -32,19 +32,24 @@ class Shortcoder extends View
 	protected $tag = '';
 
 	/**
+	 * @access private
+	 * @var bool $isGlobal, instance global atts
+	 */
+	private $isGlobal = false;
+
+	/**
 	 * Init shortcoder.
 	 */
 	public function __construct(?CallableInterface $callable = null)
 	{
-		// Init plugin config
-		$this->initConfig();
-
 		// Set custom view callables
 		if ( $callable ) {
 			$this->setCallables(
 				$callable->getCallables()
 			);
 		}
+
+		$this->applyPluginFilter('shortcode-atts', [$this, 'setGlobal']);
 	}
 
 	/**
@@ -56,7 +61,21 @@ class Shortcoder extends View
 	 */
 	public function setAttributes(array $atts = [])
 	{
-		$this->atts = Shortcode::formatAttributes($atts);
+		$this->atts = Core::formatAttributes($atts);
+	}
+
+	/**
+	 * Set global atts.
+	 *
+	 * @access protected
+	 * @param array $atts
+	 * @return void
+	 */
+	protected function setGlobal(array $atts = [])
+	{
+		if ( $this->isGlobal ) {
+			die;
+		}
 	}
 
 	/**
@@ -92,6 +111,17 @@ class Shortcoder extends View
 	public function generate() : string
 	{
         return 'template';
+	}
+
+	/**
+	 * Enable global atts.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function enableGlobal()
+	{
+		$this->isGlobal = true;
 	}
 
 	/**
@@ -137,7 +167,7 @@ class Shortcoder extends View
 	 */
 	protected function applyDefaults(string $type)
 	{
-		$this->atts = Shortcode::attributes(
+		$this->atts = Core::attributes(
 			$this->getDefaults($type),
 			$this->atts,
 			$this->tag

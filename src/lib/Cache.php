@@ -47,9 +47,6 @@ final class Cache
      */
 	public function __construct()
 	{
-		// Init plugin config
-		$this->initConfig();
-
 		// Set cache path
 		$this->path[] = $this->getTempPath();
 		$this->path[] = $this->getCachePath();

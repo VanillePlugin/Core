@@ -23,11 +23,19 @@ interface FrontHelperInterface
 
 	/**
 	 * Apply AMP.
-	 * [Action: amp-post-template-css].
+	 * [Action: amp-css].
 	 *
 	 * @return void
 	 */
     function amp();
+
+	/**
+	 * Front loaded.
+	 * [Action: loaded].
+	 *
+	 * @return void
+	 */
+	function loaded();
 
 	/**
 	 * Front head.

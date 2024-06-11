@@ -32,18 +32,12 @@ class Cron implements CronInterface
 	protected $actions = [];
 
 	/**
-	 * Init scheduler.
+	 * @inheritdoc
 	 */
 	public function __construct()
 	{
-		// Init plugin config
-		$this->initConfig();
-
-		// Add schedulers actions
 		foreach ($this->getCron() as $scheduler) {
-			$this->addSchedulerAction(
-				$this->toArray($scheduler)
-			);
+			$this->addSchedulerAction($scheduler);
 		}
 	}
 
@@ -68,7 +62,7 @@ class Cron implements CronInterface
 	 */
 	public function start()
 	{
-		$this->addFilter('cron_schedules', [$this, 'apply']);
+		$this->addFilter('cron-schedules', [$this, 'apply']);
 
 		foreach ($this->sanitizeActions() as $action) {
 			$name = $this->applyNameSpace($action['name']);
@@ -110,7 +104,7 @@ class Cron implements CronInterface
 	public function remove()
 	{
 		foreach ($this->getCron() as $scheduler) {
-			$this->clear($scheduler->name);
+			$this->clear($scheduler['name']);
 		}
 	}
 

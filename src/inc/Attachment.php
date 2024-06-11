@@ -60,7 +60,7 @@ final class Attachment
 	        'post_mime_type' => $data['type'],
 	        'post_status'    => $data['status']
 		];
-		return (int)wp_insert_attachment($attachment,$path,$data['parent']);
+		return (int)wp_insert_attachment($attachment, $path, $data['parent']);
 	}
 
 	/**
@@ -103,7 +103,7 @@ final class Attachment
 	public static function generateMeta(int $id, string $path) : array
 	{
 		if ( !TypeCheck::isFunction('wp_generate_attachment_metadata') ) {
-		    require_once(GlobalConst::rootDir('wp-admin/includes/image.php'));
+		    require_once GlobalConst::rootDir('wp-admin/includes/image.php');
 		}
 		return (array)wp_generate_attachment_metadata($id, $path);
 	}

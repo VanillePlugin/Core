@@ -28,9 +28,9 @@ final class Asset
 	 * @var string LOCK
 	 * @var string CDN
 	 */
-	private const DIR = 'vendor';
+	private const DIR  = 'vendor';
 	private const LOCK = 'asset.lock';
-	private const CDN = 'https://cdnjs.cloudflare.com/ajax/libs';
+	private const CDN  = 'https://cdnjs.cloudflare.com/ajax/libs';
 
 	/**
 	 * @access private
@@ -49,9 +49,6 @@ final class Asset
      */
     public function __construct(string $dir = self::DIR)
 	{
-		// Init config
-		$this->initConfig();
-
 		// Set base dir
 		$this->dir = $this->getAssetPath(
 			$this->basename($dir)
@@ -59,10 +56,10 @@ final class Asset
 
 		// Set remote assets
 		$this->assets = $this->getRemoteAssets();
-		
+
 		// Set cdn url
 		$this->cdn = self::CDN;
-		
+
 		// Reset config
 		$this->resetConfig();
 	}

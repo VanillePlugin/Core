@@ -47,11 +47,8 @@ class API extends Request
 	 */
 	public function __construct(string $method = 'GET', array $args = [], ?string $baseUrl = null)
 	{
-		// Init plugin config
-		$this->initConfig();
-
 		// Set args
-		$this->method = $method;
+		$this->method  = $method;
 		$this->baseUrl = $baseUrl;
 		$this->args = $this->mergeArray([
 			'timeout'     => 30,
@@ -78,7 +75,16 @@ class API extends Request
 	{
 		parent::send($url);
 		if ( $this->hasError() && $this->hasDebug ) {
-			$this->logger->debug($this->response, true);
+			$log = [
+				'request' => [
+					'url'     => "{$this->baseUrl}{$url}",
+					'method'  => $this->method,
+					'headers' => $this->headers,
+					'body'    => $this->body
+				],
+				'response' => $this->decodeJson($this->getBody(), true)
+			];
+			$this->logger->debug($log, true);
 		}
 		return $this;
 	}

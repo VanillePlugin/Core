@@ -17,7 +17,8 @@ namespace VanillePlugin\int;
 interface CronInterface
 {
 	/**
-	 * Init scheduler.
+	 * Init schedule,
+	 * Add schedulers actions.
 	 */
 	function __construct();
 

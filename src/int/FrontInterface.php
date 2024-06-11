@@ -21,12 +21,11 @@ interface FrontInterface
 	 *
 	 * @param ShortcodeInterface $shortcode
 	 * @uses !isAdmin()
-	 * @uses !isLogin()
 	 */
 	function __construct(?ShortcodeInterface $shortcode = null);
 
 	/**
-	 * Init plugin front.
+	 * Init front.
 	 * [Action: wp].
 	 *
 	 * @return void
@@ -35,20 +34,46 @@ interface FrontInterface
 	function init();
 
 	/**
-	 * Add front plugin CSS.
-	 * [Action: wp-enqueue-scripts].
+	 * Init login.
+	 * [Action: init].
+	 *
+	 * @return void
+	 * @uses isLogin()
+	 */
+	function initLogin();
+
+	/**
+	 * Add front CSS.
+	 * [Action: enqueue-scripts].
 	 *
 	 * @return void
 	 */
 	function initCSS();
 
 	/**
-	 * Add front plugin JS.
-	 * [Action: wp-enqueue-scripts].
-	 * 
+	 * Add front JS.
+	 * [Action: enqueue-scripts].
+	 *
 	 * @return void
 	 */
 	function initJS();
+
+	/**
+	 * Init login CSS.
+	 * [Action: login-enqueue-scripts].
+	 *
+	 * @return void
+	 * @uses isLogin()
+	 */
+	function loginCSS();
+
+	/**
+	 * Add login JS.
+	 * [Action: login-enqueue-scripts].
+	 *
+	 * @return void
+	 */
+	function loginJS();
 
 	/**
 	 * Add front body class.
@@ -58,4 +83,13 @@ interface FrontInterface
 	 * @return array
 	 */
 	function addClass(array $classes) : array;
+
+	/**
+	 * Add login body class.
+	 * [Filter: login-body-class].
+	 * 
+	 * @param array $classes
+	 * @return array
+	 */
+	function addLoginClass(array $classes) : array;
 }

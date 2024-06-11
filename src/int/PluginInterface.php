@@ -16,11 +16,6 @@ namespace VanillePlugin\int;
 
 interface PluginInterface
 {
-    /**
-     * Setup plugin.
-     */
-    function __construct();
-
 	/**
 	 * Plugin start action.
 	 *
@@ -63,13 +58,6 @@ interface PluginInterface
 	function upgrade(object $upgrader, array $options);
 
 	/**
-	 * Plugin uninstall action.
-	 *
-	 * @return void
-	 */
-	static function uninstall();
-
-	/**
 	 * Add plugin action links.
 	 * [Filter: plugin_action_links_{pluginMain}.php].
 	 * [Filter: network_admin_plugin_action_links_{pluginMain}.php].
@@ -78,4 +66,11 @@ interface PluginInterface
 	 * @return array
 	 */
 	function action(array $links) : array;
+
+	/**
+	 * Plugin uninstall action.
+	 *
+	 * @return void
+	 */
+	static function uninstall();
 }

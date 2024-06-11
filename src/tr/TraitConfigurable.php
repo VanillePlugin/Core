@@ -144,6 +144,33 @@ trait TraitConfigurable
 	}
 
 	/**
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function isAjax() : bool
+	{
+		return GlobalConst::ajax();
+	}
+
+	/**
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function isApi() : bool
+	{
+		return GlobalConst::api();
+	}
+
+	/**
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function getSiteRoles() : array
+	{
+		return GlobalConst::roles();
+	}
+
+	/**
 	 * Get admin url.
 	 *
 	 * @access protected

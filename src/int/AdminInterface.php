@@ -67,14 +67,6 @@ interface AdminInterface
      */
     function globalJS();
 
-    /**
-     * Add plugin admin footer.
-     * [Action: admin-init].
-     * 
-     * @return void
-     */
-    function footer();
-
 	/**
 	 * Add admin body class.
 	 * [Action: admin-body-class].

@@ -23,7 +23,7 @@ interface RestApiInterface
 	 * @return void
 	 */
 	function addRoutes(\WP_REST_Server $server);
-	
+
 	/**
 	 * Init REST tokens.
 	 *

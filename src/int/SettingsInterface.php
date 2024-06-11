@@ -30,7 +30,7 @@ interface SettingsInterface
 
 	/**
 	 * Set default settings.
-	 * [Action: activate_{plugin}].
+	 * 
 	 *
 	 * @return void
 	 */
@@ -38,6 +38,7 @@ interface SettingsInterface
 
     /**
      * Remove plugin settings.
+     * [Action: uninstall_{plugin}].
      *
      * @return void
      */

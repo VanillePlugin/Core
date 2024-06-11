@@ -43,7 +43,7 @@ trait TraitCacheable
 
 	/**
 	 * Set transient.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */

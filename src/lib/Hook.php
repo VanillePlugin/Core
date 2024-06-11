@@ -29,25 +29,26 @@ final class Hook
 	 */
 	public const FILTER = 'admin-extras';
 	public const OPTION = 'extras';
+	public const GROUP  = 'options';
 
 	/**
 	 * @access private
 	 * @var string $filter
 	 * @var string $option
+	 * @var string $group
 	 */
 	private $filter;
 	private $option;
+	private $group;
 
 	/**
 	 * Init hook.
 	 */
 	public function __construct(string $filter = self::FILTER, string $option = self::OPTION)
 	{
-		// Init config
-		$this->initConfig();
-
 		$this->filter = $filter;
 		$this->option = $option;
+		$this->group  = self::GROUP;
 	}
 
 	/**
@@ -93,23 +94,34 @@ final class Hook
 	 * Register hooks inside group.
 	 *
 	 * @access public
-	 * @param string $group
 	 * @return void
 	 */
-	public function register(string $group)
+	public function register()
 	{
-		$this->registerPluginOption($group, $this->option);
+		$this->registerPluginOption($this->group, $this->option);
 	}
 
 	/**
 	 * Add default hooks if not exists.
 	 *
 	 * @access public
-	 * @param array $default
+	 * @param array $hooks
 	 * @return bool
 	 */
-	public function add(array $default) : bool
+	public function add(array $hooks) : bool
 	{
-		return $this->addPluginOption($this->option, $default);
+		return $this->addPluginOption($this->option, $hooks);
+	}
+
+	/**
+	 * Set hooks group.
+	 *
+	 * @access public
+	 * @param string $group
+	 * @return void
+	 */
+	public function setGroup(string $group = self::GROUP)
+	{
+		$this->group = $group;
 	}
 }

@@ -315,21 +315,20 @@ final class Hook
 
 	/**
 	 * Remove excluded scripts.
-	 * 
+	 *
 	 * @access public
 	 * @param array $exclude
 	 * @return void
 	 */
-	public static function removeScript(array $exclude)
+	public static function removeScripts(array $exclude)
 	{
-		global $wp_scripts;
-		foreach ($wp_scripts->queue as $script) {
+		foreach (GlobalConst::scripts()->queue as $script) {
 			if ( self::hasScript($script, $exclude) !== false ) {
 				self::removeJS($script);
 			}
 		}
-		global $wp_styles;
-		foreach ($wp_styles->queue as $style) {
+
+		foreach (GlobalConst::styles()->queue as $style) {
 			if ( self::hasScript($style, $exclude) !== false ) {
 				self::removeCSS($style);
 			}
@@ -346,6 +345,9 @@ final class Hook
 	private static function format(string $hook) : string
 	{
 		switch ( Stringify::lowercase($hook) ) {
+			case 'loaded':
+				$hook = 'wp_loaded';
+				break;
 			case 'head':
 				$hook = 'wp_head';
 				break;
@@ -364,11 +366,44 @@ final class Hook
 			case 'body-class':
 				$hook = 'body_class';
 				break;
-			case 'amp-post-template-css':
+			case 'user-register':
+				$hook = 'user_register';
+				break;
+			case 'user-auth':
+				$hook = 'wp_authenticate_user';
+				break;
+			case 'login-enqueue-scripts':
+				$hook = 'login_enqueue_scripts';
+				break;
+			case 'login-body-class':
+				$hook = 'login_body_class';
+				break;
+			case 'login-header-url':
+				$hook = 'login_headerurl';
+				break;
+			case 'login-header-text':
+				$hook = 'login_headertext';
+				break;
+			case 'login-form':
+				$hook = 'login_form';
+				break;
+			case 'login-form-defaults':
+				$hook = 'login_form_defaults';
+				break;
+			case 'amp-css':
 				$hook = 'amp_post_template_css';
+				break;
+			case 'amp-head':
+				$hook = 'amp_post_template_head';
+				break;
+			case 'amp-footer':
+				$hook = 'amp_post_template_footer';
 				break;
 			case 'plugins-loaded':
 				$hook = 'plugins_loaded';
+				break;
+			case 'plugin-row':
+				$hook = 'plugin_row_meta';
 				break;
 			case 'admin-init':
 				$hook = 'admin_init';
@@ -379,6 +414,9 @@ final class Hook
 			case 'admin-bar-menu':
 				$hook = 'admin_bar_menu';
 				break;
+			case 'show-admin-bar':
+				$hook = 'show_admin_bar';
+				break;
 			case 'admin-enqueue-scripts':
 				$hook = 'admin_enqueue_scripts';
 				break;
@@ -387,6 +425,18 @@ final class Hook
 				break;
 			case 'admin-footer-text':
 				$hook = 'admin_footer_text';
+				break;
+			case 'admin-notices':
+				$hook = 'admin_notices';
+				break;
+			case 'mail':
+				$hook = 'wp_mail';
+				break;
+			case 'mail-from':
+				$hook = 'wp_mail_from';
+				break;
+			case 'mail-name':
+				$hook = 'wp_mail_from_name';
 				break;
 			case 'update-footer':
 				$hook = 'update_footer';
@@ -411,6 +461,15 @@ final class Hook
 				break;
 			case 'dashboard-setup':
 				$hook = 'wp_dashboard_setup';
+				break;
+			case 'rest-api':
+				$hook = 'rest_api_init';
+				break;
+			case 'post-status':
+				$hook = 'transition_post_status';
+				break;
+			case 'cron-schedules':
+				$hook = 'cron_schedules';
 				break;
 		}
         return $hook;

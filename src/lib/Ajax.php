@@ -41,9 +41,6 @@ final class Ajax implements AjaxCoreInterface
 	 */
 	public function __construct(AjaxInterface $callable)
 	{
-		// Init plugin config
-		$this->initConfig();
-
 		// Set callable
 		$this->callable = $callable;
 

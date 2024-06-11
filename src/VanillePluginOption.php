@@ -192,11 +192,11 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function registerPluginOption(string $group, string $key, array $args = [], $lang = null)
+	protected function registerPluginOption(string $group, string $key, array $args = [], $multiling = null)
 	{
-		$lang = $this->setOptionLanguage($lang);
+		$lang  = $this->setOptionLanguage($multiling);
 		$group = $this->applyPrefix($group);
-		$key = $this->applyPrefix("{$key}{$lang}");
+		$key   = $this->applyPrefix("{$key}{$lang}");
 		$this->registerOption($group, $key, $args);
 	}
 
@@ -206,10 +206,10 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addPluginOption(string $key, $value, $lang = null) : bool
+	protected function addPluginOption(string $key, $value, $multiling = null) : bool
 	{
-		$lang = $this->setOptionLanguage($lang);
-		$key = $this->applyPrefix("{$key}{$lang}");
+		$lang = $this->setOptionLanguage($multiling);
+		$key  = $this->applyPrefix("{$key}{$lang}");
 		return $this->addOption($key, $value);
 	}
 
@@ -220,10 +220,10 @@ trait VanillePluginOption
 	 * @inheritdoc
 	 * @todo Move farmatting
 	 */
-	protected function getPluginOption(string $key, string $type = 'array', $default = false, $lang = null)
+	protected function getPluginOption(string $key, string $type = 'array', $default = false, $multiling = null)
 	{
-		$lang = $this->setOptionLanguage($lang);
-		$key = $this->applyPrefix("{$key}{$lang}");
+		$lang  = $this->setOptionLanguage($multiling);
+		$key   = $this->applyPrefix("{$key}{$lang}");
 		$value = $this->stripSlash(
 			$this->getOption($key, $default)
 		);
@@ -253,10 +253,10 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function updatePluginOption(string $key, $value, $lang = null) : bool
+	protected function updatePluginOption(string $key, $value, $multiling = null) : bool
 	{
-		$lang = $this->setOptionLanguage($lang);
-		$key = $this->applyPrefix("{$key}{$lang}");
+		$lang = $this->setOptionLanguage($multiling);
+		$key  = $this->applyPrefix("{$key}{$lang}");
 		return $this->updateOption($key, $value);
 	}
 
@@ -266,9 +266,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removePluginOption(string $key, $lang = null) : bool
+	protected function removePluginOption(string $key, $multiling = null) : bool
 	{
-		$lang = $this->setOptionLanguage($lang);
+		$lang = $this->setOptionLanguage($multiling);
 		$key  = $this->applyPrefix("{$key}{$lang}");
 		return $this->removeOption($key);
 	}
@@ -277,14 +277,15 @@ trait VanillePluginOption
 	 * Set plugin option language.
 	 *
 	 * @access protected
-	 * @param mixed $lang
+	 * @param mixed $multiling
 	 * @return mixed
 	 */
-	protected function setOptionLanguage($lang = null)
+	protected function setOptionLanguage($multiling = null)
 	{
+		$lang = null;
 		if ( $this->hasMultilingual() ) {
-			if ( $lang !== false ) {
-				$lang = "-{$this->getLang()}";
+			if ( $multiling !== false ) {
+				$multiling = "-{$this->getLang()}";
 			}
 		}
 		return $lang;
@@ -474,7 +475,7 @@ trait VanillePluginOption
 		$id = $this->removeString('.min', $id);
 		$id = $this->applyNamespace($id);
 		$path = $this->applyAsset($path);
-		$this->addCSS($id , $path, $deps, $version, $media);
+		$this->addCSS($id, $path, $deps, $version, $media);
 	}
 
 	/**
@@ -537,15 +538,15 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addPluginCaps($roles, string $cap = 'manage')
+	protected function addPluginCaps($roles = [], string $cap = 'manage')
 	{
-		if ( $this->isType('array', $roles) ) {
-			foreach ($roles as $role) {
-				$this->addPluginCapability($role, $cap);
-			}
-
-		} else {
-			$this->addPluginCapability($roles, $cap);
+		if ( $this->isType('string', $roles) ) {
+			$roles = [$roles];
+		}
+		$roles = $this->getPluginRoles();
+		$roles = $this->applyPluginFilter('roles', $roles);
+		foreach ($roles as $role) {
+			$this->addPluginCapability($role, $cap);
 		}
 	}
 
@@ -555,10 +556,10 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function hasPluginCapability(string $cap = 'manage') : bool
+	protected function hasPluginCap(string $cap = 'manage') : bool
 	{
 		$cap = $this->applySufix($cap);
-		return $this->hasCapability($cap);
+		return $this->hasCap($cap);
 	}
 
 	/**
@@ -567,10 +568,10 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removePluginCapability(string $role, string $cap = 'manage')
+	protected function removePluginCap(string $role, string $cap = 'manage')
 	{
 		$cap = $this->applySufix($cap);
-		$this->removeCapability($role, $cap);
+		$this->removeCap($role, $cap);
 	}
 
 	/**
@@ -579,15 +580,17 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removePluginCaps($roles, string $cap = 'manage')
+	protected function removePluginCaps($roles = [], string $cap = 'manage')
 	{
-		if ( $this->isType('array', $roles) ) {
-			foreach ($roles as $role) {
-				$this->removePluginCapability($role, $cap);
-			}
-
-		} else {
-			$this->removePluginCapability($roles, $cap);
+		$this->purgePluginTransients();
+		if ( $this->isType('string', $roles) ) {
+			$roles = [$roles];
+		}
+		if ( empty($roles) ) {
+			$roles = $this->getSiteRoles();
+		}
+		foreach ($roles as $role) {
+			$this->removePluginCap($role, $cap);
 		}
 	}
 
@@ -668,6 +671,21 @@ trait VanillePluginOption
 	    	$code = ($this->hasDebug()) ? 400 : 200;
 	    	$this->setResponse('Invalid token', [], 'error', $code);
 	  	}
+	}
+
+	/**
+	 * Check role permission.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function checkPermission($id = null)
+	{
+		if ( !$this->isAdministrator($id) ) {
+			$code = ($this->hasDebug()) ? 401 : 200;
+			$this->setResponse("You don't have permissions", [], 'error', $code);
+			return false;
+		}
 	}
 
 	/**
@@ -810,6 +828,10 @@ trait VanillePluginOption
 	 */
 	protected function addPluginWidget($cb, ?string $name = null)
 	{
+		if ( !$this->hasPluginCap() ) {
+			return;
+		}
+		
 		if ( !$name ) {
 			$name = $this->getPluginName();
 		}

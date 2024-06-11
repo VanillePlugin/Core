@@ -18,8 +18,6 @@ interface AdminHelperInterface
 {
 	/**
 	 * Init admin helper.
-	 * 
-	 * @uses initConfig()
 	 */
 	function __construct();
 
@@ -55,6 +53,34 @@ interface AdminHelperInterface
 	 * @return array
 	 */
 	function action(array $links) : array;
+
+	/**
+	 * Plugin about.
+	 * [Filter: {plugin}-about].
+	 * 
+	 * @param string $output
+	 * @return string
+	 */
+	function about(string $output) : string;
+
+	/**
+	 * Plugin version.
+	 * [Filter: {plugin}-version].
+	 * 
+	 * @param string $output
+	 * @return string
+	 */
+	function version(string $output) : string;
+
+	/**
+	 * Plugin row.
+	 * [Filter: plugin-row].
+	 * 
+	 * @param array $meta
+	 * @param string $file
+	 * @return array
+	 */
+	function row(array $meta, string $file) : array;
 
 	/**
 	 * Plugin init action.

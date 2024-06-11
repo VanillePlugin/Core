@@ -43,7 +43,8 @@ final class User
 	public static function getId() : int
 	{
 		$user = self::current();
-		return $user->ID ?? 0;
+		$id = $user['id'] ?? 0;
+		return (int)$id;
 	}
 
 	/**
@@ -55,7 +56,9 @@ final class User
 	 */
 	public static function getEmail($id = null)
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		$user = self::getBy('ID', (int)$id);
 		return $user['email'] ?? false;
 	}
@@ -69,14 +72,54 @@ final class User
 	 */
 	public static function getHash($id = null)
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		$user = self::getBy('ID', (int)$id);
 		return $user['hash'] ?? false;
 	}
 
 	/**
-	 * Get current user.
+	 * Get user avatar.
 	 * 
+	 * @access public
+	 * @param mixed $id
+	 * @return string
+	 */
+	public static function getAvatar($id = null) : string
+	{
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
+		return (string)get_avatar_url($id, [
+			'default' => '404',
+			'size'    => 100
+		]);
+	}
+
+	/**
+     * Get user data.
+     * 
+	 * @access public
+	 * @param string $key
+	 * @param mixed $id
+	 * @return mixed
+	 */
+	public static function getData(string $key, $id = null)
+	{
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
+		$id = (int)$id;
+		if ( ($user = get_userdata($id)) ) {
+			return $user->{$key} ?? false;
+		}
+		return false;
+	}
+
+	/**
+	 * Get current user.
+	 *
 	 * @access public
      * @param bool $format
 	 * @return mixed
@@ -118,7 +161,9 @@ final class User
 	 */
 	public static function getById($id = null, bool $format = true)
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		return self::getBy('ID', (int)$id, $format);
 	}
 
@@ -281,7 +326,9 @@ final class User
 	 */
 	public static function delete($id = null, bool $force = false) : bool
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		return (bool)wp_delete_user((int)$id, $force);
 	}
 
@@ -297,7 +344,9 @@ final class User
 	 */
 	public static function addMeta(string $key, $value, $id = null, bool $unique = false)
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		return add_user_meta((int)$id, $key, $value, $unique);
 	}
 
@@ -312,7 +361,9 @@ final class User
 	 */
 	public static function getMeta(string $key, $id = null, bool $single = true)
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		return get_user_meta((int)$id, $key, $single);
 	}
 
@@ -327,7 +378,9 @@ final class User
 	 */
 	public static function updateMeta(string $key, $value, $id = null)
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		return update_user_meta((int)$id, $key, $value);
 	}
 
@@ -342,7 +395,9 @@ final class User
 	 */
 	public static function deleteMeta(string $key, $id = null, $value = null) : bool
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		return delete_user_meta((int)$id, $key, $value);
 	}
 
@@ -409,13 +464,14 @@ final class User
      * Logout user.
      * 
 	 * @access public
-	 * @return void
+	 * @return bool
 	 */
-	public static function logout()
+	public static function logout() : bool
 	{
 		wp_destroy_current_session();
 		wp_clear_auth_cookie();
 		wp_set_current_user(0);
+		return true;
 	}
 
 	/**
@@ -429,8 +485,26 @@ final class User
 	 */
 	public static function isPassword(string $pswd, string $hash, $id = null) : bool
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		return Password::isValid($pswd, $hash, $id);
+	}
+
+	/**
+     * Update password.
+     *
+	 * @access public
+	 * @param string $pswd
+	 * @param mixed $id
+	 * @return bool
+	 */
+	public static function updatePassword(string $pswd, $id = null) : bool
+	{
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
+		return (bool)wp_set_password($pswd, (int)$id);
 	}
 
 	/**
@@ -442,11 +516,44 @@ final class User
 	 */
 	public static function sendPassword($id = null) : bool
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
         if ( ($user = self::getById((int)$id)) ) {
            return Password::send($user['login']);
         }
 		return false;
+	}
+
+	/**
+     * Get reset key.
+     *
+	 * @access public
+	 * @param object $user
+	 * @return mixed
+	 */
+	public static function getResetKey(object $user)
+	{
+		$key = get_password_reset_key($user);
+		if ( !Exception::isError($key) ) {
+			return $key;
+		}
+		return false;
+	}
+
+	/**
+	 * Get password reset URL.
+	 * 
+	 * @access public
+	 * @param object $user
+	 * @return string
+	 */
+	public static function getResetUrl(object $user) : string
+	{
+		$url = wp_lostpassword_url();
+		$key = self::getResetKey($user);
+		$login = rawurlencode($user->user_login);
+		return "{$url}?action=rp&key={$key}&login={$login}";
 	}
 
 	/**
@@ -469,27 +576,29 @@ final class User
 	 */
 	public static function getRoles($id = null) : array
 	{
-		if ( !$id ) $id = self::getId();
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		$user = new WP_User($id);
 		return (array)$user->roles;
 	}
 
 	/**
-	 * Get user capabilities.
+	 * Check whether user has role.
 	 *
 	 * @access public
+	 * @param string $role
 	 * @param mixed $id
-	 * @return array
+	 * @return bool
 	 */
-	public static function getCaps($id = null) : array
+	public static function hasRole(string $role, $id = null) : bool
 	{
-		if ( !$id ) $id = self::getId();
-		$user = new WP_User($id);
-		return (array)$user->caps;
+		$roles = self::getRoles($id);
+		return Arrayify::inArray($role, $roles);
 	}
 
 	/**
-	 * Get role.
+	 * Get role object.
 	 *
 	 * @access public
 	 * @param string $role
@@ -530,6 +639,22 @@ final class User
 	}
 
 	/**
+	 * Get user capabilities.
+	 *
+	 * @access public
+	 * @param mixed $id
+	 * @return array
+	 */
+	public static function getCaps($id = null) : array
+	{
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
+		$user = new WP_User($id);
+		return (array)$user->caps;
+	}
+
+	/**
 	 * Add role capability.
 	 *
 	 * @access public
@@ -545,6 +670,20 @@ final class User
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Add role capability (Alias).
+	 *
+	 * @access public
+	 * @param string $role
+	 * @param string $cap
+	 * @param bool $grant
+	 * @return bool
+	 */
+	public static function addCap(string $role, string $cap, bool $grant = true) : bool
+	{
+		return self::addCapability($role, $cap, $grant);
 	}
 
 	/**
@@ -565,7 +704,20 @@ final class User
 	}
 
 	/**
-	 * Check whether current user has capability.
+	 * Remove role capability (Alias).
+	 *
+	 * @access public
+	 * @param string $role
+	 * @param string $cap
+	 * @return bool
+	 */
+	public static function removeCap(string $role, string $cap) : bool
+	{
+		return self::removeCapability($role, $cap);
+	}
+
+	/**
+	 * Check current user capability.
 	 *
 	 * @access public
 	 * @param string $cap
@@ -578,17 +730,32 @@ final class User
 	}
 
 	/**
-	 * Check user capability (Alias).
+	 * Check current user capability (Alias).
 	 *
 	 * @access public
 	 * @param string $cap
 	 * @param mixed $args
-	 * @param mixed $id
 	 * @return bool
 	 */
-	public static function hasPermission(string $cap = 'edit_posts', $args = null, $id = null) : bool
+	public static function hasCap(string $cap = 'edit_posts', $args = null) : bool
 	{
-		if ( !$id ) $id = self::getId();
+		return self::hasCapability($cap, $args);
+	}
+
+	/**
+	 * Check user capability.
+	 *
+	 * @access public
+	 * @param mixed $id
+	 * @param string $cap
+	 * @param mixed $args
+	 * @return bool
+	 */
+	public static function can($id = null, string $cap = 'edit_posts', $args = null) : bool
+	{
+		if ( TypeCheck::isNull($id) ) {
+			$id = self::getId();
+		}
 		return user_can($id, $cap, $args);
 	}
 
@@ -601,11 +768,15 @@ final class User
 	 */
 	private static function format($user)
 	{
-        if ( $user ) {
+        if ( TypeCheck::isObject($user) ) {
+			$name = $user->data->display_name;
+			if ( empty($name) ) {
+				$name = $user->data->user_nicename;
+			}
             return [
                 'id'    => $user->data->ID,
                 'login' => $user->data->user_login,
-                'name'  => $user->data->user_nicename,
+                'name'  => $name,
                 'email' => $user->data->user_email,
                 'hash'  => $user->data->user_pass
             ];

@@ -66,7 +66,7 @@ trait TraitHookable
 
 	/**
 	 * Add hook action.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -246,9 +246,9 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removeScript(array $exclude)
+	protected function removeScripts(array $exclude)
 	{
-		Hook::removeScript($exclude);
+		Hook::removeScripts($exclude);
 	}
 
 	/**
@@ -260,6 +260,28 @@ trait TraitHookable
 	protected function addShortcode(string $tag, $callback)
 	{
 		Shortcode::add($tag, $callback);
+	}
+
+	/**
+	 * Assign content to shortcode.
+	 * 
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function assignShortcode(string $content, bool $ignore = false)
+	{
+		Shortcode::do($content, $ignore);
+	}
+
+	/**
+	 * Render shortcode.
+	 * 
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function renderShortcode(string $content, bool $ignore = false)
+	{
+		Shortcode::render($content, $ignore);
 	}
 
 	/**

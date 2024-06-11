@@ -84,7 +84,7 @@ final class Plugin
 	public static function getHeader(string $file, bool $markup = true, bool $translate = true) : array
 	{
 	    if ( !TypeCheck::isFunction('get_plugin_data') ) {
-	        require_once(GlobalConst::rootDir('wp-admin/includes/plugin.php'));
+	        require_once GlobalConst::rootDir('wp-admin/includes/plugin.php');
 	    }
 	    $file = self::getDir($file);
 		return get_plugin_data($file, $markup, $translate);

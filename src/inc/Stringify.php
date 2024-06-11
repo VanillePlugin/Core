@@ -1028,4 +1028,15 @@ final class Stringify
 		$path = self::replace('\\', '/', $path);
 		return basename($path, $suffix);
 	}
+
+	/**
+	 * Get break to line.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public static function break() : string
+	{
+		return PHP_EOL;
+	}
 }

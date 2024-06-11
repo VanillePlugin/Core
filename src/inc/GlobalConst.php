@@ -18,7 +18,7 @@ final class GlobalConst
 {
 	/**
 	 * Get site name.
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -48,6 +48,29 @@ final class GlobalConst
 	{
 		global $wp_version;
 		return $wp_version;
+	}
+	/**
+	 * Get website scripts.
+	 *
+	 * @access public
+	 * @return object
+	 */
+	public static function scripts()
+	{
+		global $wp_scripts;
+		return $wp_scripts;
+	}
+	
+	/**
+	 * Get website styles.
+	 *
+	 * @access public
+	 * @return object
+	 */
+	public static function styles()
+	{
+		global $wp_styles;
+		return $wp_styles;
 	}
 
 	/**
@@ -93,6 +116,29 @@ final class GlobalConst
 	{
 		return wp_is_mobile();
 	}
+	/**
+	 * Check ajax.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public static function ajax() : bool
+	{
+		$request = Server::get('request-uri');
+		return Stringify::contains($request, 'admin-ajax.php');
+	}
+
+	/**
+	 * Check API.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public static function api() : bool
+	{
+		$request = Server::get('request-uri');
+		return Stringify::contains($request, 'wp-json');
+	}
 
 	/**
 	 * Get site locale.
@@ -107,6 +153,17 @@ final class GlobalConst
 			return get_user_locale($user);
 		}
 		return get_locale();
+	}
+
+	/**
+	 * Get site roles.
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public static function roles() : array
+	{
+		return Arrayify::keys(wp_roles()->roles);
 	}
 
 	/**
@@ -249,13 +306,27 @@ final class GlobalConst
 	 * Get admin url.
 	 *
 	 * @access public
-	 * @param string $url
+	 * @param string $path
 	 * @param string $scheme
 	 * @return string
 	 */
-	public static function adminUrl(?string $url = null, string $scheme = 'admin') : string
+	public static function adminUrl(?string $path = null, string $scheme = 'admin') : string
 	{
-		$url = admin_url((string)$url, $scheme);
+		$url = admin_url((string)$path, $scheme);
+		return Stringify::formatPath($url);
+	}
+
+	/**
+	 * Get includes url.
+	 *
+	 * @access public
+	 * @param string $path
+	 * @param string $scheme
+	 * @return string
+	 */
+	public static function includesUrl(?string $path = null, string $scheme = 'admin') : string
+	{
+		$url = includes_url((string)$path, $scheme);
 		return Stringify::formatPath($url);
 	}
 
@@ -273,14 +344,15 @@ final class GlobalConst
 
 	/**
 	 * Get login URL.
-	 * 
+	 *
 	 * @access public
 	 * @param string $redirect
+	 * @param bool $auth
 	 * @return string
 	 */
-	public static function loginUrl(?string $redirect = null) : string
+	public static function loginUrl(?string $redirect = null, bool $auth = false) : string
 	{
-		return wp_login_url($redirect);
+		return wp_login_url($redirect, $auth);
 	}
 
 	/**

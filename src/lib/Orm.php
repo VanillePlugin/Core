@@ -47,9 +47,6 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function __construct()
 	{
-		// Init config
-		$this->initConfig();
-		
 		// Init db
 		parent::__construct();
 

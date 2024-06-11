@@ -16,6 +16,8 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\int\RestApiInterface;
 use \WP_REST_Server;
+use \WP_REST_Request;
+use \WP_REST_Response;
 
 /**
  * Wrapper class for internal REST API.
@@ -36,9 +38,9 @@ abstract class AbstractRestAPI implements RestApiInterface
 	 * @var mixed METHOD Default REST method
 	 */
 	private const ENDPOINT = 'api';
-	private const VERSION = 'v1';
-	private const KEY = 'public-key';
-	private const METHOD = 'GET';
+	private const VERSION  = 'v1';
+	private const KEY      = 'public-key';
+	private const METHOD   = 'GET';
 
 	/**
 	 * @access protected
@@ -57,7 +59,7 @@ abstract class AbstractRestAPI implements RestApiInterface
 
 	/**
 	 * Init endpoint action.
-	 * 
+	 *
 	 * @access protected
 	 * @return mixed
 	 */
@@ -81,7 +83,7 @@ abstract class AbstractRestAPI implements RestApiInterface
 			$this->register($args->route, $args->methods, $callback, "{$callback}Permission");
 		}
 	}
-	
+
 	/**
 	 * @inheritdoc
 	 */
@@ -130,7 +132,7 @@ abstract class AbstractRestAPI implements RestApiInterface
 
 	/**
 	 * Init REST,
-	 * [Action: rest_api_init].
+	 * [Action: rest-api].
 	 * 
 	 * @access protected
 	 * @param string $version
@@ -142,7 +144,7 @@ abstract class AbstractRestAPI implements RestApiInterface
 		$this->version = $version;
 		$this->endpoint = $endpoint;
 		$this->routes = $this->getRoutes();
-		$this->addAction('rest_api_init', [$this, 'addRoutes']);
+		$this->addAction('rest-api', [$this, 'addRoutes']);
 	}
 
 	/**

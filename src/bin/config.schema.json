@@ -70,6 +70,9 @@
         }
       }
     },
+    "roles": {
+      "type": "array"
+    },
     "ajax": {
       "type": "object",
       "required": ["admin", "front"],
@@ -83,7 +86,7 @@
       }
     },
     "cron":{
-      "type": "array",
+      "type": "object",
       "items": [
         {
           "type": "object",
@@ -193,11 +196,20 @@
         }
       }
     },
-    "assets": {
-      "type": "object"
-    },
     "routes": {
       "type": "object"
+    },
+    "assets": {
+      "type": "object",
+      "required": ["admin", "front"],
+      "properties":{
+        "admin":{
+          "type": "array"
+        },
+        "front":{
+          "type": "array"
+        }
+      }
     },
     "strings": {
       "type": "object",
@@ -220,11 +232,12 @@
     "link",
     "path",
     "options",
-    "ajax",
+    "roles",
     "cron",
     "requirements",
-    "assets",
     "routes",
+    "ajax",
+    "assets",
     "strings"
   ]
 }

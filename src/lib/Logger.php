@@ -38,14 +38,11 @@ class Logger implements LoggerInterface
      */
     public function __construct(?string $path = '/', string $file = 'debug', string $ext = 'log')
     {
-		// Init plugin config
-		$this->initConfig();
-        
         $this->setPath($this->getLoggerPath($path));
         $this->setFilename($file);
         $this->setExtension($ext);
 
-        // Reset plugin config
+        // Reset config
         $this->resetConfig();
     }
 
@@ -143,7 +140,7 @@ class Logger implements LoggerInterface
         $date = date('[d-m-Y]');
         $log  = "{$this->path}/{$this->filename}-{$date}.{$this->extension}";
         $date = date('[d-m-Y H:i:s]');
-        $msg  = "{$date} : [{$status}] - {$message}" . PHP_EOL;
+        $msg  = "{$date} : [{$status}] - {$message}{$this->breakString()}";
         return $this->writeFile($log, $msg, true);
     }
 }

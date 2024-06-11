@@ -34,9 +34,6 @@ class Requirement extends Notice implements RequirementInterface
 	 */
 	public function __construct()
 	{
-		// Init plugin config
-		$this->initConfig();
-
 		$this->add([$this, 'requirePath']);
 		$this->add([$this, 'requirePlugins']);
 		$this->add([$this, 'requireOptions']);
@@ -47,7 +44,7 @@ class Requirement extends Notice implements RequirementInterface
 		// Set template
 		$this->tpl = 'admin/inc/notice/requirement';
 		$this->tpl = $this->applyPluginFilter('requirement-template', $this->tpl);
-		
+
 		// Set strings
 		$this->strings = $this->applyPluginFilter('requirement-strings', [
 			'path'     => [
@@ -297,7 +294,7 @@ class Requirement extends Notice implements RequirementInterface
 
 	/**
 	 * Check whether plugin installed.
-	 * 
+	 *
 	 * @access protected
 	 * @param string $slug
 	 * @return bool
@@ -315,7 +312,7 @@ class Requirement extends Notice implements RequirementInterface
 
 	/**
 	 * Check whether plugin or PHP module activated.
-	 * 
+	 *
 	 * @access protected
 	 * @param string $callable
 	 * @return bool
