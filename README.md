@@ -1,9 +1,9 @@
 # VanillePlugin
-[![Build Status](https://travis-ci.com/Jakiboy/VanillePlugin.svg?branch=master)](https://travis-ci.com/Jakiboy/VanillePlugin)
 
 <img src="https://raw.githubusercontent.com/Jakiboy/VanillePlugin/master/logo.png" width="100" alt="WordPress Plugin Framework">
 
-VanillePlugin is a **WordPress Plugin Framework** (WordPress Wrapper Lib for Base Plugin Functions) that simplify [WordPress Plugin API](https://developer.wordpress.org/plugins/), Makes creating plugins easier without hardcoding.
+VanillePlugin is a **WordPress Plugin Framework** (WordPress Wrapper Lib for Base Plugin Functions),  
+That simplify [WordPress Plugin API](https://developer.wordpress.org/plugins/), Makes creating plugins easier without hardcoding.
 
 ## ⚡ Installing:
 
