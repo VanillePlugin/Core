@@ -138,15 +138,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addPluginShortcode($callback, ?string $tag = null)
+	protected function addPluginShortcode($callback)
 	{
-		if ( !$tag ) {
-			$tag = $this->getNameSpace();
-
-		} else {
-			$tag = $this->slugify($tag);
-			$tag = $this->applyNamespace($tag);
-		}
+		$tag = $this->getNameSpace();
 		$this->addShortcode($tag, $callback);
 	}
 
@@ -156,34 +150,22 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removePluginShortcode(?string $tag = null)
+	protected function removePluginShortcode()
 	{
-		if ( !$tag ) {
-			$tag = $this->getNameSpace();
-
-		} else {
-			$tag = $this->slugify($tag);
-			$tag = $this->applyNamespace($tag);
-		}
+		$tag = $this->getNameSpace();
 		$this->removeShortcode($tag);
 	}
 
 	/**
-	 * Checks Whether plugin shortcode exists.
+	 * Check whether shortcode registered.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function pluginShortcodeExists(?string $tag = null) : bool
+	protected function hasPluginShortcode() : bool
 	{
-		if ( !$tag ) {
-			$tag = $this->getNameSpace();
-			
-		} else {
-			$tag = $this->slugify($tag);
-			$tag = $this->applyNamespace($tag);
-		}
-		return $this->shortcodeExists($tag);
+		$tag = $this->getNameSpace();
+		return $this->hasShortcode($tag);
 	}
 
 	/**

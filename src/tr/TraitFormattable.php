@@ -392,6 +392,17 @@ trait TraitFormattable
 	{
 		return Arrayify::uniqueMultiple($array);
 	}
+	
+	/**
+	 * Format array key case.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function formatKeyCase(array $array, int $case = CASE_LOWER) : array
+	{
+		return Arrayify::formatKeyCase($array, $case);
+	}
 
 	/**
 	 * Decode JSON.

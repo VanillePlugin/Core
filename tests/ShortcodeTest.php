@@ -15,33 +15,33 @@ use PHPUnit\Framework\TestCase;
 
 final class ShortcodeTest extends TestCase
 {
-    public function testAttributes()
+    public function testAtts()
     {
         $default = ['att1' => '', 'att2' => '2', 'att3' => '', 'att4' => 4];
         $atts    = ['att1' => '1', 'att2' => 2, 'att3' => '3'];
-        $atts = Shortcode::attributes($default,$atts, '');
+        $atts = Shortcode::getAtts($default,$atts, '');
         $this->assertEquals($atts, ['att1' => '1', 'att2' => 2, 'att3' => '3', 'att4' => 4]);
     }
 
-    public function testFormatAttributes()
+    public function testFormatAtts()
     {
         $atts = ['att-1' => '', 'att-2' => 1, 'ATT-3' => '3'];
-        $atts = Shortcode::formatAttributes($atts);
+        $atts = Shortcode::formatAtts($atts);
         $this->assertEquals($atts, ['att_1' => '', 'att_2' => 1, 'att_3' => '3']);
     }
 
-    public function testFormatAttributeName()
+    public function testFormatAttrName()
     {
-        $this->assertSame(Shortcode::formatAttributeName('att-1'), 'att_1');
-        $this->assertSame(Shortcode::formatAttributeName('att--1'), 'att__1');
-        $this->assertSame(Shortcode::formatAttributeName('att---1'), 'att___1');
+        $this->assertSame(Shortcode::formatAttrName('att-1'), 'att_1');
+        $this->assertSame(Shortcode::formatAttrName('att--1'), 'att__1');
+        $this->assertSame(Shortcode::formatAttrName('att---1'), 'att___1');
     }
 
-    public function testFormatSeparator()
+    public function testFormatSep()
     {
-        $this->assertSame(Shortcode::formatSeparator('1|2|3'), '1,2,3');
-        $this->assertSame(Shortcode::formatSeparator('1;2;3'), '1,2,3');
-        $this->assertSame(Shortcode::formatSeparator('1; 2; 3',true), '1,2,3');
+        $this->assertSame(Shortcode::formatSep('1|2|3'), '1,2,3');
+        $this->assertSame(Shortcode::formatSep('1;2;3'), '1,2,3');
+        $this->assertSame(Shortcode::formatSep('1; 2; 3',true), '1,2,3');
     }
 
     public function testSetAttsValues()

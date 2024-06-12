@@ -48,11 +48,10 @@ class Loader
 	 * @access public
 	 * @param string $path
 	 * @param string $className
-	 * @param mixed $arg1
-	 * @param mixed $arg2
+	 * @param mixed $args
 	 * @return mixed
 	 */
-	public function instance($path, $className, $arg1 = null, $arg2 = null)
+	public function instance($path, $className, ...$args)
 	{
 		$path = $this->format($path);
 		$dir = "{$this->getRoot()}/{$this->baseDir}/{$path}";
@@ -62,7 +61,7 @@ class Loader
 			if ( isset($files[$className]) ) {
 				if ( $this->isType('class', $files[$className]) ) {
 					$class = $files[$className];
-					return new $class($arg1, $arg2);
+					return new $class($args);
 				}
 			}
 		}
@@ -75,13 +74,12 @@ class Loader
 	 * @access public
 	 * @param string $path
 	 * @param string $className
-	 * @param mixed $arg1
-	 * @param mixed $arg2
+	 * @param mixed $args
 	 * @return mixed
 	 */
-	public function i($path, $className, $arg1 = null, $arg2 = null)
+	public function i($path, $className, ...$args)
 	{
-		return $this->instance($path, $className, $arg1, $arg2);
+		return $this->instance($path, $className, $args);
 	}
 
 	/**

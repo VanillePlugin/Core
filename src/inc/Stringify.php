@@ -68,7 +68,7 @@ final class Stringify
 
 	/**
 	 * Search replace string(s) using regex.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $regex
 	 * @param mixed $replace

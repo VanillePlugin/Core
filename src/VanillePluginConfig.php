@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace VanillePlugin;
 
-use PhpParser\Node\Expr\Cast\Array_;
 use VanillePlugin\exc\ConfigurationException;
 use VanillePlugin\inc\Arrayify;
 

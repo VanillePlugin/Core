@@ -296,13 +296,13 @@ trait TraitHookable
 	}
 
 	/**
-	 * Check whether shortcode exists.
+	 * Check whether shortcode registered.
 	 * 
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function shortcodeExists(string $tag) : bool
+	protected function hasShortcode(string $tag) : bool
 	{
-		return Shortcode::exists($tag);
+		return Shortcode::has($tag);
 	}
 }
