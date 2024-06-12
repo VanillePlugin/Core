@@ -1,6 +1,6 @@
 # VanillePlugin
 
-<img src="https://raw.githubusercontent.com/Jakiboy/VanillePlugin/master/logo.png" width="100" alt="WordPress Plugin Framework">
+<img src="https://raw.githubusercontent.com/Jakiboy/VanillePlugin/main/logo.png" width="100" alt="WordPress Plugin Framework">
 
 VanillePlugin is a **WordPress Plugin Framework** (WordPress Wrapper Lib for Base Plugin Functions),  
 That simplify [WordPress Plugin API](https://developer.wordpress.org/plugins/), Makes creating plugins easier without hardcoding.
@@ -11,24 +11,13 @@ That simplify [WordPress Plugin API](https://developer.wordpress.org/plugins/), 
 composer require jakiboy/vanilleplugin
 ```
 
-## Contributing:
+---
 
-Please read [CONTRIBUTING.md](https://github.com/Jakiboy/VanillePlugin/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+### Authors:
 
-## Versioning:
+* [Jakiboy](https://github.com/Jakiboy) (*Initial work*)
+* Any PR is welcome!
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/Jakiboy/VanillePlugin/tags). 
+### ⭐ Support:
 
-## Authors:
-
-* **Jihad Sinnaour** - [Jakiboy](https://github.com/Jakiboy) (*Initial work*)
-
-See also the full list of [contributors](https://github.com/Jakiboy/VanillePlugin/contributors) who participated in this project. Any suggestions (Pull requests) are welcome!
-
-## License:
-
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/Jakiboy/VanillePlugin/blob/master/LICENSE) file for details.
-
-## ⭐ Support:
-
-Please give it a Star if you like the project.
+Don't buy me a coffee! Just **star the project** if you like it.
