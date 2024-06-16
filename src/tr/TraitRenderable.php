@@ -82,7 +82,7 @@ trait TraitRenderable
 	}
 
 	/**
-	 * Add Metabox.
+	 * Add metabox.
 	 * 
 	 * @access protected
 	 * @inheritdoc

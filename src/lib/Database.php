@@ -12,23 +12,26 @@
 
 declare(strict_types=1);
 
-namespace VanillePlugin\third;
-
-use VanillePlugin\third\inc\plugin\Amp as Plugin;
+namespace VanillePlugin\lib;
 
 /**
- * Third-Party AMP helper class.
+ * Database dynamic autoloader.
  */
-final class Amp
+class Database
 {
+	use \VanillePlugin\VanillePluginOption;
+
 	/**
-	 * Check whether AMP is active (functional).
-	 * 
+	 * Load database table.
+	 *
 	 * @access public
-	 * @return bool
+	 * @param string $name
+	 * @param mixed $args
+	 * @return mixed
 	 */
-	public static function isActive() : bool
+	public function load(string $name, ...$args)
 	{
-		return Plugin::isActive();
+		$path = $this->applyPluginFilter('database-path', 'db');
+		return (new Loader())->i($path, $name, $args);
 	}
 }

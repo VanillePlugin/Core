@@ -16,7 +16,7 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\exc\CacheException;
 use VanillePlugin\inc\Cache as ObjectCache;
-use VanillePlugin\third\Cache as ThirdCache;
+use VanilleThird\Cache as ThirdCache;
 use VanilleCache\Cache as FileCache;
 
 /**

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\GlobalConst;
-use VanillePlugin\third\Translator;
+use VanilleThird\Translator;
 
 trait TraitTranslatable
 {

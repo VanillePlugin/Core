@@ -116,4 +116,19 @@ final class Image extends File
 
 		return self::validate($file, $allowed);
 	}
+
+	/**
+	 * Add image size.
+	 *
+	 * @access public
+	 * @param string $name
+	 * @param int $width
+	 * @param int $height
+	 * @param mixed $crop
+	 * @return mixed
+	 */
+	public static function addSize(string $name, int $width = 0, int $height = 0, $crop = false)
+	{
+		return add_image_size($name, $width, $height, $crop);
+	}
 }

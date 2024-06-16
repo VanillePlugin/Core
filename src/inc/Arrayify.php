@@ -148,6 +148,19 @@ final class Arrayify
 	}
 
 	/**
+	 * Fill array keys.
+	 *
+	 * @access public
+	 * @param array $array
+	 * @param mixed $values
+	 * @return array
+	 */
+	public static function fillKeys(array $array, $values) : array
+	{
+		return array_fill_keys($array, $values);
+	}
+
+	/**
 	 * Get array values.
 	 * 
 	 * @access public

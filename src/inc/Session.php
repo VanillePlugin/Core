@@ -180,13 +180,16 @@ final class Session
 
     /**
      * Check whether session is active.
+     * 
+     * PHP_SESSION_NONE 1
+     * PHP_SESSION_ACTIVE 2
      *
      * @access public
      * @return bool
      */
     public static function isActive() : bool
     {
-        return (self::getStatus() == 2);
+        return (session_status() == 1 || session_status() == 2);
     }
     
     /**

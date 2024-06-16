@@ -14,13 +14,11 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-use \WP_Query;
-
 class Post
 {
 	/**
 	 * Get post by Id.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $id
 	 * @param bool $format
@@ -94,6 +92,17 @@ class Post
 		$title = get_the_title($id);
 		return !empty($title) ? $title : $default;
 	}
+	
+	/**
+	 * Get loop post content.
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	public static function getContent()
+	{
+		return get_the_content();
+	}
 
 	/**
 	 * Get post URL by Id.
@@ -110,7 +119,7 @@ class Post
 
 	/**
 	 * Get all post types.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $args
 	 * @param string $output
@@ -124,7 +133,7 @@ class Post
 
 	/**
 	 * Get post by title.
-	 * 
+	 *
 	 * @access public
 	 * @param string $title
 	 * @param string $operator
@@ -132,12 +141,28 @@ class Post
 	 */
 	public static function getByTitle(string $title, string $type = 'post') : array
 	{
-		$query = new WP_Query([
+		$posts = [];
+		$query = new Query([
 			'name'      => $title,
-			'post_type' => $type
+			'post-type' => $type
 		]);
-		return $query->have_posts() ? (array)reset($query->posts) : [];
+		if ( $query->havePosts() ) {
+			$posts = $query->posts;
+		}
+		return $posts;
 	}
+
+	/**
+     * Get post thumbnail.
+     *
+	 * @access public
+	 * @param mixed $id
+	 * @return mixed
+	 */
+	public static function getThumbnail($id = null, $size = 'post-thumbnail')
+    {
+        return get_the_post_thumbnail_url($id, $size);
+    }
 
 	/**
 	 * Add post.
@@ -182,8 +207,21 @@ class Post
 	}
 
 	/**
+     * Register post type.
+     *
+	 * @access public
+	 * @param string $type
+	 * @param array $args
+	 * @return mixed
+	 */
+	public static function registerType(string $type, array $args = [])
+	{
+		return register_post_type($type, $args);
+	}
+
+	/**
      * Get meta.
-     * 
+     *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $id
@@ -228,22 +266,23 @@ class Post
 
 	/**
 	 * Get all posts.
-	 * 
+	 *
 	 * @access public
 	 * @param array $args
 	 * @return array
 	 */
 	public static function all(array $args = []) : array
 	{
-		return get_posts(Arrayify::merge([
+		$args = Arrayify::merge([
 			'post_type'      => 'any',
 			'posts_per_page' => -1
-		], $args));
+		], $args);
+		return get_posts($args);
 	}
 
 	/**
      * Get post formatted data.
-     * 
+     *
 	 * @access private
 	 * @param mixed $post
 	 * @return mixed

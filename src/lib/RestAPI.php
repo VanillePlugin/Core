@@ -23,7 +23,7 @@ use \WP_REST_Response;
  * Wrapper class for internal REST API.
  * @uses JWT is recommended for external use.
  */
-abstract class AbstractRestAPI implements RestApiInterface
+abstract class RestAPI implements RestApiInterface
 {
     use \VanillePlugin\VanillePluginConfig,
 		\VanillePlugin\tr\TraitRequestable,
