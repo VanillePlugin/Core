@@ -62,7 +62,7 @@ class API extends Request
 		// Set debug status
 		$this->hasDebug = $this->hasDebug();
 
-        // Reset plugin config
+        // Reset config
         $this->resetConfig();
 	}
 
@@ -211,5 +211,19 @@ class API extends Request
 	public function forceDisableSSL()
 	{
 		$this->args['sslverify'] = false;
+	}
+
+	/**
+	 * Instance API.
+	 *
+	 * @access public
+	 * @param string $name
+	 * @param string $path
+	 * @param mixed $args
+	 * @return mixed
+	 */
+	public static function i(string $name, $path = 'api', ...$args)
+	{
+		return (new Loader())->i($path, $name, $args);
 	}
 }

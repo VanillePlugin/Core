@@ -56,7 +56,7 @@ final class Ajax implements AjaxCoreInterface
 			$this->initFrontActions();
 		}
 
-		// Reset plugin config
+		// Reset config
 		$this->resetConfig();
 	}
 
@@ -67,6 +67,7 @@ final class Ajax implements AjaxCoreInterface
 	{
 		foreach ($this->actions as $action) {
 			if ( $this->isAction($action) ) {
+				$action = $this->camelcase($action);
 				$this->callable->{$action}();
 			}
 		}

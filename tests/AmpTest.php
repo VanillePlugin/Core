@@ -10,7 +10,7 @@
  * This file if a part of VanillePlugin Framework.
  */
 
-use VanillePlugin\third\AMP;
+use VanilleThird\AMP;
 use PHPUnit\Framework\TestCase;
 
 final class AmpTest extends TestCase

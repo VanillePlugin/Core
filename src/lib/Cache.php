@@ -29,8 +29,10 @@ final class Cache
 	/**
 	 * @access private
 	 * @var string FILECACHE, File cache
+	 * @var string THIRDCACHE, Third cache
 	 */
-	private const FILECACHE = 'VanilleCache\Cache';
+	private const FILECACHE  = 'VanilleCache\Cache';
+	private const THIRDCACHE = 'VanilleThird\Cache';
 
 	/**
 	 * @access private
@@ -44,9 +46,18 @@ final class Cache
 
 	/**
 	 * Init cache path.
+	 *
+	 * @param string $key
+	 * @param string $tag
      */
-	public function __construct()
+	public function __construct(?string $key = null, ?string $tag = null)
 	{
+		// Set cache key
+		$this->setKey($key);
+
+		// Set cache tag
+		$this->setTag($tag);
+
 		// Set cache path
 		$this->path[] = $this->getTempPath();
 		$this->path[] = $this->getCachePath();
@@ -56,48 +67,26 @@ final class Cache
 	}
 
 	/**
-	 * Set cache key.
-	 * 
-	 * @access public
-	 * @param string $key
-	 * @return object
-	 */
-	public function setKey(string $key) : self
-	{
-		$this->key = $key;
-		$this->tag = $this->getTag($key);
-
-		if ( ThirdCache::isActive() ) {
-			$this->key = $this->applyNamespace($this->key);
-			$this->tag = $this->applyNamespace($this->tag);
-		}
-
-		return $this;
-	}
-
-	/**
 	 * Get cache value.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $default
 	 * @return mixed
-	 * @throws CacheException
 	 */
 	public function get($default = null)
 	{
-		$data = null;
-
 		if ( !$this->key ) {
 	        throw new CacheException(
 	            CacheException::undefinedCacheKey()
 	        );
 		}
 
-		if ( ThirdCache::isActive() ) {
-			$data = ObjectCache::get($this->key);
-		}
+		$data = null;
 
-		if ( $this->isType('class', self::FILECACHE) ) {
+		if ( $this->hasThirdCache() ) {
+			$data = ObjectCache::get($this->key);
+
+		} elseif ( $this->hasFileCache() ) {
 			$data = (new FileCache())->get($this->key);
 		}
 
@@ -113,7 +102,6 @@ final class Cache
 	 *
 	 * @access public
 	 * @return bool
-	 * @throws CacheException
 	 */
 	public function isCached() : bool
 	{
@@ -123,11 +111,11 @@ final class Cache
 	        );
 		}
 
-		if ( ThirdCache::isActive() ) {
+		if ( $this->hasThirdCache() ) {
 			return (ObjectCache::get($this->key) !== false);
 		}
 
-		if ( $this->isType('class', self::FILECACHE) ) {
+		if ( $this->hasFileCache() ) {
 			return (new FileCache())->setKey($this->key)->isCached();
 		}
 
@@ -141,7 +129,6 @@ final class Cache
 	 * @param mixed $value
 	 * @param int $ttl
 	 * @return bool
-	 * @throws CacheException
 	 */
 	public function set($value, ?int $ttl = null) : bool
 	{
@@ -151,11 +138,11 @@ final class Cache
 	        );
 		}
 
-		if ( ThirdCache::isActive() ) {
-			return ObjectCache::set($this->key, $value, $this->tag, (int)$ttl);
+		if ( $this->hasThirdCache() ) {
+			return ObjectCache::set($this->key, $value, (string)$this->tag, (int)$ttl);
 		}
 
-		if ( $this->isType('class', self::FILECACHE) ) {
+		if ( $this->hasFileCache() ) {
 			return (new FileCache())->setKey($this->key)->set($value, $this->tag, $ttl);
 		}
 
@@ -164,10 +151,9 @@ final class Cache
 
 	/**
 	 * Delete cache.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
-	 * @throws CacheException
 	 */
 	public function delete() : bool
 	{
@@ -177,11 +163,11 @@ final class Cache
 	        );
 		}
 
-		if ( ThirdCache::isActive() ) {
+		if ( $this->hasThirdCache() ) {
 			return ObjectCache::delete($this->key);
 		}
 
-		if ( $this->isType('class', self::FILECACHE) ) {
+		if ( $this->hasFileCache() ) {
 			return (new FileCache())->delete($this->key);
 		}
 
@@ -190,14 +176,14 @@ final class Cache
 	
 	/**
 	 * Delete cache by tag(s).
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $tag
 	 * @return bool
 	 */
 	public function deleteByTag($tag) : bool
 	{
-		if ( $this->isType('class', self::FILECACHE) ) {
+		if ( $this->hasFileCache() ) {
 			return (new FileCache())->deleteByTag($tag);
 		}
 	}
@@ -213,12 +199,12 @@ final class Cache
 	{
 		$stauts = 0;
 		
-		if ( ThirdCache::isActive() ) {
+		if ( $this->hasThirdCache() ) {
 			$stauts += (int)ThirdCache::purge();
 			$stauts += (int)ObjectCache::purge();
 		}
 
-		if ( $this->isType('class', self::FILECACHE) ) {
+		if ( $this->hasFileCache() ) {
 			$stauts += (int)(new FileCache())->purge();
 		}
 
@@ -270,15 +256,63 @@ final class Cache
 	}
 
 	/**
-	 * Get cache tag.
-	 * 
-	 * @access private
+	 * Set cache key.
+	 *
+	 * @access public
 	 * @param string $key
-	 * @return string
+	 * @return object
 	 */
-	private function getTag(string $key) : string
+	public function setKey(?string $key = null) : self
 	{
-		$tag = explode('-', $key);
-		return $tag[0] ?? $this->getNameSpace();
+		if ( $key ) {
+			$this->key = $this->applyNamespace($key);
+		}
+		return $this;
+	}
+
+	/**
+	 * Set cache tag.
+	 *
+	 * @access public
+	 * @param string $tag
+	 * @return object
+	 */
+	public function setTag(?string $tag = null) : self
+	{
+		if ( $tag ) {
+			$this->tag = $tag;
+
+		} else {
+			if ( $this->key ) {
+				$tag = explode('-', $this->key);
+				$this->tag = $tag[1] ?? $this->getNameSpace();
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * Check third cache.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function hasThirdCache() : bool
+	{
+		if ( $this->isType('class', self::THIRDCACHE) ) {
+			return ThirdCache::isActive();
+		}
+		return false;
+	}
+
+	/**
+	 * Check file cache.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function hasFileCache() : bool
+	{
+		return $this->isType('class', self::FILECACHE);
 	}
 }

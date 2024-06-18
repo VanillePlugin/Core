@@ -36,9 +36,13 @@ class Cron implements CronInterface
 	 */
 	public function __construct()
 	{
+		// Add schedulers actions
 		foreach ($this->getCron() as $scheduler) {
 			$this->addSchedulerAction($scheduler);
 		}
+
+		// Reset config
+		$this->resetConfig();
 	}
 
 	/**
@@ -157,14 +161,7 @@ class Cron implements CronInterface
 
 			if ( !isset($action['callable']) && isset($action['name']) ) {
 
-				$name = explode('-', $this->slugify($action['name']));
-				if ( count($name) == 2 ) {
-					$name[1] = $this->capitalize($name[1]);
-				}
-
-				$callable = implode('', $name);
-				$callable = $this->undash($callable);
-
+				$callable = $this->camelcase($action['name']);
 				if ( $this->hasObject('method', $this, $callable) ) {
 					$this->actions[$key]['callable'] = [$this, $callable];
 

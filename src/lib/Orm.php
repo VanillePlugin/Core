@@ -54,6 +54,9 @@ class Orm extends Db implements OrmInterface
 		if ( !$this->hasDebug() ) {
 			$this->silent();
 		}
+
+		// Reset config
+		$this->resetConfig();
 	}
 
 	/**

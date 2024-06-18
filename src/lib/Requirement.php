@@ -70,6 +70,9 @@ class Requirement extends Notice implements RequirementInterface
 				'required' => 'Required'
 			]
 		]);
+
+		// Reset config
+		$this->resetConfig();
 	}
 	
 	/**

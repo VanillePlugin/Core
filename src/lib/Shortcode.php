@@ -46,6 +46,9 @@ class Shortcode extends View
 				$callable->getCallables()
 			);
 		}
+
+		// Reset config
+		$this->resetConfig();
 	}
 
 	/**
@@ -142,6 +145,20 @@ class Shortcode extends View
 			global ${$namespace};
 			${$namespace} = $this->atts;
 		}
+	}
+
+	/**
+	 * Instance shortcode.
+	 *
+	 * @access public
+	 * @param string $name
+	 * @param string $path
+	 * @param mixed $args
+	 * @return mixed
+	 */
+	public static function i(string $name, $path = 'shortcode', ...$args)
+	{
+		return (new Loader())->i($path, $name, $args);
 	}
 
 	/**
@@ -456,19 +473,5 @@ class Shortcode extends View
 			return $this->hasString(['on', 'yes', 'oui', 'true'], $value);
 		}
 		return false;
-	}
-
-	/**
-	 * Load shortcode part.
-	 *
-	 * @access protected
-	 * @param string $name
-	 * @param mixed $args
-	 * @return mixed
-	 */
-	protected function load(string $name, ...$args)
-	{
-		$path = $this->applyPluginFilter('shortcode-path', 'shortcode');
-		return (new Loader())->i($path, $name, $args);
 	}
 }

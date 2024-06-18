@@ -46,6 +46,14 @@ interface AdminHelperInterface
 	function upgrade();
 
 	/**
+	 * Plugin load action.
+	 * [Action: {plugin}-load].
+	 *
+	 * @return void
+	 */
+	function load();
+
+	/**
 	 * Plugin action links.
 	 * [Filter: {plugin}-action].
 	 * 

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace VanillePlugin;
 
 use VanillePlugin\exc\ConfigurationException;
-use VanillePlugin\inc\Arrayify;
 
 /**
  * Define base configuration used by plugin.
@@ -93,7 +92,7 @@ trait VanillePluginConfig
 	 */
 	protected function initConfig()
 	{
-		if ( $this->global ) {
+		if ( isset($this->global) ) {
 			return;
 		}
 		
@@ -176,22 +175,25 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @param array $options
 	 * @param int $args
-	 * @return void
+	 * @return bool
 	 */
-	protected function updateConfig(array $options = [], $args = 64|128|256)
+	protected function updateConfig(array $options = [], $args = 64|128|256) : bool
 	{
 		$json = $this->getRoot($this->config);
-		$update = $this->parseJson($json, true);
+		$data = $this->parseJson($json, true);
+
 		foreach ($options as $option => $value) {
-			if ( isset($update['options'][$option]) ) {
-				$update['options'][$option] = $value;
+			if ( isset($data['options'][$option]) ) {
+				$data['options'][$option] = $value;
 			}
 		}
-		$update['routes'] = (object)$update['routes'];
-		$update['cron']   = (object)$update['cron'];
-		$update['assets'] = (object)$update['assets'];
-		$update = $this->formatJson($update, $args);
-		$this->writeFile($this->getRoot($this->config), $update);
+
+		$data['routes'] = (object)$data['routes'];
+		$data['cron']   = (object)$data['cron'];
+		$data['assets'] = (object)$data['assets'];
+		$data = $this->formatJson($data, $args);
+
+		return $this->writeFile($this->getRoot($this->config), $data);
 	}
 
 	/**
@@ -319,9 +321,9 @@ trait VanillePluginConfig
 	 */
 	protected function getAsset() : string
 	{
-		$paths = $this->getConfig('path');
-		$asset = $paths->asset ?? '/assets';
-		return "/{$this->getNameSpace()}{$asset}";
+		$config = $this->getConfig('path');
+		$data = $config->asset ?? '/assets';
+		return "/{$this->getNameSpace()}{$data}";
 	}
 
 	/**
@@ -332,9 +334,9 @@ trait VanillePluginConfig
 	 */
 	protected function getAssetUrl() : string
 	{
-		$paths = $this->getConfig('path');
-		$asset = $paths->asset ?? '/assets';
-		return "{$this->getBaseUrl()}{$asset}";
+		$config = $this->getConfig('path');
+		$data = $config->asset ?? '/assets';
+		return "{$this->getBaseUrl()}{$data}";
 	}
 	
 	/**
@@ -346,9 +348,9 @@ trait VanillePluginConfig
 	 */
 	protected function getAssetPath(?string $sub = null) : string
 	{
-		$paths = $this->getConfig('path');
-		$asset = $paths->asset ?? '/assets';
-		$path = $this->getRoot($asset);
+		$config = $this->getConfig('path');
+		$data = $config->asset ?? '/assets';
+		$path = $this->getRoot($data);
 		if ( $sub ) {
 			$path .= "/{$sub}";
 		}
@@ -364,9 +366,9 @@ trait VanillePluginConfig
 	 */
 	protected function getMigratePath(?string $sub = null) : string
 	{
-		$paths = $this->getConfig('path');
-		$migrate = $paths->migrate ?? '/migrate';
-		$path = $this->getRoot($migrate);
+		$config = $this->getConfig('path');
+		$data = $config->migrate ?? '/migrate';
+		$path = $this->getRoot($data);
 		if ( $sub ) {
 			$path .= "/{$sub}";
 		}
@@ -381,9 +383,9 @@ trait VanillePluginConfig
 	 */
 	protected function getCachePath() : string
 	{
-		$paths = $this->getConfig('path');
-		$cache = $paths->cache ?? '/cache';
-		return $this->getRoot($cache);
+		$config = $this->getConfig('path');
+		$data = $config->cache ?? '/cache';
+		return $this->getRoot($data);
 	}
 
 	/**
@@ -395,9 +397,9 @@ trait VanillePluginConfig
 	 */
 	protected function getTempPath(?string $sub = null) : string
 	{
-		$paths = $this->getConfig('path');
-		$temp = $paths->temp ?? '/temp';
-		$path = $this->getRoot($temp);
+		$config = $this->getConfig('path');
+		$data = $config->temp ?? '/temp';
+		$path = $this->getRoot($data);
 		if ( $sub ) {
 			$path .= "/{$sub}";
 		}
@@ -412,9 +414,9 @@ trait VanillePluginConfig
 	 */
 	protected function getExpireIn() : int
 	{
-		$options = $this->getConfig('options');
-		$ttl = $options->ttl ?? 0;
-		return (int)$ttl;
+		$config = $this->getConfig('options');
+		$data = $config->ttl ?? 0;
+		return (int)$data;
 	}
 	
 	/**
@@ -425,9 +427,9 @@ trait VanillePluginConfig
 	 */
 	protected function getViewPath() : string
 	{
-		$paths = $this->getConfig('path');
-		$view = $paths->view ?? '/view';
-		return $this->getRoot($view);
+		$config = $this->getConfig('path');
+		$data = $config->view ?? '/view';
+		return $this->getRoot($data);
 	}
 
 	/**
@@ -438,9 +440,9 @@ trait VanillePluginConfig
 	 */
 	protected function getLoggerPath() : string
 	{
-		$paths = $this->getConfig('path');
-		$logs = $paths->logs ?? '/logs';
-		return $this->getRoot($logs);
+		$config = $this->getConfig('path');
+		$data = $config->logs ?? '/logs';
+		return $this->getRoot($data);
 	}
 
 	/**
@@ -451,9 +453,9 @@ trait VanillePluginConfig
 	 */
 	protected function getViewExtension() : string
 	{
-		$options = $this->getConfig('options');
-		$extension = $options->view->extension ?? '.html';
-		return (string)$extension;
+		$config = $this->getConfig('options');
+		$data = $config->view->extension ?? '.html';
+		return (string)$data;
 	}
 
 	/**
@@ -499,10 +501,10 @@ trait VanillePluginConfig
 	protected function getAjax() : object
 	{
 		$this->initConfig();
-		if ( !($ajax = $this->loadConfig('ajax')) ) {
-			$ajax = $this->global->ajax ?? [];
+		if ( !($data = $this->loadConfig('ajax')) ) {
+			$data = $this->global->ajax ?? [];
 		}
-		return (object)$ajax;
+		return (object)$data;
 	}
 
 	/**
@@ -513,8 +515,8 @@ trait VanillePluginConfig
 	 */
 	protected function getAdminAjax() : array
 	{
-		$ajax = $this->getAjax()->admin ?? [];
-		return (array)$ajax;
+		$data = $this->getAjax()->admin ?? [];
+		return (array)$data;
 	}
 
 	/**
@@ -525,8 +527,8 @@ trait VanillePluginConfig
 	 */
 	protected function getFrontAjax() : array
 	{
-		$ajax = $this->getAjax()->front ?? [];
-		return (array)$ajax;
+		$data = $this->getAjax()->front ?? [];
+		return (array)$data;
 	}
 
 	/**
@@ -538,10 +540,10 @@ trait VanillePluginConfig
 	protected function getPluginRoles() : array
 	{
 		$this->initConfig();
-		if ( !($roles = $this->loadConfig('roles', true)) ) {
-			$roles = $this->global->roles ?? [];
+		if ( !($data = $this->loadConfig('roles', true)) ) {
+			$data = $this->global->roles ?? [];
 		}
-		return (array)$roles;
+		return (array)$data;
 	}
 
 	/**
@@ -553,10 +555,10 @@ trait VanillePluginConfig
 	protected function getCron() : array
 	{
 		$this->initConfig();
-		if ( !($cron = $this->loadConfig('cron', true)) ) {
-			$cron = $this->global->cron ?? [];
+		if ( !($data = $this->loadConfig('cron', true)) ) {
+			$data = $this->global->cron ?? [];
 		}
-		return (array)$cron;
+		return (array)$data;
 	}
 
 	/**
@@ -568,10 +570,10 @@ trait VanillePluginConfig
 	protected function getRoutes() : object
 	{
 		$this->initConfig();
-		if ( !($routes = $this->loadConfig('routes')) ) {
-			$routes = $this->global->routes ?? [];
+		if ( !($data = $this->loadConfig('routes')) ) {
+			$data = $this->global->routes ?? [];
 		}
-		return (object)$routes;
+		return (object)$data;
 	}
 
 	/**
@@ -583,10 +585,10 @@ trait VanillePluginConfig
 	protected function getRequirements() : object
 	{
 		$this->initConfig();
-		if ( !($requirements = $this->loadConfig('requirements')) ) {
-			$requirements = $this->global->requirements ?? [];
+		if ( !($data = $this->loadConfig('requirements')) ) {
+			$data = $this->global->requirements ?? [];
 		}
-		return (object)$requirements;
+		return (object)$data;
 	}
 
 	/**
@@ -598,10 +600,10 @@ trait VanillePluginConfig
 	protected function getHooks() : array
 	{
 		$this->initConfig();
-		if ( !($hooks = $this->loadConfig('hooks', true)) ) {
-			$hooks = $this->global->hooks ?? [];
+		if ( !($data = $this->loadConfig('hooks', true)) ) {
+			$data = $this->global->hooks ?? [];
 		}
-		return (array)$hooks;
+		return (array)$data;
 	}
 
 	/**
@@ -613,10 +615,10 @@ trait VanillePluginConfig
 	protected function getSettings() : array
 	{
 		$this->initConfig();
-		if ( !($settings = $this->loadConfig('settings', true)) ) {
-			$settings = $this->global->settings ?? [];
+		if ( !($data = $this->loadConfig('settings', true)) ) {
+			$data = $this->global->settings ?? [];
 		}
-		return (array)$settings;
+		return (array)$data;
 	}
 
 	/**
@@ -627,13 +629,13 @@ trait VanillePluginConfig
 	 */
 	protected function getGroupSettings() : array
 	{
-		$groups = [];
+		$data = [];
 		foreach ($this->getSettings() as $group) {
 			$name = $group['group'];
 			unset($group['group']);
-			$groups[$name][] = $group;
+			$data[$name][] = $group;
 		}
-		return (array)$groups;
+		return (array)$data;
 	}
 
 	/**
@@ -645,10 +647,10 @@ trait VanillePluginConfig
 	protected function getAssets() : array
 	{
 		$this->initConfig();
-		if ( !($assets = $this->loadConfig('assets', true)) ) {
-			$assets = $this->global->assets ?? [];
+		if ( !($data = $this->loadConfig('assets', true)) ) {
+			$data = $this->global->assets ?? [];
 		}
-		return (array)$assets;
+		return (array)$data;
 	}
 
 	/**
@@ -659,9 +661,8 @@ trait VanillePluginConfig
 	 */
 	protected function getRemoteAssets() : array
 	{
-		$assets = $this->getAssets();
-		$remote = $assets['remote'] ?? [];
-		return (array)$remote;
+		$data = $this->getAssets()['remote'] ?? [];
+		return (array)$data;
 	}
 
 	/**
@@ -672,9 +673,8 @@ trait VanillePluginConfig
 	 */
 	protected function getLocalAssets() : array
 	{
-		$assets = $this->getAssets();
-		$local = $assets['local'] ?? [];
-		return (array)$local;
+		$data = $this->getAssets()['local'] ?? [];
+		return (array)$data;
 	}
 
 	/**
@@ -687,14 +687,14 @@ trait VanillePluginConfig
 	 */
 	protected function getAdminAssets(string $type, string $env = 'main') : array
 	{
-		$assets = $this->getLocalAssets()['admin'] ?? [];
-		$assets = $this->mapArray(function($item) use ($type, $env) {
+		$data = $this->getLocalAssets()['admin'] ?? [];
+		$data = $this->mapArray(function($item) use ($type, $env) {
 			if ( $item['type'] === $type && $item['env'] === $env ) {
 				return $item['path'];
 			}
-		}, $assets);
+		}, $data);
 
-		return Arrayify::filter($assets);
+		return $this->filterArray($data);
 	}
 
 	/**
@@ -705,14 +705,14 @@ trait VanillePluginConfig
 	 */
 	protected function getFrontAssets(string $type, string $env = 'main') : array
 	{
-		$assets = $this->getLocalAssets()['front'] ?? [];
-		$assets = $this->mapArray(function($item) use ($type, $env) {
+		$data = $this->getLocalAssets()['front'] ?? [];
+		$data = $this->mapArray(function($item) use ($type, $env) {
 			if ( $item['type'] === $type && $item['env'] === $env ) {
 				return $item['path'];
 			}
-		}, $assets);
+		}, $data);
 
-		return Arrayify::filter($assets);
+		return $this->filterArray($data);
 	}
 
 	/**
@@ -724,10 +724,10 @@ trait VanillePluginConfig
 	protected function getStrings() : array
 	{
 		$this->initConfig();
-		if ( !($strings = $this->loadConfig('strings', true)) ) {
-			$strings = $this->global->strings ?? [];
+		if ( !($data = $this->loadConfig('strings', true)) ) {
+			$data = $this->global->strings ?? [];
 		}
-		return (array)$strings;
+		return (array)$data;
 	}
 
 	/**
@@ -738,9 +738,9 @@ trait VanillePluginConfig
 	 */
 	protected function isMultilingual() : bool
 	{
-		$options = $this->getConfig('options');
-		$multilingual = $options->multilingual ?? false;
-		return (bool)$multilingual;
+		$config = $this->getConfig('options');
+		$data = $config->multilingual ?? false;
+		return (bool)$data;
 	}
 
 	/**
@@ -751,9 +751,9 @@ trait VanillePluginConfig
 	 */
 	protected function allowedMultisite() : bool
 	{
-		$options = $this->getConfig('options');
-		$multisite = $options->multisite ?? false;
-		return (bool)$multisite;
+		$config = $this->getConfig('options');
+		$data = $config->multisite ?? false;
+		return (bool)$data;
 	}
 
 	/**
@@ -764,9 +764,9 @@ trait VanillePluginConfig
 	 */
 	protected function hasDebug() : bool
 	{
-		$options = $this->getConfig('options');
-		$debug = $options->debug ?? false;
-		return (bool)$debug;
+		$config = $this->getConfig('options');
+		$data = $config->debug ?? false;
+		return (bool)$data;
 	}
 
 	/**
@@ -777,9 +777,9 @@ trait VanillePluginConfig
 	 */
 	protected function getEnv() : string
 	{
-		$options = $this->getConfig('options');
-		$env = $options->environment ?? 'dev';
-		return (string)$env;
+		$config = $this->getConfig('options');
+		$data = $config->environment ?? 'dev';
+		return (string)$data;
 	}
 
 	/**
@@ -881,32 +881,53 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get plugin language.
+	 * Get plugin current language (locale).
 	 *
 	 * @access protected
-	 * @param bool $country
+	 * @param bool $cache
+	 * @param bool $parse
 	 * @return string
 	 */
-	protected function getLang(bool $country = true) : string
+	protected function getLang(bool $cache = true, bool $parse = false) : string
 	{
+		// Get from cache
+		if ( $cache ) {
+			if ( ($lang = $this->getCacheLang($parse)) ) {
+				return $lang;
+			}
+		}
+
 		// Get from system
-		$locale = $default = $this->getLocale();
+		$lang = $default = $this->getLocale();
 
 		// Get from third-party
 		if ( $this->hasMultilingual() ) {
-			$locale = $this->getTranslatorLocale();
+			$lang = $this->getTranslatorLocale();
 		}
 
 		// Get from default
-		if ( !$locale ) {
-			$locale = $default;
+		if ( !$lang ) {
+			$lang = $default;
 		}
 
-		// Convert to country code
-		if ( $country ) {
-			return $this->getTranslatorCountry($locale);
-		}
+		// Normalize
+		$lang = $this->normalizeLocale($lang);
+		return ($parse) ? $this->parseLang($lang) : $lang;
+	}
 
-		return $this->getLanguage($locale);
+	/**
+	 * Get plugin cache lang.
+	 *
+	 * @access protected
+	 * @param bool $parse
+	 * @return mixed
+	 */
+	protected function getCacheLang(bool $parse = false)
+	{
+		$key = "{$this->getNameSpace()}-lang";
+		if ( ($lang = $this->getTransient($key)) ) {
+			return ($parse) ? $this->parseLang($lang) : $lang;
+		}
+		return false;
 	}
 }

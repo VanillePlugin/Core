@@ -176,7 +176,7 @@ trait VanillePluginOption
 	 */
 	protected function registerPluginOption(string $group, string $key, array $args = [], $multiling = null)
 	{
-		$lang  = $this->setOptionLanguage($multiling);
+		$lang  = $this->getOptionLang($multiling);
 		$group = $this->applyPrefix($group);
 		$key   = $this->applyPrefix("{$key}{$lang}");
 		$this->registerOption($group, $key, $args);
@@ -190,7 +190,7 @@ trait VanillePluginOption
 	 */
 	protected function addPluginOption(string $key, $value, $multiling = null) : bool
 	{
-		$lang = $this->setOptionLanguage($multiling);
+		$lang = $this->getOptionLang($multiling);
 		$key  = $this->applyPrefix("{$key}{$lang}");
 		return $this->addOption($key, $value);
 	}
@@ -204,7 +204,7 @@ trait VanillePluginOption
 	 */
 	protected function getPluginOption(string $key, string $type = 'array', $default = false, $multiling = null)
 	{
-		$lang  = $this->setOptionLanguage($multiling);
+		$lang  = $this->getOptionLang($multiling);
 		$key   = $this->applyPrefix("{$key}{$lang}");
 		$value = $this->stripSlash(
 			$this->getOption($key, $default)
@@ -237,7 +237,7 @@ trait VanillePluginOption
 	 */
 	protected function updatePluginOption(string $key, $value, $multiling = null) : bool
 	{
-		$lang = $this->setOptionLanguage($multiling);
+		$lang = $this->getOptionLang($multiling);
 		$key  = $this->applyPrefix("{$key}{$lang}");
 		return $this->updateOption($key, $value);
 	}
@@ -250,27 +250,44 @@ trait VanillePluginOption
 	 */
 	protected function removePluginOption(string $key, $multiling = null) : bool
 	{
-		$lang = $this->setOptionLanguage($multiling);
+		$lang = $this->getOptionLang($multiling);
 		$key  = $this->applyPrefix("{$key}{$lang}");
 		return $this->removeOption($key);
 	}
 
 	/**
-	 * Set plugin option language.
+	 * Get plugin option language.
 	 *
 	 * @access protected
-	 * @param mixed $multiling
+	 * @param bool $multiling
 	 * @return mixed
 	 */
-	protected function setOptionLanguage($multiling = null)
+	protected function getOptionLang(?bool $multiling = null)
 	{
 		$lang = null;
 		if ( $this->hasMultilingual() ) {
 			if ( $multiling !== false ) {
-				$multiling = "-{$this->getLang()}";
+				$lang = "-{$this->getLang()}";
 			}
 		}
 		return $lang;
+	}
+
+	/**
+	 * Set plugin transient lang.
+	 * [Action: head].
+	 * [Action: admin-init].
+	 *
+	 * @access protected
+	 * @return bool
+	 */
+	protected function setLang() : bool
+	{
+		if ( $this->hasMultilingual() ) {
+			$lang = $this->getLang(false);
+			return $this->setPluginTransient('lang', $lang, 0);
+		}
+		return false;
 	}
 
 	/**
@@ -307,14 +324,20 @@ trait VanillePluginOption
 	 */
 	protected function addPluginMenuPage(array $settings = []) : string
 	{
+		$name = $this->getPluginName();
+		$name = $this->applyPluginFilter('menu-name', $name);
+		$icon = $this->applyPluginFilter('menu-icon', 'admin-plugins');
+		$cap  = $this->applyPluginFilter('menu-cap', $this->applySufix('manage'));
+		$pos  = $this->applyPluginFilter('menu-pos', 20);
+
 		$settings = $this->mergeArray([
-			'title'    => "{$this->getPluginName()} Dashboard",
-			'menu'     => $this->getPluginName(),
-			'cap'      => $this->applySufix('manage'),
+			'title'    => "{$name} Dashboard",
+			'menu'     => $name,
+			'cap'      => $cap,
 			'slug'     => $this->getNameSpace(),
 			'callback' => [$this, 'index'],
-			'icon'     => 'admin-plugins',
-			'position' => 20
+			'icon'     => $icon,
+			'position' => $pos
 		], $settings);
 
 		$settings['title'] = $this->trans($settings['title']);
@@ -331,18 +354,21 @@ trait VanillePluginOption
 	 */
 	protected function addPluginSubMenuPage(array $settings = [])
 	{
+		$name = $this->getPluginName();
+		$name = $this->applyPluginFilter('menu-name', $name);
+		$cap  = $this->applyPluginFilter('menu-cap', $this->applySufix('manage'));
+
 		$settings = $this->mergeArray([
 			'parent'   => $this->getNameSpace(),
-			'title'    => "{$this->getPluginName()} {menu}",
-			'menu'     => $this->getPluginName(),
-			'cap'      => $this->applySufix('manage'),
+			'title'    => "{$name} {menu}",
+			'menu'     => $name,
+			'cap'      => $cap,
 			'slug'     => $this->getNameSpace(),
 			'callback' => [$this, 'index'],
 			'icon'     => false
 		], $settings);
 		
 		$settings['menu']  = $this->trans($settings['menu']);
-
 		$settings['title'] = $this->trans(
 			$this->replaceString('{menu}', $settings['menu'], $settings['title'])
 		);
@@ -363,7 +389,7 @@ trait VanillePluginOption
 	protected function resetPluginSubMenu(?string $title = null, ?string $icon = null)
 	{
 		$parent = $this->getNameSpace();
-		$title = $this->trans($title);
+		$title  = $this->trans($title);
 		$this->resetSubMenuPage($parent, $title, $icon);
 	}
 

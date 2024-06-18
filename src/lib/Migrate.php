@@ -27,11 +27,11 @@ final class Migrate extends Orm
 	 * @var string ADD
 	 * @var string ALTER
 	 */
-	private const LOCK = 'migrate.lock';
-	private const UPGRADE = 'upgrade.sql';
+	private const LOCK      = 'migrate.lock';
+	private const UPGRADE   = 'upgrade.sql';
 	private const UNINSTALL = 'uninstall.sql';
-	private const ADD = '/ADD\s`(.*)`\s/s';
-	private const ALTER = '/ALTER\sTABLE\s`(.*)`\sADD/s';
+	private const ADD       = '/ADD\s`(.*)`\s/s';
+	private const ALTER     = '/ALTER\sTABLE\s`(.*)`\sADD/s';
 
 	/**
 	 * Init migrate.
@@ -40,15 +40,18 @@ final class Migrate extends Orm
 	{
 		// Init orm
 		parent::__construct();
+
+        // Reset config
+        $this->resetConfig();
 	}
 
 	/**
-	 * Create plugin database tables.
+	 * Install plugin database tables.
 	 *
 	 * @access public
 	 * @return bool
 	 */
-	public function table() : bool
+	public function install() : bool
 	{
 		if ( $this->isMigrated() ) {
 			return false;
@@ -71,6 +74,18 @@ final class Migrate extends Orm
 
 		$this->lock();
 		return (bool)$count;
+	}
+
+	/**
+	 * Rebuild plugin database tables.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function rebuild() : bool
+	{
+		$this->unlock();
+		return $this->install();
 	}
 
 	/**
@@ -221,6 +236,20 @@ final class Migrate extends Orm
 		return $this->removeFile(
 			$this->getMigratePath(self::LOCK)
 		);
+	}
+
+	/**
+	 * Instance database table.
+	 *
+	 * @access public
+	 * @param string $name
+	 * @param string $path
+	 * @param mixed $args
+	 * @return mixed
+	 */
+	public static function i(string $name, $path = 'db', ...$args)
+	{
+		return (new Loader())->i($path, $name, $args);
 	}
 
 	/**

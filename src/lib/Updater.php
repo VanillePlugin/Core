@@ -134,6 +134,9 @@ class Updater implements UpdaterInterface
 		 * @property count 1
 		 */
 		$this->addFilter('http_request_args', [$this, 'filterArgs'], 20);
+
+		// Reset config
+		$this->resetConfig();
 	}
 
 	/**

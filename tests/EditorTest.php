@@ -10,7 +10,7 @@
  * This file if a part of VanillePlugin Framework.
  */
 
-use VanillePlugin\third\Editor;
+use VanilleThird\Editor;
 use PHPUnit\Framework\TestCase;
 
 final class EditorTest extends TestCase

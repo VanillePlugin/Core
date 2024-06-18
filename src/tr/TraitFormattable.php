@@ -101,6 +101,17 @@ trait TraitFormattable
 	}
 
 	/**
+	 * Camelcase string.
+	 * 
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function camelcase(string $string) : string
+	{
+		return Stringify::camelcase($string);
+	}
+
+	/**
 	 * Slugify string.
 	 * 
 	 * @access protected
@@ -402,6 +413,17 @@ trait TraitFormattable
 	protected function formatKeyCase(array $array, int $case = CASE_LOWER) : array
 	{
 		return Arrayify::formatKeyCase($array, $case);
+	}
+
+	/**
+	 * Map array.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function map($callback, array $array, ?array $arrays = null)
+	{
+		return Arrayify::map($callback, $array, $arrays);
 	}
 
 	/**

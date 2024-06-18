@@ -40,6 +40,9 @@ class Loader
 	{
 		$this->baseDir = $this->format($baseDir);
 		$this->pattern = $pattern;
+
+		// Reset config
+		$this->resetConfig();
 	}
 
 	/**

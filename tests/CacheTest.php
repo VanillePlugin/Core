@@ -10,7 +10,7 @@
  * This file if a part of VanillePlugin Framework.
  */
 
-use VanillePlugin\third\Cache;
+use VanilleThird\Cache;
 use PHPUnit\Framework\TestCase;
 
 final class CacheTest extends TestCase

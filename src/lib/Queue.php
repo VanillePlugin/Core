@@ -23,9 +23,17 @@ class Queue
     use \VanillePlugin\VanillePluginConfig,
         \VanillePlugin\tr\TraitCacheable;
 
+    /**
+	 * Reset config.
+     */
+	public function __construct()
+	{
+        $this->resetConfig();
+	}
+
 	/**
 	 * Add item to queue.
-	 * 
+	 *
 	 * @access public
 	 * @param string $item
 	 * @param string $name
@@ -40,7 +48,7 @@ class Queue
 
 	/**
 	 * Check whether item in queue.
-	 * 
+	 *
 	 * @access public
 	 * @param string $item
 	 * @param string $name
@@ -53,7 +61,7 @@ class Queue
 
 	/**
 	 * Delete queue.
-	 * 
+	 *
 	 * @access public
 	 * @param string $name
 	 * @return bool
@@ -66,7 +74,7 @@ class Queue
 
 	/**
 	 * Get queue.
-	 * 
+	 *
 	 * @access private
 	 * @param string $name
 	 * @return array
@@ -83,7 +91,7 @@ class Queue
 
 	/**
 	 * Set queue.
-	 * 
+	 *
 	 * @access private
 	 * @param array $queue
 	 * @param string $name

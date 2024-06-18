@@ -19,14 +19,25 @@ use VanillePlugin\lib\Migrate;
 trait TraitMigratable
 {
 	/**
-	 * Create plugin database tables.
+	 * Install plugin database tables.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function migrateTables() : bool
+	protected function installTables() : bool
 	{
-		return (new Migrate())->table();
+		return (new Migrate())->install();
+	}
+
+	/**
+	 * Rebuild plugin database tables.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function rebuildTables() : bool
+	{
+		return (new Migrate())->rebuild();
 	}
 
 	/**

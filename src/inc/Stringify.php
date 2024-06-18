@@ -175,6 +175,31 @@ final class Stringify
 	}
 
 	/**
+	 * Camelcase string.
+	 * 
+	 * @access public
+	 * @param string $string
+	 * @return string
+	 */
+	public static function camelcase(string $string) : string
+	{
+		$string = explode('-', self::slugify($string));
+		$string = Arrayify::values(
+			Arrayify::filter($string)
+		);
+		$first  = $string[0] ?? '';
+		$string = Arrayify::map(function($val) use ($first) {
+			if ( $val === $first ) {
+				return $val;
+			}
+			return self::capitalize($val);
+		}, $string);
+		return self::undash(
+			implode('', $string)
+		);
+	}
+
+	/**
 	 * Slugify string.
 	 * 
 	 * @access public

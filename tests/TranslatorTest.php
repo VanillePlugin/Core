@@ -10,7 +10,7 @@
  * This file if a part of VanillePlugin Framework.
  */
 
-use VanillePlugin\third\Translator;
+use VanilleThird\Translator;
 use PHPUnit\Framework\TestCase;
 
 final class TranslatorTest extends TestCase

@@ -65,11 +65,11 @@ final class Rewrite
      * @param string $regex
      * @param mixed $query
      * @param string $after
-     * @return void
+     * @return mixed
      */
     public function addRules(string $regex, $query, string $after = 'bottom')
     {
-        add_rewrite_rule($regex, $query, $after);
+        return add_rewrite_rule($regex, $query, $after);
     }
 
     /**
@@ -81,11 +81,11 @@ final class Rewrite
      * @param string $name
      * @param int $places
      * @param mixed $query
-     * @return void
+     * @return mixed
      */
     public function addEndpoint(string $name, int $places = 8191, $query = true)
     {
-        add_rewrite_endpoint($name, $places, $query);
+        return add_rewrite_endpoint($name, $places, $query);
     }
 
     /**
@@ -162,11 +162,11 @@ final class Rewrite
      * 
      * @access public
      * @param bool $force
-     * @return void
+     * @return mixed
      */
     public static function flush(bool $force = true)
     {
-        flush_rewrite_rules($force);
+        return flush_rewrite_rules($force);
     }
 
     /**

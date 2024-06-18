@@ -14,14 +14,16 @@ declare(strict_types=1);
 
 namespace VanillePlugin\tr;
 
-use VanillePlugin\inc\GlobalConst;
+use VanillePlugin\inc\{
+	GlobalConst, Stringify
+};
 use VanilleThird\Translator;
 
 trait TraitTranslatable
 {
 	/**
 	 * Get site locale.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -32,7 +34,7 @@ trait TraitTranslatable
 
 	/**
 	 * Get translator locale.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -40,31 +42,9 @@ trait TraitTranslatable
 	{
 		return (string)Translator::getLocale();
 	}
-
-	/**
-	 * Get normalized country code.
-	 * 
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getTranslatorCountry(string $locale) : string
-	{
-		return Translator::getCountry($locale);
-	}
 	
 	/**
-	 * Get normalized language code.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getLanguage(string $locale) : string
-	{
-		return Translator::getLanguage($locale);
-	}
-	
-	/**
-	 * Check whether translator is active (functional).
+	 * Check whether translator is active.
 	 *
 	 * @access protected
 	 * @inheritdoc
@@ -72,5 +52,39 @@ trait TraitTranslatable
 	protected function hasTranslator() : bool
 	{
 		return (bool)Translator::isActive();
+	}
+
+	/**
+	 * Normalize locale.
+	 *
+	 * @access public
+	 * @param string $locale
+	 * @return string
+	 */
+	public static function normalizeLocale(string $locale) : string
+	{
+		$locale = Stringify::slugify($locale);
+		$locale = Stringify::replace('_', '-', $locale);
+		if ( !Stringify::contains($locale, '-') ) {
+			$locale = "{$locale}-{$locale}";
+		}
+		return $locale;
+	}
+
+	/**
+	 * Parse lang.
+	 *
+	 * @access public
+	 * @param string $locale
+	 * @return string
+	 */
+	public static function parseLang(string $locale) : string
+	{
+		if ( Stringify::contains($locale, '-') ) {
+			if ( ($locale = explode('-', $locale)) ) {
+				$locale = $locale[0] ?? '';
+			}
+		}
+		return $locale;
 	}
 }

@@ -37,6 +37,9 @@ final class Backup extends Orm
 	{
 		// Init orm
 		parent::__construct();
+		
+        // Reset config
+        $this->resetConfig();
 	}
 
 	/**

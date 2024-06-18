@@ -274,11 +274,11 @@ final class TypeCheck
 	 * Check method.
 	 * 
 	 * @access public
-	 * @param object $object
+	 * @param mixed $object
 	 * @param string $method
 	 * @return bool
 	 */
-	public static function hasMethod(object $object, string $method) : bool
+	public static function hasMethod($object, string $method) : bool
 	{
 		return method_exists($object, $method);
 	}
