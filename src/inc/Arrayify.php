@@ -218,6 +218,20 @@ final class Arrayify
 	}
 
 	/**
+	 * Format array.
+	 *
+	 * @access public
+	 * @param array $array
+	 * @return array
+	 */
+	public static function format(array $array) : array
+	{
+		return self::filter(
+			self::values($array)
+		);
+	}
+
+	/**
 	 * Format array key case.
 	 *
 	 * @access public

@@ -247,7 +247,7 @@ final class Migrate extends Orm
 	 * @param mixed $args
 	 * @return mixed
 	 */
-	public static function i(string $name, $path = 'db', ...$args)
+	public static function instance(string $name, $path = 'db', ...$args)
 	{
 		return (new Loader())->i($path, $name, $args);
 	}

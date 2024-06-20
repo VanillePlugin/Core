@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
+use PHPUnit\Util\Type;
+
 /**
  * Advanced custom I/O helper and string manipulation,
  * @see https://wordpress.org/about/security/.
@@ -1038,6 +1040,34 @@ final class Stringify
 			$string = self::uppercase($string);
 		}
 	    return self::replace('-', '_', $string);
+	}
+
+	/**
+	 * Format dash (Alias).
+	 *
+	 * @access public
+	 * @param mixed $value
+	 * @param array $except
+	 * @return mixed
+	 */
+	public static function underscore($value, array $except = [])
+	{
+		if ( TypeCheck::isArray($value) ) {
+			foreach ($value as $k => $v) {
+				if ( !TypeCheck::isString($k) || Arrayify::inArray($k, $except) ) {
+					continue;
+				}
+				if ( self::contains($k, '-') ) {
+					unset($value[$k]);
+					$k = self::undash($k);
+					$value[$k] = $v;
+				}
+			}
+		}
+		if ( TypeCheck::isString($value) && !Arrayify::inArray($value, $except) ) {
+			$value = self::undash($value);
+		}
+	    return $value;
 	}
 
 	/**

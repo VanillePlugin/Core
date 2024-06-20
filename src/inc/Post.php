@@ -34,7 +34,7 @@ class Post
 
 	/**
 	 * Get current post Id.
-	 * 
+	 *
 	 * @access public
 	 * @return int
 	 */
@@ -46,7 +46,7 @@ class Post
 
 	/**
 	 * Get current post.
-	 * 
+	 *
 	 * @access public
      * @param bool $format
 	 * @return mixed
@@ -80,7 +80,7 @@ class Post
 
 	/**
 	 * Get post title by Id.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $id
 	 * @param string $default
@@ -106,7 +106,7 @@ class Post
 
 	/**
 	 * Get post URL by Id.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $id
 	 * @return string
@@ -166,7 +166,7 @@ class Post
 
 	/**
 	 * Add post.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $data
 	 * @param bool $error
@@ -175,12 +175,13 @@ class Post
 	 */
 	public static function add($data, bool $error = false, bool $after = true)
 	{
+		$data = Stringify::underscore($data);
 		return wp_insert_post($data, $error, $after);
 	}
 
 	/**
 	 * Update post.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $data
 	 * @param bool $error
@@ -194,7 +195,7 @@ class Post
 
 	/**
 	 * Delete post.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $id
 	 * @param bool $force
@@ -269,15 +270,24 @@ class Post
 	 *
 	 * @access public
 	 * @param array $args
+	 * @param bool $format
 	 * @return array
 	 */
-	public static function all(array $args = []) : array
+	public static function all(array $args = [], bool $format = true) : array
 	{
 		$args = Arrayify::merge([
-			'post_type'      => 'any',
-			'posts_per_page' => -1
+			'post-type'      => 'any',
+			'posts-per-page' => -1
 		], $args);
-		return get_posts($args);
+		$args = Stringify::underscore($args);
+
+		$posts = get_posts($args);
+        if ( $format ) {
+			$posts = Arrayify::map(function($post) {
+				return self::format($post);
+			}, $posts);
+        }
+        return $posts;
 	}
 
 	/**

@@ -155,7 +155,7 @@ class View implements ViewInterface
 			'nonce' => function($action = -1) : string {
                 return $this->createToken($action);
             },
-			'translate' => function(string $string) : string {
+			'translate' => function(?string $string) : string {
                 return $this->trans($string);
             },
 			'unJson' => function(string $value, bool $isArray = false) {
@@ -170,7 +170,7 @@ class View implements ViewInterface
 			'unserialize' => function(string $value) {
                 return $this->unserialize($value);
             },
-			'limitString' => function(string $string, int $limit) {
+			'limitString' => function(?string $string, int $limit) {
                 return $this->limitString($string, $limit);
             },
 			'getOption' => function(string $key, $default = false) {

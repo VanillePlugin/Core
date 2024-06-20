@@ -24,7 +24,7 @@ use VanillePlugin\exc\ConfigurationException;
  * - Formatting
  * - Caching
  * - IO
- * 
+ *
  * @see https://developer.wordpress.org/plugins/
  */
 trait VanillePluginConfig
@@ -885,10 +885,9 @@ trait VanillePluginConfig
 	 * Get plugin current language (locale).
 	 *
 	 * @access protected
-	 * @param bool $parse
 	 * @return string
 	 */
-	protected function getLang(bool $parse = false) : string
+	protected function getLang() : string
 	{
 		// Get from system
 		$lang = $default = $this->getLocale();
@@ -904,7 +903,6 @@ trait VanillePluginConfig
 		}
 
 		// Normalize
-		$lang = $this->normalizeLocale($lang);
-		return ($parse) ? $this->parseLang($lang) : $lang;
+		return $this->normalizeLocale($lang);
 	}
 }

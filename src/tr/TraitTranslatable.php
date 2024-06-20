@@ -14,9 +14,7 @@ declare(strict_types=1);
 
 namespace VanillePlugin\tr;
 
-use VanillePlugin\inc\{
-	Globals, Stringify
-};
+use VanillePlugin\inc\Localisation;
 use VanilleThird\Translator;
 
 trait TraitTranslatable
@@ -29,7 +27,62 @@ trait TraitTranslatable
 	 */
 	protected function getLocale($user = null) : string
 	{
-		return Globals::locale($user);
+		return Localisation::getLocale($user);
+	}
+
+	/**
+	 * Load translation.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function loadTranslation(string $domain, string $mo) : bool
+	{
+		return Localisation::load($domain, $mo);
+	}
+
+	/**
+	 * Load plugin translation.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function loadPluginTranslation(string $domain, ?string $path = null) : bool
+	{
+		return Localisation::loadPlugin($domain, $path);
+	}
+
+	/**
+	 * Parse translation file.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function parseTranslationFile(string $domain) : string
+	{
+		return Localisation::parse($domain, $this->getLocale());
+	}
+
+	/**
+	 * Load theme translation.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function loadThemeTranslation(string $domain, ?string $path = null) : bool
+	{
+		return Localisation::loadTheme($domain, $path);
+	}
+
+	/**
+	 * Load child translation.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function loadChildTranslation(string $domain, ?string $path = null) : bool
+	{
+		return Localisation::loadChild($domain, $path);
 	}
 
 	/**
@@ -57,34 +110,17 @@ trait TraitTranslatable
 	/**
 	 * Normalize locale.
 	 *
-	 * @access public
+	 * @access protected
 	 * @param string $locale
 	 * @return string
 	 */
-	public static function normalizeLocale(string $locale) : string
+	protected function normalizeLocale(string $locale) : string
 	{
-		$locale = Stringify::slugify($locale);
-		$locale = Stringify::replace('_', '-', $locale);
-		if ( !Stringify::contains($locale, '-') ) {
-			$locale = "{$locale}-{$locale}";
+		$lang = Localisation::parseLang($locale);
+		$region = Localisation::parseRegion($locale);
+		if ( $lang === $region ) {
+			return $lang;
 		}
-		return $locale;
-	}
-
-	/**
-	 * Parse lang.
-	 *
-	 * @access public
-	 * @param string $locale
-	 * @return string
-	 */
-	public static function parseLang(string $locale) : string
-	{
-		if ( Stringify::contains($locale, '-') ) {
-			if ( ($locale = explode('-', $locale)) ) {
-				$locale = $locale[0] ?? '';
-			}
-		}
-		return $locale;
+		return Localisation::normalizeLocale($locale);
 	}
 }

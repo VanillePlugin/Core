@@ -291,7 +291,8 @@ class Updater implements UpdaterInterface
 	/**
 	 * Fetch response (Info, Update, Translation),
 	 * Used cached response by plugin version.
-	 *  
+	 * [Filter: {plugin}-updater-{option}-{ttl}].
+	 *
 	 * @access protected
 	 * @param string $action
 	 * @param string $url
@@ -390,7 +391,8 @@ class Updater implements UpdaterInterface
 
 	/**
 	 * Get updater timeout.
-	 *  
+	 * [Filter: {plugin}-updater-timeout].
+	 *
 	 * @access protected
 	 * @return int
 	 */
@@ -401,6 +403,7 @@ class Updater implements UpdaterInterface
 
 	/**
 	 * Check updater API SSL.
+	 * [Filter: {plugin}-updater-ssl].
 	 *  
 	 * @access protected
 	 * @return bool

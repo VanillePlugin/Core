@@ -20,30 +20,33 @@ trait TraitLoggable
 {
     /**
      * Log debug message.
-     * 
+     *
+     * @access protected
      * @inheritdoc
      */
-    public function debug($message, bool $isArray = false) : bool
+    protected function debug($message, bool $isArray = false) : bool
     {
         return (new Logger())->debug($message, $isArray);
     }
 
     /**
      * Log error message.
-     * 
+     *
+     * @access protected
      * @inheritdoc
      */
-    public function error(string $message) : bool
+    protected function error(string $message) : bool
     {
         return (new Logger())->error($message);
     }
 
     /**
      * Log warning message.
-     * 
+     *
+     * @access protected
      * @inheritdoc
      */
-    public function warning(string $message) : bool
+    protected function warning(string $message) : bool
     {
         return (new Logger())->warning($message);
     }

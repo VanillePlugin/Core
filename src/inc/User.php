@@ -216,11 +216,9 @@ final class User
 	{
 		$users = get_users();
         if ( $format ) {
-            $wrapper = [];
-            foreach ($users as $user) {
-                $wrapper[] = self::format($user);
-            }
-            return $wrapper;
+			$users = Arrayify::map(function($user) {
+				return self::format($user);
+			}, $users);
         }
         return $users;
 	}

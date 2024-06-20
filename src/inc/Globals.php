@@ -141,21 +141,6 @@ final class Globals
 	}
 
 	/**
-	 * Get site locale.
-	 *
-	 * @access public
-	 * @param mixed $user
-	 * @return string
-	 */
-	public static function locale($user = null) : string
-	{
-		if ( $user ) {
-			return get_user_locale($user);
-		}
-		return get_locale();
-	}
-
-	/**
 	 * Get site roles.
 	 *
 	 * @access public

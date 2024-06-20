@@ -21,7 +21,7 @@ final class Cache
 {
 	/**
 	 * Get cache value.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $key
 	 * @param string $group
@@ -36,15 +36,15 @@ final class Cache
 
 	/**
 	 * Set cache value.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $key
 	 * @param mixed $value
-	 * @param string $group
 	 * @param int $ttl
+	 * @param string $group
 	 * @return bool
 	 */
-	public static function set($key, $value, string $group = '', int $ttl = 0) : bool
+	public static function set($key, $value, int $ttl = 0, string $group = '') : bool
 	{
 		return wp_cache_set($key, $value, $group, $ttl);
 	}
@@ -55,11 +55,11 @@ final class Cache
 	 * @access public
 	 * @param mixed $key
 	 * @param mixed $value
-	 * @param string $group
 	 * @param int $ttl
+	 * @param string $group
 	 * @return bool
 	 */
-	public static function add($key, $value, string $group = '', int $ttl = 0) : bool
+	public static function add($key, $value, int $ttl = 0, string $group = '') : bool
 	{
 		return wp_cache_add($key, $value, $group, $ttl);
 	}
@@ -70,11 +70,11 @@ final class Cache
 	 * @access public
 	 * @param mixed $key
 	 * @param mixed $value
-	 * @param string $group
 	 * @param int $ttl
+	 * @param string $group
 	 * @return bool
 	 */
-	public static function update($key, $value, string $group = '', int $ttl = 0) : bool
+	public static function update($key, $value, int $ttl = 0, string $group = '') : bool
 	{
 		return wp_cache_replace($key, $value, $group, $ttl);
 	}

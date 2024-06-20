@@ -31,6 +31,8 @@ class Requirement extends Notice implements RequirementInterface
 
 	/**
 	 * Init requirement.
+	 * [Filter: {plugin}-requirement-template].
+	 * [Filter: {plugin}-requirement-strings].
 	 */
 	public function __construct()
 	{

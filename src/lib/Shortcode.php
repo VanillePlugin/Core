@@ -53,6 +53,8 @@ class Shortcode extends View
 
 	/**
 	 * Set shortcode content.
+	 * [Filter: {plugin}-shortcode-nested].
+	 * [Filter: {plugin}-shortcode-content].
 	 *
 	 * @access public
 	 * @param string $atts
@@ -132,6 +134,7 @@ class Shortcode extends View
 
 	/**
 	 * Set shortcode atts.
+	 * [Filter: {plugin}-shortcode-global].
 	 *
 	 * @access public
 	 * @param array $atts
@@ -156,13 +159,15 @@ class Shortcode extends View
 	 * @param mixed $args
 	 * @return mixed
 	 */
-	public static function i(string $name, $path = 'shortcode', ...$args)
+	public static function instance(string $name, $path = 'shortcode', ...$args)
 	{
 		return (new Loader())->i($path, $name, $args);
 	}
 
 	/**
 	 * Show shortcode error.
+	 * [Filter: {plugin}-shortcode-error].
+	 * [Filter: {plugin}-shortcode-template].
 	 *
 	 * @access protected
 	 * @param string $error
@@ -172,7 +177,7 @@ class Shortcode extends View
 	{
 		$error = $this->applyPluginFilter('shortcode-error', $error, $this->atts);
 		if ( $error ) {
-			$template = $this->applyPluginFilter('shortcode-error', 'front/error');
+			$template = $this->applyPluginFilter('shortcode-template', 'front/error');
 			return $this->assign($template, [
 				'error' => $error,
 				'atts'  => $this->filterArray($this->atts)
@@ -182,6 +187,7 @@ class Shortcode extends View
 
 	/**
 	 * Get shortcode default atts.
+	 * [Filter: {plugin}-shortcode-default-atts].
 	 *
 	 * @access protected
 	 * @param string $type
@@ -190,14 +196,15 @@ class Shortcode extends View
 	protected function getDefaults(string $type) : array
 	{
 		$defaults = [];
-		if ( $this->hasPluginFilter('defaults-shortcode-atts') ) {
-			$defaults = $this->applyPluginFilter('defaults-shortcode-atts', $type, $defaults);
+		if ( $this->hasPluginFilter('shortcode-default-atts') ) {
+			$defaults = $this->applyPluginFilter('shortcode-default-atts', $type, $defaults);
 		}
 		return $defaults;
 	}
 
 	/**
 	 * Apply object default atts.
+	 * [Filter: {plugin}-shortcode-atts].
 	 *
 	 * @access protected
 	 * @param string $type

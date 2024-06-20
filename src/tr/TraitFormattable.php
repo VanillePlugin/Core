@@ -48,7 +48,7 @@ trait TraitFormattable
 
 	/**
 	 * Format whitespaces.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -59,7 +59,7 @@ trait TraitFormattable
 
 	/**
 	 * Strip spaces in string.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -70,7 +70,7 @@ trait TraitFormattable
 
 	/**
 	 * Lowercase string.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -81,7 +81,7 @@ trait TraitFormattable
 
 	/**
 	 * Uppercase string.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -92,7 +92,7 @@ trait TraitFormattable
 
 	/**
 	 * Capitalize string.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -103,7 +103,7 @@ trait TraitFormattable
 
 	/**
 	 * Camelcase string.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -114,7 +114,7 @@ trait TraitFormattable
 
 	/**
 	 * Slugify string.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -136,7 +136,7 @@ trait TraitFormattable
 
 	/**
 	 * Remove slashes from value.
-	 * 
+	 *
 	 * @param mixed $value
 	 * @return mixed
 	 */
@@ -169,7 +169,7 @@ trait TraitFormattable
 
 	/**
 	 * Remove string in other string.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -184,7 +184,7 @@ trait TraitFormattable
 	/**
 	 * Search replace string(s),
      * Accept regex.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -198,7 +198,7 @@ trait TraitFormattable
 
 	/**
 	 * Search replace string(s) using array.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -209,7 +209,7 @@ trait TraitFormattable
 
 	/**
 	 * Match string using regex.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -220,7 +220,7 @@ trait TraitFormattable
 
 	/**
 	 * Match all strings using regex (g).
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -231,7 +231,7 @@ trait TraitFormattable
 
 	/**
 	 * Parse string.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -242,18 +242,18 @@ trait TraitFormattable
 
 	/**
 	 * Limit string.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function limitString(string $string, int $limit = 150) : string
+	protected function limitString(?string $string, int $limit = 150) : string
 	{
-		return Stringify::limit($string, $limit);
+		return Stringify::limit((string)$string, $limit);
 	}
 
 	/**
 	 * Get basename with path format.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -264,7 +264,7 @@ trait TraitFormattable
 
 	/**
 	 * Get break to line.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -275,7 +275,7 @@ trait TraitFormattable
 
 	/**
 	 * Check array item.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -286,7 +286,7 @@ trait TraitFormattable
 
 	/**
 	 * Merge arrays.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -297,7 +297,7 @@ trait TraitFormattable
 
 	/**
 	 * Filter array.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -319,7 +319,7 @@ trait TraitFormattable
 
 	/**
 	 * Get array keys.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -330,7 +330,7 @@ trait TraitFormattable
 
 	/**
 	 * Get array values.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -341,7 +341,7 @@ trait TraitFormattable
 
 	/**
 	 * Shift array.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -352,7 +352,7 @@ trait TraitFormattable
 
 	/**
 	 * Get array diff.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -374,7 +374,7 @@ trait TraitFormattable
 
 	/**
 	 * Slice array.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -385,7 +385,7 @@ trait TraitFormattable
 
 	/**
 	 * Unique array.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -396,7 +396,7 @@ trait TraitFormattable
 	
 	/**
 	 * Unique arrays.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -425,6 +425,28 @@ trait TraitFormattable
 	protected function map($callback, array $array, ?array $arrays = null)
 	{
 		return Arrayify::map($callback, $array, $arrays);
+	}
+
+	/**
+	 * Push array.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function pushArray(array &$array, $values) : int
+	{
+		return Arrayify::push($array, $values);
+	}
+
+	/**
+	 * Format array.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function formatArray(array $array) : array
+	{
+		return Arrayify::format($array);
 	}
 
 	/**
@@ -484,7 +506,7 @@ trait TraitFormattable
 
 	/**
 	 * Validate server config.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -528,7 +550,7 @@ trait TraitFormattable
 
 	/**
 	 * Validate plugin version.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -662,7 +684,7 @@ trait TraitFormattable
 
 	/**
 	 * Convert array to object.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */

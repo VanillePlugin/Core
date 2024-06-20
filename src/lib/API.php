@@ -222,7 +222,7 @@ class API extends Request
 	 * @param mixed $args
 	 * @return mixed
 	 */
-	public static function i(string $name, $path = 'api', ...$args)
+	public static function instance(string $name, $path = 'api', ...$args)
 	{
 		return (new Loader())->i($path, $name, $args);
 	}

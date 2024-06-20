@@ -47,7 +47,7 @@ class Loader
 
 	/**
 	 * Instance class.
-	 * 
+	 *
 	 * @access public
 	 * @param string $path
 	 * @param string $className
@@ -73,7 +73,7 @@ class Loader
 
 	/**
 	 * Instance alias.
-	 * 
+	 *
 	 * @access public
 	 * @param string $path
 	 * @param string $className
@@ -87,7 +87,7 @@ class Loader
 
 	/**
 	 * Scan classes files.
-	 * 
+	 *
 	 * @access protected
 	 * @param string $dir
 	 * @param string $base
@@ -110,7 +110,7 @@ class Loader
 
 	/**
 	 * Format loader path.
-	 * 
+	 *
 	 * @access protected
 	 * @param string $path
 	 * @param bool $namespace

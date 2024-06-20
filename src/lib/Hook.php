@@ -56,7 +56,8 @@ final class Hook
 
 	/**
 	 * Get valid hooks.
-	 *
+	 * [Filter: {plugin}-{filter}].
+	 * 
 	 * @access public
 	 * @return mixed
 	 */
