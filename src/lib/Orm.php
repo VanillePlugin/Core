@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
+use VanillePlugin\inc\Db;
 use VanillePlugin\int\{
 	OrmInterface, OrmQueryInterface
 };

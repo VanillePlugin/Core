@@ -37,7 +37,7 @@ class Mail
 	 */
 	public function __construct($email = null)
 	{
-		$this->to = ($email) ? $email : GlobalConst::email();
+		$this->to = ($email) ? $email : Globals::email();
 		$this->setBody('');
 	}
 
@@ -117,7 +117,7 @@ class Mail
 	 */
 	public function setFooter() : self
 	{
-		$footer = '©' . GlobalConst::website() . ' ' . date('Y');
+		$footer = '©' . Globals::website() . ' ' . date('Y');
 		$this->addContent($footer);
 		return $this;
 	}

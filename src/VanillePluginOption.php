@@ -174,11 +174,10 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function registerPluginOption(string $group, string $key, array $args = [], $multiling = null)
+	protected function registerPluginOption(string $group, string $key, array $args = [], bool $multi = true)
 	{
-		$lang  = $this->getOptionLang($multiling);
+		$key = $this->getOptionLang($key, $multi);
 		$group = $this->applyPrefix($group);
-		$key   = $this->applyPrefix("{$key}{$lang}");
 		$this->registerOption($group, $key, $args);
 	}
 
@@ -188,10 +187,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addPluginOption(string $key, $value, $multiling = null) : bool
+	protected function addPluginOption(string $key, $value, bool $multi = true) : bool
 	{
-		$lang = $this->getOptionLang($multiling);
-		$key  = $this->applyPrefix("{$key}{$lang}");
+		$key = $this->getOptionLang($key, $multi);
 		return $this->addOption($key, $value);
 	}
 
@@ -200,32 +198,13 @@ trait VanillePluginOption
 	 *
 	 * @access protected
 	 * @inheritdoc
-	 * @todo Move farmatting
 	 */
-	protected function getPluginOption(string $key, string $type = 'array', $default = false, $multiling = null)
+	protected function getPluginOption(string $key, $default = [], bool $multi = true)
 	{
-		$lang  = $this->getOptionLang($multiling);
-		$key   = $this->applyPrefix("{$key}{$lang}");
+		$key = $this->getOptionLang($key, $multi);
 		$value = $this->stripSlash(
 			$this->getOption($key, $default)
 		);
-		
-		switch ($type) {
-			case 'int':
-			case 'integer':
-				return intval($value);
-				break;
-
-			case 'double':
-			case 'float':
-				return floatval($value);
-				break;
-
-			case 'bool':
-			case 'boolean':
-				return boolval($value);
-				break;
-		}
 		return $value;
 	}
 
@@ -235,10 +214,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function updatePluginOption(string $key, $value, $multiling = null) : bool
+	protected function updatePluginOption(string $key, $value, bool $multi = true) : bool
 	{
-		$lang = $this->getOptionLang($multiling);
-		$key  = $this->applyPrefix("{$key}{$lang}");
+		$key = $this->getOptionLang($key, $multi);
 		return $this->updateOption($key, $value);
 	}
 
@@ -248,10 +226,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removePluginOption(string $key, $multiling = null) : bool
+	protected function removePluginOption(string $key, bool $multi = true) : bool
 	{
-		$lang = $this->getOptionLang($multiling);
-		$key  = $this->applyPrefix("{$key}{$lang}");
+		$key = $this->getOptionLang($key, $multi);
 		return $this->removeOption($key);
 	}
 
@@ -259,18 +236,16 @@ trait VanillePluginOption
 	 * Get plugin option language.
 	 *
 	 * @access protected
-	 * @param bool $multiling
-	 * @return mixed
+	 * @param string $key
+	 * @param bool $multi
+	 * @return string
 	 */
-	protected function getOptionLang(?bool $multiling = null)
+	protected function getOptionLang(string $key, bool $multi) : string
 	{
-		$lang = null;
-		if ( $this->hasMultilingual() ) {
-			if ( $multiling !== false ) {
-				$lang = "-{$this->getLang()}";
-			}
+		if ( $this->hasMultilingual() && $multi ) {
+			$key = "{$key}-{$this->getLang()}";
 		}
-		return $lang;
+		return $this->applyPrefix($key);
 	}
 
 	/**
@@ -284,7 +259,7 @@ trait VanillePluginOption
 	protected function setLang() : bool
 	{
 		if ( $this->hasMultilingual() ) {
-			$lang = $this->getLang(false);
+			$lang = $this->getLang();
 			return $this->setPluginTransient('lang', $lang, 0);
 		}
 		return false;
@@ -704,7 +679,7 @@ trait VanillePluginOption
 	 */
 	protected function getPluginTransient(string $key)
 	{
-		$key = $this->applyNamespace($key);
+		$key = $this->applyPrefix($key);
 		if ( $this->isMultisite() && $this->allowedMultisite() ) {
 			return $this->getSiteTransient($key);
 		}
@@ -713,13 +688,13 @@ trait VanillePluginOption
 
 	/**
 	 * Set plugin transient.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function setPluginTransient(string $key, $value, ?int $ttl = null) : bool
 	{
-		$key = $this->applyNamespace($key);
+		$key = $this->applyPrefix($key);
 		if ( $this->isType('null', $ttl) ) {
 			$ttl = $this->getExpireIn();
 		}
@@ -737,7 +712,7 @@ trait VanillePluginOption
 	 */
 	protected function deletePluginTransient(string $key) : bool
 	{
-		$key = $this->applyNamespace($key);
+		$key = $this->applyPrefix($key);
 		if ( $this->isMultisite() && $this->allowedMultisite() ) {
 			return $this->deleteSiteTransient($key);
 		}

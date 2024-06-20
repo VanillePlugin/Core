@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\inc;
 
 if ( !TypeCheck::isFunction('WP_List_Table') ) {
-	require_once GlobalConst::rootDir('wp-admin/includes/class-wp-list-table.php');
+	require_once Globals::rootDir('wp-admin/includes/class-wp-list-table.php');
 }
 
 class Table extends \WP_List_Table

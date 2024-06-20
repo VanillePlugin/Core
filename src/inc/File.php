@@ -28,7 +28,7 @@ class File
 	 */
 	public static function init()
 	{
-		WP_Filesystem();
+		\WP_Filesystem();
 	}
 
 	/**

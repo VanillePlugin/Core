@@ -137,11 +137,11 @@ class View implements ViewInterface
 			'isDebug' => function() : bool {
                 return $this->isDebug();
             },
-			'getConfig' => function($key) {
+			'getConfig' => function(?string $key = null) {
                 return $this->getConfig($key);
             },
-			'getRoot' => function() : string {
-                return $this->getRoot();
+			'getRoot' => function(?string $sub = null) : string {
+                return $this->getRoot($sub);
             },
 			'getNameSpace' => function() : string {
                 return $this->getNameSpace();
@@ -176,8 +176,8 @@ class View implements ViewInterface
 			'getOption' => function(string $key, $default = false) {
                 return $this->getOption($key, $default);
             },
-			'getPluginOption' => function($k, $t = 'array', $d = false, $l = null) {
-                return $this->getPluginOption($k, $t, $d, $l);
+			'getPluginOption' => function(string $k, $d = false, bool $m = true) {
+                return $this->getPluginOption($k, $d, $m);
             },
 			'hasFilter' => function(string $hook, $callback = false) {
                 return $this->hasPluginFilter($hook, $callback);

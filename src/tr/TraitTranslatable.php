@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-	GlobalConst, Stringify
+	Globals, Stringify
 };
 use VanilleThird\Translator;
 
@@ -29,7 +29,7 @@ trait TraitTranslatable
 	 */
 	protected function getLocale($user = null) : string
 	{
-		return GlobalConst::locale($user);
+		return Globals::locale($user);
 	}
 
 	/**

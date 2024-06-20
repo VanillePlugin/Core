@@ -107,7 +107,7 @@ final class Upload
 
 		// Include upload handler
 		if ( !TypeCheck::isFunction('wp_handle_upload') ) {
-		    require_once GlobalConst::rootDir('wp-admin/includes/file.php');
+		    require_once Globals::rootDir('wp-admin/includes/file.php');
 		}
 
 		// Set defaut handler args

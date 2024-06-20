@@ -587,7 +587,7 @@ final class Stringify
 	/**
 	 * Escape textarea,
 	 * [Filter: esc_textarea].
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -600,7 +600,7 @@ final class Stringify
 	/**
 	 * Sanitize text,
 	 * [Filter: sanitize_text_field].
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -613,7 +613,7 @@ final class Stringify
 	/**
 	 * Sanitize textarea,
 	 * [Filter: sanitize_textarea_field].
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -626,7 +626,7 @@ final class Stringify
 	/**
 	 * Sanitize title,
 	 * [Filter: sanitize_title].
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @param string $fallback

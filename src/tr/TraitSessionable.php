@@ -42,7 +42,7 @@ trait TraitSessionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-    protected function getSession($key = null)
+    protected function getSession(?string $key = null)
     {
         return Session::get($key);
     }
@@ -51,7 +51,7 @@ trait TraitSessionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-    protected function hasSession($key = null) : bool
+    protected function hasSession(?string $key = null) : bool
     {
         return Session::isSetted($key);
     }

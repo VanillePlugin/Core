@@ -15,7 +15,8 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-	Stringify, Arrayify, Converter, Json, Xml, TypeCheck, Validator
+	Stringify, Arrayify, Converter,
+	Json, Xml, TypeCheck, Validator
 };
 
 trait TraitFormattable

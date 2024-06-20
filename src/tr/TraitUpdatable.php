@@ -31,7 +31,7 @@ trait TraitUpdatable
 
 	/**
      * Get update status.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -42,7 +42,7 @@ trait TraitUpdatable
 
 	/**
      * Set update status.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */

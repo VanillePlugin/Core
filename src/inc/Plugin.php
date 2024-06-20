@@ -39,7 +39,7 @@ final class Plugin
 	 */
 	public static function getUrl(string $path) : string
 	{
-		$baseUrl = GlobalConst::pluginUrl();
+		$baseUrl = Globals::pluginUrl();
 		return Stringify::formatPath("{$baseUrl}/{$path}", true);
 	}
 
@@ -53,7 +53,7 @@ final class Plugin
 	 */
 	public static function getDir(string $path) : string
 	{
-		$baseDir = GlobalConst::pluginDir();
+		$baseDir = Globals::pluginDir();
 		return Stringify::formatPath("{$baseDir}/{$path}", true);
 	}
 
@@ -67,7 +67,7 @@ final class Plugin
 	 */
 	public static function getMuDir(string $path) : string
 	{
-		$baseDir = GlobalConst::pluginMuDir();
+		$baseDir = Globals::pluginMuDir();
 		return Stringify::formatPath("{$baseDir}/{$path}", true);
 	}
 
@@ -84,7 +84,7 @@ final class Plugin
 	public static function getHeader(string $file, bool $markup = true, bool $translate = true) : array
 	{
 	    if ( !TypeCheck::isFunction('get_plugin_data') ) {
-	        require_once GlobalConst::rootDir('wp-admin/includes/plugin.php');
+	        require_once Globals::rootDir('wp-admin/includes/plugin.php');
 	    }
 	    $file = self::getDir($file);
 		return get_plugin_data($file, $markup, $translate);

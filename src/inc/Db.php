@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace VanillePlugin\lib;
+namespace VanillePlugin\inc;
 
 /**
  * Wrapper class for database object.

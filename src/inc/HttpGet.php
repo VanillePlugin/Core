@@ -18,7 +18,7 @@ final class HttpGet
 {
 	/**
 	 * Get _GET value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @return mixed
@@ -33,7 +33,7 @@ final class HttpGet
 
 	/**
 	 * Set _GET value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $value
@@ -46,7 +46,7 @@ final class HttpGet
 	
 	/**
 	 * Check _GET value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @return bool
@@ -61,7 +61,7 @@ final class HttpGet
 
 	/**
 	 * Unset _GET value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @return void

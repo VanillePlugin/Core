@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-	GlobalConst, Plugin, Theme
+	Globals, Plugin, Theme
 };
 use VanillePlugin\lib\Orm;
 
@@ -111,7 +111,7 @@ trait TraitConfigurable
 	 */
 	protected function getVersion() : string
 	{
-		return GlobalConst::version();
+		return Globals::version();
 	}
 
 	/**
@@ -122,7 +122,7 @@ trait TraitConfigurable
 	 */
 	protected function isDebug() : bool
 	{
-		return GlobalConst::debug();
+		return Globals::debug();
 	}
 	
 	/**
@@ -131,7 +131,7 @@ trait TraitConfigurable
 	 */
 	protected function isMultisite() : bool
 	{
-		return GlobalConst::multisite();
+		return Globals::multisite();
 	}
 
 	/**
@@ -140,7 +140,7 @@ trait TraitConfigurable
 	 */
 	protected function isMobile() : bool
 	{
-		return GlobalConst::mobile();
+		return Globals::mobile();
 	}
 
 	/**
@@ -149,7 +149,7 @@ trait TraitConfigurable
 	 */
 	protected function isAjax() : bool
 	{
-		return GlobalConst::ajax();
+		return Globals::ajax();
 	}
 
 	/**
@@ -158,7 +158,7 @@ trait TraitConfigurable
 	 */
 	protected function isApi() : bool
 	{
-		return GlobalConst::api();
+		return Globals::api();
 	}
 
 	/**
@@ -167,7 +167,7 @@ trait TraitConfigurable
 	 */
 	protected function getSiteRoles() : array
 	{
-		return GlobalConst::roles();
+		return Globals::roles();
 	}
 
 	/**
@@ -178,7 +178,7 @@ trait TraitConfigurable
 	 */
 	protected function getAdminUrl(string $url = null, string $scheme = 'admin') : string
 	{
-		return GlobalConst::ajaxUrl($url, $scheme);
+		return Globals::ajaxUrl($url, $scheme);
 	}
 
 	/**
@@ -189,7 +189,7 @@ trait TraitConfigurable
 	 */
 	protected function getAjaxUrl(string $scheme = 'admin') : string
 	{
-		return GlobalConst::ajaxUrl($scheme);
+		return Globals::ajaxUrl($scheme);
 	}
 
 	/**
@@ -202,7 +202,7 @@ trait TraitConfigurable
 	 */
 	protected function getFrontUrl(?string $path = null, ?string $scheme = null) : string
 	{
-		return GlobalConst::url($path, $scheme);
+		return Globals::url($path, $scheme);
 	}
 
 	/**
@@ -213,7 +213,7 @@ trait TraitConfigurable
 	 */
 	protected function geSiteUrl(?string $path = null, string $scheme = 'relative') : string
 	{
-		return GlobalConst::siteUrl($path, $scheme);
+		return Globals::siteUrl($path, $scheme);
 	}
 
 	/**

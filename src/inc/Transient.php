@@ -110,9 +110,10 @@ final class Transient
 	 */
 	private static function formatKey(string $key) : string
 	{
-		$key = Stringify::slugify($key);
-		$formatted = substr($key, 0, 172);
-		if ( $formatted ) {
+		$key = Stringify::undash(
+			Stringify::slugify($key)
+		);
+		if ( ($formatted = substr($key, 0, 172)) ) {
 			return $formatted;
 		}
 		return $key;

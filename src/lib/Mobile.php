@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\{
-    HttpRequest, Server, GlobalConst, Stringify
+    HttpRequest, Server, Globals, Stringify
 };
 
 class Mobile extends View
@@ -108,7 +108,7 @@ class Mobile extends View
 	 */
 	public static function getUrl(?string $url = null) : string
 	{
-		$base = GlobalConst::url(static::ENDPOINT) . '/';
+		$base = Globals::url(static::ENDPOINT) . '/';
 		if ( $url ) {
 			$base .= $url;
 		}

@@ -37,7 +37,7 @@ final class Cookie
 	 * @access public
 	 * @param string $key
 	 * @param mixed $value
-	 * @param array $options
+	 * @param mixed $options
 	 * @return bool
 	 */
 	public static function set(string $key, $value = '', $options = [])

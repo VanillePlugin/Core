@@ -108,10 +108,11 @@ trait VanillePluginConfig
 		}
 
 		if ( $this->cacheable ) {
-			$config = "{$this->getNameSpace()}-global";
-			if ( !$this->global = $this->getTransient($config) ) {
+
+			$key = $this->applyPrefix('global');
+			if ( !($this->global = $this->getTransient($key)) ) {
 				$this->global = $this->parseConfig();
-				$this->setTransient($config, $this->global, 0);
+				$this->setTransient($key, $this->global, 0);
 			}
 
 		} else {
@@ -731,7 +732,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get multilingual status.
+	 * Get multiling status.
 	 *
 	 * @access protected
 	 * @return bool
@@ -739,7 +740,7 @@ trait VanillePluginConfig
 	protected function isMultilingual() : bool
 	{
 		$config = $this->getConfig('options');
-		$data = $config->multilingual ?? false;
+		$data = $config->multiling ?? false;
 		return (bool)$data;
 	}
 
@@ -796,12 +797,12 @@ trait VanillePluginConfig
 		$dir = dirname($this->getRoot($this->config));
 
 		if ( $this->cacheable ) {
-			$name = $this->applyNamespace($config);
-			if ( !$value = $this->getTransient($name) ) {
+			$key = $this->applyPrefix($config);
+			if ( !($value = $this->getTransient($key)) ) {
 				if ( $this->isFile( ($json = "{$dir}/{$config}.json") ) ) {
 					$value = $this->decodeJson($this->readfile($json), $isArray);
 				}
-				$this->setTransient($name, $value, 0);
+				$this->setTransient($key, $value, 0);
 			}
 
 		} else {
@@ -870,7 +871,7 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Get plugin multilingual status.
+	 * Get plugin multiling status.
 	 *
 	 * @access public
 	 * @return bool
@@ -884,19 +885,11 @@ trait VanillePluginConfig
 	 * Get plugin current language (locale).
 	 *
 	 * @access protected
-	 * @param bool $cache
 	 * @param bool $parse
 	 * @return string
 	 */
-	protected function getLang(bool $cache = true, bool $parse = false) : string
+	protected function getLang(bool $parse = false) : string
 	{
-		// Get from cache
-		if ( $cache ) {
-			if ( ($lang = $this->getCacheLang($parse)) ) {
-				return $lang;
-			}
-		}
-
 		// Get from system
 		$lang = $default = $this->getLocale();
 
@@ -913,21 +906,5 @@ trait VanillePluginConfig
 		// Normalize
 		$lang = $this->normalizeLocale($lang);
 		return ($parse) ? $this->parseLang($lang) : $lang;
-	}
-
-	/**
-	 * Get plugin cache lang.
-	 *
-	 * @access protected
-	 * @param bool $parse
-	 * @return mixed
-	 */
-	protected function getCacheLang(bool $parse = false)
-	{
-		$key = "{$this->getNameSpace()}-lang";
-		if ( ($lang = $this->getTransient($key)) ) {
-			return ($parse) ? $this->parseLang($lang) : $lang;
-		}
-		return false;
 	}
 }

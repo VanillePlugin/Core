@@ -322,13 +322,13 @@ final class Hook
 	 */
 	public static function removeScripts(array $exclude)
 	{
-		foreach (GlobalConst::scripts()->queue as $script) {
+		foreach (Globals::scripts()->queue as $script) {
 			if ( self::hasScript($script, $exclude) !== false ) {
 				self::removeJS($script);
 			}
 		}
 
-		foreach (GlobalConst::styles()->queue as $style) {
+		foreach (Globals::styles()->queue as $style) {
 			if ( self::hasScript($style, $exclude) !== false ) {
 				self::removeCSS($style);
 			}

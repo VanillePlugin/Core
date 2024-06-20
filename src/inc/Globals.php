@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-final class GlobalConst
+final class Globals
 {
 	/**
 	 * Get site name.
@@ -29,7 +29,7 @@ final class GlobalConst
 
 	/**
 	 * Get site email.
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -40,7 +40,7 @@ final class GlobalConst
 
 	/**
 	 * Get site version.
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -75,7 +75,7 @@ final class GlobalConst
 
 	/**
 	 * Get site debug status.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
@@ -86,7 +86,7 @@ final class GlobalConst
 
 	/**
 	 * Get site cache status.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
@@ -168,7 +168,7 @@ final class GlobalConst
 
 	/**
 	 * Get web server name.
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -194,7 +194,7 @@ final class GlobalConst
 
 	/**
 	 * Get plugins URL without trailing slash.
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -205,7 +205,7 @@ final class GlobalConst
 
 	/**
 	 * Get plugins directory without trailing slash,.
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -216,7 +216,7 @@ final class GlobalConst
 
 	/**
 	 * Get MU plugins directory without trailing slash.
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -227,7 +227,7 @@ final class GlobalConst
 
 	/**
 	 * Get content URL without trailing slash.
-	 * 
+	 *
 	 * @access public
 	 * @param string $path
 	 * @return string
@@ -243,7 +243,7 @@ final class GlobalConst
 	
 	/**
 	 * Get content directory without trailing slash.
-	 * 
+	 *
 	 * @access public
 	 * @param string $path
 	 * @return string
@@ -259,7 +259,7 @@ final class GlobalConst
 
 	/**
 	 * Get root directory without trailing slash.
-	 * 
+	 *
 	 * @access public
 	 * @param string $path
 	 * @return string
@@ -275,7 +275,7 @@ final class GlobalConst
 
 	/**
 	 * Get front url.
-	 * 
+	 *
 	 * @access public
 	 * @param string $path
 	 * @param string $scheme
@@ -290,7 +290,7 @@ final class GlobalConst
 	/**
 	 * Get front site url,
 	 * Including installation sub path.
-	 * 
+	 *
 	 * @access public
 	 * @param string $path
 	 * @param string $scheme
@@ -357,7 +357,7 @@ final class GlobalConst
 
 	/**
 	 * Get password reset URL.
-	 * 
+	 *
 	 * @access public
 	 * @param string $redirect
 	 * @return string
@@ -369,7 +369,7 @@ final class GlobalConst
 	
 	/**
 	 * Get privacy URL.
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */

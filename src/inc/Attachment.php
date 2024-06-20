@@ -103,7 +103,7 @@ final class Attachment
 	public static function generateMeta(int $id, string $path) : array
 	{
 		if ( !TypeCheck::isFunction('wp_generate_attachment_metadata') ) {
-		    require_once GlobalConst::rootDir('wp-admin/includes/image.php');
+		    require_once Globals::rootDir('wp-admin/includes/image.php');
 		}
 		return (array)wp_generate_attachment_metadata($id, $path);
 	}
