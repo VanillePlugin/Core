@@ -66,10 +66,10 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function doPluginAction(string $hook, $args = null)
+	protected function doPluginAction(string $hook, ...$args)
 	{
 		$hook = $this->applyNamespace($hook);
-		$this->doAction($hook, $args);
+		$this->doAction($hook, ...$args);
 	}
 
 	/**
@@ -114,10 +114,10 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function applyPluginFilter(string $hook, $value, $args = null)
+	protected function applyPluginFilter(string $hook, $value, ...$args)
 	{
 		$hook = $this->applyNamespace($hook);
-		return $this->applyFilter($hook, $value, $args);
+		return $this->applyFilter($hook, $value, ...$args);
 	}
 
 	/**
@@ -596,7 +596,7 @@ trait VanillePluginOption
 	{
 		if ( $this->isType('string', $action) ) {
 			if ( empty($action) ) {
-				$action = 'check';
+				$action = 'verify';
 			}
 			$action = $this->applyNamespace($action);
 		}
@@ -604,16 +604,16 @@ trait VanillePluginOption
 	}
 
 	/**
-	 * Check token.
+	 * Verify token.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function checkToken($action = null, bool $strict = false)
+	protected function verifyToken($action = null, bool $strict = false)
 	{
 		if ( $this->isType('string', $action) ) {
 			if ( empty($action) ) {
-				$action = 'check';
+				$action = 'verify';
 			}
 			$action = $this->applyNamespace($action);
 		}
@@ -635,16 +635,16 @@ trait VanillePluginOption
 	}
 
 	/**
-	 * Check AJAX token.
+	 * Verify AJAX token.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function checkAjaxToken($action = null, bool $strict = false)
+	protected function verifyAjaxToken($action = null, bool $strict = false)
 	{
 		if ( $this->isType('string', $action) ) {
 			if ( empty($action) ) {
-				$action = 'check';
+				$action = 'verify';
 			}
 			$action = $this->applyNamespace($action);
 		}
@@ -666,12 +666,12 @@ trait VanillePluginOption
 	}
 
 	/**
-	 * Check role permission.
+	 * Verify role permission.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function checkPermission($id = null)
+	protected function verifyPermission($id = null)
 	{
 		if ( !$this->isAdministrator($id) ) {
 			$code = ($this->hasDebug()) ? 401 : 200;
@@ -748,16 +748,20 @@ trait VanillePluginOption
 	 * [Filter: {plugin}-cache-key].
 	 * [Filter: {plugin}-cache-lang].
 	 * [Filter: {plugin}-cache-group].
+	 * [Filter: {plugin}-get-cache].
+	 * [Filter: {plugin}-cache-status].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getPluginCache($key, ?string $group = null)
+	protected function getPluginCache($key, ?bool &$status = null, ?string $group = null)
 	{
-		$key = $this->applyNamespace($key);
+		$key = $this->lowercase(
+			$this->applyNamespace($key)
+		);
 		$key = $this->applyPluginFilter('cache-key', $key);
 
-		if ( $this->isMultilingual() ) {
+		if ( $this->hasMultilingual() ) {
 			$key = "{$key}-{$this->getLang()}";
 			$key = $this->applyPluginFilter('cache-lang', $key);
 		}
@@ -767,7 +771,12 @@ trait VanillePluginOption
 			$group = $this->applyPluginFilter('cache-group', $group);
 		}
 
-		return $this->getCache($key, $group);
+		if ( $this->hasPluginFilter('get-cache') ) {
+			$status = $this->applyPluginFilter('cache-status', $status, $key);
+			return $this->applyPluginFilter('get-cache', $key, $group);
+		}
+
+		return $this->getCache($key, $status, $group);
 	}
 
 	/**
@@ -775,16 +784,19 @@ trait VanillePluginOption
 	 * [Filter: {plugin}-cache-key].
 	 * [Filter: {plugin}-cache-lang].
 	 * [Filter: {plugin}-cache-group].
+	 * [Filter: {plugin}-set-cache].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function setPluginCache($key, $value, ?int $ttl = null, ?string $group = null) : bool
 	{
-		$key = $this->applyNamespace($key);
+		$key = $this->lowercase(
+			$this->applyNamespace($key)
+		);
 		$key = $this->applyPluginFilter('cache-key', $key);
 
-		if ( $this->isMultilingual() ) {
+		if ( $this->hasMultilingual() ) {
 			$key = "{$key}-{$this->getLang()}";
 			$key = $this->applyPluginFilter('cache-lang', $key);
 		}
@@ -799,6 +811,10 @@ trait VanillePluginOption
 			$ttl = $this->applyPluginFilter('cache-ttl', $ttl);
 		}
 
+		if ( $this->hasPluginFilter('set-cache') ) {
+			return $this->applyPluginFilter('set-cache', $key, $value, $ttl, $group);
+		}
+
 		return $this->setCache($key, $value, $ttl, $group);
 	}
 
@@ -807,16 +823,19 @@ trait VanillePluginOption
 	 * [Filter: {plugin}-cache-key].
 	 * [Filter: {plugin}-cache-lang].
 	 * [Filter: {plugin}-cache-group].
+	 * [Filter: {plugin}-add-cache].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function addPluginCache($key, $value, ?int $ttl = null, ?string $group = null) : bool
 	{
-		$key = $this->applyNamespace($key);
+		$key = $this->lowercase(
+			$this->applyNamespace($key)
+		);
 		$key = $this->applyPluginFilter('cache-key', $key);
 
-		if ( $this->isMultilingual() ) {
+		if ( $this->hasMultilingual() ) {
 			$key = "{$key}-{$this->getLang()}";
 			$key = $this->applyPluginFilter('cache-lang', $key);
 		}
@@ -831,6 +850,10 @@ trait VanillePluginOption
 			$ttl = $this->applyPluginFilter('cache-ttl', $ttl);
 		}
 
+		if ( $this->hasPluginFilter('add-cache') ) {
+			return $this->applyPluginFilter('add-cache', $key, $value, $ttl, $group);
+		}
+
 		return $this->addCache($key, $value, $ttl, $group);
 	}
 
@@ -839,16 +862,19 @@ trait VanillePluginOption
 	 * [Filter: {plugin}-cache-key].
 	 * [Filter: {plugin}-cache-lang].
 	 * [Filter: {plugin}-cache-group].
+	 * [Filter: {plugin}-update-cache].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function updatePluginCache($key, $value, ?int $ttl = null, ?string $group = null) : bool
 	{
-		$key = $this->applyNamespace($key);
+		$key = $this->lowercase(
+			$this->applyNamespace($key)
+		);
 		$key = $this->applyPluginFilter('cache-key', $key);
 
-		if ( $this->isMultilingual() ) {
+		if ( $this->hasMultilingual() ) {
 			$key = "{$key}-{$this->getLang()}";
 			$key = $this->applyPluginFilter('cache-lang', $key);
 		}
@@ -863,7 +889,11 @@ trait VanillePluginOption
 			$ttl = $this->applyPluginFilter('cache-ttl', $ttl);
 		}
 
-		return $this->updateCache($key, $value, $ttl);
+		if ( $this->hasPluginFilter('update-cache') ) {
+			return $this->applyPluginFilter('update-cache', $key, $value, $ttl, $group);
+		}
+
+		return $this->updateCache($key, $value, $ttl, $group);
 	}
 
 	/**
@@ -871,16 +901,19 @@ trait VanillePluginOption
 	 * [Filter: {plugin}-cache-key].
 	 * [Filter: {plugin}-cache-lang].
 	 * [Filter: {plugin}-cache-group].
+	 * [Filter: {plugin}-delete-cache].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function deletePluginCache($key, ?string $group = null) : bool
 	{
-		$key = $this->applyNamespace($key);
+		$key = $this->lowercase(
+			$this->applyNamespace($key)
+		);
 		$key = $this->applyPluginFilter('cache-key', $key);
 
-		if ( $this->isMultilingual() ) {
+		if ( $this->hasMultilingual() ) {
 			$key = "{$key}-{$this->getLang()}";
 			$key = $this->applyPluginFilter('cache-lang', $key);
 		}
@@ -890,17 +923,25 @@ trait VanillePluginOption
 			$group = $this->applyPluginFilter('cache-group', $group);
 		}
 
+		if ( $this->hasPluginFilter('delete-cache') ) {
+			return $this->applyPluginFilter('delete-cache', $key, $group);
+		}
+
 		return $this->deleteCache($key, $group);
 	}
 
 	/**
 	 * Purge plugin cache.
+	 * [Filter: {plugin}-purge-cache].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function purgePluginCache() : bool
 	{
+		if ( $this->hasPluginFilter('purge-cache') ) {
+			return $this->applyPluginFilter('purge-cache', false);
+		}
 		return $this->purgeCache();
 	}
 
@@ -1078,7 +1119,7 @@ trait VanillePluginOption
 		if ( $this->isType('array', $msg) && count($msg) == 2 ) {
 		  	$temp = $msg[0];
 		  	$args = (array)$msg[1];
-		  	$msg = $this->transVar($temp, $args);
+		  	$msg  = $this->transVar($temp, $args);
 		  	
 		} else {
 			$msg = $this->translate($msg);

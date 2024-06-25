@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 /**
- * Plugin rewrite.
+ * Plugin rewrite manager.
  */
 final class Rewrite
 {
@@ -102,7 +102,7 @@ final class Rewrite
 
     /**
      * Apply rules,
-     * [Action: admin_init].
+     * [Action: admin-init].
      *
      * @access public
      * @param int $priority
@@ -110,12 +110,12 @@ final class Rewrite
      */
     public function applyRules(int $priority = 10)
     {
-        $this->addFilter('mod_rewrite_rules', [$this, 'getRules'], $priority);
+        $this->addFilter('rewrite-rules', [$this, 'getRules'], $priority);
     }
 
     /**
      * Remove rules,
-     * [Action: admin_init].
+     * [Action: admin-init].
      *
      * @access public
      * @param int $priority
@@ -123,12 +123,12 @@ final class Rewrite
      */
     public function removeRules(int $priority = 10) : bool
     {
-        return $this->removeFilter('mod_rewrite_rules', [$this, 'getRules'], $priority);
+        return $this->removeFilter('rewrite-rules', [$this, 'getRules'], $priority);
     }
 
     /**
      * Get rules,
-     * [Filter: mod_rewrite_rules].
+     * [Filter: rewrite-rules].
      * 
      * @access public
      * @param string $rules

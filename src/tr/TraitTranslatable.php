@@ -116,11 +116,13 @@ trait TraitTranslatable
 	 */
 	protected function normalizeLocale(string $locale) : string
 	{
-		$lang = Localisation::parseLang($locale);
+		$lang   = Localisation::parseLang($locale);
 		$region = Localisation::parseRegion($locale);
+
 		if ( $lang === $region ) {
 			return $lang;
 		}
+		
 		return Localisation::normalizeLocale($locale);
 	}
 }

@@ -20,13 +20,10 @@ use VanillePlugin\int\{
 
 /**
  * Plugin AJAX manager.
- * @uses Front actions requires admin hook for authenticated users.
  */
 final class Ajax implements AjaxCoreInterface
 {
-	use \VanillePlugin\VanillePluginConfig,
-		\VanillePlugin\tr\TraitRequestable,
-		\VanillePlugin\tr\TraitHookable;
+	use \VanillePlugin\VanillePluginOption;
 
 	/**
 	 * @access private
@@ -67,8 +64,15 @@ final class Ajax implements AjaxCoreInterface
 	{
 		foreach ($this->actions as $action) {
 			if ( $this->isAction($action) ) {
+
+				$this->verifyToken($action);
+				if ( $this->isAdminCallable() ) {
+					$this->verifyPermission();
+				}
+
 				$action = $this->camelcase($action);
 				$this->callable->{$action}();
+				break;
 			}
 		}
 		die();
@@ -111,7 +115,7 @@ final class Ajax implements AjaxCoreInterface
 
 	/**
 	 * Init admin actions.
-	 * [Action: wp_ajax_{namespace}-{action}].
+	 * [Action: wp-ajax-{namespace}-{action}].
 	 *
 	 * @access private
 	 * @return void
@@ -120,7 +124,7 @@ final class Ajax implements AjaxCoreInterface
 	{
 		foreach ($this->actions as $action) {
 			$this->addAction(
-				"wp_ajax_{$this->applyNamespace($action)}",
+				"wp-ajax-{$this->applyNamespace($action)}",
 				[$this, 'callback']
 			);
 		}
@@ -128,7 +132,7 @@ final class Ajax implements AjaxCoreInterface
 
 	/**
 	 * Init front actions.
-	 * [Action: wp_ajax_nopriv_{namespace}-{action}].
+	 * [Action: wp-ajax-nopriv-{namespace}-{action}].
 	 *
 	 * @access private
 	 * @return void
@@ -137,7 +141,7 @@ final class Ajax implements AjaxCoreInterface
 	{
 		foreach ($this->actions as $action) {
 			$this->addAction(
-				"wp_ajax_nopriv_{$this->applyNamespace($action)}",
+				"wp-ajax-nopriv-{$this->applyNamespace($action)}",
 				[$this, 'callback']
 			);
 		}

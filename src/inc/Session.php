@@ -43,7 +43,9 @@ final class Session
     {
         self::set('--session-id', session_id());
         self::set('--session-time', intval($time));
-        self::set('--session-start', Date::newTime(0, 0, self::get('--session-time')));
+
+        $time = self::get('--session-time');
+        self::set('--session-start', Date::newTime(0, 0, $time));
     }
 
     /**
@@ -139,7 +141,8 @@ final class Session
      */
     public static function renew()
     {
-        self::set('--session-start', Date::newTime(0, 0, self::get('--session-time')));
+        $time = self::get('--session-time');
+        self::set('--session-start', Date::newTime(0, 0, $time));
     }
     
     /**

@@ -291,8 +291,8 @@ final class System
         if ( self::getOsName() == 'windows' ) {
             if ( TypeCheck::isClass('COM') ) {
                 $system = new \COM('WinMgmts:\\\\.');
-                $cpu = $system->InstancesOf('Win32_Processor');
-                $load = 0;
+                $cpu   = $system->InstancesOf('Win32_Processor');
+                $load  = 0;
                 $count = 0;
                 foreach ($cpu as $key => $core) {
                     $load += $core->LoadPercentage;

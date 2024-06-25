@@ -18,7 +18,7 @@ final class TypeCheck
 {
 	/**
 	 * Check string.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -30,14 +30,14 @@ final class TypeCheck
 
 	/**
 	 * Check object.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @param string $class
 	 * @param bool $string, Allow string
 	 * @return bool
 	 */
-	public static function isObject($value, $class = null, bool $string = false) : bool
+	public static function isObject($value, ?string $class = null, bool $string = false) : bool
 	{
 		if ( $class ) {
 			return is_a($value, $class, $string);
@@ -47,7 +47,7 @@ final class TypeCheck
 	
 	/**
 	 * Check array.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -59,7 +59,7 @@ final class TypeCheck
 	
 	/**
 	 * Check iterator.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -71,7 +71,7 @@ final class TypeCheck
 
 	/**
 	 * Check int.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -83,7 +83,7 @@ final class TypeCheck
 
 	/**
 	 * Check numeric (string cast).
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -95,7 +95,7 @@ final class TypeCheck
 
 	/**
 	 * Check float.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @param bool $string
@@ -111,7 +111,7 @@ final class TypeCheck
 
 	/**
 	 * Check bool.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -123,7 +123,7 @@ final class TypeCheck
 
 	/**
 	 * Check null.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -135,7 +135,7 @@ final class TypeCheck
 
 	/**
 	 * Check false.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -147,7 +147,7 @@ final class TypeCheck
 
 	/**
 	 * Check true.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -159,7 +159,7 @@ final class TypeCheck
 
 	/**
 	 * Check empty (string or array).
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -177,7 +177,7 @@ final class TypeCheck
 
 	/**
 	 * Check NAN (Not a number).
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -189,7 +189,7 @@ final class TypeCheck
 
 	/**
 	 * Check callable.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -201,7 +201,7 @@ final class TypeCheck
 
 	/**
 	 * Check function.
-	 * 
+	 *
 	 * @access public
 	 * @param string $function
 	 * @return bool
@@ -213,7 +213,7 @@ final class TypeCheck
 
 	/**
 	 * Check class.
-	 * 
+	 *
 	 * @access public
 	 * @param string $class
 	 * @param bool $autoload
@@ -226,20 +226,20 @@ final class TypeCheck
 
 	/**
 	 * Check sub class.
-	 * 
+	 *
 	 * @access public
-	 * @param string $sub
+	 * @param mixed $sub
 	 * @param string $class
 	 * @return bool
 	 */
-	public static function isSubClassOf(string $sub, string $class) : bool
+	public static function isSubClassOf($sub, string $class) : bool
 	{
 		return is_subclass_of($sub, $class);
 	}
 	
 	/**
 	 * Check interface.
-	 * 
+	 *
 	 * @access public
 	 * @param string $interface
 	 * @param bool $autoload
@@ -252,7 +252,7 @@ final class TypeCheck
 
 	/**
 	 * Check interface.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $class
 	 * @param string $interface
@@ -272,7 +272,7 @@ final class TypeCheck
 
 	/**
 	 * Check method.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $object
 	 * @param string $method
@@ -285,7 +285,7 @@ final class TypeCheck
 
 	/**
 	 * Check countable.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -297,7 +297,7 @@ final class TypeCheck
 
 	/**
 	 * Check ressource.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -309,7 +309,7 @@ final class TypeCheck
 
 	/**
 	 * Check scalar.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return bool
@@ -321,7 +321,7 @@ final class TypeCheck
 
 	/**
 	 * Check stream.
-	 * 
+	 *
 	 * @access public
 	 * @param string $path
 	 * @return bool

@@ -206,7 +206,7 @@ final class Date extends DateTime
     /**
      * Get date expiring interval using duration string,
      * Returns -1 if invalid date or duration.
-     * 
+     *
      * @access public
      * @param string $duration
      * @param mixed $date

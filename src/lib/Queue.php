@@ -15,8 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 /**
- * Helper class for tasks queueing.
- * @uses Batch queueing is recommended.
+ * Plugin queue manager.
  */
 class Queue
 {

@@ -17,8 +17,7 @@ namespace VanillePlugin\lib;
 use VanillePlugin\int\OrmQueryInterface;
 
 /**
- * Helper class for array based ORM query (Read-only),
- * @uses Database API recommended.
+ * Plugin ORM query builder (Read-only).
  */
 final class OrmQuery implements OrmQueryInterface
 {

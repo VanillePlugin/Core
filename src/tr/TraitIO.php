@@ -214,7 +214,7 @@ trait TraitIO
 	 */
     private function secureRemove(string $path, array $secure = []) : bool
     {
-		$paths = explode('/', $path);
+		$paths  = explode('/', $path);
 		$secure = Arrayify::merge(['storage'], $secure);
 		foreach ($secure as $include) {
 			if ( !Arrayify::inArray($include, $paths) ) {

@@ -27,9 +27,9 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getCache($key, ?string $group = null)
+	protected function getCache($key, ?bool &$status = null, ?string $group = null)
 	{
-		return Cache::get($key, (string)$group);
+		return Cache::get($key, (string)$group, false, $status);
 	}
 
 	/**

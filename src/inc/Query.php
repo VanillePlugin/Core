@@ -80,19 +80,4 @@ class Query extends Core
 	{
 		return get_the_title();
 	}
-
-	/**
-     * Get query formatted args.
-     *
-	 * @access private
-	 * @param mixed $args
-	 * @return mixed
-	 */
-	private static function format($args)
-	{
-        if ( $args ) {
-            return [];
-        }
-        return $args;
-	}
 }

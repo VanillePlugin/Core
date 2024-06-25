@@ -136,9 +136,9 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function applyFilter(string $hook, $value, $args = null)
+	protected function applyFilter(string $hook, $value, ...$args)
 	{
-		return Hook::applyFilter($hook, $value, $args);
+		return Hook::applyFilter($hook, $value, ...$args);
 	}
 
 	/**

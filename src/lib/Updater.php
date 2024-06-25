@@ -15,10 +15,9 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\UpdaterInterface;
-use \stdClass;
 
 /**
- * Wrapper class for self-hosted plugin.
+ * Plugin update manager (self-hosted).
  */
 class Updater implements UpdaterInterface
 {
@@ -83,57 +82,20 @@ class Updater implements UpdaterInterface
 		unset($this->args['translationUrl']);
 		unset($this->args['assetUrl']);
 
-		/**
-		 * Get plugin info,
-		 * [Filter: plugins_api].
-		 *
-		 * @see getInfo@self
-		 * @property priority 10
-		 * @property count 3
-		 */
-		$this->addFilter('plugins_api', [$this, 'getInfo'], 10, 3);
+		// Get plugin info
+		$this->addFilter('plugins-api', [$this, 'getInfo'], 10, 3);
 
-		/**
-		 * Check plugin update,
-		 * [Filter: pre_set_site_transient_{$transient}],
-		 * [Filter: site_transient_update_{$transient}].
-		 *
-		 * @see checkUpdate@self
-		 * @property priority 10
-		 * @property count 1
-		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this, 'checkUpdate']);
+		// Check plugin update
+		$this->addFilter('pre-transient-update-plugins', [$this, 'checkUpdate']);
 
-		/**
-		 * Check plugin translation update,
-		 * [Filter: pre_set_site_transient_{$transient}],
-		 * [Filter: site_transient_update_{$transient}].
-		 *
-		 * @see checkTranslation@self
-		 * @property priority 10
-		 * @property count 1
-		 */
-		$this->addFilter('pre_set_site_transient_update_plugins', [$this, 'checkTranslation']);
+		// Check plugin translation update.
+		$this->addFilter('pre-transient-update-plugins', [$this, 'checkTranslation']);
 
-		/**
-		 * Clear plugin updates cache,
-		 * [Filter: upgrader_process_complete].
-		 *
-		 * @see clearCache@self
-		 * @property priority 10
-		 * @property count 2
-		 */
-		$this->addFilter('upgrader_process_complete', [$this, 'clearCache'], 10, 2);
+		// Filter updater request
+		$this->addFilter('http-request-args', [$this, 'filterRequest'], 20);
 
-		/**
-		 * Filter updater args,
-		 * [Filter: http_request_args].
-		 *
-		 * @see filterArgs@self
-		 * @property priority 20
-		 * @property count 1
-		 */
-		$this->addFilter('http_request_args', [$this, 'filterArgs'], 20);
+		// Clear plugin updates cache
+		$this->addAction('upgrader-process-complete', [$this, 'clearCache'], 10, 2);
 
 		// Reset config
 		$this->resetConfig();
@@ -179,7 +141,7 @@ class Updater implements UpdaterInterface
 	{
 		// Fix transient
 		if ( !$this->isType('object', $transient) ) {
-			$transient = new stdClass();
+			$transient = new \stdClass();
 		}
 
 		// Fetch update
@@ -207,7 +169,7 @@ class Updater implements UpdaterInterface
 	{
 		// Fix transient
 		if ( !$this->isType('object', $transient) ) {
-			$transient = new stdClass();
+			$transient = new \stdClass();
 		}
 
 		// Check translation API URL
@@ -223,7 +185,7 @@ class Updater implements UpdaterInterface
 
 			// Fix translation transient
 			if ( !isset($transient->translations) ) {
-				$transient = new stdClass();
+				$transient = new \stdClass();
 				$transient->translations = [];
 			}
 
@@ -231,6 +193,7 @@ class Updater implements UpdaterInterface
 			foreach ($transient->translations as $key => $translation) {
 				if ( $translation['slug'] == $this->getNameSpace() ) {
 					unset($transient->translations[$key]);
+					break;
 				}
 			}
 
@@ -250,11 +213,11 @@ class Updater implements UpdaterInterface
 	{
 	    if ( $options['action'] == 'update' && $options['type'] == 'plugin' ) {
 	    	if ( isset($options['plugins']) ) {
-		        foreach($options['plugins'] as $plugin) {
+		        foreach ($options['plugins'] as $plugin) {
 			        if ( $plugin == $this->getMainFile() ) {
-						$this->deletePluginTransient($this->applyNamespace('get-info'));
-						$this->deletePluginTransient($this->applyNamespace('check-update'));
-						$this->deletePluginTransient($this->applyNamespace('check-translation'));
+						$this->purgePluginTransients();
+						$this->purgePluginCache();
+						break;
 			        }
 		        }
 	    	}
@@ -264,7 +227,7 @@ class Updater implements UpdaterInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function filterArgs(array $args) : array
+	public function filterRequest(array $args) : array
 	{
 		if ( isset($args['reject_unsafe_urls']) ) {
 			$args['reject_unsafe_urls'] = $this->hasSsl();
@@ -338,10 +301,10 @@ class Updater implements UpdaterInterface
 				if ( $this->isType('array', $this->auth) ) {
 					$user = $this->auth[0] ?? '';
 					$pswd = $this->auth[1] ?? '';
-					$api->setBasicAuthentication($user, $pswd);
+					$api->setBasicAuth($user, $pswd);
 
 				} elseif ( $this->isType('string', $this->auth) ) {
-					$api->setAuthentication($this->auth);
+					$api->setAuth($this->auth);
 				}
 			}
 
@@ -363,7 +326,7 @@ class Updater implements UpdaterInterface
 
 	/**
 	 * Set updater license into request body.
-	 *  
+	 *
 	 * @access protected
 	 * @param array $body
 	 * @return array
@@ -380,7 +343,7 @@ class Updater implements UpdaterInterface
 
 	/**
 	 * Get updater user-agent (UA).
-	 *  
+	 *
 	 * @access protected
 	 * @return string
 	 */
@@ -404,7 +367,7 @@ class Updater implements UpdaterInterface
 	/**
 	 * Check updater API SSL.
 	 * [Filter: {plugin}-updater-ssl].
-	 *  
+	 *
 	 * @access protected
 	 * @return bool
 	 */
@@ -440,14 +403,14 @@ class Updater implements UpdaterInterface
 
 	/**
 	 * Get updater default transient.
-	 *  
+	 *
 	 * @access protected
 	 * @param string $action
 	 * @return object
 	 */
 	protected function getDefaultTransient(string $action) : object
 	{
-		$transient = new stdClass();
+		$transient = new \stdClass();
 		$transient->name = $this->pluginHeader['Name'];
 		$transient->slug = $this->getNameSpace();
 
@@ -455,7 +418,7 @@ class Updater implements UpdaterInterface
 			$transient->id            = $this->slugify($this->pluginHeader['Name']);
 			$transient->plugin        = $this->getMainFile();
 			$transient->new_version   = $this->version;
-			$transient->compatibility = new stdClass();
+			$transient->compatibility = new \stdClass();
 
 		} elseif ( $action == 'info' ) {
 			

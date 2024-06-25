@@ -128,7 +128,7 @@ final class User
 	{
 		$user = wp_get_current_user();
         if ( $format ) {
-            return self::format($user);
+            return Format::user($user);
         }
         return $user;
 	}
@@ -146,7 +146,7 @@ final class User
 	{
         $user = get_user_by($key, $value);
         if ( $format ) {
-            return self::format($user);
+            return Format::user($user);
         }
         return $user;
 	}
@@ -198,7 +198,7 @@ final class User
         if ( $format ) {
             $wrapper = [];
             foreach ($users as $user) {
-                $wrapper[] = self::format($user);
+                $wrapper[] = Format::user($user);
             }
 			return $wrapper;
 		}
@@ -217,7 +217,7 @@ final class User
 		$users = get_users();
         if ( $format ) {
 			$users = Arrayify::map(function($user) {
-				return self::format($user);
+				return Format::user($user);
 			}, $users);
         }
         return $users;
@@ -755,30 +755,5 @@ final class User
 			$id = self::getId();
 		}
 		return user_can($id, $cap, $args);
-	}
-
-	/**
-     * Get user formatted data.
-     * 
-	 * @access private
-	 * @param mixed $user
-	 * @return mixed
-	 */
-	private static function format($user)
-	{
-        if ( TypeCheck::isObject($user) ) {
-			$name = $user->data->display_name;
-			if ( empty($name) ) {
-				$name = $user->data->user_nicename;
-			}
-            return [
-                'id'    => $user->data->ID,
-                'login' => $user->data->user_login,
-                'name'  => $name,
-                'email' => $user->data->user_email,
-                'hash'  => $user->data->user_pass
-            ];
-        }
-        return $user;
 	}
 }

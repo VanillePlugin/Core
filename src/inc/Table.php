@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-if ( !TypeCheck::isFunction('WP_List_Table') ) {
+if ( !TypeCheck::isFunction('\WP_List_Table') ) {
 	require_once Globals::rootDir('wp-admin/includes/class-wp-list-table.php');
 }
 
@@ -147,6 +147,14 @@ class Table extends \WP_List_Table
 	/**
 	 * @inheritdoc
 	 */
+	public function getColumns() : array
+	{
+		return $this->get_columns();
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function get_sortable_columns() : array
 	{
 		foreach ($this->sortable as $key => $value) {
@@ -161,9 +169,25 @@ class Table extends \WP_List_Table
 	/**
 	 * @inheritdoc
 	 */
+	public function getSortableColumns() : array
+	{
+		return $this->get_sortable_columns();
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function get_hidden_columns() : array
 	{
 		return $this->hidden;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getHiddenColumns() : array
+	{
+		return $this->get_hidden_columns();
 	}
 
 	/**
@@ -177,14 +201,23 @@ class Table extends \WP_List_Table
 	/**
 	 * @inheritdoc
 	 */
+	public function columnDefault($item, $name)
+	{
+	    return $this->column_default($item, $name);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function prepare_items()
 	{
 		// Set pagination
 		if ( $this->pagination == true ) {
 
 			$current = $this->get_pagenum();
-			$total = count($this->data);
-			$this->data = array_slice($this->data, (($current - 1) * $this->limit), $this->limit);
+			$total   = count($this->data);
+			$offset  = (($current - 1) * $this->limit);
+			$this->data = Arrayify::slice($this->data, $offset, $this->limit);
 
 			$this->set_pagination_args([
 				'total_items' => $total,
@@ -205,6 +238,14 @@ class Table extends \WP_List_Table
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function prepareItems()
+	{
+		$this->prepare_items();
+	}
+
+	/**
 	 * Open form output.
 	 *
 	 * @access protected
@@ -213,9 +254,10 @@ class Table extends \WP_List_Table
 	protected function openForm()
 	{
 		$type = ($this->type) ? $this->type : 'data';
+		$page = HttpRequest::get('page');
 	    $output  = '<div class="table-wrap">';
 	    $output .= '<form id="' . $type . '-filter" method="GET">';
-	    $output .= '<input type="hidden" name="page" value="' . $_REQUEST['page'] . '">';
+	    $output .= '<input type="hidden" name="page" value="' . $page . '">';
 	    echo $output;
 	}
 

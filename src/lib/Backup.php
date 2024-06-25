@@ -76,11 +76,12 @@ final class Backup extends Orm
 	public function export(bool $asFile = false)
 	{
 		// Init options
+		$data = [];
 		if ( $this->options ) {
 			foreach ($this->options as $key => $type) {
 				$temp  = $this->applyNamespace($key);
 				$value = $this->getOption($temp, $type);
-				$wrapper['options'][$key] = $value;
+				$data['options'][$key] = $value;
 			}
 		}
 
@@ -88,16 +89,14 @@ final class Backup extends Orm
 		if ( $this->tables ) {
 			foreach ($this->tables as $table) {
 				if ( $this->hasTable($table) ) {
-					$wrapper['tables'][$table] = $this->all($table);
+					$data['tables'][$table] = $this->all($table);
 				}
 			}
 		}
 
 		// Encrypt backup
-		$encrypt = $this->getCryptor($wrapper);
-		$prefix  = $this->applyNameSpace('backup');
-		$encrypt->setPrefix($prefix);
-		$backup = $encrypt->encrypt();
+		$prefix = $this->applyNameSpace('backup');
+		$backup = $this->encrypt($data, $prefix);
 
 		if ( $asFile ) {
 			$date = $this->getDate('now', 'd-m-Y');
@@ -129,11 +128,8 @@ final class Backup extends Orm
 
 		if ( !empty($backup) ) {
 
-			$encrypt = $this->getCryptor($backup);
-			$prefix  = $this->applyNameSpace('backup');
-			$encrypt->setPrefix($prefix);
-
-			if ( ($backup = $encrypt->decrypt()) ) {
+			$prefix = $this->applyNameSpace('backup');
+			if ( ($backup = $this->decrypt($backup, $prefix)) ) {
 
 				// Backup options
 				if ( isset($backup['options']) ) {

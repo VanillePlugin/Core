@@ -15,13 +15,10 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\exc\ModelException;
-use VanillePlugin\lib\{
-	Orm, OrmQuery
-};
 
 /**
- * Helper class for database table model,
- * Using cache.
+ * Plugin table helper.
+ * @uses Cache
  */
 class Model extends Orm
 {
@@ -63,20 +60,19 @@ class Model extends Orm
 	 */
 	public function get($id) : array
 	{
-		$key = "model-{$this->table}-{$id}";
-		
-		if ( !($data = $this->getPluginCache($key)) ) {
+		$key  = "model-{$this->table}-{$id}";
+		$data = $this->getPluginCache($key, $status);
 
+		if ( !$status ) {
 			$where = ["{$this->key}" => (int)$id];
-			$data = $this->query(new OrmQuery([
+			$data  = $this->query(new OrmQuery([
 				'result' => 'row',
 				'where'  => $where
 			]));
 			$this->setPluginCache($key, $data);
-
 		}
 
-		return (array)$data;
+		return $data ?: [];
 	}
 
 	/**
@@ -157,14 +153,45 @@ class Model extends Orm
 	 */
 	public function fetch() : array
 	{
-		$key = "model-{$this->table}-all";
+		$key  = "model-{$this->table}-all";
+		$data = $this->getPluginCache($key, $status);
 		
-		if ( !($data = $this->getPluginCache($key)) ) {
+		if ( !$status ) {
 			$data = $this->all();
 			$this->setPluginCache($key, $data);
 		}
 
-		return (array)$data;
+		return $data ?: [];
+	}
+	
+	/**
+	 * Get cached item.
+	 *
+	 * @access public
+	 * @param string $key
+	 * @param bool $status
+	 * @return array
+	 */
+	public static function getCached(string $key, ?bool &$status = null) : array
+	{
+		$sub  = basename(static::class);
+		$key  = "model-{$sub}-{$key}";
+		$data = (new Cache())->get($key, $status);
+		return $data ?: [];
+	}
+	
+	/**
+	 * Instance database table.
+	 *
+	 * @access public
+	 * @param string $name
+	 * @param string $path
+	 * @param mixed $args
+	 * @return mixed
+	 */
+	public static function instance(string $name, $path = 'db', ...$args)
+	{
+		return (new Loader())->i($path, $name, ...$args);
 	}
 
 	/**

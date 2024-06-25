@@ -459,7 +459,7 @@ class File
 
 			    } else {
 			    	$dir = "{$path}/{$file}";
-				    foreach( @scandir($dir) as $file ) {
+				    foreach ( @scandir($dir) as $file ) {
 				        if ( '.' === $file || '..' === $file ) {
 				        	continue;
 				        }

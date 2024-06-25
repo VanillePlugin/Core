@@ -16,27 +16,31 @@ namespace VanillePlugin\inc;
 
 /**
  * Built-in encryption class,
- * @uses JWT is recommended for external use.
+ * JWT is recommended for external use.
  */
 class Encryption
 {
+	/**
+	 * @access public
+	 * @var string PREFIX Default encryption prefix
+	 */
+	public const PREFIX = '[vanillecrypt]';
+
 	/**
 	 * @access private
 	 * @var string SECRET Default secret key (Passphrase)
 	 * @var string VECTOR Default initialzation vector
 	 * @var int LENGTH Default encryption vector length
-	 * @var string PREFIX Default encryption prefix
 	 * @var string ALGO Default hash algorithm
 	 * @var int OPTIONS Default openssl options
 	 * @var string CIPHER Default openssl cipher algorithm
 	 */
-	private const SECRET = 'v8t1pQ92PN';
-	private const VECTOR = 'ZRfvSPsFQ';
-	private const LENGTH = 16;
-	private const PREFIX = '[vanillecrypt]';
-	private const ALGO = 'sha256';
+	private const SECRET  = 'v8t1pQ92PN';
+	private const VECTOR  = 'ZRfvSPsFQ';
+	private const LENGTH  = 16;
+	private const ALGO    = 'sha256';
 	private const OPTIONS = 0;
-	private const CIPHER = 'AES-256-CBC';
+	private const CIPHER  = 'AES-256-CBC';
 
 	/**
 	 * @access private
@@ -62,7 +66,7 @@ class Encryption
 
 	/**
 	 * Init encryption (Encrypt / Decrypt).
-	 * 
+	 *
 	 * @param mixed $data
 	 * @param string $key
 	 * @param string $vector
@@ -102,7 +106,7 @@ class Encryption
 
 	/**
 	 * Set OpenSSL cipher algorithm.
-	 * 
+	 *
 	 * @access public
 	 * @param string $options
 	 * @param object
@@ -115,7 +119,7 @@ class Encryption
 
 	/**
 	 * Set encryption prefix.
-	 * 
+	 *
 	 * @access public
 	 * @param string $prefix
 	 * @param object
@@ -130,7 +134,7 @@ class Encryption
 
 	/**
 	 * Initialize hash.
-	 * 
+	 *
 	 * @access public
 	 * @param string $algo
 	 * @return object
@@ -144,7 +148,7 @@ class Encryption
 
 	/**
 	 * Encrypt data.
-	 * 
+	 *
 	 * @access public
 	 * @param int $loop, Base64 loop (Max 5)
 	 * @param string
@@ -176,7 +180,7 @@ class Encryption
 
 	/**
 	 * Decrypt data.
-	 * 
+	 *
 	 * @access public
 	 * @param int $loop, Base64 loop (Max 5)
 	 * @param mixed
@@ -207,9 +211,9 @@ class Encryption
 
 	/**
 	 * Get decrypted data as string.
-	 * 
+	 *
 	 * @access public
-	 * @param object
+	 * @return object
 	 */
 	public function asString() : self
 	{
@@ -219,9 +223,9 @@ class Encryption
 
 	/**
 	 * Bypass encrypted string.
-	 * 
+	 *
 	 * @access public
-	 * @param object
+	 * @return object
 	 */
 	public function bypass() : self
 	{
@@ -231,7 +235,7 @@ class Encryption
 	
 	/**
 	 * Check whether data is crypted using prefix.
-	 * 
+	 *
 	 * @access public
 	 * @param bool
 	 */

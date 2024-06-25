@@ -21,6 +21,7 @@ class Request implements RequestInterface
 	/**
 	 * @access private
 	 * @var string $baseUrl, Request base URL
+	 * @var string $endpoint, Request endpoint
 	 * @var string $method, Request method
 	 * @var array $headers, Request headers
 	 * @var array $cookies, Request cookies
@@ -29,6 +30,7 @@ class Request implements RequestInterface
 	 * @var mixed $response, Raw response
 	 */
 	protected $baseUrl;
+	protected $endpoint;
 	protected $method = 'GET';
 	protected $headers = [];
 	protected $cookies = [];
@@ -41,13 +43,12 @@ class Request implements RequestInterface
 	 */
 	public function __construct(string $method = 'GET', array $args = [], ?string $baseUrl = null)
 	{
-		$this->method = $method;
-		$this->args = $args;
+		$this->method  = $method;
+		$this->args    = $args;
 		$this->baseUrl = $baseUrl;
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function setMethod(string $method) : self
@@ -57,7 +58,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function setBaseUrl(string $url) : self
@@ -67,7 +67,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function setArgs(array $args = []) : self
@@ -77,7 +76,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function addArg(string $arg, $value = null)
@@ -86,7 +84,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function setHeaders(array $headers = []) : self
@@ -96,7 +93,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function addHeader(string $header, $value = null)
@@ -105,7 +101,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function setCookies(array $cookies = []) : self
@@ -115,7 +110,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function addCookie(string $cookie, $value = null)
@@ -124,7 +118,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function setBody(array $body = []) : self
@@ -134,7 +127,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function addBody(string $body, $value = null)
@@ -143,28 +135,27 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function send(?string $url = null) : self
 	{
-		$args = Arrayify::merge([
+		$this->args = Arrayify::merge([
 		    'method'  => $this->method,
 		    'headers' => $this->headers,
 		    'body'    => $this->body,
 		    'cookies' => $this->cookies
 		], $this->args);
 
+		$this->endpoint = "{$this->baseUrl}{$url}";
 		$this->response = wp_remote_request(
-			"{$this->baseUrl}{$url}",
-			$args
+			$this->endpoint,
+			$this->args
 		);
 		
 		return $this;
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function get(string $url, array $args = []) : self
@@ -174,7 +165,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function post(string $url, array $args = []) : self
@@ -184,7 +174,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function head(string $url, array $args = []) : self
@@ -194,52 +183,36 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function put(string $url, array $args = []) : self
 	{
-		if ( isset($args['method']) ) {
-			unset($args['method']);
-			$args['method'] = 'PUT';
-		}
-
+		$args['method'] = 'PUT';
 		$this->response = wp_remote_request($url, $args);
 		return $this;
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function patch(string $url, array $args = []) : self
 	{
-		if ( isset($args['method']) ) {
-			unset($args['method']);
-			$args['method'] = 'PATCH';
-		}
-
+		$args['method'] = 'PATCH';
 		$this->response = wp_remote_request($url, $args);
 		return $this;
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function delete(string $url, array $args = []) : self
 	{
-		if ( isset($args['method']) ) {
-			unset($args['method']);
-			$args['method'] = 'DELETE';
-		}
-		
+		$args['method'] = 'DELETE';
 		$this->response = wp_remote_request($url, $args);
 		return $this;
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function getStatusCode() : int
@@ -250,7 +223,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function getBody() : string
@@ -261,7 +233,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function getHeader(string $header) : string
@@ -273,7 +244,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function getHeaders()
@@ -284,7 +254,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function getMessage() : string
@@ -295,7 +264,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function hasError() : bool
@@ -307,7 +275,6 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
 	 * @inheritdoc
 	 */
 	public function getError()
@@ -316,20 +283,31 @@ class Request implements RequestInterface
 	}
 
 	/**
-	 * @access public
+	 * @inheritdoc
+	 */
+	public function getReport() : array
+	{
+		return [
+			'request' => [
+				'url'      => $this->baseUrl,
+				'endpoint' => $this->endpoint,
+				'method'   => $this->method,
+				'headers'  => $this->headers,
+				'body'     => $this->body
+			],
+			'response' => [
+				'code'    => $this->getStatusCode(),
+				'message' => $this->getMessage(),
+				'error'   => $this->getError()
+			]
+		];
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public static function addQueryArg($arg, string $url) : string
 	{
 		return add_query_arg($arg, $url);
-	}
-
-	/**
-	 * @access public
-	 * @inheritdoc
-	 */
-	public static function buildQuery(array $args) : string
-	{
-		return Stringify::buildQuery($args);
 	}
 }

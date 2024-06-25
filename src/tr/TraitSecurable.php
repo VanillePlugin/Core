@@ -120,25 +120,15 @@ trait TraitSecurable
 	}
 
     /**
-     * Get encryption object.
-     *
-	 * @access protected
-	 * @inheritdoc
-     */
-    protected function getCryptor($data, ?string $key = 'v8t1pQ92PN', ?string $vector = 'ZRfvSPsFQ', ?int $length = 16) : Encryption
-    {
-        return new Encryption($data, $key, $vector, $length);
-    }
-
-    /**
      * Encrypt data.
      *
 	 * @access protected
 	 * @inheritdoc
      */
-    protected function encrypt($data) : string
+    protected function encrypt($data, string $prefix = Encryption::PREFIX) : string
     {
-        return (new Encryption($data))->bypass()->encrypt();
+		$cryptor = new Encryption($data);
+        return $cryptor->setPrefix($prefix)->encrypt();
     }
 
     /**
@@ -147,8 +137,9 @@ trait TraitSecurable
 	 * @access protected
 	 * @inheritdoc
      */
-    protected function decrypt($data)
+    protected function decrypt($data, string $prefix = Encryption::PREFIX)
     {
-        return (new Encryption($data))->decrypt();
+		$cryptor = new Encryption($data);
+        return $cryptor->setPrefix($prefix)->decrypt();
     }
 }

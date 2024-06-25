@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 /**
- * Plugin custom assets manager.
+ * Plugin assets manager.
  */
 final class Asset
 {
@@ -128,6 +128,7 @@ final class Asset
 	 *
 	 * @access public
 	 * @return void
+	 * @todo
 	 */
 	public function download()
 	{
@@ -224,7 +225,6 @@ final class Asset
 			foreach ($files as $file) {
 				if ( !$this->isFile("{$this->dir}/{$asset}/{$file}") ) {
 					return false;
-					break;
 				}
 			}
 		}
@@ -274,7 +274,7 @@ final class Asset
 	{
 		$wrapper = [];
 		foreach ($this->assets as $asset => $files) {
-			$wrapper[$asset] = $this->mapArray(function($file){
+			$wrapper[$asset] = $this->mapArray(function($file) {
 				return $this->getFileName($file);
 			}, $files);
 		}

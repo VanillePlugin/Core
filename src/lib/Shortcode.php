@@ -17,6 +17,9 @@ namespace VanillePlugin\lib;
 use VanillePlugin\inc\Shortcode as Core;
 use VanillePlugin\int\CallableInterface;
 
+/**
+ * Plugin shortcode manager.
+ */
 class Shortcode extends View
 {
 	/**
@@ -161,7 +164,7 @@ class Shortcode extends View
 	 */
 	public static function instance(string $name, $path = 'shortcode', ...$args)
 	{
-		return (new Loader())->i($path, $name, $args);
+		return (new Loader())->i($path, $name, ...$args);
 	}
 
 	/**
@@ -231,6 +234,43 @@ class Shortcode extends View
 	protected function setAttribute(string $attr, $value)
 	{
 		$this->atts[$attr] = $value;
+	}
+
+	/**
+	 * Set attribute (Alias).
+	 *
+	 * @access protected
+	 * @param string $attr
+	 * @param mixed $value
+	 * @return void
+	 */
+	protected function setAttr(string $attr, $value)
+	{
+		$this->setAttribute($attr, $value);
+	}
+
+	/**
+	 * Get attribute.
+	 *
+	 * @access protected
+	 * @param string $attr
+	 * @return mixed
+	 */
+	protected function getAttribute(string $attr)
+	{
+		return $this->atts[$attr] ?? null;
+	}
+
+	/**
+	 * Get attribute (Alias).
+	 *
+	 * @access protected
+	 * @param string $attr
+	 * @return mixed
+	 */
+	protected function getAttr(string $attr)
+	{
+		return $this->getAttribute($attr);
 	}
 
 	/**
@@ -370,7 +410,7 @@ class Shortcode extends View
 	protected function hasFlag(array $atts, string $attr) : bool
 	{
 		$flags = [];
-		$attr = $this->formatAttrName($attr);
+		$attr  = $this->formatAttrName($attr);
 		foreach ($atts as $key => $name) {
 			if ( $this->isType('int', $key) && $this->isType('string', $name) ) {
 				$flags[] = $this->formatAttrName($name);

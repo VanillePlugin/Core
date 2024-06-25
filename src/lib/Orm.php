@@ -20,8 +20,8 @@ use VanillePlugin\int\{
 };
 
 /**
- * Helper class for database CRUD architecture,
- * Using secured ORM style.
+ * Plugin CRUD manager.
+ * @uses ORM style
  */
 class Orm extends Db implements OrmInterface
 {
@@ -268,7 +268,7 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function all(?string $table = null) : array
 	{
-		$sql  = "SELECT * FROM `{$this->getTable($table)}`;";
+		$sql = "SELECT * FROM `{$this->getTable($table)}`;";
 		return $this->getResult($sql);
 	}
 

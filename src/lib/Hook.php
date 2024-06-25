@@ -15,8 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 /**
- * Plugin custom admin hooks.
- * @internal
+ * Plugin hooks manager.
  */
 final class Hook
 {

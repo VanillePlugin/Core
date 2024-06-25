@@ -15,8 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 /**
- * Plugin custom functions loader.
- * @internal
+ * Plugin functions loader.
  */
 class Loader
 {
@@ -64,7 +63,7 @@ class Loader
 			if ( isset($files[$className]) ) {
 				if ( $this->isType('class', $files[$className]) ) {
 					$class = $files[$className];
-					return new $class($args);
+					return new $class(...$args);
 				}
 			}
 		}
@@ -82,7 +81,7 @@ class Loader
 	 */
 	public function i($path, $className, ...$args)
 	{
-		return $this->instance($path, $className, $args);
+		return $this->instance($path, $className, ...$args);
 	}
 
 	/**

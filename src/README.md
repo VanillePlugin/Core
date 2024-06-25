@@ -9,14 +9,6 @@ The "traits" folder (tr) contains VanillePlugin "librairies" traits.
 
 These classes **SHOULD NOT** include:
 - Exceptions (exc)
-- Core (VanillePluginValidator)
-
-The "third-parties" folder (third) contains VanillePlugin third-party wrapper classes.
-
-These classes **SHOULD NOT** include:
-- Exceptions (exc)
-- Interfaces (int)
-- librairies (lib)
 - Core (VanillePluginConfig, VanillePluginOption, VanillePluginValidator)
 
 The "interfaces" folder (int) contains VanillePlugin "librairies" interfaces.
@@ -27,20 +19,13 @@ These classes **CAN ONLY** be used by:
 The "includes" folder (inc) contains VanillePlugin wrapper classes,  
 Used to improve or change behavior of built-in PHP & WordPress functions.
 
-These classes **SHOULD NOT** include:
-- Exceptions (exc)
-- Interfaces (int)
-- librairies (lib)
-- Third-parties (third)
-- Traits (tr)
-- Core (VanillePluginConfig, VanillePluginOption, VanillePluginValidator)
+These classes **SHOULD NOT** include any of VanillePlugin parts
 
 The "exceptions" folder (exc) contains VanillePlugin core exceptions.
 
-These classes **SHOULD NOT** include:
-- Interfaces (int)
+These classes **SHOULD NOT** include any of VanillePlugin parts
+and **CAN ONLY** be used by:
 - librairies (lib)
-- Third-parties (third)
 - Traits (tr)
 - Core (VanillePluginConfig, VanillePluginOption, VanillePluginValidator)
 
@@ -51,7 +36,6 @@ The VanillePluginConfig **SHOULD NOT** include:
 - Includes (inc)
 - Interfaces (int)
 - librairies (lib)
-- Third-parties (third)
 - Core (VanillePluginOption)
 
 The VanillePluginOption **SHOULD NOT** include:
@@ -59,11 +43,9 @@ The VanillePluginOption **SHOULD NOT** include:
 - Includes (inc)
 - Interfaces (int)
 - librairies (lib)
-- Third-parties (third)
 - Core (VanillePluginValidator)
 
 The VanillePluginValidator **SHOULD NOT** include:
 - Interfaces (int)
 - librairies (lib)
-- Third-parties (third)
 - Core (VanillePluginConfig, VanillePluginOption)

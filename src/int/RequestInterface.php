@@ -41,7 +41,7 @@ interface RequestInterface
 	function setArgs(array $args = []) : self;
 
 	/**
-	 * Add/Override single request arg.
+	 * Add or override single request arg.
 	 *
 	 * @param string $arg
 	 * @param mixed $value
@@ -50,15 +50,15 @@ interface RequestInterface
 	function addArg(string $arg, $value = null);
 
 	/**
-	 * Set/Reset request headers.
-	 
+	 * Set or reset request headers.
+	 *
 	 * @param array $headers
 	 * @return object
 	 */
 	function setHeaders(array $headers = []) : self;
 
 	/**
-	 * Add/Override single request header.
+	 * Add or override single request header.
 	 *
 	 * @param string $header
 	 * @param mixed $value
@@ -67,15 +67,15 @@ interface RequestInterface
 	function addHeader(string $header, $value = null);
 
 	/**
-	 * Set/Reset request cookies.
-	 
+	 * Set or reset request cookies.
+	 *
 	 * @param array $cookies
 	 * @return object
 	 */
 	function setCookies(array $cookies = []) : self;
 
 	/**
-	 * Add/Override single request cookie.
+	 * Add or override single request cookie.
 	 *
 	 * @param string $cookie
 	 * @param mixed $value
@@ -84,15 +84,15 @@ interface RequestInterface
 	function addCookie(string $cookie, $value = null);
 
 	/**
-	 * Set/Reset request body.
-	 
+	 * Set or reset request body.
+	 *
 	 * @param array $body
 	 * @return object
 	 */
 	function setBody(array $body = []) : self;
 
 	/**
-	 * Add/Override single request body.
+	 * Add or override single request body.
 	 *
 	 * @param string $body
 	 * @param mixed $value
@@ -102,7 +102,7 @@ interface RequestInterface
 
 	/**
 	 * Send request.
-	 
+	 *
 	 * @param string $url
 	 * @return object
 	 */
@@ -214,6 +214,13 @@ interface RequestInterface
 	function getError();
 
 	/**
+	 * Get request report.
+	 *
+	 * @return array
+	 */
+	function getReport() : array;
+
+	/**
 	 * Add arg to query.
 	 *
 	 * @param mixed $arg
@@ -221,12 +228,4 @@ interface RequestInterface
 	 * @return string
 	 */
 	static function addQueryArg($arg, string $url) : string;
-
-	/**
-	 * Build query args from string (Alias).
-	 *
-	 * @param array $args
-	 * @return string
-	 */
-	static function buildQuery(array $args) : string;
 }

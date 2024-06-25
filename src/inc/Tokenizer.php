@@ -16,7 +16,7 @@ namespace VanillePlugin\inc;
 
 /**
  * Built-in tokenizer class,
- * @see JWT for external use is recommended.
+ * JWT for external use is recommended.
  */
 class Tokenizer
 {

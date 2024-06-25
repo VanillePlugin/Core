@@ -147,7 +147,7 @@ trait TraitFormattable
 
 	/**
 	 * Strip slashes in quotes or single quotes.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -158,7 +158,7 @@ trait TraitFormattable
 
 	/**
 	 * Search string.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -271,6 +271,17 @@ trait TraitFormattable
 	protected function breakString() : string
 	{
 		return Stringify::break();
+	}
+
+	/**
+	 * Generate key from args.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function generateKey(string $item, array $args = []) : string
+	{
+		return Stringify::generateKey($item, $args);
 	}
 
 	/**
@@ -473,7 +484,7 @@ trait TraitFormattable
 
 	/**
 	 * Encode JSON using flags.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -561,7 +572,7 @@ trait TraitFormattable
 
 	/**
      * Check value type.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -649,21 +660,16 @@ trait TraitFormattable
     }
 
 	/**
-     * Check object inherit.
-     * 
+     * Check object.
+     *
 	 * @access protected
 	 * @inheritdoc
-	 * @todo hasObject => hasItem
 	 */
     protected function hasObject($type, $object, $item) : bool
     {
         switch ($this->lowercase($type)) {
             case 'interface':
-                $i = $this->lowercase($item);
-                if ( !$this->hasString($i, 'interface') ) {
-                    $item = $this->capitalize($item);
-                    $item = "{$item}Interface";
-                }
+                $item = $this->toInterface($item);
                 return TypeCheck::hasInterface($object, $item);
                 break;
 
@@ -702,5 +708,21 @@ trait TraitFormattable
 	protected function toArray(object $object) : array
 	{
 	    return Converter::toArray($object);
+	}
+
+	/**
+	 * Convert string to interface.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function toInterface(string $string) : string
+	{
+		$i = $this->lowercase($string);
+		if ( !$this->hasString($i, 'interface') ) {
+			$string = $this->capitalize($string);
+			$string = "{$string}Interface";
+		}
+		return $string;
 	}
 }

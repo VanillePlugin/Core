@@ -239,20 +239,6 @@ final class Migrate extends Orm
 	}
 
 	/**
-	 * Instance database table.
-	 *
-	 * @access public
-	 * @param string $name
-	 * @param string $path
-	 * @param mixed $args
-	 * @return mixed
-	 */
-	public static function instance(string $name, $path = 'db', ...$args)
-	{
-		return (new Loader())->i($path, $name, $args);
-	}
-
-	/**
 	 * Parse table name for upgrade.
 	 *
 	 * @access private

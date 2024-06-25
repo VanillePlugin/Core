@@ -17,9 +17,9 @@ namespace VanillePlugin\int;
 interface UpdaterInterface
 {
 	/**
-	 * Init updater,
-	 * [action : admin_init].
-	 * 
+	 * Init updater.
+	 * [action : admin-init].
+	 *
 	 * @param string $host
 	 * @param array $args
 	 */
@@ -27,7 +27,8 @@ interface UpdaterInterface
 
 	/**
 	 * Get plugin info.
-	 * 
+	 * [Filter: plugins-api].
+	 *
 	 * @param mixed $transient
 	 * @param string $action
 	 * @param object $args
@@ -37,7 +38,8 @@ interface UpdaterInterface
 
 	/**
 	 * Check plugin update.
-	 * 
+	 * [Filter: pre-transient-update-{$transient}].
+	 *
 	 * @param mixed $transient
 	 * @return object
 	 */
@@ -45,30 +47,31 @@ interface UpdaterInterface
 
 	/**
 	 * Check plugin translation update.
-	 * 
+	 * [Filter: pre-transient-update-{$transient}].
+	 *
 	 * @param mixed $transient
 	 * @return object
 	 */
 	function checkTranslation($transient) : object;
 
 	/**
-	 * Clear plugin updates cache,
-	 * [Filter: upgrader_process_complete].
+	 * Filter updater request.
+	 * [Filter: http-request-args].
+	 *
+	 * @param array $args
+	 * @return array
+	 */
+	function filterRequest(array $args) : array;
+	
+	/**
+	 * Clear plugin updates cache.
+	 * [Action: upgrader-process-complete].
 	 *
 	 * @param object $upgrader
 	 * @param array $options
 	 * @return void
 	 */
 	function clearCache(object $upgrader, array $options);
-
-	/**
-	 * Filter updater args,
-	 * Allow unsafe updater URLs for non SSL.
-	 * 
-	 * @param array $args
-	 * @return array
-	 */
-	function filterArgs(array $args) : array;
 
 	/**
 	 * Get update status.

@@ -18,6 +18,9 @@ use VanillePlugin\inc\{
     HttpRequest, Server, Globals, Stringify
 };
 
+/**
+ * Plugin mobile helper.
+ */
 class Mobile extends View
 {
 	use \VanillePlugin\tr\TraitLoggable;

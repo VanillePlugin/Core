@@ -55,7 +55,7 @@ class Post
 	{
 		global $post;
         if ( $format ) {
-            return self::format($post);
+            return Format::post($post);
         }
         return $post;
 	}
@@ -73,7 +73,7 @@ class Post
 		if ( !$id ) $id = self::getId();
 		$post = get_post($id);
         if ( $format ) {
-            return self::format($post);
+            return Format::post($post);
         }
 		return $post;
 	}
@@ -284,35 +284,9 @@ class Post
 		$posts = get_posts($args);
         if ( $format ) {
 			$posts = Arrayify::map(function($post) {
-				return self::format($post);
+				return Format::post($post);
 			}, $posts);
         }
         return $posts;
-	}
-
-	/**
-     * Get post formatted data.
-     *
-	 * @access private
-	 * @param mixed $post
-	 * @return mixed
-	 */
-	private static function format($post)
-	{
-        if ( $post ) {
-            return [
-                'id'      => $post->ID,
-                'slug'    => $post->post_name,
-                'title'   => $post->post_title,
-                'content' => $post->post_content,
-                'link'    => $post->guid,
-                'type'    => $post->post_type,
-                'status'  => $post->post_status,
-                'author'  => $post->post_author,
-                'date'    => $post->post_date,
-                'edited'  => $post->post_modified
-            ];
-        }
-        return $post;
 	}
 }

@@ -18,7 +18,7 @@ final class Server
 {
 	/**
 	 * Get _SERVER value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @param bool $format
@@ -27,9 +27,7 @@ final class Server
 	public static function get(?string $key = null, $format = true)
 	{
 		if ( $key ) {
-			if ( $format ) {
-				$key = Stringify::undash($key, true);
-			}
+			if ( $format ) $key = Stringify::undash($key, true);
 			return self::isSetted($key) ? $_SERVER[$key] : null;
 		}
 		return self::isSetted() ? $_SERVER : null;
@@ -37,7 +35,7 @@ final class Server
 
 	/**
 	 * Set _SERVER value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $value
@@ -46,15 +44,13 @@ final class Server
 	 */
 	public static function set(string $key, $value = null, $format = true)
 	{
-		if ( $format ) {
-			$value = Stringify::undash($key, true);
-		}
+		if ( $format ) $value = Stringify::undash($key, true);
 		$_SERVER[$key] = $value;
 	}
 
 	/**
 	 * Check _SERVER value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @param bool $format
@@ -63,9 +59,7 @@ final class Server
 	public static function isSetted(?string $key = null, $format = true) : bool
 	{
 		if ( $key ) {
-			if ( $format ) {
-				$key = Stringify::undash($key, true);
-			}
+			if ( $format ) $key = Stringify::undash($key, true);
 			return isset($_SERVER[$key]);
 		}
 		return isset($_SERVER) && !empty($_SERVER);
@@ -73,7 +67,7 @@ final class Server
 
 	/**
 	 * Unset _SERVER value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @return void
@@ -136,7 +130,7 @@ final class Server
 	 */
 	public static function getProtocol()
 	{
-		return self::isSsl() ? 'https://' : 'http://';
+		return (self::isSsl()) ? 'https://' : 'http://';
 	}
 
 	/**
@@ -153,16 +147,17 @@ final class Server
 			'http-cf-ipcountry',
 			'http-x-country-code'
 		];
+
 		foreach ($headers as $header) {
 			if ( self::isSetted($header) ) {
 				$code = self::get($header);
 				if ( !empty($code) ) {
 					$code = Stringify::stripSlash($code);
 					return Stringify::uppercase($code);
-					break;
 				}
 			}
 		}
+		
 		return false;
 	}
 	
@@ -189,10 +184,8 @@ final class Server
 	public static function getBaseUrl() : string
 	{
 		$url = self::get('http-host');
-		if ( self::isSsl() ) {
-			return "https://{$url}";
-		}
-		return "http://{$url}";
+		$schema = (self::isSsl()) ? 'https://' : 'http://';
+		return "{$schema}}{$url}";
 	}
 
 	/**
@@ -222,9 +215,13 @@ final class Server
 	 * @param string $url
 	 * @return string
 	 */
-	public static function parseBaseUrl($url = '')
+	public static function parseBaseUrl(string $url) : string
 	{
-		if ( !empty($url) && ($url = Stringify::parseUrl($url)) ) {
+		if ( empty($url) ) {
+			return $url;
+		}
+
+		if ( ($url = Stringify::parseUrl($url)) ) {
 			unset($url['path']);
 			$tmp = '';
 			if ( isset($url['scheme']) ) {
@@ -235,12 +232,13 @@ final class Server
 			}
 			$url = $tmp;
 		}
-		return (string)$url;
+
+		return $url;
 	}
 
 	/**
 	 * Check external server status code.
-	 * 
+	 *
 	 * @access public
 	 * @param string $url
 	 * @param array $args
@@ -332,6 +330,7 @@ final class Server
 						return true;
 					}
 				}
+
 			} else {
 				if ( $request->getBody() !== $args['response'] ) {
 					return true;
@@ -350,10 +349,7 @@ final class Server
 	 */
 	public static function isBasicAuth() : bool
 	{
-		if ( self::isSetted('php-auth-user') && self::isSetted('php-auth-pw') ) {
-			return true;
-		}
-		return false;
+		return (self::getBasicAuthUser() && self::getBasicAuthPwd());
 	}
 
 	/**
@@ -364,7 +360,7 @@ final class Server
 	 */
 	public static function getBasicAuthUser() : string
 	{
-		return self::isSetted('php-auth-user') ? self::get('php-auth-user') : '';
+		return self::get('php-auth-user') ?: '';
 	}
 
 	/**
@@ -375,7 +371,7 @@ final class Server
 	 */
 	public static function getBasicAuthPwd() : string
 	{
-		return self::isSetted('php-auth-pw') ? self::get('php-auth-pw') : '';
+		return self::get('php-auth-pw') ?: '';
 	}
 
 	/**
@@ -432,8 +428,7 @@ final class Server
 	}
 
     /**
-     * Check if SSL verify is required in request,
-     * Maybe remote server requires (SNI),
+     * Check if SSL verify is required in request.
      * Fix (SNI) SSL verification.
      *
      * @access public
@@ -444,11 +439,37 @@ final class Server
     {
     	$hasCurl = TypeCheck::isFunction('curl_init');
 		if ( isset($args['sslverify']) && !$args['sslverify'] ) {
+
 			// Force sslverify when cUrl not used
 			if ( !$hasCurl ) {
 				$args['sslverify'] = true;
 			}
+			
 		}
     	return $args;
+    }
+
+    /**
+     * Get domain name from URL.
+     *
+     * @access public
+     * @param string $url
+     * @return string
+     */
+    public static function getDomain(?string $url = null) : string
+    {
+		if ( !$url ) {
+			$url = self::getCurrentUrl(true);
+		}
+		
+		$pieces  = Stringify::parseUrl($url);
+		$domain  = isset($pieces['host']) ? $pieces['host'] : $pieces['path'];
+		$pattern = '/(?P<domain>[a-z0-9][a-z0-9\\-]{1,63}\\.[a-z\\.]{2,6})$/i';
+		
+		if ( ($domain = Stringify::match($pattern, $domain)) ) {
+			return $domain;
+		}
+
+		return $url;
     }
 }

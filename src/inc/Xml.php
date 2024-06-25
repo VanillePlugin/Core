@@ -18,7 +18,7 @@ final class Xml
 {
 	/**
 	 * Parse XML string.
-     * 
+	 *
 	 * [NOCDATA: 16384].
 	 * [VERSION: 20908].
 	 * 

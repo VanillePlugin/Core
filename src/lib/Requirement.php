@@ -252,7 +252,7 @@ class Requirement extends Notice implements RequirementInterface
 			if ( isset($module->override) ) {
 
 				// Overrided module check
-				$name = $module->override->name ?? '';
+				$name  = $module->override->name ?? '';
 				$value = $module->override->value ?? '';
 
 				if ( !$this->isActivated($module->callable) && !$this->isConfig($name,$value) ) {

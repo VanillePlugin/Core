@@ -29,9 +29,9 @@ final class Cache
 	 * @param bool $found
 	 * @return mixed
 	 */
-	public static function get($key, string $group = '', bool $force = false, ?bool &$found = null)
+	public static function get($key, string $group = '', bool $force = false, ?bool &$status = null)
 	{
-		return wp_cache_get($key, $group, $force, $found);
+		return wp_cache_get($key, $group, $force, $status);
 	}
 
 	/**

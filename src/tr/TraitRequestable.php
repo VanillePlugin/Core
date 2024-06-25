@@ -16,7 +16,7 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
     HttpRequest, HttpPost, HttpGet,
-	Response, Request, Server, Stringify
+	Response, Server, Stringify
 };
 
 trait TraitRequestable
@@ -185,7 +185,7 @@ trait TraitRequestable
 
     /**
      * Check if SSL verify is required in request.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
      */
@@ -195,35 +195,24 @@ trait TraitRequestable
     }
 
     /**
+     * Get domain name from URL.
+     *
+	 * @access protected
+	 * @inheritdoc
+     */
+    protected function getDomainName(?string $url = null) : string
+    {
+    	return Server::getDomain($url);
+    }
+
+    /**
      * Parse URL.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
      */
     protected function parseUrl(string $url, int $component = -1)
     {
     	return Stringify::parseUrl($url, $component);
-    }
-
-    /**
-     * Build query args from string.
-     * 
-	 * @access protected
-	 * @inheritdoc
-     */
-    protected function buildQuery($args, string $prefix = '', ?string $sep = '&', int $enc = 1) : string
-    {
-    	return Stringify::buildQuery($args, $prefix, $sep, $enc);
-    }
-
-	/**
-	 * Get HTTP client.
-	 * 
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getHttpClient(string $method = 'GET', array $args = [], ?string $baseUrl = null) : Request
-    {
-        return new Request($method, $args, $baseUrl);
     }
 }

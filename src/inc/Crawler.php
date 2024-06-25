@@ -25,7 +25,7 @@ final class Crawler
 	 * @var string METHOD
 	 * @var string PATTERN
 	 */
-	private const METHOD = 'GET';
+	private const METHOD  = 'GET';
 	private const PATTERN = '*';
 
 	/**
@@ -45,7 +45,7 @@ final class Crawler
 	public function __construct(string $pattern = self::PATTERN, string $method = self::METHOD)
 	{
 		$this->pattern = $pattern;
-		$this->method = $method;
+		$this->method  = $method;
 	}
 
 	/**

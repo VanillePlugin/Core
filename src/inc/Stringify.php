@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-use PHPUnit\Util\Type;
-
 /**
  * Advanced custom I/O helper and string manipulation,
  * @see https://wordpress.org/about/security/.
@@ -643,7 +641,7 @@ final class Stringify
 	/**
 	 * Sanitize key,
 	 * [Filter: sanitize_key].
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -656,7 +654,7 @@ final class Stringify
 	/**
 	 * Sanitize email,
 	 * [Filter: sanitize_email].
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -668,7 +666,7 @@ final class Stringify
 
 	/**
 	 * Sanitize hex color (with #).
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -681,7 +679,7 @@ final class Stringify
 	/**
 	 * Sanitize HTML class,
 	 * [Filter: sanitize_html_class].
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @param string $fallback
@@ -697,7 +695,7 @@ final class Stringify
 	 * Replacing whitespace with dashes,
 	 * [Filter: sanitize_file_name],
 	 * [Filter: sanitize_file_name_chars].
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -710,7 +708,7 @@ final class Stringify
 	/**
 	 * Sanitize mime type,
 	 * [Filter: sanitize_mime_type].
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -722,7 +720,7 @@ final class Stringify
 
 	/**
 	 * Sanitize SQL 'order by' clause.
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -986,10 +984,10 @@ final class Stringify
 
 	/**
 	 * Build query args from string (URL toolkit).
-	 * 
+	 *
 	 * [PHP_QUERY_RFC1738: 1]
 	 * [PHP_QUERY_RFC3986: 2]
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $args
 	 * @param string $prefix, Numeric index for args (array)
@@ -1093,5 +1091,42 @@ final class Stringify
 	public static function break() : string
 	{
 		return PHP_EOL;
+	}
+
+	/**
+	 * Generate key from args.
+	 *
+	 * @access public
+	 * @param string $item
+	 * @param array $args
+	 * @return string
+	 */
+	public static function generateKey(string $item, array $args = []) : string
+	{
+		$key = $item;
+		
+		foreach ($args as $name => $value) {
+
+			if ( TypeCheck::isNull($value) || TypeCheck::isEmpty($value) ) {
+				continue;
+			}
+
+			if ( $value === 0 ) {
+				$value = '0';
+
+			} elseif ( TypeCheck::isFalse($value) ) {
+				$value = 'false';
+
+			} elseif ( TypeCheck::isTrue($value) ) {
+				$value = 'true';
+
+			} elseif ( TypeCheck::isArray($value) ) {
+				$value = implode('-', $value);
+			}
+
+			$key .= "-{$name}-{$value}";
+		}
+
+		return self::slugify($key);
 	}
 }
