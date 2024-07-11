@@ -18,60 +18,27 @@ interface UpdaterInterface
 {
 	/**
 	 * Init updater.
-	 * [action : admin-init].
+	 * [Action : admin-init].
 	 *
-	 * @param string $host
-	 * @param array $args
+	 * @param array $auth
+	 * @param array $url
 	 */
-	function __construct(string $host, array $args = []);
+	function __construct(array $auth = [], array $url = []);
 
 	/**
-	 * Get plugin info.
-	 * [Filter: plugins-api].
+	 * Set update listener.
 	 *
-	 * @param mixed $transient
-	 * @param string $action
-	 * @param object $args
-	 * @return mixed
-	 */
-	function getInfo($transient, string $action, object $args);
-
-	/**
-	 * Check plugin update.
-	 * [Filter: pre-transient-update-{$transient}].
-	 *
-	 * @param mixed $transient
-	 * @return object
-	 */
-	function checkUpdate($transient) : object;
-
-	/**
-	 * Check plugin translation update.
-	 * [Filter: pre-transient-update-{$transient}].
-	 *
-	 * @param mixed $transient
-	 * @return object
-	 */
-	function checkTranslation($transient) : object;
-
-	/**
-	 * Filter updater request.
-	 * [Filter: http-request-args].
-	 *
-	 * @param array $args
-	 * @return array
-	 */
-	function filterRequest(array $args) : array;
-	
-	/**
-	 * Clear plugin updates cache.
-	 * [Action: upgrader-process-complete].
-	 *
-	 * @param object $upgrader
-	 * @param array $options
 	 * @return void
 	 */
-	function clearCache(object $upgrader, array $options);
+	function listen();
+
+	/**
+	 * Set updater host.
+	 *
+	 * @param mixed $host
+	 * @return bool
+	 */
+	function setHost($host) : bool;
 
 	/**
 	 * Get update status.
@@ -86,4 +53,68 @@ interface UpdaterInterface
 	 * @return bool
 	 */
 	function setAsUpdated() : bool;
+
+	/**
+	 * Remove plugin updates.
+	 *
+	 * @return bool
+	 */
+	function remove() : bool;
+	
+	/**
+	 * Get plugin info.
+	 * [Filter: plugins-api].
+	 *
+	 * @param mixed $transient
+	 * @param string $action
+	 * @param object $args
+	 * @return mixed
+	 */
+	function getInfo($transient, $action, $args);
+
+	/**
+	 * Check plugin core update.
+	 * [Filter: update-plugins].
+	 *
+	 * @param mixed $transient
+	 * @return object
+	 */
+	function checkUpdate($transient) : object;
+
+	/**
+	 * Check plugin translation update.
+	 * [Filter: update-plugins].
+	 *
+	 * @param mixed $transient
+	 * @return object
+	 */
+	function checkTranslation($transient) : object;
+	
+	/**
+	 * Clear plugin update cache.
+	 * [Action: upgrade-complete].
+	 *
+	 * @param object $upgrader
+	 * @param array $options
+	 * @return void
+	 */
+	function clearCache($upgrader, $options);
+
+	/**
+	 * Set updater TTL.
+	 * [Filter: {plugin}-updater-ttl].
+	 *
+	 * @param int $ttl
+	 * @param string $action
+	 * @return int
+	 */
+	function ttl($ttl, $action) : int;
+	
+	/**
+	 * Get updater timeout.
+	 * [Filter: {plugin}-updater-timeout].
+	 *
+	 * @return int
+	 */
+	function timeout() : int;
 }

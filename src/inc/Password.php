@@ -32,7 +32,7 @@ final class Password
 
     /**
      * Check whether password is valid against hash.
-     * 
+     *
      * @access public
      * @param string $pswd
      * @param string $hash
@@ -46,7 +46,7 @@ final class Password
 
     /**
      * Hash password.
-     * 
+     *
      * @access public
      * @param string $pswd
      * @return string
@@ -58,7 +58,7 @@ final class Password
 
 	/**
      * Send password.
-     * 
+     *
 	 * @access public
 	 * @param string $login
 	 * @return bool
@@ -74,7 +74,7 @@ final class Password
 
     /**
      * Check password is strong.
-     * 
+     *
      * @access public
      * @param string $pswd
      * @param int $length

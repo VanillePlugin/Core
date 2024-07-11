@@ -41,9 +41,6 @@ class Logger implements LoggerInterface
         $this->setPath($this->getLoggerPath($path));
         $this->setFilename($file);
         $this->setExtension($ext);
-
-        // Reset config
-        $this->resetConfig();
     }
 
     /**

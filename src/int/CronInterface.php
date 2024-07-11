@@ -24,7 +24,7 @@ interface CronInterface
 
 	/**
 	 * Apply schedules,
-	 * [Filter: cron_schedules].
+	 * [Filter: cron-schedules].
 	 *
 	 * @param array $schedules
 	 * @return array

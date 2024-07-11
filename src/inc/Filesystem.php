@@ -12,15 +12,25 @@
 
 declare(strict_types=1);
 
-namespace VanillePlugin\int;
+namespace VanillePlugin\inc;
 
-interface NoticeInterface
+/**
+ * Filesystem wrapper class.
+ */
+class Filesystem
 {
-    /**
-	 * Add notice.
-	 * [Action: admin-notices].
-	 * 
-	 * @param mixed $callable
-     */
-    function add($callable);
+	/**
+	 * Init WP filesystem.
+	 * [Action: admin-init].
+	 * [Action: loaded].
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	public static function init()
+	{
+		if ( TypeCheck::isFunction('WP_Filesystem') ) {
+			WP_Filesystem();
+		}
+	}
 }

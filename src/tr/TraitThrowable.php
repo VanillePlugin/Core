@@ -62,4 +62,26 @@ trait TraitThrowable
 	{
         Exception::throw($error);
 	}
+
+	/**
+	 * Check for WordPress error.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function isError($object) : bool
+	{
+		return Exception::isError($object);
+	}
+
+	/**
+	 * Get WordPress error.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function getError($object)
+	{
+		return Exception::getError($object);
+	}
 }

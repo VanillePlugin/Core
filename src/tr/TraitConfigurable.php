@@ -98,18 +98,18 @@ trait TraitConfigurable
 		if ( !$namespace ) {
 			return false;
 		}
-		$db = new Orm();
+		$db  = new Orm();
 		$sql = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%{$namespace}_%'";
 		return (bool)$db->execute($sql);
 	}
 
 	/**
 	 * Get site version.
-	 * 
+	 *
 	 * @access protected
 	 * @return string
 	 */
-	protected function getVersion() : string
+	protected function getSiteVersion() : string
 	{
 		return Globals::version();
 	}
@@ -176,9 +176,20 @@ trait TraitConfigurable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getAdminUrl(string $url = null, string $scheme = 'admin') : string
+	protected function getAdminUrl(?string $path = null, string $scheme = 'admin') : string
 	{
-		return Globals::ajaxUrl($url, $scheme);
+		return Globals::adminUrl($path, $scheme);
+	}
+
+	/**
+	 * Get rest url.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function getRestUrl(?string $path = null) : string
+	{
+		return Globals::restUrl($path);
 	}
 
 	/**
@@ -194,7 +205,7 @@ trait TraitConfigurable
 
 	/**
 	 * Get front url.
-	 * 
+	 *
 	 * @access protected
 	 * @param string $path
 	 * @param string $scheme
@@ -207,13 +218,24 @@ trait TraitConfigurable
 
 	/**
 	 * Get site base url.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function geSiteUrl(?string $path = null, string $scheme = 'relative') : string
 	{
 		return Globals::siteUrl($path, $scheme);
+	}
+
+	/**
+	 * Get site domain name.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function geSiteDomain() : string
+	{
+		return Globals::siteDomain();
 	}
 
 	/**

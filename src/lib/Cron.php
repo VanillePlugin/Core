@@ -36,13 +36,9 @@ class Cron implements CronInterface
 	 */
 	public function __construct()
 	{
-		// Add schedulers actions
 		foreach ($this->getCron() as $scheduler) {
 			$this->addSchedulerAction($scheduler);
 		}
-
-		// Reset config
-		$this->resetConfig();
 	}
 
 	/**

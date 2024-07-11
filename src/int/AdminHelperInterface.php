@@ -54,6 +54,14 @@ interface AdminHelperInterface
 	function load();
 
 	/**
+	 * Plugin admin loaded action.
+	 * [Action: {plugin}-admin-loaded].
+	 *
+	 * @return void
+	 */
+	function loaded();
+
+	/**
 	 * Plugin action links.
 	 * [Filter: {plugin}-action].
 	 * 
@@ -91,6 +99,24 @@ interface AdminHelperInterface
 	function row(array $meta, string $file) : array;
 
 	/**
+	 * Plugin admin data (JS).
+	 * [Filter: {plugin}-admin-data].
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function adminData(array $data) : array;
+
+	/**
+	 * Plugin global data (JS).
+	 * [Filter: {plugin}-global-data].
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function globalData(array $data) : array;
+
+	/**
 	 * Plugin init action.
 	 * [Action: admin-init].
 	 * 
@@ -107,7 +133,7 @@ interface AdminHelperInterface
 	function dashboard();
 
 	/**
-	 * Disable auto-update.
+	 * Disable plugin auto-update.
 	 * [Filter: auto-update-plugin].
 	 *
 	 * @param mixed $update

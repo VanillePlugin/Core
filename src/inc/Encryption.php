@@ -128,7 +128,7 @@ class Encryption
 	{
 		$prefix = Stringify::remove('[', $prefix);
 		$prefix = Stringify::remove(']', $prefix);
-		$this->prefix = "[$prefix]";
+		$this->prefix = ($prefix) ? "[$prefix]" : $prefix;
 		return $this;
 	}
 

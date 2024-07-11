@@ -68,7 +68,7 @@ class View implements ViewInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function assign(string $tpl = 'default', array $content = [])
+	public function assign(string $tpl = 'default', array $content = []) : string
 	{
         // Get View environment
         $env = $this->getEnvironment($this->getPath($tpl), [
@@ -98,7 +98,7 @@ class View implements ViewInterface
             $this->clearLastError();
         }
 
-        return false;
+        return '{}';
 	}
 
     /**
@@ -109,24 +109,9 @@ class View implements ViewInterface
      */
     protected function getDefaultCallables() : array
     {
-		return [
+        $global = [
 			'dump' => function($var) {
                 var_dump($var);
-            },
-			'exit' => function(?int $status = null) {
-                exit($status);
-            },
-			'getSession' => function(?string $key = null) {
-                return $this->getSession($key);
-            },
-			'settingsFields' => function(string $group) {
-                $this->doSettingsFields($group);
-            },
-			'settingsSections' => function(string $page) {
-                $this->doSettingsSections($page);
-            },
-			'submitButton' => function(?string $text = null) {
-                $this->doSettingsSubmit($text);
             },
 			'isLoggedIn' => function() : bool {
                 return $this->isLoggedIn();
@@ -182,16 +167,44 @@ class View implements ViewInterface
 			'hasFilter' => function(string $hook, $callback = false) {
                 return $this->hasPluginFilter($hook, $callback);
             },
-			'applyFilter' => function(string $hook, $value, $args = null) {
-                return $this->applyPluginFilter($hook, $value, $args);
+			'applyFilter' => function(string $hook, $value, ...$args) {
+                return $this->applyPluginFilter($hook, $value, ...$args);
             },
 			'hasAction' => function(string $hook, $callback = false) {
                 return $this->hasPluginAction($hook, $callback);
             },
-			'doAction' => function(string $hook, $args = null) {
-                $this->doPluginAction($hook, $args);
+			'doAction' => function(string $hook, ...$args) {
+                $this->doPluginAction($hook, ...$args);
             }
         ];
+
+        if ( $this->isAdmin() ) {
+
+            return $this->mergeArray([
+                'settingsFields' => function(string $group) {
+                    $this->doSettingsFields($group);
+                },
+                'settingsSections' => function(string $page) {
+                    $this->doSettingsSections($page);
+                },
+                'submitButton' => function(?string $text = null) {
+                    $this->doSettingsSubmit($text);
+                },
+                'getCheckbox' => function($data, $value = true) {
+                    return $this->getCheckbox($data, $value);
+                }
+            ], $global);
+
+        }
+
+        return $this->mergeArray([
+			'exit' => function(?int $status = null) {
+                exit($status);
+            },
+			'getSession' => function(?string $key = null) {
+                return $this->getSession($key);
+            }
+        ], $global);
     }
 
     /**

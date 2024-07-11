@@ -19,14 +19,14 @@ use VanillePlugin\lib\Updater;
 trait TraitUpdatable
 {
 	/**
-	 * Update plugin from external host.
+	 * Set update listener.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function update(?string $host = null, array $args = [])
+	protected function update(array $auth = [], array $urls = [])
 	{
-		new Updater($host, $args);
+		(new Updater($auth, $urls))->listen();
 	}
 
 	/**
@@ -49,5 +49,16 @@ trait TraitUpdatable
 	protected function setAsUpdated() : bool
 	{
 		return (new Updater())->setAsUpdated();
+	}
+
+	/**
+     * Remove plugin updates.
+     *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function removeUpdates() : bool
+	{
+		return (new Updater())->remove();
 	}
 }

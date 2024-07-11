@@ -15,14 +15,14 @@ declare(strict_types=1);
 namespace VanillePlugin\inc;
 
 /**
- * Built-in tokenizer class,
+ * Built-in tokenizer class.
  * JWT for external use is recommended.
  */
 class Tokenizer
 {
     /**
-     * Get token.
-     * 
+     * Get token authentication.
+     *
      * @access public
      * @param string $user
      * @param string $pswd
@@ -32,44 +32,46 @@ class Tokenizer
     public static function get(string $user, string $pswd, ?string $prefix = null) : array
     {
         $secret = self::getUniqueId();
-        $token = trim("{user:{$user}}{pswd:{$pswd}}");
+        $token  = trim("{user:{$user}}{pswd:{$pswd}}");
+
         $encryption = new Encryption($token, $secret);
         $encryption->setPrefix((string)$prefix);
+
         return [
-            'public' => $encryption->encrypt(),
+            'token'  => $encryption->encrypt(),
             'secret' => $secret
         ];
     }
 
     /**
-     * Match token.
-     * 
+     * Match token authentication.
+     *
      * @access public
-     * @param string $public
+     * @param string $token
      * @param string $secret
      * @param string $prefix
      * @return mixed
      */
-    public static function match(string $public, string $secret, ?string $prefix = null)
+    public static function match(string $token, string $secret, ?string $prefix = null)
     {
         $pattern = '/{user:(.*?)}{pswd:(.*?)}/';
-        $encryption = new Encryption($public, $secret);
-        $encryption->setPrefix((string)$prefix);
-        $access = $encryption->decrypt();
-        $user = Stringify::match($pattern, $access, 1);
-        $pswd = Stringify::match($pattern, $access, 2);
+        $cryptor = new Encryption($token, $secret);
+        $cryptor->setPrefix((string)$prefix);
+
+        $access = $cryptor->decrypt();
+        $user   = Stringify::match($pattern, $access, 1);
+        $pswd   = Stringify::match($pattern, $access, 2);
+
         if ( $user && $pswd ) {
-            return [
-                'username' => $user,
-                'password' => $pswd
-            ];
+            return ['user' => $user, 'pswd' => $pswd];
         }
+
         return false;
     }
 
     /**
      * Get range of numbers.
-     * 
+     *
      * @access public
      * @param int $min
      * @param int $max
@@ -81,21 +83,24 @@ class Tokenizer
         if ( $range < 0 ) {
             return $min;
         }
-        $log = log($range, 2);
-        $bytes = (int)($log / 8) + 1;
-        $bits = (int)$log + 1;
+
+        $log    = log($range, 2);
+        $bytes  = (int)($log / 8) + 1;
+        $bits   = (int)$log + 1;
         $filter = (1 << $bits) - 1;
+
         do {
             $randomBytes = (string)openssl_random_pseudo_bytes($bytes);
             $rand = hexdec(bin2hex($randomBytes));
             $rand = $rand & $filter;
         } while ($rand >= $range);
-        return $min + $rand;
+
+        return ($min + $rand);
     }
 
     /**
      * Generate token.
-     * 
+     *
      * @access public
      * @param int $length
      * @param bool $special
@@ -103,7 +108,7 @@ class Tokenizer
      */
     public static function generate(int $length = 16, bool $special = false) : string
     {
-        $token = '';
+        $token  = '';
         $chars  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $chars .= 'abcdefghijklmnopqrstuvwxyz';
         $chars .= '0123456789';
@@ -216,5 +221,22 @@ class Tokenizer
 	public static function checkAjaxNonce($action = -1, $arg = 'nonce') : bool
 	{
 	  	return (bool)check_ajax_referer($action, $arg, false);
+	}
+
+	/**
+	 * Hash data.
+	 *
+	 * @access public
+	 * @param mixed $data
+	 * @param string $salt
+	 * @return string
+	 */
+	public static function hash($data, string $salt = 'Y3biC') : string
+	{
+        if ( !TypeCheck::isString($data) ) {
+            $data = String::serialize($data);
+        }
+		$data = "{$salt}{$data}";
+		return hash('sha256', $data);
 	}
 }

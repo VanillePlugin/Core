@@ -81,7 +81,7 @@ final class Globals
 	 */
 	public static function debug() : bool
 	{
-		return WP_DEBUG;
+		return defined('WP_DEBUG') && (WP_DEBUG == true);
 	}
 
 	/**
@@ -92,7 +92,7 @@ final class Globals
 	 */
 	public static function cache() : bool
 	{
-		return defined('WP_CACHE') && WP_CACHE == true;
+		return defined('WP_CACHE') && (WP_CACHE == true);
 	}
 
 	/**
@@ -116,6 +116,7 @@ final class Globals
 	{
 		return wp_is_mobile();
 	}
+	
 	/**
 	 * Check ajax.
 	 *
@@ -129,15 +130,14 @@ final class Globals
 	}
 
 	/**
-	 * Check API.
+	 * Check REST API endpoint.
 	 *
 	 * @access public
 	 * @return bool
 	 */
 	public static function api() : bool
 	{
-		$request = Server::get('request-uri');
-		return Stringify::contains($request, 'wp-json');
+		return wp_is_rest_endpoint();
 	}
 
 	/**
@@ -288,6 +288,19 @@ final class Globals
 	}
 
 	/**
+	 * Get site domain name.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public static function siteDomain() : string
+	{
+		return Server::getDomain(
+			self::siteUrl()
+		);
+	}
+
+	/**
 	 * Get admin url.
 	 *
 	 * @access public
@@ -313,6 +326,19 @@ final class Globals
 	{
 		$url = includes_url((string)$path, $scheme);
 		return Stringify::formatPath($url);
+	}
+
+	/**
+	 * Get REST url.
+	 *
+	 * @access public
+	 * @param string $path
+	 * @param string $scheme
+	 * @return string
+	 */
+	public static function restUrl(?string $path = null, string $scheme = 'rest')
+	{
+		return get_rest_url(null, $path, $scheme);
 	}
 
 	/**

@@ -14,12 +14,10 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\RequirementInterface;
-
 /**
  * Plugin requirements manager.
  */
-class Requirement extends Notice implements RequirementInterface
+class Requirement extends Notice
 {
 	/**
 	 * @access private
@@ -72,9 +70,6 @@ class Requirement extends Notice implements RequirementInterface
 				'required' => 'Required'
 			]
 		]);
-
-		// Reset config
-		$this->resetConfig();
 	}
 	
 	/**

@@ -22,7 +22,7 @@ trait TraitSecurable
 {
     /**
      * Get token.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
      */
@@ -33,13 +33,13 @@ trait TraitSecurable
 
     /**
      * Match token.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
      */
-    protected function matchToken(string $public, string $secret, ?string $prefix = null)
+    protected function matchToken(string $token, string $secret, ?string $prefix = null)
 	{
-		return Tokenizer::match($public, $secret, $prefix);
+		return Tokenizer::match($token, $secret, $prefix);
 	}
 
 	/**
@@ -110,7 +110,7 @@ trait TraitSecurable
 
     /**
      * Generate token.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
      */
@@ -120,14 +120,25 @@ trait TraitSecurable
 	}
 
     /**
+     * Generate hash.
+     *
+	 * @access protected
+	 * @inheritdoc
+     */
+    protected function generateHash($data, string $salt = 'Y3biC') : string
+	{
+		return Tokenizer::hash($data, $salt);
+	}
+
+    /**
      * Encrypt data.
      *
 	 * @access protected
 	 * @inheritdoc
      */
-    protected function encrypt($data, string $prefix = Encryption::PREFIX) : string
+    protected function encrypt($data, ?string $key = null, string $prefix = Encryption::PREFIX) : string
     {
-		$cryptor = new Encryption($data);
+		$cryptor = new Encryption($data, $key);
         return $cryptor->setPrefix($prefix)->encrypt();
     }
 
@@ -137,9 +148,9 @@ trait TraitSecurable
 	 * @access protected
 	 * @inheritdoc
      */
-    protected function decrypt($data, string $prefix = Encryption::PREFIX)
+    protected function decrypt($data, ?string $key = null,  string $prefix = Encryption::PREFIX)
     {
-		$cryptor = new Encryption($data);
+		$cryptor = new Encryption($data, $key);
         return $cryptor->setPrefix($prefix)->decrypt();
     }
 }

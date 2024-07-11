@@ -91,7 +91,7 @@ final class OrmQuery implements OrmQueryInterface
 		// Init properties
 		$args = $this->mergeArray([
 			'table'     => '',       // Array | String
-			'type'      => 'select', // String
+			'type'      => 'select', // String (select, count)
 			'result'    => 'any',    // String (any, none, field, row, column)
 			'orderby'   => '',       // Array | String
 			'groupby'   => '',       // Array | String
@@ -146,7 +146,7 @@ final class OrmQuery implements OrmQueryInterface
 			$sql .= "{$this->getGroupbyString()} ";
 			$sql .= "{$this->getOrderbyString()} ";
 			$sql .= "{$this->getLimitString()} ";
-			$sql .= "{$this->getOffsetString()};";
+			$sql .= "{$this->getOffsetString()} ";
 
 		} elseif ( $this->lowercase($type) == 'count' ) {
 
@@ -154,10 +154,11 @@ final class OrmQuery implements OrmQueryInterface
 			$this->format = 'int';
 
 			$sql  = "{$this->getSelectCountString()} ";
-			$sql .= "{$this->getWhereString()};";
+			$sql .= "{$this->getWhereString()} ";
 		}
-
-		return $sql;
+		
+		$sql = trim($sql);
+		return "{$sql};";
 	}
 
 	/**

@@ -165,13 +165,15 @@ final class Geotargeting
 		$key = "geo-{$this->getVisitorId()}";
 		if ( !($code = Cache::get($key)) ) {
 
-			$address = Stringify::replace('{ip}', $ip, $address);
-			$request = new Request('GET', ['timeout' => 1], $address);
-			if ( $request->send()->getStatusCode() == 200 ) {
-				$response = Json::decode($request->getBody(), true);
+			$address  = Stringify::replace('{ip}', $ip, $address);
+			$response = Request::get($address, ['timeout' => 1]);
+
+			if ( Request::getStatusCode($response) == 200 ) {
+				$response = Json::decode(Request::getBody($response), true);
 				$code = $response[$param] ?? '';
 			}
-			Cache::set($key, $code, '', $this->ttl);
+
+			Cache::set($key, $code, $this->ttl);
 
 		}
 
@@ -197,15 +199,16 @@ final class Geotargeting
 		}
 
 		$key = "ip-{$this->getVisitorId()}";
+		
 		if ( !($ip = Cache::get($key)) ) {
 
-			$request = new Request('GET', ['timeout' => 1], $address);
-			if ( $request->send()->getStatusCode() == 200 ) {
-				$response = Json::decode($request->getBody(), true);
+			$response = Request::get($address, ['timeout' => 1]);
+			if ( Request::getStatusCode($response) == 200 ) {
+				$response = Json::decode(Request::getBody($response), true);
 				$ip = $response[$param] ?? '';
 			}
 
-			Cache::set($key, $ip, '', $this->ttl);
+			Cache::set($key, $ip, $this->ttl);
 
 		}
 

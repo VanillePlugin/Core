@@ -297,8 +297,8 @@ final class Stringify
 	}
 
 	/**
-	 * Format key (Sanitize alias).
-	 * 
+	 * Format key (Alias).
+	 *
 	 * @access public
 	 * @param string $key
 	 * @return string
@@ -504,9 +504,9 @@ final class Stringify
 	}
 
 	/**
-	 * Escape URL (URL toolkit),
-	 * [Filter: clean_url],
-	 * [[Filter: wp_allowed_protocols]].
+	 * Escape URL (URL toolkit).
+	 * [Filter: escape-url].
+	 * [Filter: allowed-protocols].
 	 * 
 	 * @access public
 	 * @param string $url
@@ -520,8 +520,8 @@ final class Stringify
 	}
 
 	/**
-	 * Escape HTML,
-	 * [Filter: esc_html].
+	 * Escape HTML.
+	 * [Filter: escape-html].
 	 * 
 	 * @access public
 	 * @param string $string
@@ -533,8 +533,8 @@ final class Stringify
 	}
 
 	/**
-	 * Escape XML,
-	 * [Filter: esc_xml].
+	 * Escape XML.
+	 * [Filter: escape-xml].
 	 * 
 	 * @access public
 	 * @param string $string
@@ -546,9 +546,9 @@ final class Stringify
 	}
 
 	/**
-	 * Escape JS,
-	 * Escape single quotes and fixes line endings,
-	 * [Filter: js_escape].
+	 * Escape JS.
+	 * Escape single quotes and fixes line endings.
+	 * [Filter: escape-js].
 	 * 
 	 * @access public
 	 * @param string $string
@@ -561,7 +561,7 @@ final class Stringify
 
 	/**
 	 * Escape SQL.
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -572,8 +572,8 @@ final class Stringify
 	}
 
 	/**
-	 * Escape HTML attributes,
-	 * [Filter: attribute_escape].
+	 * Escape HTML attribute.
+	 * [Filter: escape-attr].
 	 * 
 	 * @access public
 	 * @param string $string
@@ -585,8 +585,8 @@ final class Stringify
 	}
 
 	/**
-	 * Escape textarea,
-	 * [Filter: esc_textarea].
+	 * Escape textarea.
+	 * [Filter: escape-textarea].
 	 *
 	 * @access public
 	 * @param string $string
@@ -598,8 +598,8 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize text,
-	 * [Filter: sanitize_text_field].
+	 * Sanitize text field.
+	 * [Filter: sanitize-text].
 	 *
 	 * @access public
 	 * @param string $string
@@ -611,8 +611,8 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize textarea,
-	 * [Filter: sanitize_textarea_field].
+	 * Sanitize textarea field.
+	 * [Filter: sanitize-textarea].
 	 *
 	 * @access public
 	 * @param string $string
@@ -624,8 +624,8 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize title,
-	 * [Filter: sanitize_title].
+	 * Sanitize title.
+	 * [Filter: sanitize-title].
 	 *
 	 * @access public
 	 * @param string $string
@@ -639,8 +639,8 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize key,
-	 * [Filter: sanitize_key].
+	 * Sanitize key.
+	 * [Filter: sanitize-key].
 	 *
 	 * @access public
 	 * @param string $string
@@ -652,8 +652,8 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize email,
-	 * [Filter: sanitize_email].
+	 * Sanitize email.
+	 * [Filter: sanitize-email].
 	 *
 	 * @access public
 	 * @param string $string
@@ -678,7 +678,7 @@ final class Stringify
 
 	/**
 	 * Sanitize HTML class,
-	 * [Filter: sanitize_html_class].
+	 * [Filter: sanitize-html].
 	 *
 	 * @access public
 	 * @param string $string
@@ -691,10 +691,10 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize filename,
-	 * Replacing whitespace with dashes,
-	 * [Filter: sanitize_file_name],
-	 * [Filter: sanitize_file_name_chars].
+	 * Sanitize filename.
+	 * Replacing whitespace with dashes.
+	 * [Filter: sanitize-file-chars].
+	 * [Filter: sanitize-file-name].
 	 *
 	 * @access public
 	 * @param string $string
@@ -707,7 +707,7 @@ final class Stringify
 
 	/**
 	 * Sanitize mime type,
-	 * [Filter: sanitize_mime_type].
+	 * [Filter: sanitize-mime].
 	 *
 	 * @access public
 	 * @param string $string
@@ -731,9 +731,9 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize value based on option,
-	 * [Filter: sanitize_option_{$key}].
-	 * 
+	 * Sanitize option value.
+	 * [Filter: sanitize-option-{$key}].
+	 *
 	 * @access public
 	 * @param string $key
 	 * @param string $value
@@ -745,9 +745,9 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize meta,
+	 * Sanitize meta value.
 	 * [Filter: sanitize_{$type}_meta_{$key}].
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $value
@@ -761,24 +761,24 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize username,
-	 * [Filter: sanitize_user].
-	 * 
+	 * Sanitize username.
+	 * [Filter: sanitize-username].
+	 *
 	 * @access public
-	 * @param string $user
+	 * @param string $username
 	 * @param bool $strict
 	 * @return string
 	 */
-	public static function sanitizeUser(string $user, bool $strict = true) : string
+	public static function sanitizeUsername(string $username, bool $strict = true) : string
 	{
-		return sanitize_user($user, $strict);
+		return sanitize_user($username, $strict);
 	}
 
 	/**
-	 * Sanitize URL (URL toolkit),
-	 * For database, redirection, non-encoded usage,
-	 * [Filter: wp_allowed_protocols].
-	 * 
+	 * Sanitize URL (URL toolkit).
+	 * For database, redirection, non-encoded usage.
+	 * [Filter: allowed-protocols].
+	 *
 	 * @access public
 	 * @param string $url
 	 * @param array $protocols
@@ -790,11 +790,11 @@ final class Stringify
 	}
 
 	/**
-	 * Sanitize HTML content (XSS),
-	 * Expect unslashed content,
-	 * [Filter: wp_kses_allowed_html],
-	 * [Filter: wp_allowed_protocols].
-	 * 
+	 * Sanitize HTML content (XSS).
+	 * Expect unslashed content.
+	 * [Filter: allowed-html].
+	 * [Filter: allowed-protocols].
+	 *
 	 * @access public
 	 * @param string $string
 	 * @param mixed $html
@@ -808,7 +808,7 @@ final class Stringify
 
 	/**
 	 * Match string using regex.
-	 * 
+	 *
 	 * @access public
 	 * @param string $regex
 	 * @param string $string
@@ -1094,39 +1094,19 @@ final class Stringify
 	}
 
 	/**
-	 * Generate key from args.
+	 * Convert string to interface.
 	 *
 	 * @access public
-	 * @param string $item
-	 * @param array $args
+	 * @param string $string
 	 * @return string
 	 */
-	public static function generateKey(string $item, array $args = []) : string
+	public static function toInterface(string $string) : string
 	{
-		$key = $item;
-		
-		foreach ($args as $name => $value) {
-
-			if ( TypeCheck::isNull($value) || TypeCheck::isEmpty($value) ) {
-				continue;
-			}
-
-			if ( $value === 0 ) {
-				$value = '0';
-
-			} elseif ( TypeCheck::isFalse($value) ) {
-				$value = 'false';
-
-			} elseif ( TypeCheck::isTrue($value) ) {
-				$value = 'true';
-
-			} elseif ( TypeCheck::isArray($value) ) {
-				$value = implode('-', $value);
-			}
-
-			$key .= "-{$name}-{$value}";
+		$i = self::lowercase($string);
+		if ( !self::contains($i, 'interface') ) {
+			$string = self::capitalize($string);
+			$string = "{$string}Interface";
 		}
-
-		return self::slugify($key);
+		return $string;
 	}
 }

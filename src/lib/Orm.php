@@ -48,16 +48,11 @@ class Orm extends Db implements OrmInterface
 	 */
 	public function __construct()
 	{
-		// Init db
 		parent::__construct();
 
-		// Display error
 		if ( !$this->hasDebug() ) {
 			$this->silent();
 		}
-
-		// Reset config
-		$this->resetConfig();
 	}
 
 	/**
@@ -461,6 +456,7 @@ class Orm extends Db implements OrmInterface
 				$sql = $prepare;
 			}
 		}
+
 		return $this->formatQuery($sql);
 	}
 

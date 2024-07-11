@@ -49,7 +49,7 @@ interface PluginInterface
 
 	/**
 	 * Plugin upgrade action.
-	 * [Action: upgrader-process-complete].
+	 * [Action: upgrade-complete].
 	 *
 	 * @param object $upgrader
 	 * @param array $options

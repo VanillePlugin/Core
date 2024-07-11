@@ -30,7 +30,7 @@ final class Ajax implements AjaxCoreInterface
 	 * @var object $callable
 	 * @var array $actions
 	 */
-	private $callable;
+	private AjaxInterface $callable;
 	private $actions = [];
 
 	/**
@@ -52,9 +52,6 @@ final class Ajax implements AjaxCoreInterface
 			$this->actions = $this->getFrontAjax();
 			$this->initFrontActions();
 		}
-
-		// Reset config
-		$this->resetConfig();
 	}
 
 	/**
@@ -115,7 +112,7 @@ final class Ajax implements AjaxCoreInterface
 
 	/**
 	 * Init admin actions.
-	 * [Action: wp-ajax-{namespace}-{action}].
+	 * [Action: wp-ajax-{plugin}-{action}].
 	 *
 	 * @access private
 	 * @return void
@@ -132,7 +129,7 @@ final class Ajax implements AjaxCoreInterface
 
 	/**
 	 * Init front actions.
-	 * [Action: wp-ajax-nopriv-{namespace}-{action}].
+	 * [Action: wp-ajax-nopriv-{plugin}-{action}].
 	 *
 	 * @access private
 	 * @return void

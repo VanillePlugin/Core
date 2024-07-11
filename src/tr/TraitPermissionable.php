@@ -31,15 +31,6 @@ trait TraitPermissionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getCaps($id = null) : array
-	{
-		return User::getCaps($id);
-	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
 	protected function getRole(string $role)
 	{
 		return User::getRole($role);
@@ -82,16 +73,36 @@ trait TraitPermissionable
 	 */
 	protected function isAdministrator($id = null) : bool
 	{
-		return User::hasRole('administrator', $id);
+		return $this->hasRole('administrator', $id);
 	}
 
 	/**
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addCapability(string $role, string $cap, bool $grant = true) : bool
+	protected function getCaps($id = null) : array
 	{
-		return User::addCapability($role, $cap, $grant);
+		return User::getCaps($id);
+	}
+	
+	/**
+	 * Check user capability.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function hasCap(string $cap = 'edit-posts', $id = null, ...$args) : bool
+	{
+		return User::hasCap($cap, $id, ...$args);
+	}
+
+	/**
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function addCap(string $role, string $cap, bool $grant = true) : bool
+	{
+		return User::addCap($role, $cap, $grant);
 	}
 
 	/**
@@ -101,14 +112,5 @@ trait TraitPermissionable
 	protected function removeCap(string $role, string $cap) : bool
 	{
 		return User::removeCap($role, $cap);
-	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function hasCap(string $cap = 'edit_posts', $args = null) : bool
-	{
-		return User::hasCap($cap, $args);
 	}
 }

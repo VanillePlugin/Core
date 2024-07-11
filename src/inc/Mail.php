@@ -32,18 +32,20 @@ class Mail
 
 	/**
 	 * Init mail.
-	 * 
+	 *
 	 * @param mixed $email
 	 */
 	public function __construct($email = null)
 	{
-		$this->to = ($email) ? $email : Globals::email();
-		$this->setBody('');
+		if ( $email ) {
+			$this->to = $email;
+		}
+		$this->setBody();
 	}
 
 	/**
 	 * Set receiving email.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $email
 	 * @return object
@@ -56,12 +58,12 @@ class Mail
 
 	/**
 	 * Set body.
-	 * 
+	 *
 	 * @access public
 	 * @param string $body
 	 * @return object
 	 */
-	public function setBody(string $body) : self
+	public function setBody(string $body = '') : self
 	{
 		$this->body = $body;
 		return $this;
@@ -69,7 +71,7 @@ class Mail
 
 	/**
 	 * Add content to body.
-	 * 
+	 *
 	 * @access public
 	 * @param string $content
 	 * @param bool $break
@@ -86,7 +88,7 @@ class Mail
 
 	/**
 	 * Add break to body.
-	 * 
+	 *
 	 * @access public
 	 * @return object
 	 */
@@ -98,7 +100,7 @@ class Mail
 
 	/**
 	 * Set subject.
-	 * 
+	 *
 	 * @access public
 	 * @param string $subject
 	 * @return object
@@ -111,7 +113,7 @@ class Mail
 	
 	/**
 	 * Set footer.
-	 * 
+	 *
 	 * @access public
 	 * @return object
 	 */
@@ -124,7 +126,7 @@ class Mail
 
 	/**
 	 * Set headers.
-	 * 
+	 *
 	 * @access public
 	 * @param array $headers
 	 * @return object
@@ -137,7 +139,7 @@ class Mail
 
 	/**
 	 * Add header.
-	 * 
+	 *
 	 * @access public
 	 * @param string $header
 	 * @return object
@@ -150,7 +152,7 @@ class Mail
 
 	/**
 	 * Set attachments.
-	 * 
+	 *
 	 * @access public
 	 * @param array $attachments
 	 * @return object
@@ -163,7 +165,7 @@ class Mail
 
 	/**
 	 * Add attachment.
-	 * 
+	 *
 	 * @access public
 	 * @param string $attachments
 	 * @return object
@@ -176,7 +178,7 @@ class Mail
 
 	/**
 	 * Send email as HTML.
-	 * 
+	 *
 	 * @access public
 	 * @return object
 	 */
@@ -188,7 +190,7 @@ class Mail
 
 	/**
 	 * Send email.
-	 * 
+	 *
 	 * @access public
 	 * @return bool
 	 */
@@ -204,5 +206,16 @@ class Mail
 			);
 		}
 		return false;
+	}
+	
+	/**
+	 * Get admin email address.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public static function address() : string
+	{
+		return Globals::email();
 	}
 }

@@ -33,7 +33,6 @@ trait VanillePluginOption
 {
 	use VanillePluginBase,
 		VanillePluginConfig,
-		\VanillePlugin\tr\TraitCacheable,
 		\VanillePlugin\tr\TraitRequestable;
 
 	/**
@@ -372,7 +371,7 @@ trait VanillePluginOption
 	protected function resetPluginSubMenu(?string $title = null, ?string $icon = null)
 	{
 		$parent = $this->getNameSpace();
-		$title  = $this->translate($title);
+		$title  = ($title) ? $this->translate($title) : $title;
 		$this->resetSubMenuPage($parent, $title, $icon);
 	}
 
@@ -447,9 +446,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function assignGlobalJS(array $data = [], string $id = 'global')
+	protected function assignGlobalJS(array $data = [])
 	{
-		$id = $this->applyNamespace($id);
+		$id = $this->applyNamespace('global');
 		$object = $this->applyPrefix('Global', false);
 		$this->assignJS($id, $object, $data);
 	}
@@ -462,9 +461,9 @@ trait VanillePluginOption
 	 */
 	protected function addPluginCSS(string $path, array $deps = [], $version = false, string $media = 'all')
 	{
-		$id = $this->removeString('.css', $this->basename($path));
-		$id = $this->removeString('.min', $id);
-		$id = $this->applyNamespace($id);
+		$id   = $this->removeString('.css', $this->basename($path));
+		$id   = $this->removeString('.min', $id);
+		$id   = $this->applyNamespace($id);
 		$path = $this->applyAsset($path);
 		$this->addCSS($id, $path, $deps, $version, $media);
 	}
@@ -477,7 +476,7 @@ trait VanillePluginOption
 	 */
 	protected function addPluginMainCSS(string $path, array $deps = [], $version = false, string $media = 'all')
 	{
-		$id = $this->applyNamespace('main');
+		$id   = $this->applyNamespace('main');
 		$path = $this->applyAsset($path);
 		$this->addCSS($id, $path, $deps, $version, $media);
 	}
@@ -490,7 +489,7 @@ trait VanillePluginOption
 	 */
 	protected function addPluginGlobalCSS(string $path, array $deps = [], $version = false, string $media = 'all')
 	{
-		$id = $this->applyNamespace('global');
+		$id   = $this->applyNamespace('global');
 		$path = $this->applyAsset($path);
 		$this->addCSS($id, $path, $deps, $version, $media);
 	}
@@ -504,10 +503,10 @@ trait VanillePluginOption
 	protected function isPluginAdmin(?string $slug = null) : bool
 	{
 		$protocol = $this->getServerProtocol();
-		$host = $this->getServer('http-host');
-		$request = $this->getServer('request-uri');
-		$url = "{$protocol}{$host}{$request}";
-		$current = ($slug) ? $slug : $this->applySufix('?page=', false);
+		$host     = $this->getServer('http-host');
+		$request  = $this->getServer('request-uri');
+		$url      = "{$protocol}{$host}{$request}";
+		$current  = ($slug) ? $slug : $this->applySufix('?page=', false);
 		return $this->hasString($url, $current);
 	}
 	
@@ -517,10 +516,10 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addPluginCapability(string $role, string $cap = 'manage')
+	protected function addPluginCap(string $role, string $cap = 'manage')
 	{
 		$cap = $this->applySufix($cap);
-		$this->addCapability($role, $cap);
+		$this->addCap($role, $cap);
 	}
 
 	/**
@@ -538,7 +537,7 @@ trait VanillePluginOption
 		$roles = $this->getPluginRoles();
 		$roles = $this->applyPluginFilter('roles', $roles);
 		foreach ($roles as $role) {
-			$this->addPluginCapability($role, $cap);
+			$this->addPluginCap($role, $cap);
 		}
 	}
 
@@ -594,11 +593,9 @@ trait VanillePluginOption
 	 */
 	protected function createToken($action = null) : string
 	{
-		if ( $this->isType('string', $action) ) {
-			if ( empty($action) ) {
-				$action = 'verify';
-			}
-			$action = $this->applyNamespace($action);
+		if ( $this->isType('null', $action) || $this->isType('string', $action) ) {
+			$action = $action ?: 'verify';
+			$action = ($action == 'rest') ? 'wp_rest' : $this->applyNamespace($action);
 		}
 	  	return $this->createNonce($action);
 	}
@@ -611,11 +608,9 @@ trait VanillePluginOption
 	 */
 	protected function verifyToken($action = null, bool $strict = false)
 	{
-		if ( $this->isType('string', $action) ) {
-			if ( empty($action) ) {
-				$action = 'verify';
-			}
-			$action = $this->applyNamespace($action);
+		if ( $this->isType('null', $action) || $this->isType('string', $action) ) {
+			$action = $action ?: 'verify';
+			$action = ($action == 'rest') ? 'wp_rest' : $this->applyNamespace($action);
 		}
 
 		if ( $this->hasRequest('nonce') ) {
@@ -626,11 +621,14 @@ trait VanillePluginOption
 		}
 
 	    if ( !$this->checkNonce($token, $action) ) {
+
 	    	if ( $strict ) {
 	    		die($this->translate('Invalid token'));
 	    	}
+
 	    	$code = ($this->hasDebug()) ? 400 : 200;
 	    	$this->setResponse('Invalid token', [], 'error', $code);
+
 	    }
 	}
 
@@ -642,11 +640,9 @@ trait VanillePluginOption
 	 */
 	protected function verifyAjaxToken($action = null, bool $strict = false)
 	{
-		if ( $this->isType('string', $action) ) {
-			if ( empty($action) ) {
-				$action = 'verify';
-			}
-			$action = $this->applyNamespace($action);
+		if ( $this->isType('null', $action) || $this->isType('string', $action) ) {
+			$action = $action ?: 'verify';
+			$action = ($action == 'rest') ? 'wp_rest' : $this->applyNamespace($action);
 		}
 
 		if ( $this->hasRequest('nonce') ) {
@@ -745,31 +741,16 @@ trait VanillePluginOption
 
 	/**
 	 * Get plugin cache value.
-	 * [Filter: {plugin}-cache-key].
-	 * [Filter: {plugin}-cache-lang].
-	 * [Filter: {plugin}-cache-group].
 	 * [Filter: {plugin}-get-cache].
 	 * [Filter: {plugin}-cache-status].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getPluginCache($key, ?bool &$status = null, ?string $group = null)
+	protected function getPluginCache(string $key, ?bool &$status = null, ?string $group = null)
 	{
-		$key = $this->lowercase(
-			$this->applyNamespace($key)
-		);
-		$key = $this->applyPluginFilter('cache-key', $key);
-
-		if ( $this->hasMultilingual() ) {
-			$key = "{$key}-{$this->getLang()}";
-			$key = $this->applyPluginFilter('cache-lang', $key);
-		}
-
-		if ( $this->isType('null', $group) ) {
-			$group = $this->getNamespace();
-			$group = $this->applyPluginFilter('cache-group', $group);
-		}
+		$key   = $this->getPluginCacheKey($key);
+		$group = $this->getPluginCacheGroup($group);
 
 		if ( $this->hasPluginFilter('get-cache') ) {
 			$status = $this->applyPluginFilter('cache-status', $status, $key);
@@ -781,35 +762,16 @@ trait VanillePluginOption
 
 	/**
 	 * Set plugin cache value.
-	 * [Filter: {plugin}-cache-key].
-	 * [Filter: {plugin}-cache-lang].
-	 * [Filter: {plugin}-cache-group].
 	 * [Filter: {plugin}-set-cache].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function setPluginCache($key, $value, ?int $ttl = null, ?string $group = null) : bool
+	protected function setPluginCache(string $key, $value, ?int $ttl = null, ?string $group = null) : bool
 	{
-		$key = $this->lowercase(
-			$this->applyNamespace($key)
-		);
-		$key = $this->applyPluginFilter('cache-key', $key);
-
-		if ( $this->hasMultilingual() ) {
-			$key = "{$key}-{$this->getLang()}";
-			$key = $this->applyPluginFilter('cache-lang', $key);
-		}
-
-		if ( $this->isType('null', $group) ) {
-			$group = $this->getNamespace();
-			$group = $this->applyPluginFilter('cache-group', $group);
-		}
-
-		if ( $this->isType('null', $ttl) ) {
-			$ttl = $this->getExpireIn();
-			$ttl = $this->applyPluginFilter('cache-ttl', $ttl);
-		}
+		$key   = $this->getPluginCacheKey($key);
+		$group = $this->getPluginCacheGroup($group);
+		$ttl   = $this->getPluginCacheTtl($ttl);
 
 		if ( $this->hasPluginFilter('set-cache') ) {
 			return $this->applyPluginFilter('set-cache', $key, $value, $ttl, $group);
@@ -820,35 +782,16 @@ trait VanillePluginOption
 
 	/**
 	 * Add value to plugin cache.
-	 * [Filter: {plugin}-cache-key].
-	 * [Filter: {plugin}-cache-lang].
-	 * [Filter: {plugin}-cache-group].
 	 * [Filter: {plugin}-add-cache].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addPluginCache($key, $value, ?int $ttl = null, ?string $group = null) : bool
+	protected function addPluginCache(string $key, $value, ?int $ttl = null, ?string $group = null) : bool
 	{
-		$key = $this->lowercase(
-			$this->applyNamespace($key)
-		);
-		$key = $this->applyPluginFilter('cache-key', $key);
-
-		if ( $this->hasMultilingual() ) {
-			$key = "{$key}-{$this->getLang()}";
-			$key = $this->applyPluginFilter('cache-lang', $key);
-		}
-
-		if ( $this->isType('null', $group) ) {
-			$group = $this->getNamespace();
-			$group = $this->applyPluginFilter('cache-group', $group);
-		}
-		
-		if ( $this->isType('null', $ttl) ) {
-			$ttl = $this->getExpireIn();
-			$ttl = $this->applyPluginFilter('cache-ttl', $ttl);
-		}
+		$key   = $this->getPluginCacheKey($key);
+		$group = $this->getPluginCacheGroup($group);
+		$ttl   = $this->getPluginCacheTtl($ttl);
 
 		if ( $this->hasPluginFilter('add-cache') ) {
 			return $this->applyPluginFilter('add-cache', $key, $value, $ttl, $group);
@@ -859,35 +802,16 @@ trait VanillePluginOption
 
 	/**
 	 * Update plugin cache value.
-	 * [Filter: {plugin}-cache-key].
-	 * [Filter: {plugin}-cache-lang].
-	 * [Filter: {plugin}-cache-group].
 	 * [Filter: {plugin}-update-cache].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function updatePluginCache($key, $value, ?int $ttl = null, ?string $group = null) : bool
+	protected function updatePluginCache(string $key, $value, ?int $ttl = null, ?string $group = null) : bool
 	{
-		$key = $this->lowercase(
-			$this->applyNamespace($key)
-		);
-		$key = $this->applyPluginFilter('cache-key', $key);
-
-		if ( $this->hasMultilingual() ) {
-			$key = "{$key}-{$this->getLang()}";
-			$key = $this->applyPluginFilter('cache-lang', $key);
-		}
-
-		if ( $this->isType('null', $group) ) {
-			$group = $this->getNamespace();
-			$group = $this->applyPluginFilter('cache-group', $group);
-		}
-
-		if ( $this->isType('null', $ttl) ) {
-			$ttl = $this->getExpireIn();
-			$ttl = $this->applyPluginFilter('cache-ttl', $ttl);
-		}
+		$key   = $this->getPluginCacheKey($key);
+		$group = $this->getPluginCacheGroup($group);
+		$ttl   = $this->getPluginCacheTtl($ttl);
 
 		if ( $this->hasPluginFilter('update-cache') ) {
 			return $this->applyPluginFilter('update-cache', $key, $value, $ttl, $group);
@@ -898,30 +822,15 @@ trait VanillePluginOption
 
 	/**
 	 * Delete plugin cache.
-	 * [Filter: {plugin}-cache-key].
-	 * [Filter: {plugin}-cache-lang].
-	 * [Filter: {plugin}-cache-group].
 	 * [Filter: {plugin}-delete-cache].
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function deletePluginCache($key, ?string $group = null) : bool
+	protected function deletePluginCache(string $key, ?string $group = null) : bool
 	{
-		$key = $this->lowercase(
-			$this->applyNamespace($key)
-		);
-		$key = $this->applyPluginFilter('cache-key', $key);
-
-		if ( $this->hasMultilingual() ) {
-			$key = "{$key}-{$this->getLang()}";
-			$key = $this->applyPluginFilter('cache-lang', $key);
-		}
-
-		if ( $this->isType('null', $group) ) {
-			$group = $this->getNamespace();
-			$group = $this->applyPluginFilter('cache-group', $group);
-		}
+		$key   = $this->getPluginCacheKey($key);
+		$group = $this->getPluginCacheGroup($group);
 
 		if ( $this->hasPluginFilter('delete-cache') ) {
 			return $this->applyPluginFilter('delete-cache', $key, $group);
@@ -943,6 +852,63 @@ trait VanillePluginOption
 			return $this->applyPluginFilter('purge-cache', false);
 		}
 		return $this->purgeCache();
+	}
+
+	/**
+	 * Get plugin cache key.
+	 * [Filter: {plugin}-cache-key].
+	 * [Filter: {plugin}-cache-lang].
+	 *
+	 * @access protected
+	 * @param string $key
+	 * @return string
+	 */
+	protected function getPluginCacheKey(string $key) : string
+	{
+		$key = $this->applyNamespace($key);
+		$key = $this->formatKey($key);
+		$key = $this->applyPluginFilter('cache-key', $key);
+
+		if ( $this->hasMultilingual() ) {
+			$key = "{$key}-{$this->getLang()}";
+			$key = $this->applyPluginFilter('cache-lang', $key);
+		}
+
+		return $key;
+	}
+
+	/**
+	 * Get plugin cache group.
+	 * [Filter: {plugin}-cache-group].
+	 *
+	 * @access protected
+	 * @param string $group
+	 * @return string
+	 */
+	protected function getPluginCacheGroup(?string $group = null) : string
+	{
+		if ( $this->isType('null', $group) ) {
+			$group = $this->getNamespace();
+			$group = $this->applyPluginFilter('cache-group', $group);
+		}
+		return $group;
+	}
+
+	/**
+	 * Get plugin cache TTL.
+	 * [Filter: {plugin}-cache-ttl].
+	 *
+	 * @access protected
+	 * @param int $ttl
+	 * @return int
+	 */
+	protected function getPluginCacheTtl(?int $ttl = null) : int
+	{
+		if ( $this->isType('null', $ttl) ) {
+			$ttl = $this->getExpireIn();
+			$ttl = $this->applyPluginFilter('cache-ttl', $ttl);
+		}
+		return $ttl;
 	}
 
 	/**
@@ -1044,7 +1010,7 @@ trait VanillePluginOption
 	}
 	
 	/**
-	 * Translate string,
+	 * Translate string.
 	 * May require quotes escaping.
 	 *
 	 * @access public
@@ -1108,22 +1074,23 @@ trait VanillePluginOption
 	 * Including translated message.
 	 *
 	 * @access protected
-	 * @param mixed $msg
+	 * @param mixed $message
 	 * @param mixed $content
 	 * @param string $status
 	 * @param int $code
 	 * @return void
 	 */
-	protected function setResponse($msg, $content = [], string $status = 'success', int $code = 200)
+	protected function setResponse($message, $content = [], string $status = 'success', int $code = 200)
 	{
-		if ( $this->isType('array', $msg) && count($msg) == 2 ) {
-		  	$temp = $msg[0];
-		  	$args = (array)$msg[1];
-		  	$msg  = $this->transVar($temp, $args);
+		$message = $this->applyPluginFilter('http-response', $message, $status, $code);
+		if ( $this->isType('array', $message) && count($message) == 2 ) {
+		  	$temp = $message[0];
+		  	$args = (array)$message[1];
+		  	$message = $this->transVar($temp, $args);
 		  	
 		} else {
-			$msg = $this->translate($msg);
+			$message = $this->translate($message);
 		}
-		$this->setHttpResponse($msg, $content, $status, $code);
+		$this->setHttpResponse($message, $content, $status, $code);
 	}
 }

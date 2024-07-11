@@ -55,9 +55,9 @@ final class Json extends File
 	}
 
 	/**
-	 * Encode JSON using flags,
-	 * [SLASHES: 64],
-	 * [PRETTY: 128],
+	 * Encode JSON using flags.
+	 * [SLASHES: 64].
+	 * [PRETTY: 128].
 	 * [UNICODE: 256].
 	 * 
 	 * @access public

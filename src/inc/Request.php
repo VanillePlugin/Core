@@ -14,300 +14,209 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-use VanillePlugin\int\RequestInterface;
-
-class Request implements RequestInterface
+class Request
 {
 	/**
-	 * @access private
-	 * @var string $baseUrl, Request base URL
-	 * @var string $endpoint, Request endpoint
-	 * @var string $method, Request method
-	 * @var array $headers, Request headers
-	 * @var array $cookies, Request cookies
-	 * @var array $body, Request body
-	 * @var array $args, Request additional args
-	 * @var mixed $response, Raw response
+	 * @access public
 	 */
-	protected $baseUrl;
-	protected $endpoint;
-	protected $method = 'GET';
-	protected $headers = [];
-	protected $cookies = [];
-	protected $body = [];
-	protected $args = [];
-	protected $response = false;
+	public const GET     = 'GET';
+	public const POST    = 'POST';
+	public const HEAD    = 'HEAD';
+	public const PUT     = 'PUT';
+	public const PATCH   = 'PATCH';
+	public const OPTIONS = 'OPTIONS';
+	public const DELETE  = 'DELETE';
 
 	/**
-	 * @inheritdoc
+	 * Send HTTP request.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return mixed
 	 */
-	public function __construct(string $method = 'GET', array $args = [], ?string $baseUrl = null)
+	public static function do(string $url, array $args)
 	{
-		$this->method  = $method;
-		$this->args    = $args;
-		$this->baseUrl = $baseUrl;
+		return wp_remote_request($url, $args);
 	}
 
 	/**
-	 * @inheritdoc
+	 * HTTP GET request.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return mixed
 	 */
-	public function setMethod(string $method) : self
+	public static function get(string $url, array $args = [])
 	{
-		$this->method = $method;
-		return $this;
+		return wp_remote_get($url, Format::request($args));
 	}
 
 	/**
-	 * @inheritdoc
+	 * HTTP POST request.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return mixed
 	 */
-	public function setBaseUrl(string $url) : self
+	public static function post(string $url, array $args = [])
 	{
-		$this->baseUrl = $url;
-		return $this;
+		return wp_remote_post($url, Format::request($args));
 	}
 
 	/**
-	 * @inheritdoc
+	 * HTTP HEAD request.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return mixed
 	 */
-	public function setArgs(array $args = []) : self
+	public static function head(string $url, array $args = [])
 	{
-		$this->args = $args;
-		return $this;
+		return wp_remote_head($url, Format::request($args));
 	}
 
 	/**
-	 * @inheritdoc
+	 * HTTP PUT request.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return mixed
 	 */
-	public function addArg(string $arg, $value = null)
+	public static function put(string $url, array $args = [])
 	{
-		$this->args[$arg] = $value;
+		$args['method'] = static::PUT;
+		return self::do($url, Format::request($args));
 	}
 
 	/**
-	 * @inheritdoc
+	 * HTTP PATCH request.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return mixed
 	 */
-	public function setHeaders(array $headers = []) : self
+	public static function patch(string $url, array $args = [])
 	{
-		$this->headers = $headers;
-		return $this;
+		$args['method'] = static::PATCH;
+		return self::do($url, Format::request($args));
 	}
 
 	/**
-	 * @inheritdoc
+	 * HTTP OPTIONS request.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return mixed
 	 */
-	public function addHeader(string $header, $value = null)
+	public static function options(string $url, array $args = [])
 	{
-		$this->headers[$header] = $value;
+		$args['method'] = static::OPTIONS;
+		return self::do($url, Format::request($args));
 	}
 
 	/**
-	 * @inheritdoc
+	 * HTTP DELETE request.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @param array $args
+	 * @return mixed
 	 */
-	public function setCookies(array $cookies = []) : self
+	public static function delete(string $url, array $args = [])
 	{
-		$this->cookies = $cookies;
-		return $this;
+		$args['method'] = static::DELETE;
+		return self::do($url, Format::request($args));
 	}
 
 	/**
-	 * @inheritdoc
+	 * Get response status code.
+	 *
+	 * @access public
+	 * @param mixed $response
+	 * @return mixed
 	 */
-	public function addCookie(string $cookie, $value = null)
-	{
-		$this->cookies[$cookie] = $value;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function setBody(array $body = []) : self
-	{
-		$this->body = $body;
-		return $this;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function addBody(string $body, $value = null)
-	{
-		$this->body[$body] = $value;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function send(?string $url = null) : self
-	{
-		$this->args = Arrayify::merge([
-		    'method'  => $this->method,
-		    'headers' => $this->headers,
-		    'body'    => $this->body,
-		    'cookies' => $this->cookies
-		], $this->args);
-
-		$this->endpoint = "{$this->baseUrl}{$url}";
-		$this->response = wp_remote_request(
-			$this->endpoint,
-			$this->args
-		);
-		
-		return $this;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get(string $url, array $args = []) : self
-	{
-		$this->response = wp_remote_get($url, $args);
-		return $this;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function post(string $url, array $args = []) : self
-	{
-		$this->response = wp_remote_post($url, $args);
-		return $this;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function head(string $url, array $args = []) : self
-	{
-		$this->response = wp_remote_head($url, $args);
-		return $this;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function put(string $url, array $args = []) : self
-	{
-		$args['method'] = 'PUT';
-		$this->response = wp_remote_request($url, $args);
-		return $this;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function patch(string $url, array $args = []) : self
-	{
-		$args['method'] = 'PATCH';
-		$this->response = wp_remote_request($url, $args);
-		return $this;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function delete(string $url, array $args = []) : self
-	{
-		$args['method'] = 'DELETE';
-		$this->response = wp_remote_request($url, $args);
-		return $this;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getStatusCode() : int
+	public static function getStatusCode($response) : int
 	{
 		return (int)wp_remote_retrieve_response_code(
-			$this->response
+			$response
 		);
 	}
 
 	/**
-	 * @inheritdoc
+	 * Get response body.
+	 *
+	 * @access public
+	 * @param mixed $response
+	 * @return string
 	 */
-	public function getBody() : string
+	public static function getBody($response) : string
 	{
 		return wp_remote_retrieve_body(
-			$this->response
+			$response
 		);
 	}
 
 	/**
-	 * @inheritdoc
+	 * Get response header.
+	 *
+	 * @access public
+	 * @param string $header
+	 * @param mixed $response
+	 * @return string
 	 */
-	public function getHeader(string $header) : string
+	public static function getHeader(string $header, $response) : string
 	{
 		return wp_remote_retrieve_header(
-			$this->response,
+			$response,
 			$header
 		);
 	}
 
 	/**
-	 * @inheritdoc
+	 * Get response headers.
+	 *
+	 * @access public
+	 * @param mixed $response
+	 * @return mixed
 	 */
-	public function getHeaders()
+	public static function getHeaders($response)
 	{
 		return wp_remote_retrieve_headers(
-			$this->response
+			$response
 		);
 	}
 
 	/**
-	 * @inheritdoc
+	 * Get response message.
+	 *
+	 * @access public
+	 * @param mixed $response
+	 * @return string
 	 */
-	public function getMessage() : string
+	public static function getMessage($response) : string
 	{
 		return wp_remote_retrieve_response_message(
-			$this->response
+			$response
 		);
 	}
 
 	/**
-	 * @inheritdoc
+	 * URL query string.
+	 *
+	 * @access public
+	 * @param array $args
+	 * @param string $url
+	 * @return string
 	 */
-	public function hasError() : bool
+	public static function queryUrl(array $args, string $url) : string
 	{
-		if ( $this->getStatusCode() !== 200 ) {
-			return true;
-		}
-		return Exception::isError($this->response);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getError()
-	{
-		return Exception::getError($this->response);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getReport() : array
-	{
-		return [
-			'request' => [
-				'url'      => $this->baseUrl,
-				'endpoint' => $this->endpoint,
-				'method'   => $this->method,
-				'headers'  => $this->headers,
-				'body'     => $this->body
-			],
-			'response' => [
-				'code'    => $this->getStatusCode(),
-				'message' => $this->getMessage(),
-				'error'   => $this->getError()
-			]
-		];
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public static function addQueryArg($arg, string $url) : string
-	{
-		return add_query_arg($arg, $url);
+		return add_query_arg($args, $url);
 	}
 }

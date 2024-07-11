@@ -39,7 +39,7 @@ interface ViewInterface
      *
      * @param string $tpl
      * @param array $content
-     * @return mixed
+     * @return string
      */
-    function assign(string $tpl = 'default', array $content = []);
+    function assign(string $tpl = 'default', array $content = []) : string;
 }

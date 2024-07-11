@@ -38,11 +38,7 @@ final class Migrate extends Orm
 	 */
 	public function __construct()
 	{
-		// Init orm
 		parent::__construct();
-
-        // Reset config
-        $this->resetConfig();
 	}
 
 	/**

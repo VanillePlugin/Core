@@ -16,8 +16,13 @@ namespace VanillePlugin\exc;
 
 class ModelException extends VanillePluginException
 {
-    public static function undefinedTable()
+    public static function undefinedTable() : string
     {
         return 'Undefined table name';
+    }
+
+    public static function invalidInstance() : string
+    {
+        return 'Invalid shortcode part instance';
     }
 }

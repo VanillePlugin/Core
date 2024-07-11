@@ -14,15 +14,14 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-use VanillePlugin\int\RouterInterface;
 use \RuntimeException;
 use \Traversable;
 
 /**
  * Built-in HTTP router class,
- * @uses Inspired by https://altorouter.com
+ * @see https://dannyvankooten.github.io/AltoRouter/
  */
-class Router implements RouterInterface
+class Router
 {
     /**
      * @access protected

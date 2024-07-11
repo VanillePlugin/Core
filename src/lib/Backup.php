@@ -35,11 +35,7 @@ final class Backup extends Orm
      */
 	public function __construct()
 	{
-		// Init orm
 		parent::__construct();
-		
-        // Reset config
-        $this->resetConfig();
 	}
 
 	/**

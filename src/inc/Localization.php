@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-final class Localisation
+final class Localization
 {
 	/**
 	 * Get site locale.

@@ -208,7 +208,7 @@ final class TypeCheck
 	 */
 	public static function isFunction(string $function) : bool
 	{
-		return function_exists($function);
+		return function_exists(Stringify::undash($function));
 	}
 
 	/**
@@ -334,5 +334,27 @@ final class TypeCheck
 	    }
 	    $stream = substr($path, 0, $scheme);
 	    return Arrayify::inArray($stream, stream_get_wrappers(), true);
+	}
+	
+	/**
+	 * Check dynamic type.
+	 *
+	 * @access public
+	 * @param string $type
+	 * @param string $value
+	 * @return mixed
+	 * @internal
+	 */
+	public static function isDynamicType(string $type, ?string $value = null)
+	{
+        $pattern = sprintf('/^%s\|(.+)$/', $type);
+		if ( ($match = Stringify::match($pattern, (string)$value, -1)) ) {
+			$match = $match[1] ?? 'NaN';
+			if ( $type == 'bool' && $match == '0' ) {
+				$match = 'NaN';
+			}
+			return $match;
+		}
+		return false;
 	}
 }

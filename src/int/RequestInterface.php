@@ -26,7 +26,7 @@ interface RequestInterface
 
 	/**
 	 * Set request base URL.
-	 
+	 *
 	 * @param string $url
 	 * @return object
 	 */
@@ -41,7 +41,7 @@ interface RequestInterface
 	function setArgs(array $args = []) : self;
 
 	/**
-	 * Add or override single request arg.
+	 * Add request arg.
 	 *
 	 * @param string $arg
 	 * @param mixed $value
@@ -50,7 +50,7 @@ interface RequestInterface
 	function addArg(string $arg, $value = null);
 
 	/**
-	 * Set or reset request headers.
+	 * Set request headers.
 	 *
 	 * @param array $headers
 	 * @return object
@@ -58,7 +58,7 @@ interface RequestInterface
 	function setHeaders(array $headers = []) : self;
 
 	/**
-	 * Add or override single request header.
+	 * Add request header.
 	 *
 	 * @param string $header
 	 * @param mixed $value
@@ -67,7 +67,7 @@ interface RequestInterface
 	function addHeader(string $header, $value = null);
 
 	/**
-	 * Set or reset request cookies.
+	 * Set request cookies.
 	 *
 	 * @param array $cookies
 	 * @return object
@@ -75,7 +75,7 @@ interface RequestInterface
 	function setCookies(array $cookies = []) : self;
 
 	/**
-	 * Add or override single request cookie.
+	 * Add request cookie.
 	 *
 	 * @param string $cookie
 	 * @param mixed $value
@@ -84,7 +84,7 @@ interface RequestInterface
 	function addCookie(string $cookie, $value = null);
 
 	/**
-	 * Set or reset request body.
+	 * Set request body.
 	 *
 	 * @param array $body
 	 * @return object
@@ -92,7 +92,7 @@ interface RequestInterface
 	function setBody(array $body = []) : self;
 
 	/**
-	 * Add or override single request body.
+	 * Add request body.
 	 *
 	 * @param string $body
 	 * @param mixed $value
@@ -109,95 +109,56 @@ interface RequestInterface
 	function send(?string $url = null) : self;
 
 	/**
-	 * Standalone "GET" request.
+	 * Get response body.
 	 *
-	 * @param string $url
-	 * @param array $args
-	 * @return object
+	 * @return string
 	 */
-	function get(string $url, array $args = []) : self;
+	function body() : string;
 
 	/**
-	 * Standalone "POST" request.
-	 *
-	 * @param string $url
-	 * @param array $args
-	 * @return object
-	 */
-	function post(string $url, array $args = []) : self;
-
-	/**
-	 * Standalone "HEAD" request.
-	 *
-	 * @param string $url
-	 * @param array $args
-	 * @return object
-	 */
-	function head(string $url, array $args = []) : self;
-
-	/**
-	 * Standalone "PUT" request.
-	 *
-	 * @param string $url
-	 * @param array $args
-	 * @return object
-	 */
-	function put(string $url, array $args = []) : self;
-
-	/**
-	 * Standalone "PATCH" request.
-	 *
-	 * @param string $url
-	 * @param array $args
-	 * @return object
-	 */
-	function patch(string $url, array $args = []) : self;
-
-	/**
-	 * Standalone "DELETE" request.
-	 *
-	 * @param string $url
-	 * @param array $args
-	 * @return object
-	 */
-	function delete(string $url, array $args = []) : self;
-
-	/**
-	 * Get response code,
-	 * Return 0 if code is not retrieved.
+	 * Get response status code.
 	 *
 	 * @return int
 	 */
-	function getStatusCode() : int;
+	function status() : int;
 
 	/**
-	 * Get body from the raw response.
+	 * Check response status.
 	 *
-	 * @return string
+	 * @param string $status
+	 * @return bool
 	 */
-	function getBody() : string;
+	function hasStatus(string $status) : bool;
 
 	/**
-	 * Get header from the raw response.
+	 * Check response content.
 	 *
-	 * @param string $header
-	 * @return string
+	 * @return bool
 	 */
-	function getHeader(string $header) : string;
+	function hasContent() : bool;
 
 	/**
-	 * Get headers from the raw response.
+	 * Check response item.
 	 *
-	 * @return mixed
+	 * @param string $item
+	 * @param string $value
+	 * @return bool
 	 */
-	function getHeaders();
+	function has(string $item, ?string $value = null) : bool;
 
 	/**
-	 * Get message from the raw response.
+	 * Get formatted response from body.
 	 *
-	 * @return string
+	 * @return array
 	 */
-	function getMessage() : string;
+	function response() : array;
+
+	/**
+	 * Get formatted response from body (XML).
+	 *
+	 * @return array
+	 */
+	function responseXml() : array;
 
 	/**
 	 * Check response error.
@@ -211,21 +172,73 @@ interface RequestInterface
 	 *
 	 * @return mixed
 	 */
-	function getError();
+	function error();
 
 	/**
-	 * Get request report.
+	 * Disable SSL verification.
 	 *
-	 * @return array
+	 * @return object
 	 */
-	function getReport() : array;
+	function noSSL() : self;
 
 	/**
-	 * Add arg to query.
+	 * Check remote server status.
 	 *
-	 * @param mixed $arg
-	 * @param string $url
+	 * @param int $code
+	 * @return bool
+	 */
+	function isDown(?int $code = null) : bool;
+
+	/**
+	 * Set <Bearer> authentication.
+	 *
+	 * @param string $token
+	 * @return void
+	 */
+	function setAuth(string $token);
+
+	/**
+	 * Set <Basic> authentication.
+	 *
+	 * @param string $user
+	 * @param string $pswd
+	 * @return void
+	 */
+	function setBasicAuth(string $user, ?string $pswd = null);
+	
+	/**
+	 * Get request timeout.
+	 * [Filter: {plugin}-request-timeout].
+	 *
+	 * @return int
+	 */
+	function timeout() : int;
+
+	/**
+	 * Get request user-agent.
+	 * [Filter: {plugin}-request-ua].
+	 *
 	 * @return string
 	 */
-	static function addQueryArg($arg, string $url) : string;
+	function userAgent() : string;
+
+	/**
+	 * Filter request SSL.
+	 * [Filter: http-request-args].
+	 * [Filter: {plugin}-request-ssl].
+	 *
+	 * @param array $args
+	 * @return array
+	 */
+	function filterSSL($args) : array;
+
+	/**
+	 * Instance API.
+	 *
+	 * @param string $name
+	 * @param string $path
+	 * @param mixed $args
+	 * @return mixed
+	 */
+	static function instance(string $name, $path = 'api', ...$args);
 }

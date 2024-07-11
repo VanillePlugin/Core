@@ -43,10 +43,16 @@
     },
     "options": {
       "type": "object",
-      "required": ["ttl", "multiling", "multisite", "footprint", "debug", "view"],
+      "required": ["ttl", "timeout", "secret", "multiling", "multisite", "footprint", "debug", "view"],
       "properties":{
         "ttl":{
           "type": "integer"
+        },
+        "timeout":{
+          "type": "integer"
+        },
+        "secret":{
+          "type": "string"
         },
         "multiling":{
           "type": "boolean"
@@ -69,6 +75,10 @@
           }
         }
       }
+    },
+    "remote": {
+      "type": "object",
+      "required": ["host", "token", "user", "pswd", "key"]
     },
     "roles": {
       "type": "array"
@@ -98,6 +108,55 @@
               "type": "string"
             }
           }
+        }
+      ]
+    },
+    "hooks":{
+      "type": "object",
+      "items": [
+        {
+          "type": "object",
+          "properties":{
+            "name":{
+              "type": "string"
+            },
+            "value":{
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "settings":{
+      "type": "object",
+      "items": [
+        {
+          "type": "object",
+          "properties":{
+            "name":{
+              "type": "string"
+            },
+            "type":{
+              "type": "string"
+            },
+            "group":{
+              "type": "string"
+            },
+            "value":{
+              "type": "null"
+            },
+            "multi":{
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "inputs":{
+      "type": "object",
+      "items": [
+        {
+          "type": "object"
         }
       ]
     },
@@ -197,7 +256,7 @@
       }
     },
     "routes": {
-      "type": "object"
+      "type": "array"
     },
     "assets": {
       "type": "object",
@@ -232,8 +291,12 @@
     "link",
     "path",
     "options",
+    "remote",
     "roles",
     "cron",
+    "hooks",
+    "settings",
+    "inputs",
     "requirements",
     "routes",
     "ajax",

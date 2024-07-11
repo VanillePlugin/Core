@@ -137,16 +137,17 @@ final class Server
 	 * Get country code from request headers.
 	 *
 	 * @access public
+	 * @param array $headers
 	 * @return string
 	 */
-	public static function getCountryCode()
+	public static function getCountryCode(array $headers = [])
 	{
-		$headers = [
+		$headers = Arrayify::merge([
 			'mm-country-code',
 			'geoip-country-code',
 			'http-cf-ipcountry',
 			'http-x-country-code'
-		];
+		], $headers);
 
 		foreach ($headers as $header) {
 			if ( self::isSetted($header) ) {
@@ -246,93 +247,85 @@ final class Server
 	 */
 	public static function isDown(string $url, $args = [])
 	{
+		$ssl = self::mayRequireSSL(
+			self::isSsl()
+		);
+
 		// Set overridden args
 		$args = Arrayify::merge([
 			'code'     => 500,
 			'format'   => false,
-			'endpoint' => true,
 			'response' => false,
 			'auth'     => false,
-			'method'   => 'GET',
 			'operator' => '>=',
 			'http'     => [
+				'method'      => 'GET',
+				'headers'     => [],
 				'timeout'     => 30,
 				'redirection' => 0,
-				'sslverify'   => self::isSsl()
+				'sslverify'   => $ssl
 			]
-		], self::maybeRequireSSL($args));
+		], $args);
 
-		// Format URL (Base)
+		// Format URL
 		if ( $args['format'] ) {
 			$url = self::parseBaseUrl($url);
 		}
 
-		// Format URL (Endpoint)
-		if ( $args['endpoint'] ) {
-			$url = rtrim($url,'/');
-			$url = "{$url}/";
-		}
-
 		// Init request
-		$request = new Request();
-		$request->setMethod($args['method']);
-		$request->setArgs($args['http']);
-		$request->setBaseUrl($url);
+		$request = $args['http'];
 
-		// Set Auth
+		// Set auth
 		if ( $args['auth'] ) {
 			if ( TypeCheck::isArray($args['auth']) ) {
-				$user = $args['auth'][0] ?? '';
-				$pswd = $args['auth'][1] ?? '';
+				$user  = $args['auth'][0] ?? false;
+				$pswd  = $args['auth'][1] ?? false;
 				$token = Tokenizer::base64("{$user}:{$pswd}");
-				$request->addHeader(
-					'Authorization',
-					sprintf('Basic %s', $token)
-				);
+				$token = sprintf('Basic %s', $token);
+				$request['headers']['Authorization'] = $token;
 
 			} else {
-				$request->addHeader(
-					'Authorization',
-					sprintf('Bearer %s', $args['auth'])
-				);
+				$auth = sprintf('Bearer %s', $args['auth']);
+				$request['headers']['Authorization'] = $auth;
 			}
 		}
 
 		// Send request
-		$request->send();
+		$response = Request::do($url, $request);
 
 		// Check status match
-		if ( !$request->getStatusCode() ) {
+		if ( !($code = Request::getStatusCode($response)) ) {
 			return true;
 		}
 
 		if ( $args['operator'] == '==' ) {
-			if ( $request->getStatusCode() == intval($args['code']) ) {
+			if ( $code == intval($args['code']) ) {
 				return true;
 			}
 
 		} elseif ( $args['operator'] == '>=' ) {
-			if ( $request->getStatusCode() >= intval($args['code']) ) {
+			if ( $code >= intval($args['code']) ) {
 				return true;
 			}
 
 		} elseif ( $args['operator'] == '<=' ) {
-			if ( $request->getStatusCode() <= intval($args['code']) ) {
+			if ( $code <= intval($args['code']) ) {
 				return true;
 			}
 		}
 
 		// Check response match
 		if ( $args['response'] ) {
-			if ( ($body = Json::decode($request->getBody(),true)) ) {
+			$body = Request::getBody($response);
+			if ( ($data = Json::decode($body, true)) ) {
 				if ( TypeCheck::isString($args['response']) ) {
-					if ( !isset($body[$args['response']]) ) {
+					if ( !isset($data[$args['response']]) ) {
 						return true;
 					}
 				}
 
 			} else {
-				if ( $request->getBody() !== $args['response'] ) {
+				if ( $body !== $args['response'] ) {
 					return true;
 				}
 			}
@@ -428,25 +421,19 @@ final class Server
 	}
 
     /**
-     * Check if SSL verify is required in request.
-     * Fix (SNI) SSL verification.
+     * Check if SSL verify is required (SNI).
      *
      * @access public
-     * @param array $args, Request args
-     * @return array
+     * @param bool $verify
+     * @return bool
      */
-    public static function maybeRequireSSL(array $args) : array
+    public static function mayRequireSSL(bool $verify = true) : bool
     {
-    	$hasCurl = TypeCheck::isFunction('curl_init');
-		if ( isset($args['sslverify']) && !$args['sslverify'] ) {
-
-			// Force sslverify when cUrl not used
-			if ( !$hasCurl ) {
-				$args['sslverify'] = true;
-			}
-			
+		// Force when cUrl disabled
+		if ( !$verify && !TypeCheck::isFunction('curl-init') ) {
+			$verify = true;
 		}
-    	return $args;
+    	return $verify;
     }
 
     /**
@@ -471,5 +458,16 @@ final class Server
 		}
 
 		return $url;
+    }
+
+    /**
+     * Get HTTP referer.
+     *
+     * @access public
+     * @return mixed
+     */
+    public static function getReferer()
+    {
+		return wp_get_referer();
     }
 }

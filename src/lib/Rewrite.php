@@ -40,9 +40,6 @@ final class Rewrite
         if ( $this->isFile( $rewrite = "{$dir}/.rewrite" ) ) {
             $this->rules = $this->writeFile($rewrite);
         }
-
-		// Reset config
-		$this->resetConfig();
     }
 
     /**
@@ -58,7 +55,7 @@ final class Rewrite
     }
 
     /**
-     * Add rules,
+     * Add rules.
      * [Action: init].
      *
      * @access public
@@ -73,8 +70,8 @@ final class Rewrite
     }
 
     /**
-     * Add endpoint,
-     * [Action: init],
+     * Add endpoint.
+     * [Action: init].
      * [EP_ALL: 8191].
      *
      * @access public
@@ -101,8 +98,8 @@ final class Rewrite
     }
 
     /**
-     * Apply rules,
-     * [Action: admin-init].
+     * Apply rules.
+     * [Action: loaded].
      *
      * @access public
      * @param int $priority
@@ -115,7 +112,7 @@ final class Rewrite
 
     /**
      * Remove rules,
-     * [Action: admin-init].
+     * [Action: loaded].
      *
      * @access public
      * @param int $priority

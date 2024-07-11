@@ -90,11 +90,11 @@ final class Arrayify
 	 *
 	 * @access public
 	 * @param array $array
-	 * @return mixed
+	 * @return array
 	 */
-	public static function shift(array &$array)
+	public static function shift(array &$array) : array
 	{
-		return array_shift($array);
+		return (array)array_shift($array);
 	}
 
 	/**
@@ -140,10 +140,15 @@ final class Arrayify
 	 *
 	 * @access public
 	 * @param array $array
+	 * @param mixed $value
+	 * @param bool $search
 	 * @return array
 	 */
-	public static function keys(array $array) : array
+	public static function keys(array $array, $value = null, bool $search = false) : array
 	{
+		if ( $search ) {
+			return array_keys($array, $value, true);
+		}
 		return array_keys($array);
 	}
 

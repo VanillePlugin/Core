@@ -16,7 +16,7 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
 	Stringify, Arrayify, Converter,
-	Json, Xml, TypeCheck, Validator
+    Json, Xml, TypeCheck, Validator
 };
 
 trait TraitFormattable
@@ -157,6 +157,39 @@ trait TraitFormattable
 	}
 
 	/**
+	 * Add slashes to value.
+	 * 
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function slash($value)
+	{
+		return Stringify::slash($value);
+	}
+
+	/**
+	 * Remove trailing slashes and backslashes if exist.
+	 * 
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function untrailingSlash(string $string) : string
+	{
+	    return Stringify::untrailingSlash($string);
+	}
+
+	/**
+	 * Append trailing slashes.
+	 * 
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function trailingSlash(string $string) : string
+	{
+		return Stringify::trailingSlash($string);
+	}
+
+	/**
 	 * Search string.
      *
 	 * @access protected
@@ -274,16 +307,170 @@ trait TraitFormattable
 	}
 
 	/**
-	 * Generate key from args.
+	 * Escape HTML.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function generateKey(string $item, array $args = []) : string
+	protected function escapeHTML(string $string) : string
 	{
-		return Stringify::generateKey($item, $args);
+		return Stringify::escapeHTML($string);
 	}
 
+	/**
+	 * Escape HTML attribute.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function escapeAttr(string $string) : string
+	{
+		return Stringify::escapeAttr($string);
+	}
+
+	/**
+	 * Escape textarea.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function escapeTextarea(string $string) : string
+	{
+		return Stringify::escapeTextarea($string);
+	}
+
+	/**
+	 * Escape JS.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function escapeJS(string $string) : string
+	{
+		return Stringify::escapeJS($string);
+	}
+
+	/**
+	 * Escape SQL.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function escapeSQL(string $string) : string
+	{
+		return Stringify::escapeSQL($string);
+	}
+
+	/**
+	 * Escape Url.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function escapeUrl(string $url) : string
+	{
+		return Stringify::escapeUrl($url);
+	}
+
+	/**
+	 * Sanitize text field.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function sanitizeText(string $string) : string
+	{
+		return Stringify::sanitizeText($string);
+	}
+
+	/**
+	 * Sanitize textarea field.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function sanitizeTextarea(string $string) : string
+	{
+		return Stringify::sanitizeTextarea($string);
+	}
+
+	/**
+	 * Sanitize title.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function sanitizeTitle(string $string) : string
+	{
+		return Stringify::sanitizeTitle($string);
+	}
+
+	/**
+	 * Sanitize email.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function sanitizeEmail(string $string) : string
+	{
+		return Stringify::sanitizeEmail($string);
+	}
+
+	/**
+	 * Sanitize option value.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function sanitizeOption(string $key, string $value) : string
+	{
+		return Stringify::sanitizeOption($key, $value);
+	}
+
+	/**
+	 * Sanitize meta value.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function sanitizeMeta(string $key, string $value) : string
+	{
+		return Stringify::sanitizeMeta($key, $value);
+	}
+
+	/**
+	 * Sanitize username.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function sanitizeUsername(string $key, string $value) : string
+	{
+		return Stringify::sanitizeUsername($key, $value);
+	}
+
+	/**
+	 * Sanitize url.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function sanitizeUrl(string $url) : string
+	{
+		return Stringify::sanitizeUrl($url);
+	}
+
+	/**
+	 * Sanitize HTML content (XSS).
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function sanitizeHTML(string $string) : string
+	{
+		return Stringify::sanitizeHTML($string);
+	}
+	
 	/**
 	 * Check array item.
 	 *
@@ -334,9 +521,9 @@ trait TraitFormattable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function arrayKeys(array $array) : array
+	protected function arrayKeys(array $array, $value = null, bool $search = false) : array
 	{
-		return Arrayify::keys($array);
+		return Arrayify::keys($array, $value, $search);
 	}
 
 	/**
@@ -669,7 +856,7 @@ trait TraitFormattable
     {
         switch ($this->lowercase($type)) {
             case 'interface':
-                $item = $this->toInterface($item);
+                $item = Stringify::toInterface($item);
                 return TypeCheck::hasInterface($object, $item);
                 break;
 
@@ -711,18 +898,13 @@ trait TraitFormattable
 	}
 
 	/**
-	 * Convert string to interface.
+	 * Convert data to key.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function toInterface(string $string) : string
+	protected function toKey($data) : string
 	{
-		$i = $this->lowercase($string);
-		if ( !$this->hasString($i, 'interface') ) {
-			$string = $this->capitalize($string);
-			$string = "{$string}Interface";
-		}
-		return $string;
+	    return Converter::toKey($data);
 	}
 }

@@ -31,7 +31,7 @@ trait TraitRenderable
 
 	/**
 	 * Add menu page.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -83,7 +83,7 @@ trait TraitRenderable
 
 	/**
 	 * Add metabox.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -137,14 +137,14 @@ trait TraitRenderable
 	}
 
 	/**
-	 * Add help tab.
+	 * Add help menu (tab).
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addHelpTab(array $settings)
+	protected function addHelpMenu(array $settings)
 	{
-		Page::addHelpTab($settings);
+		Page::addHelpMenu($settings);
 	}
 
 	/**
@@ -186,9 +186,9 @@ trait TraitRenderable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function doSettingsSubmit(string $page)
+	protected function doSettingsSubmit(?string $text = null)
 	{
-		Page::doSettingsSubmit($page);
+		Page::doSettingsSubmit($text);
 	}
 
 	/**
@@ -200,5 +200,16 @@ trait TraitRenderable
 	protected function addDashboardWidget(string $id, string $name, $cb, $ctrl = null, ?array $args = null, string $c = 'normal', string $p = 'core')
 	{
 		Page::addDashboardWidget($id, $name, $cb, $ctrl, $args, $c, $p);
+	}
+
+	/**
+	 * Get checkbox attribute.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function getCheckbox($data, $value = true) : string
+	{
+		return Page::getCheckbox($data, $value);
 	}
 }

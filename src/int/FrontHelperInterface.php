@@ -52,4 +52,22 @@ interface FrontHelperInterface
 	 * @return void
 	 */
 	function init();
+
+	/**
+	 * Plugin front data (JS).
+	 * [Filter: {plugin}-front-data].
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function frontData(array $data) : array;
+
+	/**
+	 * Plugin login data (JS).
+	 * [Filter: {plugin}-login-data].
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function loginData(array $data) : array;
 }

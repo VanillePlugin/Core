@@ -12,15 +12,12 @@
 
 declare(strict_types=1);
 
-namespace VanillePlugin\int;
+namespace VanillePlugin\exc;
 
-interface NoticeInterface
+class ShortcodeException extends VanillePluginException
 {
-    /**
-	 * Add notice.
-	 * [Action: admin-notices].
-	 * 
-	 * @param mixed $callable
-     */
-    function add($callable);
+    public static function invalidInstance() : string
+    {
+        return 'Invalid shortcode part instance';
+    }
 }

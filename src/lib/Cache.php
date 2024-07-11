@@ -40,13 +40,6 @@ final class Cache
 	 */
 	public function get(string $key, ?bool &$status = null, ?string $group = null)
 	{
-		if ( $this->hasInternalCache() ) {
-			if ( !$this->hasPluginFilter('get-cache') ) {
-				$instance = self::INTERNAL;
-				$cache = new $instance();
-				return $cache->get($key, $status);
-			}
-		}
 		return $this->getPluginCache($key, $status, $group);
 	}
 
@@ -61,14 +54,6 @@ final class Cache
 	 */
 	public function set(string $key, $value, ?int $ttl = null, ?string $group = null) : bool
 	{
-		if ( $this->hasInternalCache() ) {
-			if ( !$this->hasPluginFilter('set-cache') ) {
-				$instance = self::INTERNAL;
-				$cache = new $instance;
-				return $cache->set($key, $value, $ttl, $group);
-			}
-		}
-
 		return $this->setPluginCache($key, $value, $ttl, $group);
 	}
 
@@ -81,14 +66,6 @@ final class Cache
 	 */
 	public function delete(string $key, ?string $group = null) : bool
 	{
-		if ( $this->hasInternalCache() ) {
-			if ( !$this->hasPluginFilter('delete-cache') ) {
-				$instance = self::INTERNAL;
-				$cache = new $instance;
-				return $cache->delete($key);
-			}
-		}
-
 		return $this->deletePluginCache($key, $group);
 	}
 
@@ -103,14 +80,6 @@ final class Cache
 	{
 		$count = 0;
 		$count += (int)$this->purgePluginCache();
-
-		if ( $this->hasInternalCache() ) {
-			if ( !$this->hasPluginFilter('purge-cache') ) {
-				$instance = self::INTERNAL;
-				$cache  = new $instance;
-				$count += (int)$cache::purge();
-			}
-		}
 
 		if ( $this->hasThirdCache() ) {
 			$cache  = self::THIRD;

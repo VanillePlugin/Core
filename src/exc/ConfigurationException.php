@@ -16,17 +16,17 @@ namespace VanillePlugin\exc;
 
 class ConfigurationException extends VanillePluginException
 {
-	public static function invalidPluginConfigurationFile($file)
+	public static function invalidPluginConfigurationFile($file) : string
 	{
 		return "Couldn't find plugin configuration file: '{$file}'";
 	}
 
-    public static function invalidPluginConfigurationFormat($file)
+    public static function invalidPluginConfigurationFormat($file) : string
     {
         return "Invalid plugin configuration JSON format: '{$file}'";
     }
 
-    public static function invalidPluginConfiguration($error, $file)
+    public static function invalidPluginConfiguration($error, $file) : string
     {
         return "Invalid plugin configuration: '{$error}' in '{$file}'";
     }

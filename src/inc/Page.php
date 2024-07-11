@@ -106,10 +106,10 @@ final class Page
 	}
 
 	/**
-	 * Add Metabox,
-	 * [Action: add_meta_boxes],
-	 * [Action: add_meta_boxes_{type}].
-	 * 
+	 * Add metabox,
+	 * [Action: add-meta-boxes],
+	 * [Action: add-meta-boxes-{type}].
+	 *
 	 * @access public
 	 * @param string $id
 	 * @param string $t Title
@@ -176,13 +176,13 @@ final class Page
 	}
 
 	/**
-	 * Add help tab.
+	 * Add help menu (tab).
 	 *
 	 * @access public
 	 * @param array $settings
 	 * @return void
 	 */
-	public static function addHelpTab(array $settings)
+	public static function addHelpMenu(array $settings)
 	{
 		if ( !self::screen() ) return;
 		self::screen()->add_help_tab($settings);
@@ -257,5 +257,18 @@ final class Page
 	public static function addDashboardWidget(string $id, string $name, $cb, $ctrl = null, ?array $args = null, string $c = 'normal', string $p = 'core')
 	{
 		wp_add_dashboard_widget($id, $name, $cb, $ctrl, $args, $c, $p);
+	}
+
+	/**
+	 * Get checkbox attribute.
+	 *
+	 * @access public
+	 * @param mixed $data
+	 * @param mixed $value
+	 * @return string
+	 */
+	public static function getCheckbox($data, $value = true) : string
+	{
+		return ($data === $value) ? 'checked' : '';
 	}
 }

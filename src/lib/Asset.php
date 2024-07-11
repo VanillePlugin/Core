@@ -59,9 +59,6 @@ final class Asset
 
 		// Set cdn url
 		$this->cdn = self::CDN;
-
-		// Reset config
-		$this->resetConfig();
 	}
 
 	/**

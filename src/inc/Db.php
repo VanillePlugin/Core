@@ -40,7 +40,7 @@ class Db
 	{
 		global $wpdb;
 		$this->db = $wpdb;
-		$this->prefix = $this->db->prefix;
+		$this->prefix  = $this->db->prefix;
 		$this->collate = $this->db->collate;
 	}
 }

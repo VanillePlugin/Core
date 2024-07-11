@@ -27,7 +27,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getCache($key, ?bool &$status = null, ?string $group = null)
+	protected function getCache(string $key, ?bool &$status = null, ?string $group = null)
 	{
 		return Cache::get($key, (string)$group, false, $status);
 	}
@@ -38,7 +38,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function setCache($key, $value, int $ttl = 0, ?string $group = null) : bool
+	protected function setCache(string $key, $value, int $ttl = 0, ?string $group = null) : bool
 	{
 		return Cache::set($key, $value, $ttl, (string)$group);
 	}
@@ -49,7 +49,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addCache($key, $value, int $ttl = 0, ?string $group = null) : bool
+	protected function addCache(string $key, $value, int $ttl = 0, ?string $group = null) : bool
 	{
 		return Cache::add($key, $value, $ttl, (string)$group);
 	}
@@ -60,7 +60,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function updateCache($key, $value, int $ttl = 0, ?string $group = null) : bool
+	protected function updateCache(string $key, $value, int $ttl = 0, ?string $group = null) : bool
 	{
 		return Cache::update($key, $value, $ttl, (string)$group);
 	}
@@ -71,7 +71,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function deleteCache($key, ?string $group = null) : bool
+	protected function deleteCache(string $key, ?string $group = null) : bool
 	{
 		return Cache::delete($key, (string)$group);
 	}

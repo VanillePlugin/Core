@@ -21,15 +21,7 @@ class Queue
 {
     use \VanillePlugin\VanillePluginConfig,
         \VanillePlugin\tr\TraitCacheable;
-
-    /**
-	 * Reset config.
-     */
-	public function __construct()
-	{
-        $this->resetConfig();
-	}
-
+		
 	/**
 	 * Add item to queue.
 	 *

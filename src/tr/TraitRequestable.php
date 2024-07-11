@@ -16,7 +16,7 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
     HttpRequest, HttpPost, HttpGet,
-	Response, Server, Stringify
+	Response, Server, Stringify, Converter
 };
 
 trait TraitRequestable
@@ -43,9 +43,13 @@ trait TraitRequestable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getHttpPost(?string $key = null)
+	protected function getHttpPost(?string $key = null, bool $type = false)
     {
-        return HttpPost::get($key);
+		$data = HttpPost::get($key);
+		if ( $type ) {
+			return Converter::toTypes($data);
+		}
+        return $data;
     }
 
 	/**
@@ -61,9 +65,13 @@ trait TraitRequestable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getHttpGet(?string $key = null)
+	protected function getHttpGet(?string $key = null, bool $type = false)
     {
-        return HttpGet::get($key);
+		$data = HttpGet::get($key);
+		if ( $type ) {
+			return Converter::toTypes($data);
+		}
+        return $data;
     }
 
 	/**
@@ -79,9 +87,9 @@ trait TraitRequestable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function setHttpResponse(string $msg, $content = [], string $status = 'success', int $code = 200)
+	protected function setHttpResponse(string $message, $content = [], string $status = 'success', int $code = 200)
 	{
-		Response::set($msg, $content, $status, $code);
+		Response::set($message, $content, $status, $code);
 	}
 
 	/**
@@ -184,14 +192,14 @@ trait TraitRequestable
 	}
 
     /**
-     * Check if SSL verify is required in request.
+     * Check if SSL verify is required (SNI).
      *
 	 * @access protected
 	 * @inheritdoc
      */
-    protected function maybeRequireSSL(array $args) : array
+    protected function mayRequireSSL(bool $verify = true) : bool
     {
-    	return Server::maybeRequireSSL($args);
+    	return Server::mayRequireSSL($verify);
     }
 
     /**

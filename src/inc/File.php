@@ -15,22 +15,11 @@ declare(strict_types=1);
 namespace VanillePlugin\inc;
 
 /**
- * Built-in filesystem class,
- * @see Using WP Filesystem API is recommended for external use.
+ * Built-in file class.
+ * Filesystem API is recommended for external use.
  */
 class File
 {
-	/**
-	 * Init WP filesystem.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public static function init()
-	{
-		\WP_Filesystem();
-	}
-
 	/**
 	 * Analyse file.
 	 *
@@ -61,7 +50,9 @@ class File
 	 */
 	public static function getParentDir(string $path) : string
 	{
-		return dirname(Stringify::formatPath($path));
+		return dirname(
+			Stringify::formatPath($path)
+		);
 	}
 
 	/**
@@ -188,9 +179,8 @@ class File
 	}
 
 	/**
-	 * Get all file lines,
-	 * If file exists and not empty,
-	 * [ignore-new: 2],
+	 * Get all file lines.
+	 * [ignore-new: 2].
 	 * [skip-empty: 4].
 	 *
 	 * @access public
@@ -214,8 +204,7 @@ class File
 	}
 	
 	/**
-	 * Parse file lines using stream,
-	 * If file exists and not empty.
+	 * Parse file lines using stream.
 	 *
 	 * @access public
 	 * @param string $path

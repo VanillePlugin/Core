@@ -48,9 +48,6 @@ final class Hook
 		$this->filter = $filter;
 		$this->option = $option;
 		$this->group  = self::GROUP;
-
-		// Reset config
-		$this->resetConfig();
 	}
 
 	/**

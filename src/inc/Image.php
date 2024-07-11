@@ -35,7 +35,7 @@ final class Image extends File
 		$data = self::getMime($name);
 		$mime = $data['type'];
 		$dir  = Upload::dir();
-		$path = "{$dir['path']}/{$name}"; // Keep non formated path
+		$path = "{$dir['path']}/{$name}"; // Keep non formatted path
 
 		// Get existing image from gallery by filename (Title)
 		if ( ($id = Attachment::getIdByTitle(self::getName($path))) ) {
@@ -48,14 +48,12 @@ final class Image extends File
 		} else {
 
 			// Duplicate image
-			if ( !$override ) {
-				if ( self::exists($path) ) {
-					$ext  = $data['ext'];
-					$tmp  = self::getName($name);
-					$id   = Tokenizer::getUniqueId();
-					$name = "{$tmp}-{$id}.{$ext}";
-					$path = "{$dir['path']}/{$name}";
-				}
+			if ( !$override && self::exists($path) ) {
+				$ext  = $data['ext'];
+				$tmp  = self::getName($name);
+				$id   = Tokenizer::getUniqueId();
+				$name = "{$tmp}-{$id}.{$ext}";
+				$path = "{$dir['path']}/{$name}";
 			}
 
 			// Import image

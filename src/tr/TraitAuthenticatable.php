@@ -23,6 +23,8 @@ trait TraitAuthenticatable
 		TraitSecurable;
 
 	/**
+	 * Register user.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -32,6 +34,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
+	 * Advanced user login.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -41,6 +45,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
+	 * Authenticate user.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -50,6 +56,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
+	 * Logout user.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -59,6 +67,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
+	 * Check whether user exists.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -68,6 +78,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
+	 * Check whether user is logged-in.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -77,6 +89,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
+	 * Validate user password.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -86,6 +100,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
+	 * Send user password.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -95,15 +111,19 @@ trait TraitAuthenticatable
 	}
 
 	/**
+	 * Get user by Id.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getUser($id = null, bool $format = true)
+	protected function getUser($id = null)
 	{
-		return User::get($id, $format);
+		return User::get($id);
 	}
 
 	/**
+	 * Get current user Id.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -113,8 +133,19 @@ trait TraitAuthenticatable
 	}
 
 	/**
-     * Get users by meta.
+     * Get user by field.
      * 
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function getUserBy(string $key, $value)
+	{
+		return User::getBy($key, $value);
+	}
+
+	/**
+     * Get users by meta.
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -125,45 +156,45 @@ trait TraitAuthenticatable
 
 	/**
      * Add user meta.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addUserMeta(string $key, $value, $id = null, bool $unique = true)
+	protected function addUserMeta(string $key, $value, $id = null)
 	{
-		return User::addMeta($key, $value, $id, $unique);
+		return User::addMeta($key, $value, $id);
 	}
 
 	/**
      * Get user meta.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getUserMeta(string $key, $id = null, bool $single = true)
+	protected function getUserMeta(string $key, $id = null)
 	{
-		return User::getMeta($key, $id, $single);
+		return User::getMeta($key, $id);
 	}
 
 	/**
      * Update user meta.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function updateUserMeta(string $key, $value, $id = null)
 	{
-		return User::getMeta($key, $value, $id);
+		return User::updateMeta($key, $value, $id);
 	}
 
 	/**
      * Delete user meta.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function deleteUserMeta(string $key, $id = null, $value = null) : bool
 	{
-		return User::getMeta($key, $id, $value);
+		return User::deleteMeta($key, $id, $value);
 	}
 }

@@ -14,63 +14,76 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\{
-	Request, Server
-};
+use VanillePlugin\inc\Request;
+use VanillePlugin\int\RequestInterface;
 
 /**
  * Plugin API helper.
  * @uses Cache
  */
-class API extends Request
+class API extends Request implements RequestInterface
 {
-	Use \VanillePlugin\VanillePluginOption;
+	Use \VanillePlugin\VanillePluginOption,
+	    \VanillePlugin\tr\TraitThrowable;
 
 	/**
 	 * @access public
 	 */
-	public const DOWN = 429;
+	public const UP   = 200;
+	public const DOWN = 400;
 
 	/**
 	 * @access protected
-	 * @var object $logger, API logger
-	 * @var object $debug, Debug status
-	 * @var object $cache, Cached response
+	 * @var string $url, Request base URL
+	 * @var string $method, Request method
+	 * @var array $headers, Request headers
+	 * @var array $cookies, Request cookies
+	 * @var array $body, Request body
+	 * @var array $args, Request additional args
+	 * @var array $auth, Request auth
+	 * @var mixed $response, Raw response
+	 * @var bool $debug, Debug status
+	 * @var ?Logger $logger, Request logger
 	 */
-	protected $logger;
-	protected $hasDebug = false;
+	protected $url;
+	protected $method = self::GET;
+	protected $headers = [];
+	protected $cookies = [];
+	protected $body = [];
+	protected $args = [];
+	protected $auth = [];
+	protected $response = false;
+	protected $debug = false;
+	protected ?Logger $logger = null;
 
 	/**
-	 * @access private
-	 * @var bool $isCached, Cache status
-	 * @var mixed $data, Cache data
-	 * @var string $key, Cache key
-	 */
-	private $isCached = false;
-	private $cache = [];
-	private $cacheKey;
-
-	/**
-	 * Init request client.
+	 * Init API request.
 	 *
-	 * @inheritdoc
+	 * @param string $method
+	 * @param array $args
+	 * @param string $url
 	 */
-	public function __construct(string $method = 'GET', array $args = [], ?string $baseUrl = null)
+	public function __construct(string $method = self::GET, array $args = [], ?string $url = null)
 	{
-		$this->method  = $method;
-		$this->baseUrl = $baseUrl;
+		// Filter request SSL
+		$this->addFilter('http-request-args', [$this, 'filterSSL'], 20);
 
-		$this->args = $this->mergeArray([
-			'timeout'     => 3,
-			'redirection' => 0,
-			'sslverify'   => true
-		], Server::maybeRequireSSL($args));
+		// Default args
+		$this->method = $method;
+		$this->args   = $args;
+		$this->url    = $url;
 
-		$this->logger   = new Logger();
-		$this->hasDebug = $this->hasDebug();
+		// Default auth
+		$this->auth = $this->mergeArray([
+			'token' => false,
+			'user'  => false,
+			'pswd'  => false
+		], $this->auth);
 
-        // Reset config
-        $this->resetConfig();
+		// Debug
+		if ( ($this->debug = $this->hasDebug()) ) {
+			$this->logger = new Logger();
+		}
 	}
 
 	/**
@@ -78,37 +91,149 @@ class API extends Request
 	 */
 	public function send(?string $url = null) : self
 	{
-		$this->cacheKey = $this->generateKey('api', [
-			'url'     => "{$this->baseUrl}{$url}",
-			'method'  => $this->method,
-			'headers' => $this->headers,
-			'body'    => $this->body
-		]);
-
-		$this->cache = $this->getPluginCache(
-			$this->cacheKey,
-			$this->isCached
-		);
-
-		if ( !$this->isCached ) {
-			parent::send($url);
-			if ( $this->hasError() && $this->hasDebug ) {
-				$this->logger->debug($this->getReport(), true);
-			}
+		$url = $this->formatPath("{$this->url}{$url}");
+	
+		if ( ($token = $this->getAuth($type)) ) {
+			($type == 'basic') 
+			? $this->setBasicAuth($token)
+			: $this->setAuth($token);
 		}
 
-		// Reset config
-		$this->resetConfig();
+		$this->args = $this->mergeArray([
+			'method'      => $this->method,
+			'headers'     => $this->headers,
+			'body'        => $this->body,
+			'cookies'     => $this->cookies,
+			'timeout'     => $this->timeout(),
+			'user-agent'  => $this->userAgent(),
+			'sslverify'   => $this->mayRequireSSL(true),
+			'redirection' => 0
+		], $this->args);
+
+		$key = $this->toKey($this);
+		$this->response = $this->getPluginCache($key, $status);
+
+		if ( !$status ) {
+			$this->response = self::do($url, $this->args);
+			$this->setPluginCache($key, $this->response);
+		}
+		
+		if ( $this->hasError() && $this->debug ) {
+			$this->logger->debug($this, true);
+		}
 
 		return $this;
 	}
 
 	/**
-	 * Set <Bearer> authentication.
-	 *
-	 * @access public
-	 * @param string $token
-	 * @return void
+	 * @inheritdoc
+	 */
+	public function noSSL() : self
+	{
+		$this->args['sslverify'] = false;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setMethod(string $method) : self
+	{
+		$this->method = $method;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setBaseUrl(string $url) : self
+	{
+		$this->url = $url;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setArgs(array $args = []) : self
+	{
+		$this->args = $args;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function addArg(string $arg, $value = null)
+	{
+		$this->args[$arg] = $value;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setHeaders(array $headers = []) : self
+	{
+		$this->headers = $headers;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function addHeader(string $header, $value = null)
+	{
+		$this->headers[$header] = $value;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setCookies(array $cookies = []) : self
+	{
+		$this->cookies = $cookies;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function addCookie(string $cookie, $value = null)
+	{
+		$this->cookies[$cookie] = $value;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setBody(array $body = []) : self
+	{
+		$this->body = $body;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function addBody(string $body, $value = null)
+	{
+		$this->body[$body] = $value;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function filterSSL($args) : array
+	{
+		if ( isset($args['reject-unsafe-urls']) ) {
+			$ssl = $this->applyPluginFilter('request-ssl', $this->isSsl());
+			$args['reject-unsafe-urls'] = $ssl;
+		}
+		return $args;
+	}
+
+	/**
+	 * @inheritdoc
 	 */
 	public function setAuth(string $token)
 	{
@@ -119,16 +244,11 @@ class API extends Request
 	}
 
 	/**
-	 * Set <Basic> authentication.
-	 *
-	 * @access public
-	 * @param string $user
-	 * @param string $pswd
-	 * @return void
+	 * @inheritdoc
 	 */
-	public function setBasicAuth(string $user, string $pswd)
+	public function setBasicAuth(string $user, ?string $pswd = null)
 	{
-		$token = $this->base64("{$user}:{$pswd}");
+		$token = ($pswd) ? $this->base64("{$user}:{$pswd}") : $user;
 		$this->addHeader(
 			'Authorization',
 			sprintf('Basic %s', $token)
@@ -136,47 +256,49 @@ class API extends Request
 	}
 
 	/**
-	 * Get formated response from body (JSON).
-	 *
-	 * @access public
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function response() : array
 	{
-		if ( $this->isCached ) {
-			return $this->cache ?: [];
+		$data = [];
+		if ( !$this->hasError() ) {
+			$body = $this->body();
+			$data = (array)$this->decodeJson($body, true);
 		}
-
-		$data = $this->decodeJson($this->getBody(), true);
-		$this->setPluginCache($this->cacheKey, $data);
-
 		return $data;
 	}
 
 	/**
-	 * Get formated response from body (XML).
-	 *
-	 * @access public
-	 * @return mixed
+	 * @inheritdoc
 	 */
-	public function responseXml()
+	public function responseXml() : array
 	{
-		if ( $this->isCached ) {
-			return $this->cache;
+		$data = [];
+		if ( !$this->hasError() ) {
+			$body = $this->body();
+			$data = (array)$this->parseXml($body);
 		}
-
-		$data = $this->parseXml($this->getBody());
-		$this->setPluginCache($this->cacheKey, $data);
-
 		return $data;
 	}
 
 	/**
-	 * Check whether response has status (JSON).
-	 *
-	 * @access public
-	 * @param string $status
-	 * @return bool
+	 * @inheritdoc
+	 */
+	public function body() : string
+	{
+		return self::getBody($this->response);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function status() : int
+	{
+		return self::getStatusCode($this->response);
+	}
+
+	/**
+	 * @inheritdoc
 	 */
 	public function hasStatus(string $status) : bool
 	{
@@ -184,10 +306,7 @@ class API extends Request
 	}
 
 	/**
-	 * Check whether response has content (JSON).
-	 *
-	 * @access public
-	 * @return bool
+	 * @inheritdoc
 	 */
 	public function hasContent() : bool
 	{
@@ -195,12 +314,7 @@ class API extends Request
 	}
 
 	/**
-	 * Check whether response has content (JSON).
-	 *
-	 * @access public
-	 * @param string $item
-	 * @param string $value
-	 * @return bool
+	 * @inheritdoc
 	 */
 	public function has(string $item, ?string $value = null) : bool
 	{
@@ -215,56 +329,102 @@ class API extends Request
 	}
 
 	/**
-	 * Check remote server status.
-	 *
-	 * @access public
-	 * @param int $code
-	 * @return bool
+	 * @inheritdoc
 	 */
-	public function isDown(int $code = self::DOWN) : bool
+	public function timeout() : int
 	{
-		if ( !$this->getStatusCode() ) {
-			return true;
+		$timeout = $this->getTimeout();
+		return $this->applyPluginFilter('request-timeout', $timeout);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function userAgent() : string
+	{
+		$plugin = $this->getPluginHeader(
+			$this->getMainFile()
+		);
+		$version = $plugin['Version'] ?? false;
+		if ( !$version ) {
+			$version = $this->getPluginVersion() ?: 'na';
 		}
-		if ( $this->getStatusCode() >= intval($code) ) {
+
+		$wp  = $this->getSiteVersion() ?: 'na';
+		$php = phpversion() ?: 'na';
+
+		$ua = [
+			"wp/{$wp}",
+			"php/{$php}",
+			"{$this->getNameSpace()}/{$version}"
+		];
+
+		$ua = implode(';', $ua);
+		return $this->applyPluginFilter('request-ua', $ua);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function isDown(?int $code = null) : bool
+	{
+		$code = ($code) ? $code : static::DOWN;
+		if ( !$this->status() || ($this->status() >= $code) ) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Disable SSL verification.
-	 *
-	 * @access public
-	 * @return void
+	 * @inheritdoc
 	 */
-	public function noSSL()
+	public function hasError() : bool
 	{
-		$this->args['sslverify'] = false;
+		if ( !$this->inArray($this->status(), (array)static::UP) ) {
+			return true;
+		}
+		return $this->isError($this->response);
 	}
 
 	/**
-	 * Check cache status.
-	 *
-	 * @access public
-	 * @return bool
+	 * @inheritdoc
 	 */
-	public function isCached() : bool
+	public function error()
 	{
-		return $this->isCached;
+		if ( !$this->inArray($this->status(), (array)static::UP) ) {
+			return self::getMessage($this->response);
+		}
+		return $this->getError($this->response);
 	}
 
 	/**
-	 * Instance API.
-	 *
-	 * @access public
-	 * @param string $name
-	 * @param string $path
-	 * @param mixed $args
-	 * @return mixed
+	 * @inheritdoc
 	 */
 	public static function instance(string $name, $path = 'api', ...$args)
 	{
 		return (new Loader())->i($path, $name, ...$args);
+	}
+
+	/**
+	 * Get API auth.
+	 *
+	 * @access protected
+	 * @param string $type
+	 * @return mixed
+	 */
+	protected function getAuth(?string &$type = null)
+	{
+		if ( $this->auth['token'] ) {
+			$type = 'bearer';
+			return $this->auth['token'];
+		}
+
+		if ( $this->auth['user'] && $this->auth['pswd'] ) {
+			$type = 'basic';
+			$auth = "{$this->auth['user']}:{$this->auth['pswd']}";
+			return $this->base64($auth);
+		}
+
+		return false;
 	}
 }

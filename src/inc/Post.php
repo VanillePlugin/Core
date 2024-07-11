@@ -61,6 +61,32 @@ class Post
 	}
 
 	/**
+	 * Get post referer Id.
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	public static function getRefererId()
+	{
+		if ( ($url = Server::getReferer()) ) {
+			return self::getUrlId($url);
+		}
+		return false;
+	}
+
+	/**
+	 * Get post URL Id.
+	 *
+	 * @access public
+	 * @param string $url
+	 * @return mixed
+	 */
+	public static function getUrlId(string $url)
+	{
+		return url_to_postid($url);
+	}
+
+	/**
      * Get post by Id.
      * 
 	 * @access public

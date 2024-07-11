@@ -15,12 +15,14 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\exc\ModelException;
+use VanillePlugin\inc\TypeCheck;
+use VanillePlugin\int\ModelInterface;
 
 /**
  * Plugin table helper.
  * @uses Cache
  */
-class Model extends Orm
+class Model extends Orm implements ModelInterface
 {
 	Use \VanillePlugin\VanillePluginOption;
 
@@ -34,15 +36,13 @@ class Model extends Orm
 	            ModelException::undefinedTable()
 	        );
 		}
+		
 		$this->key = "{$this->table}Id";
 		parent::__construct();
 	}
 
 	/**
-	 * Get rendered table.
-	 *
-	 * @access public
-	 * @return string
+	 * @inheritdoc
 	 */
 	public function render() : string
 	{
@@ -52,15 +52,11 @@ class Model extends Orm
 	}
 
 	/**
-	 * Get item by Id.
-	 *
-	 * @access public
-	 * @param mixed $id
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get($id) : array
 	{
-		$key  = "model-{$this->table}-{$id}";
+		$key  = self::getCacheKey($id);
 		$data = $this->getPluginCache($key, $status);
 
 		if ( !$status ) {
@@ -76,37 +72,64 @@ class Model extends Orm
 	}
 
 	/**
-	 * Add item.
-	 *
-	 * @access public
-	 * @param array $data
-	 * @return bool
+	 * @inheritdoc
 	 */
-	public function add(array $data) : bool
+	public function getWithLang($id) : array
 	{
-		return (bool)$this->create($data);
+		$key  = self::getCacheKey($id);
+		$data = $this->getPluginCache($key, $status);
+
+		if ( !$status ) {
+			$where = [
+				"{$this->key}" => (int)$id,
+				'lang' => $this->getLang()
+			];
+			$data  = $this->query(new OrmQuery([
+				'result' => 'row',
+				'where'  => $where
+			]));
+			$this->setPluginCache($key, $data);
+		}
+
+		return $data ?: [];
 	}
 
 	/**
-	 * Update item.
-	 *
-	 * @access public
-	 * @param array $data
-	 * @return bool
+	 * @inheritdoc
+	 */
+	public function exist(array $data) : bool
+	{
+		return (bool)$this->query(new OrmQuery([
+			'result' => 'count',
+			'where'  => $data
+		]));
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function add(array $data) : bool
+	{
+		$data = $this->format($data);
+		unset($data['date']);
+		if ( !$this->exist($data) ) {
+			return (bool)$this->create($data);
+		}
+		return false;
+	}
+
+	/**
+	 * @inheritdoc
 	 */
 	public function save(array $data) : bool
 	{
 		$where = ["{$this->key}" => (int)$data["{$this->key}"]];
+		$data = $this->format($data);
 		return (bool)$this->update($data, $where);
 	}
 
 	/**
-	 * Update item status.
-	 *
-	 * @access public
-	 * @param mixed $id
-	 * @param int $status
-	 * @return bool
+	 * @inheritdoc
 	 */
 	public function status($id, int $status = 0) : bool
 	{
@@ -117,11 +140,7 @@ class Model extends Orm
 	}
 
 	/**
-	 * Duplicate item.
-	 *
-	 * @access public
-	 * @param int $id
-	 * @return bool
+	 * @inheritdoc
 	 */
 	public function duplicate($id) : bool
 	{
@@ -133,11 +152,7 @@ class Model extends Orm
 	}
 
 	/**
-	 * Delete item.
-	 *
-	 * @access public
-	 * @param int $id
-	 * @return bool
+	 * @inheritdoc
 	 */
 	public function remove($id) : bool
 	{
@@ -146,14 +161,11 @@ class Model extends Orm
 	}
 
 	/**
-	 * Get items.
-	 *
-	 * @access public
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function fetch() : array
 	{
-		$key  = "model-{$this->table}-all";
+		$key  = self::getCacheKey('all');
 		$data = $this->getPluginCache($key, $status);
 		
 		if ( !$status ) {
@@ -163,46 +175,29 @@ class Model extends Orm
 
 		return $data ?: [];
 	}
-	
+
 	/**
-	 * Get cached item.
-	 *
-	 * @access public
-	 * @param string $key
-	 * @param bool $status
-	 * @return array
+	 * @inheritdoc
 	 */
-	public static function getCached(string $key, ?bool &$status = null) : array
+	public function fetchWithLang() : array
 	{
-		$sub  = basename(static::class);
-		$key  = "model-{$sub}-{$key}";
-		$data = (new Cache())->get($key, $status);
-		return $data ?: [];
-	}
-	
-	/**
-	 * Instance database table.
-	 *
-	 * @access public
-	 * @param string $name
-	 * @param string $path
-	 * @param mixed $args
-	 * @return mixed
-	 */
-	public static function instance(string $name, $path = 'db', ...$args)
-	{
-		return (new Loader())->i($path, $name, ...$args);
+		$key  = self::getCacheKey('all');
+		$data = $this->getPluginCache($key, $status);
+		
+		if ( !$status ) {
+			$data = $this->query(new OrmQuery([
+				'where' => ['lang' => $this->getLang()]
+			]));
+			$this->setPluginCache($key, $data);
+		}
+		
+		return (array)$data;
 	}
 
 	/**
-	 * Format datatable,
-	 * '{"data":[["XXXX"],["XXXX"]]}'.
-	 *
-	 * @access protected
-	 * @param array $data
-	 * @return string
+	 * @inheritdoc
 	 */
-	protected function assign(array $data) : string
+	public function assign(array $data) : string
 	{
 		$wrapper = $this->map(function($item) {
 			if ( $this->isType('array', $item)) {
@@ -217,5 +212,59 @@ class Model extends Orm
 		$prefix = '"data": ';
 
 		return "{{$prefix}{$json}}";
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function getCached($key, ?bool &$status = null) : array
+	{
+		$key  = self::getCacheKey($key);
+		$data = (new Cache())->get($key, $status);
+		return $data ?: [];
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function setCached($key, $data) : bool
+	{
+		$key = self::getCacheKey($key);
+		return (new Cache())->set($key, $data);
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public static function getCacheKey($key) : string
+	{
+		$obj = basename(self::class);
+		$sub = basename(static::class);
+		return "{$obj}-{$sub}-{$key}";
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	public static function instance(string $name, $path = 'db', ...$args)
+	{
+		$class = (new Loader())->i($path, $name, ...$args);
+		if ( !TypeCheck::hasInterface($class, 'ModelInterface') ) {
+			throw new ModelException(
+				ModelException::invalidInstance()
+			);
+		}
+		return $class;
+	}
+	
+	/**
+	 * Format entities.
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	protected function format(array $data) : array
+	{
+		return $data;
 	}
 }

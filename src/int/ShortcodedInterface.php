@@ -14,13 +14,19 @@ declare(strict_types=1);
 
 namespace VanillePlugin\int;
 
-interface NoticeInterface
+interface ShortcodedInterface
 {
-    /**
-	 * Add notice.
-	 * [Action: admin-notices].
-	 * 
-	 * @param mixed $callable
-     */
-    function add($callable);
+	/**
+	 * Get shortcode part templates.
+	 *
+	 * @return array
+	 */
+	static function templates() : array;
+
+	/**
+	 * Get shortcode part attributes.
+	 *
+	 * @return array
+	 */
+	static function atts() : array;
 }

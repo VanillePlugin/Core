@@ -168,9 +168,9 @@ final class Session
     }
 
     /**
-     * Get session status,
-     * [Disabled: 0],
-     * [None: 1],
+     * Get session status.
+     * [Disabled: 0].
+     * [None: 1].
      * [Active: 2].
      * 
      * @access public
@@ -183,9 +183,8 @@ final class Session
 
     /**
      * Check whether session is active.
-     * 
-     * PHP_SESSION_NONE 1
-     * PHP_SESSION_ACTIVE 2
+     * [PHP_SESSION_NONE: 1].
+     * [PHP_SESSION_ACTIVE: 2].
      *
      * @access public
      * @return bool

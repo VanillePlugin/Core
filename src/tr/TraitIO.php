@@ -37,8 +37,11 @@ trait TraitIO
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function isReadable(string $path) : bool
+	protected function isReadable(string $path, bool $fileType = false) : bool
 	{
+		if ( $fileType && !$this->isFile($path) ) {
+			return false;
+		}
 		return File::isReadable($path);
 	}
 
@@ -48,8 +51,11 @@ trait TraitIO
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function isWritable(string $path) : bool
+	protected function isWritable(string $path, bool $fileType = false) : bool
 	{
+		if ( $fileType && !$this->isFile($path) ) {
+			return false;
+		}
 		return File::isWritable($path);
 	}
 

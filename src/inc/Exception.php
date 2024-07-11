@@ -75,12 +75,12 @@ final class Exception extends \Exception
 	 * @access public
 	 * @param mixed $code
 	 * @param string $message
-	 * @param array $args
+	 * @param mixed $data
 	 * @return object
 	 */
-	public static function error($code, ?string $message = null, array $args = []) : object
+	public static function error($code, ?string $message = null, $data = []) : object
 	{
-	    return new WP_Error($code, $message, $args);
+	    return new WP_Error($code, $message, $data);
 	}
 
 	/**

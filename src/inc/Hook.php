@@ -114,7 +114,7 @@ final class Hook
 	 */
 	public static function doAction(string $hook, ...$args)
 	{
-		do_action($hook, ...$args);
+		do_action(Format::hook($hook), ...$args);
 	}
 
 	/**
@@ -127,7 +127,7 @@ final class Hook
 	 */
 	public static function hasAction(string $hook, $callback = false)
 	{
-		return has_action($hook, $callback);
+		return has_action(Format::hook($hook), $callback);
 	}
 
 	/**
@@ -156,7 +156,7 @@ final class Hook
 	 */
 	public static function removeFilter(string $hook, $callback, int $priority = 10) : bool
 	{
-		return remove_filter($hook, $callback, $priority);
+		return remove_filter(Format::hook($hook), $callback, $priority);
 	}
 
 	/**
@@ -170,7 +170,7 @@ final class Hook
 	 */
 	public static function applyFilter(string $hook, $value, ...$args)
 	{
-		return apply_filters($hook, $value, ...$args);
+		return apply_filters(Format::hook($hook), $value, ...$args);
 	}
 
 	/**
@@ -183,7 +183,7 @@ final class Hook
 	 */
 	public static function hasFilter(string $hook, $callback = false)
 	{
-		return has_filter($hook, $callback);
+		return has_filter(Format::hook($hook), $callback);
 	}
 
 	/**

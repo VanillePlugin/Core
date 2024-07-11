@@ -20,7 +20,7 @@ trait TraitDatable
 {
 	/**
      * Get date (Default current).
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -31,7 +31,7 @@ trait TraitDatable
 
 	/**
      * Get date difference interval.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -53,7 +53,7 @@ trait TraitDatable
 
     /**
      * Convert date format.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
      */
@@ -62,9 +62,20 @@ trait TraitDatable
     	return Date::convert($date, $format, $to);
     }
 
+    /**
+     * Convert date to string format.
+     *
+	 * @access protected
+	 * @inheritdoc
+     */
+    protected function dateToString($date, string $to = Date::FORMAT) : string
+    {
+    	return Date::toString($date, $to);
+    }
+
 	/**
      * Get current time.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -75,7 +86,7 @@ trait TraitDatable
 
 	/**
      * Generate new time.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -86,7 +97,7 @@ trait TraitDatable
 
 	/**
      * Set default date timezone.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -97,7 +108,7 @@ trait TraitDatable
 
     /**
      * Get date timezone.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
      */

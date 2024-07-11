@@ -26,159 +26,212 @@ final class Format
 	public static function hook(string $hook) : string
 	{
         $name = Stringify::lowercase($hook);
-		
-        if ( Stringify::contains($name, 'wp-ajax-') ) {
-			$hook = Stringify::replace('wp-ajax-nopriv-', 'wp_ajax_nopriv_', $hook);
-			$hook = Stringify::replace('wp-ajax-', 'wp_ajax_', $hook);
-			return $hook;
-        }
 
-		switch ( $name ) {
-			case 'loaded':
-				$hook = 'wp_loaded';
-				break;
-			case 'head':
-				$hook = 'wp_head';
-				break;
-			case 'body':
-				$hook = 'wp_body_open';
-				break;
-			case 'content':
-				$hook = 'the_content';
-				break;
-			case 'footer':
-				$hook = 'wp_footer';
-				break;
-			case 'enqueue-scripts':
-				$hook = 'wp_enqueue_scripts';
-				break;
-			case 'body-class':
-				$hook = 'body_class';
-				break;
-			case 'user-register':
-				$hook = 'user_register';
-				break;
-			case 'user-auth':
-				$hook = 'wp_authenticate_user';
-				break;
-			case 'login-enqueue-scripts':
-				$hook = 'login_enqueue_scripts';
-				break;
-			case 'login-body-class':
-				$hook = 'login_body_class';
-				break;
-			case 'login-header-url':
-				$hook = 'login_headerurl';
-				break;
-			case 'login-header-text':
-				$hook = 'login_headertext';
-				break;
-			case 'login-form':
-				$hook = 'login_form';
-				break;
-			case 'login-form-defaults':
-				$hook = 'login_form_defaults';
-				break;
-			case 'amp-css':
-				$hook = 'amp_post_template_css';
-				break;
-			case 'amp-head':
-				$hook = 'amp_post_template_head';
-				break;
-			case 'amp-footer':
-				$hook = 'amp_post_template_footer';
-				break;
-			case 'plugins-loaded':
-				$hook = 'plugins_loaded';
-				break;
-			case 'plugin-row':
-				$hook = 'plugin_row_meta';
-				break;
-			case 'admin-init':
-				$hook = 'admin_init';
-				break;
-			case 'admin-menu':
-				$hook = 'admin_menu';
-				break;
-			case 'admin-bar-menu':
-				$hook = 'admin_bar_menu';
-				break;
-			case 'show-admin-bar':
-				$hook = 'show_admin_bar';
-				break;
-			case 'admin-enqueue-scripts':
-				$hook = 'admin_enqueue_scripts';
-				break;
-			case 'admin-body-class':
-				$hook = 'admin_body_class';
-				break;
-			case 'admin-footer-text':
-				$hook = 'admin_footer_text';
-				break;
-			case 'admin-notices':
-				$hook = 'admin_notices';
-				break;
-			case 'mail':
-				$hook = 'wp_mail';
-				break;
-			case 'mail-from':
-				$hook = 'wp_mail_from';
-				break;
-			case 'mail-name':
-				$hook = 'wp_mail_from_name';
-				break;
-			case 'update-footer':
-				$hook = 'update_footer';
-				break;
-			case 'save-post':
-				$hook = 'save_post';
-				break;
-			case 'insert-post-data':
-				$hook = 'wp_insert_post_data';
-				break;
-			case 'post-status':
-				$hook = 'transition_post_status';
-				break;
-			case 'media-button':
-				$hook = 'media_buttons';
-				break;
-			case 'template-redirect':
-				$hook = 'template_redirect';
-				break;
-			case 'dashboard-setup':
-				$hook = 'wp_dashboard_setup';
-				break;
-			case 'rest-api':
-				$hook = 'rest_api_init';
-				break;
-			case 'http-request-args':
-				$hook = 'http_request_args';
-				break;
-			case 'cron-schedules':
-				$hook = 'cron_schedules';
-				break;
-			case 'upgrader-process-complete':
-				$hook = 'upgrader_process_complete';
-				break;
-			case 'auto-update-plugin':
-				$hook = 'auto_update_plugin';
-				break;
-			case 'plugins-api':
-				$hook = 'plugins_api';
-				break;
-			case 'pre-transient-update-plugins':
-				$hook = 'pre_set_site_transient_update_plugins';
-				break;
-			case 'pre-transient-update-themes':
-				$hook = 'pre_set_site_transient_update_themes';
-				break;
-			case 'rewrite-rules':
-				$hook = 'mod_rewrite_rules';
-				break;
+		// Format dashed hooks
+		$format = [
+			'plugins-loaded',
+			'plugins-api',
+			'add-meta-boxes',
+			'body-class',
+			'user-register',
+			'login-enqueue-scripts',
+			'login-body-class',
+			'login-form',
+			'login-form-defaults',
+			'login-url',
+			'login-redirect',
+			'admin-init',
+			'admin-menu',
+			'admin-bar-menu',
+			'admin-enqueue-scripts',
+			'admin-body-class',
+			'admin-footer-text',
+			'admin-notices',
+			'show-admin-bar',
+			'update-footer',
+			'save-post',
+			'parse-query',
+			'sanitize-title',
+			'sanitize-key',
+			'sanitize-email',
+			'sanitize-file-name',
+			'widget-text',
+			'author-link',
+			'media-buttons',
+			'template-redirect',
+			'http-request-args',
+			'cron-schedules',
+			'upgrade-complete',
+			'auto-update-plugin',
+			'rest-api-init',
+			'rest-namespace-index'
+		];
+
+		if ( Arrayify::inArray($name, $format)) {
+			return Stringify::undash($name);
 		}
+
+		// Format custom hooks
+		$format = [
+			'loaded'              => 'wp_loaded',
+			'headers'             => 'wp_headers',
+			'head'                => 'wp_head',
+			'body'                => 'wp_body_open',
+			'title'               => 'the_title',
+			'content'             => 'the_content',
+			'footer'              => 'wp_footer',
+			'posts'               => 'pre_get_posts',
+			'redirect'            => 'wp_redirect',
+			'insert-post-data'    => 'wp_insert_post_data',
+			'post-status'         => 'transition_post_status',
+			'generator'           => 'the_generator',
+			'search-form'         => 'get_search_form',
+			'enqueue-scripts'     => 'wp_enqueue_scripts',
+			'avatar'              => 'get_avatar',
+			'user-auth'           => 'wp_authenticate_user',
+			'login-header-url'    => 'login_headerurl',
+			'login-header-text'   => 'login_headertext',
+			'login-error'         => 'login_errors',
+			'amp-css'             => 'amp_post_template_css',
+			'amp-head'            => 'amp_post_template_head',
+			'amp-footer'          => 'amp_post_template_footer',
+			'upgrade-complete'    => 'upgrader_process_complete',
+			'update-plugins'      => 'pre_set_site_transient_update_plugins',
+			'update-themes'       => 'pre_set_site_transient_update_themes',
+			'theme-setup'         => 'after_setup_theme',
+			'print-styles'        => 'wp_print_styles',
+			'print-scripts'       => 'wp_print_scripts',
+			'plugin-row'          => 'plugin_row_meta',
+			'mail'                => 'wp_mail',
+			'mail-from'           => 'wp_mail_from',
+			'mail-name'           => 'wp_mail_from_name',
+			'dashboard-setup'     => 'wp_dashboard_setup',
+			'widget-init'         => 'widgets_init',
+			'allowed-protocols'   => 'kses_allowed_protocols',
+			'allowed-html'        => 'wp_kses_allowed_html',
+			'escape-url'          => 'clean_url',
+			'escape-html'         => 'esc_html',
+			'escape-xml'          => 'esc_xml',
+			'escape-js'           => 'js_escape',
+			'escape-attr'         => 'attribute_escape',
+			'escape-textarea'     => 'esc_textarea',
+			'sanitize-text'       => 'sanitize_text_field',
+			'sanitize-textarea'   => 'sanitize_textarea_field',
+			'sanitize-html'       => 'sanitize_html_class',
+			'sanitize-mime'       => 'sanitize_mime_type',
+			'sanitize-file-chars' => 'sanitize_file_name_chars',
+			'sanitize-username'   => 'sanitize_user',
+			'nonce-ttl'           => 'nonce_life',
+			'rewrite-rules'       => 'mod_rewrite_rules',
+			'xml-rpc'             => 'xmlrpc_enabled',
+			'rest-api-prefix'     => 'rest_url_prefix',
+			'rest-api-index'      => 'rest_index',
+			'rest-api-endpoint'   => 'rest_endpoints',
+			'rest-api-error'      => 'rest_authentication_errors',
+			'rest-api-jsonp'      => 'rest_jsonp_enabled',
+			'rest-api-request'    => 'rest_pre_serve_request',
+			'rest-api-response'   => 'rest_pre_echo_response',
+			'rest-api-dispatch'   => 'rest_pre_dispatch',
+			'rest-api-callback'   => 'rest_request_before_callbacks',
+		];
+
+		if ( isset($format[$name]) ) {
+			return $format[$name];
+		}
+
+		// Format prefixed hooks
+		$format = [
+			'wp-ajax-nopriv-',
+			'wp-ajax-',
+			'add-meta-boxes-',
+			'sanitize-option-'
+		];
+
+		foreach ($format as $value) {
+			if ( Stringify::contains($name, $value)) {
+				$replace = Stringify::undash($value);
+				return Stringify::replace($value, $replace, $name);
+			}
+		}
+
         return $hook;
 	}
 
+	/**
+     * Get formatted request args.
+     *
+	 * @access public
+	 * @param array $args
+	 * @return array
+	 */
+	public static function request(array $args) : array
+	{
+		foreach ($args as $key => $value) {
+			$k = Stringify::lowercase($key);
+			if ( $k !== 'user-agent' ) {
+				$k = Stringify::undash($k);
+			}
+			unset($args[$key]);
+			$args[$k] = $value;
+		}
+		return $args;
+	}
+
+	/**
+     * Get formatted restful args.
+     *
+	 * @access public
+	 * @param array $args
+	 * @return array
+	 */
+	public static function restful(array $args) : array
+	{
+		$format = [
+			'method' => 'methods',
+			'action' => 'callback',
+			'access' => 'permission_callback'
+		];
+
+		foreach ($args as $key => $value) {
+
+			if ( isset($format[$key]) ) {
+				$k = $format[$key];
+				unset($args[$key]);
+				$args[$k] = $value;
+				continue;
+			}
+
+			$k = Stringify::lowercase($key);
+			if ( Stringify::contains($k, '-') ) {
+				$k = Stringify::undash($k);
+				unset($args[$key]);
+				$args[$k] = $value;
+			}
+			
+		}
+		
+		return $args;
+	}
+
+	/**
+     * Format dashed args.
+     *
+	 * @access public
+	 * @param array $args
+	 * @return array
+	 */
+	public static function undash(array $args) : array
+	{
+		foreach ($args as $key => $value) {
+			if ( Stringify::contains($key, '-') ) {
+				$k = Stringify::undash($key);
+				unset($args[$key]);
+				$args[$k] = $value;
+			}
+		}
+		return $args;
+	}
+	
 	/**
      * Get post formatted data.
      *
@@ -188,7 +241,7 @@ final class Format
 	 */
 	public static function post($post)
 	{
-        if ( $post ) {
+        if ( TypeCheck::isObject($post) ) {
             return [
                 'id'      => $post->ID,
                 'slug'    => $post->post_name,
@@ -207,7 +260,7 @@ final class Format
 
 	/**
      * Get user formatted data.
-     * 
+     *
 	 * @access public
 	 * @param mixed $user
 	 * @return mixed
@@ -215,6 +268,9 @@ final class Format
 	public static function user($user)
 	{
         if ( TypeCheck::isObject($user) ) {
+			if ( !count((array)$user->data) ) {
+				return [];
+			}
 			$name = $user->data->display_name;
 			if ( empty($name) ) {
 				$name = $user->data->user_nicename;

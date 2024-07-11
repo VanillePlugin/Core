@@ -14,8 +14,11 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\Shortcode as Core;
+use VanillePlugin\inc\{
+	TypeCheck, Shortcode as Core
+};
 use VanillePlugin\int\CallableInterface;
+use VanillePlugin\exc\ShortcodeException;
 
 /**
  * Plugin shortcode manager.
@@ -50,8 +53,8 @@ class Shortcode extends View
 			);
 		}
 
-		// Reset config
-		$this->resetConfig();
+		// Init output
+		$this->setOutput();
 	}
 
 	/**
@@ -161,10 +164,17 @@ class Shortcode extends View
 	 * @param string $path
 	 * @param mixed $args
 	 * @return mixed
+	 * @throws ShortcodeException
 	 */
 	public static function instance(string $name, $path = 'shortcode', ...$args)
 	{
-		return (new Loader())->i($path, $name, ...$args);
+		$class = (new Loader())->i($path, $name, ...$args);
+		if ( !TypeCheck::hasInterface($class, 'ShortcodedInterface') ) {
+			throw new ShortcodeException(
+				ShortcodeException::invalidInstance()
+			);
+		}
+		return $class;
 	}
 
 	/**

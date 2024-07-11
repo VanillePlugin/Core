@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace VanillePlugin\tr;
 
-use VanillePlugin\inc\Localisation;
+use VanillePlugin\inc\Localization;
 use VanilleThird\Translator;
 
 trait TraitTranslatable
@@ -27,7 +27,7 @@ trait TraitTranslatable
 	 */
 	protected function getLocale($user = null) : string
 	{
-		return Localisation::getLocale($user);
+		return Localization::getLocale($user);
 	}
 
 	/**
@@ -38,7 +38,7 @@ trait TraitTranslatable
 	 */
 	protected function loadTranslation(string $domain, string $mo) : bool
 	{
-		return Localisation::load($domain, $mo);
+		return Localization::load($domain, $mo);
 	}
 
 	/**
@@ -49,7 +49,7 @@ trait TraitTranslatable
 	 */
 	protected function loadPluginTranslation(string $domain, ?string $path = null) : bool
 	{
-		return Localisation::loadPlugin($domain, $path);
+		return Localization::loadPlugin($domain, $path);
 	}
 
 	/**
@@ -60,7 +60,7 @@ trait TraitTranslatable
 	 */
 	protected function parseTranslationFile(string $domain) : string
 	{
-		return Localisation::parse($domain, $this->getLocale());
+		return Localization::parse($domain, $this->getLocale());
 	}
 
 	/**
@@ -71,7 +71,7 @@ trait TraitTranslatable
 	 */
 	protected function loadThemeTranslation(string $domain, ?string $path = null) : bool
 	{
-		return Localisation::loadTheme($domain, $path);
+		return Localization::loadTheme($domain, $path);
 	}
 
 	/**
@@ -82,7 +82,7 @@ trait TraitTranslatable
 	 */
 	protected function loadChildTranslation(string $domain, ?string $path = null) : bool
 	{
-		return Localisation::loadChild($domain, $path);
+		return Localization::loadChild($domain, $path);
 	}
 
 	/**
@@ -116,13 +116,13 @@ trait TraitTranslatable
 	 */
 	protected function normalizeLocale(string $locale) : string
 	{
-		$lang   = Localisation::parseLang($locale);
-		$region = Localisation::parseRegion($locale);
+		$lang   = Localization::parseLang($locale);
+		$region = Localization::parseRegion($locale);
 
 		if ( $lang === $region ) {
 			return $lang;
 		}
 		
-		return Localisation::normalizeLocale($locale);
+		return Localization::normalizeLocale($locale);
 	}
 }

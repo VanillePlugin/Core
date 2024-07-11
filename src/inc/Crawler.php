@@ -16,76 +16,74 @@ namespace VanillePlugin\inc;
 
 /**
  * Built-in crawler.
- * Used in servers with enough capacity.
  */
-final class Crawler
+final class Crawler extends Request
 {
 	/**
 	 * @access private
-	 * @var string METHOD
 	 * @var string PATTERN
 	 */
-	private const METHOD  = 'GET';
 	private const PATTERN = '*';
 
 	/**
 	 * @access private
-	 * @var string $method
 	 * @var string $pattern
+	 * @var array $args
 	 */
-	private $method;
 	private $pattern;
+	private $args;
 
 	/**
 	 * Init crawler.
 	 *
 	 * @param string $pattern
-	 * @param string $method
 	 */
-	public function __construct(string $pattern = self::PATTERN, string $method = self::METHOD)
+	public function __construct(string $pattern = self::PATTERN, array $args = [])
 	{
 		$this->pattern = $pattern;
-		$this->method  = $method;
+		$this->args = Arrayify::merge([
+			'method'      => self::GET,
+			'timeout'     => 3,
+			'redirection' => 2,
+			'blocking'    => false,
+			'headers'     => ['Cache-Control' => 'max-age=0']
+		], $args);
 	}
 
 	/**
 	 * Start crawler.
 	 *
 	 * @access public
-	 * @param int $depth
-	 * @param array $args
+	 * @param int $try
 	 * @return void
 	 */
-	public function start(int $depth = 2, array $args = [])
+	public function start(int $try = 2)
 	{
 		if ( self::canStart() ) {
-
-			// Set request args
-			$args = Arrayify::merge([
-				'timeout'     => 10,
-				'redirection' => 2,
-				'user-agent'  => 'VanillePlugin/crawler',
-				'headers'     => [
-					'Cache-Control' => 'max-age=0'
-				]
-			], $args);
-
-			// Init request client
-			$api = new Request($this->method, $args);
-
-			// Loop through posts
+			$try = ($try <= 5) ? $try : 2;
 			foreach (Post::all() as $post) {
-				$content = $post->post_content;
-				if ( $this->pattern == '*' || $this->match($content) ) {
-					$i = 1;
-					$url = $post->guid;
-					while ( $i <= $depth ) {
-						$api->send($url);
-					    $i++;
-					    sleep(1);
-					}
+				if ( $this->pattern == '*' || $this->match($post['content']) ) {
+					$this->ping($post['link'], $try);
 				}
 			}
+		}
+	}
+
+	/**
+	 * Ping url.
+	 *
+	 * @access private
+	 * @param string $url
+	 * @param int $try
+	 * @return void
+	 */
+	private function ping(string $url, int $try = 2)
+	{
+		$i = 1;
+		while ( $i <= $try ) {
+			self::do($url, $this->args);
+			$i++;
+			sleep(1);
 		}
 	}
 

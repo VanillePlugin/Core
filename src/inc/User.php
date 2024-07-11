@@ -14,13 +14,11 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-use \WP_User;
-
 final class User
 {
 	/**
 	 * Get user by Id.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $id
 	 * @param bool $format
@@ -28,15 +26,15 @@ final class User
 	 */
 	public static function get($id = null, bool $format = true)
 	{
-        if ( $id ) {
-            return self::getById($id, $format);
-        }
-		return self::current($format);
+		if ( TypeCheck::isNull($id) ) {
+			return self::current($format);
+		}
+        return self::getById($id, $format);
 	}
 
 	/**
 	 * Get current user Id.
-	 * 
+	 *
 	 * @access public
 	 * @return int
 	 */
@@ -49,7 +47,7 @@ final class User
 
 	/**
      * Get user email by Id.
-     * 
+     *
 	 * @access public
 	 * @param mixed $id
 	 * @return mixed
@@ -65,7 +63,7 @@ final class User
 
 	/**
      * Get user hash by Id.
-     * 
+     *
 	 * @access public
 	 * @param mixed $id
 	 * @return mixed
@@ -81,7 +79,7 @@ final class User
 
 	/**
 	 * Get user avatar.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $id
 	 * @return string
@@ -99,7 +97,7 @@ final class User
 
 	/**
      * Get user data.
-     * 
+     *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $id
@@ -127,15 +125,12 @@ final class User
 	public static function current(bool $format = true)
 	{
 		$user = wp_get_current_user();
-        if ( $format ) {
-            return Format::user($user);
-        }
-        return $user;
+		return ($format) ? Format::user($user) : $user;
 	}
 
 	/**
      * Get user by field.
-     * 
+     *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $value
@@ -145,15 +140,12 @@ final class User
 	public static function getBy(string $key, $value, bool $format = true)
 	{
         $user = get_user_by($key, $value);
-        if ( $format ) {
-            return Format::user($user);
-        }
-        return $user;
+        return ($format) ? Format::user($user) : $user;
 	}
 
 	/**
      * Get user by Id.
-     * 
+     *
 	 * @access public
 	 * @param mixed $id
 	 * @param bool $format
@@ -169,7 +161,7 @@ final class User
 
 	/**
 	 * Get user by email.
-	 * 
+	 *
 	 * @access public
 	 * @param string $email
 	 * @param bool $format
@@ -182,7 +174,7 @@ final class User
 
 	/**
      * Get users by meta.
-     * 
+     *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $value
@@ -191,30 +183,23 @@ final class User
 	 */
 	public static function getByMeta(string $key, $value, bool $format = true) : array
 	{
-		$users = get_users([
-			'meta_key'   => $key,
-			'meta_value' => $value
-		]);
-        if ( $format ) {
-            $wrapper = [];
-            foreach ($users as $user) {
-                $wrapper[] = Format::user($user);
-            }
-			return $wrapper;
-		}
-		return $users;
+		return self::all([
+			'meta-key'   => $key,
+			'meta-value' => $value
+		], $format);
 	}
 
 	/**
 	 * Get all users.
-	 * 
+	 *
 	 * @access public
+	 * @param array $args
 	 * @param bool $format
 	 * @return array
 	 */
-	public static function all(bool $format = true) : array
+	public static function all(array $args = [], bool $format = true) : array
 	{
-		$users = get_users();
+		$users = get_users(Format::undash($args));
         if ( $format ) {
 			$users = Arrayify::map(function($user) {
 				return Format::user($user);
@@ -250,8 +235,8 @@ final class User
 	}
 
 	/**
-     * Check user email.
-     * 
+     * Check user exists by email.
+     *
 	 * @access public
 	 * @param string $email
 	 * @return bool
@@ -262,8 +247,8 @@ final class User
 	}
 
 	/**
-     * Check user login.
-     * 
+     * Check user exists by login.
+     *
 	 * @access public
 	 * @param string $login
 	 * @return bool
@@ -274,21 +259,21 @@ final class User
 	}
 
 	/**
-     * Check user login.
-     * 
+     * Check user exists by Id.
+     *
 	 * @access public
 	 * @param mixed $id
 	 * @return bool
 	 */
 	public static function exists($id) : bool
 	{
-		$user = new WP_User($id);
-		return $user->exists();
+		$user = self::get($id, false);
+		return ($user) ? $user->exists() : false;
 	}
 
 	/**
 	 * Add user.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $data
 	 * @param bool $error
@@ -302,7 +287,7 @@ final class User
 
 	/**
 	 * Update user.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $data
 	 * @param bool $error
@@ -316,7 +301,7 @@ final class User
 
 	/**
 	 * Delete user.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $id
 	 * @param bool $force
@@ -332,7 +317,7 @@ final class User
 
 	/**
      * Add meta.
-     * 
+     *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $value
@@ -340,7 +325,7 @@ final class User
 	 * @param bool $unique
 	 * @return mixed
 	 */
-	public static function addMeta(string $key, $value, $id = null, bool $unique = false)
+	public static function addMeta(string $key, $value, $id = null, bool $unique = true)
 	{
 		if ( TypeCheck::isNull($id) ) {
 			$id = self::getId();
@@ -350,7 +335,7 @@ final class User
 
 	/**
      * Get meta.
-     * 
+     *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $id
@@ -367,7 +352,7 @@ final class User
 
 	/**
      * Update meta.
-     * 
+     *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $value
@@ -384,7 +369,7 @@ final class User
 
 	/**
      * Delete meta.
-     * 
+     *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $id
@@ -401,7 +386,7 @@ final class User
 
 	/**
      * Register user.
-     * 
+     *
 	 * @access public
 	 * @param string $email
 	 * @param string $pswd
@@ -422,8 +407,8 @@ final class User
 	}
 
 	/**
-     * Login user.
-     * 
+     * Advanced user login.
+     *
 	 * @access public
 	 * @param string $user
 	 * @param string $pswd
@@ -432,11 +417,12 @@ final class User
 	 */
 	public static function login(string $user, string $pswd, bool $memory = false) : bool
 	{
-		$login = wp_signon([
-			'user_login'    => $user,
-			'user_password' => $pswd,
+		$args = Format::undash([
+			'user-login'    => $user,
+			'user-password' => $pswd,
 			'remember'      => $memory
-		], Server::isSsl());
+		]);
+		$login = wp_signon($args, Server::isSsl());
 
 		if ( !Exception::isError($login) ) {
 			return true;
@@ -460,21 +446,20 @@ final class User
 
 	/**
      * Logout user.
-     * 
+     *
 	 * @access public
-	 * @return bool
+	 * @return void
 	 */
-	public static function logout() : bool
+	public static function logout()
 	{
 		wp_destroy_current_session();
 		wp_clear_auth_cookie();
 		wp_set_current_user(0);
-		return true;
 	}
 
 	/**
      * Validate user password.
-     * 
+     *
 	 * @access public
 	 * @param string $pswd
 	 * @param string $hash
@@ -507,17 +492,14 @@ final class User
 
 	/**
      * Send user password.
-     * 
+     *
 	 * @access public
 	 * @param mixed $id
 	 * @return bool
 	 */
 	public static function sendPassword($id = null) : bool
 	{
-		if ( TypeCheck::isNull($id) ) {
-			$id = self::getId();
-		}
-        if ( ($user = self::getById((int)$id)) ) {
+        if ( ($user = self::getById($id)) ) {
            return Password::send($user['login']);
         }
 		return false;
@@ -541,7 +523,7 @@ final class User
 
 	/**
 	 * Get password reset URL.
-	 * 
+	 *
 	 * @access public
 	 * @param object $user
 	 * @return string
@@ -574,11 +556,8 @@ final class User
 	 */
 	public static function getRoles($id = null) : array
 	{
-		if ( TypeCheck::isNull($id) ) {
-			$id = self::getId();
-		}
-		$user = new WP_User($id);
-		return (array)$user->roles;
+		$user = self::get($id, false);
+		return ($user) ? (array)$user->roles : [];
 	}
 
 	/**
@@ -619,8 +598,9 @@ final class User
 	public static function addRole(string $display, string $role = null, array $cap = [])
 	{
 		$role = ($role) ? (string)$role : $display;
-		$role = Stringify::slugify($role);
-		$role = Stringify::undash($role);
+		$role = Stringify::undash(
+			Stringify::slugify($role)
+		);
 		return add_role($role, $display, $cap);
 	}
 
@@ -645,11 +625,40 @@ final class User
 	 */
 	public static function getCaps($id = null) : array
 	{
+		$user = self::get($id, false);
+		return ($user) ? (array)$user->caps : [];
+	}
+
+	/**
+	 * Check user capability.
+	 *
+	 * @access public
+	 * @param string $cap
+	 * @param mixed $id
+	 * @param array $args
+	 * @return bool
+	 */
+	public static function hasCapability(string $cap = 'edit-posts', $id = null, ...$args) : bool
+	{
+		$cap = Stringify::undash($cap);
 		if ( TypeCheck::isNull($id) ) {
-			$id = self::getId();
+			return current_user_can($cap, ...$args);
 		}
-		$user = new WP_User($id);
-		return (array)$user->caps;
+		return user_can($id, $cap, ...$args);
+	}
+
+	/**
+	 * Check user capability (Alias).
+	 *
+	 * @access public
+	 * @param string $cap
+	 * @param mixed $id
+	 * @param array $args
+	 * @return bool
+	 */
+	public static function hasCap(string $cap = 'edit-posts', $id = null, ...$args) : bool
+	{
+		return self::hasCapability($cap, $id, ...$args);
 	}
 
 	/**
@@ -712,48 +721,5 @@ final class User
 	public static function removeCap(string $role, string $cap) : bool
 	{
 		return self::removeCapability($role, $cap);
-	}
-
-	/**
-	 * Check current user capability.
-	 *
-	 * @access public
-	 * @param string $cap
-	 * @param mixed $args
-	 * @return bool
-	 */
-	public static function hasCapability(string $cap = 'edit_posts', $args = null) : bool
-	{
-		return current_user_can($cap, $args);
-	}
-
-	/**
-	 * Check current user capability (Alias).
-	 *
-	 * @access public
-	 * @param string $cap
-	 * @param mixed $args
-	 * @return bool
-	 */
-	public static function hasCap(string $cap = 'edit_posts', $args = null) : bool
-	{
-		return self::hasCapability($cap, $args);
-	}
-
-	/**
-	 * Check user capability.
-	 *
-	 * @access public
-	 * @param mixed $id
-	 * @param string $cap
-	 * @param mixed $args
-	 * @return bool
-	 */
-	public static function can($id = null, string $cap = 'edit_posts', $args = null) : bool
-	{
-		if ( TypeCheck::isNull($id) ) {
-			$id = self::getId();
-		}
-		return user_can($id, $cap, $args);
 	}
 }
