@@ -143,7 +143,7 @@ final class Restful
 	}
 
 	/**
-     * Get request params.
+     * Get request params (POST).
      *
 	 * @access public
 	 * @param RestfulRequest $request

@@ -73,13 +73,13 @@ interface RestfulInterface
 	function noPadding() : self;
 
 	/**
-	 * Override REST 404.
+	 * Override REST response.
 	 * [Action: init].
 	 * [Filter: rest-api-response].
 	 *
 	 * @return object
 	 */
-	function notFound() : self;
+	function override() : self;
 
 	/**
 	 * Disable REST.
@@ -110,7 +110,7 @@ interface RestfulInterface
 	function addRoutes($server);
 
 	/**
-	 * Set endpoint default action callback.
+	 * Set endpoint action callback.
 	 *
 	 * @param object $request
 	 * @return mixed
@@ -118,12 +118,20 @@ interface RestfulInterface
 	function action($request);
 
 	/**
-	 * Set endpoint default access callback.
+	 * Set endpoint access callback.
 	 *
 	 * @param object $request
 	 * @return mixed
 	 */
 	function access($request);
+
+	/**
+	 * Set endpoint internal access callback.
+	 *
+	 * @param object $request
+	 * @return mixed
+	 */
+	function internal($request);
 	
 	/**
 	 * Add auth token.

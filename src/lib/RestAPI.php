@@ -153,14 +153,31 @@ class RestAPI implements RestfulInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function notFound() : self
+	public function override() : self
 	{
 		$this->addFilter('rest-api-response', function($response) {
-			
+
 			if ( isset($response['code']) ) {
-				if ( $response['code'] == 'rest_no_route' ) {
+
+				if ( $response['code'] == $this->undash('rest-no-route') ) {
 					$this->setResponse('REST API route not found', [], 'error', 404);
 				}
+				if ( $response['code'] == $this->undash('rest-forbidden') ) {
+					$this->setResponse('REST API route forbidden', [], 'error', 403);
+				}
+				if ( $response['code'] == $this->undash('rest-cookie-invalid-nonce') ) {
+					$this->setResponse('REST API route invalid cookie', [], 'error', 403);
+				}
+				if ( $response['code'] == $this->undash('rest-invalid-type') ) {
+					$this->setResponse('REST API route invalid type', [], 'error', 422);
+				}
+				if ( $response['code'] == $this->undash('rest-invalid-pattern') ) {
+					$this->setResponse('REST API route invalid pattern', [], 'error', 422);
+				}
+				if ( $response['code'] == $this->undash('rest-invalid-json') ) {
+					$this->setResponse('REST API route invalid json', [], 'error', 422);
+				}
+
 			}
 			
 			return $response;
@@ -228,6 +245,17 @@ class RestAPI implements RestfulInterface
 		}
 		return true;
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function internal($request)
+    {
+        if ( $this->isLoggedIn() ) {
+            return $this->hasCap('manage-options');
+        }
+        return false;
+    }
 
 	/**
      * Fetch response body.
@@ -339,7 +367,7 @@ class RestAPI implements RestfulInterface
 	}
 
 	/**
-     * Get request params.
+     * Get request params (POST).
      *
 	 * @access protected
 	 * @inheritdoc
@@ -446,6 +474,28 @@ class RestAPI implements RestfulInterface
 	protected function isValidParam($request, string $key) : bool
 	{
 		return Restful::isValidParam($request, $key);
+	}
+
+	/**
+     * Check POST method.
+     *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function isPost($request) : bool
+	{
+		return ($this->getMethod($request) == 'POST');
+	}
+
+	/**
+     * Check GET method.
+     *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function isGet($request) : bool
+	{
+		return ($this->getMethod($request) == 'GET');
 	}
 
 	/**

@@ -907,4 +907,15 @@ trait TraitFormattable
 	{
 	    return Converter::toKey($data);
 	}
+
+	/**
+	 * Convert dynamic types.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function toTypes($value)
+	{
+		return Converter::toTypes($value);
+	}
 }

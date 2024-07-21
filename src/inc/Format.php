@@ -133,6 +133,7 @@ final class Format
 			'rest-api-response'   => 'rest_pre_echo_response',
 			'rest-api-dispatch'   => 'rest_pre_dispatch',
 			'rest-api-callback'   => 'rest_request_before_callbacks',
+			'rest-api-nocache'    => 'rest_send_nocache_headers',
 		];
 
 		if ( isset($format[$name]) ) {
