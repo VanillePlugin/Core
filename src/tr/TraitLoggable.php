@@ -16,6 +16,9 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\lib\Logger;
 
+/**
+ * Define logging functions.
+ */
 trait TraitLoggable
 {
     /**

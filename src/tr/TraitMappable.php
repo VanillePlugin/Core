@@ -16,27 +16,29 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\Arrayify;
 
-trait TraitMapable
+/**
+ * Define mapping functions.
+ */
+trait TraitMappable
 {
-    /**
-     * @access protected
-     * @inheritdoc
-     */
-    protected function mapArray($callback, array $array, ?array $arrays = null)
-    {
-        switch ($callback) {
-            case 'values':
-                $callback = 'array_values';
-                break;
-        }
-        return Arrayify::map($callback, $array, $arrays);
-    }
-
 	/**
-	 * @access protected
+	 * Map array.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function recursiveArray(&$array, $callback, $arg = null) : bool
+	public function map($callback, array $array, ?array $arrays = null) : array
+	{
+		return Arrayify::map($callback, $array, $arrays);
+	}
+
+	/**
+	 * Walk recursive array.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function recursiveArray(&$array, $callback, $arg = null) : bool
     {
         return Arrayify::recursive($array, $callback, $arg);
     }

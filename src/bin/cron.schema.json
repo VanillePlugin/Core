@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "plugin.cron.schema.json",
+  "type": "object",
+  "properties": {
+    "schedules": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "display": {
+              "type": "string"
+            },
+            "interval": {
+              "type": "integer"
+            }
+          }
+        }
+      ],
+      "required": [
+        "name",
+        "interval"
+      ]
+    },
+    "events": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "schedule": {
+              "type": "string"
+            },
+            "callback": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "required": [
+        "name",
+        "schedule"
+      ]
+    }
+  },
+  "required": [
+    "schedules",
+    "events"
+  ]
+}

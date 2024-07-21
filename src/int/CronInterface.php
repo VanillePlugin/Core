@@ -17,56 +17,97 @@ namespace VanillePlugin\int;
 interface CronInterface
 {
 	/**
-	 * Init schedule,
-	 * Add schedulers actions.
+	 * Init event timestamp.
+     *
+     * @param int $timestamp
 	 */
-	function __construct();
+	function __construct(?int $timestamp = null);
 
 	/**
-	 * Apply schedules,
+	 * Register events.
+	 * [Action: {plugin}-load].
 	 * [Filter: cron-schedules].
-	 *
-	 * @param array $schedules
-	 * @return array
-	 */
-	function apply(array $schedules) : array;
-
-	/**
-	 * Start schedules.
 	 *
 	 * @return void
 	 */
-	function start();
+	function register();
 
 	/**
-	 * Check scheduled waitlist.
+	 * Run scheduled events.
+	 * [Action: init].
 	 *
-	 * @param string $name
-	 * @return bool
+	 * @return void
 	 */
-	function next($name);
+	function run();
 
 	/**
-	 * Check scheduled waitlist.
-	 *
-	 * @param string $interval
-	 * @param string $hook
-	 * @return mixed
-	 */
-	function schedule(string $interval, string $hook);
-
-	/**
-	 * Clear hooked schedules.
-	 *
-	 * @param string $name
-	 * @return mixed
-	 */
-	function clear(string $name);
-
-	/**
-	 * Remove schedules.
+	 * Remove scheduled events.
+	 * [Action: {plugin}-deactivate].
 	 *
 	 * @return void
 	 */
 	function remove();
+
+	/**
+	 * Use server cron.
+	 * [Action: {plugin}-load].
+	 *
+	 * @return void
+	 */
+	function useServer();
+
+	/**
+	 * Check server cron handler.
+	 * [Action: {plugin}-load].
+	 *
+	 * @return bool
+	 */
+	function isServer() : bool;
+
+	/**
+	 * Get next event timestamp.
+	 *
+	 * @param string $name
+	 * @param array $args
+	 * @return int
+	 */
+	function next(string $name, array $args = []) : int;
+
+	/**
+	 * Schedule recurring event.
+	 *
+	 * @param string $interval
+	 * @param string $hook
+	 * @param array $args
+	 * @return bool
+	 */
+	function schedule(string $interval, string $hook, array $args = []) : bool;
+
+	/**
+	 * Schedule event once.
+	 *
+	 * @param string $hook
+	 * @param array $args
+	 * @return bool
+	 */
+	function once(string $hook, array $args = []) : bool;
+
+	/**
+	 * Unschedule scheduled event.
+	 *
+	 * @param string $hook
+	 * @param array $args
+	 * @return bool
+	 */
+	function unschedule(string $hook, array $args = []) : bool;
+
+	/**
+	 * Clear schedule event.
+	 * [Action: {plugin}-deactivate].
+	 *
+	 * @param string $hook
+	 * @param array $args
+	 * @return int
+	 */
+	function clear(string $hook, array $args = []) : int;
 }

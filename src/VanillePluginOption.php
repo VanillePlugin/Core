@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin;
 
 /**
- * Define tweaked base functions used by plugin.
+ * Define tweaked plugin base functions.
  *
  * - Hooking
  * - Rendering
@@ -23,8 +23,8 @@ namespace VanillePlugin;
  * - Configuration
  * - Translation
  * - Formatting
- * - IO
  * - Caching
+ * - IO
  * - Requesting
  *
  * @see https://developer.wordpress.org/plugins/
@@ -173,9 +173,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function registerPluginOption(string $group, string $key, array $args = [], bool $multi = true)
+	protected function registerPluginOption(string $group, string $key, array $args = [], bool $lang = true)
 	{
-		$key = $this->getOptionLang($key, $multi);
+		$key = $this->getOptionLang($key, $lang);
 		$group = $this->applyPrefix($group);
 		$this->registerOption($group, $key, $args);
 	}
@@ -186,9 +186,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addPluginOption(string $key, $value, bool $multi = true) : bool
+	protected function addPluginOption(string $key, $value, bool $lang = true) : bool
 	{
-		$key = $this->getOptionLang($key, $multi);
+		$key = $this->getOptionLang($key, $lang);
 		return $this->addOption($key, $value);
 	}
 
@@ -198,9 +198,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getPluginOption(string $key, $default = [], bool $multi = true)
+	protected function getPluginOption(string $key, $default = [], bool $lang = true)
 	{
-		$key = $this->getOptionLang($key, $multi);
+		$key = $this->getOptionLang($key, $lang);
 		$value = $this->stripSlash(
 			$this->getOption($key, $default)
 		);
@@ -213,10 +213,27 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function updatePluginOption(string $key, $value, bool $multi = true) : bool
+	protected function updatePluginOption(string $key, $value, bool $lang = true) : bool
 	{
-		$key = $this->getOptionLang($key, $multi);
+		$key = $this->getOptionLang($key, $lang);
 		return $this->updateOption($key, $value);
+	}
+
+	/**
+	 * Reset plugin option.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function resetPluginOption(string $key, $default = []) : bool
+	{
+		$settings = $this->getGroupSettings();
+		if ( isset($settings[$key]) ) {
+			$settings = $settings[$key];
+			$key = $this->getOptionLang($key, $settings['lang']);
+			return $this->updateOption($key, $settings['value']);
+		}
+		return $this->updateOption($key, $default);
 	}
 
 	/**
@@ -225,9 +242,9 @@ trait VanillePluginOption
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removePluginOption(string $key, bool $multi = true) : bool
+	protected function removePluginOption(string $key, bool $lang = true) : bool
 	{
-		$key = $this->getOptionLang($key, $multi);
+		$key = $this->getOptionLang($key, $lang);
 		return $this->removeOption($key);
 	}
 
@@ -236,12 +253,12 @@ trait VanillePluginOption
 	 *
 	 * @access protected
 	 * @param string $key
-	 * @param bool $multi
+	 * @param bool $lang
 	 * @return string
 	 */
-	protected function getOptionLang(string $key, bool $multi) : string
+	protected function getOptionLang(string $key, bool $lang) : string
 	{
-		if ( $this->hasMultilingual() && $multi ) {
+		if ( $this->hasMultilingual() && $lang ) {
 			$key = "{$key}-{$this->getLang()}";
 		}
 		return $this->applyPrefix($key);
@@ -573,7 +590,7 @@ trait VanillePluginOption
 	 */
 	protected function removePluginCaps($roles = [], string $cap = 'manage')
 	{
-		$this->purgePluginTransients();
+		$this->removePluginTransients();
 		if ( $this->isType('string', $roles) ) {
 			$roles = [$roles];
 		}
@@ -677,6 +694,18 @@ trait VanillePluginOption
 	}
 
 	/**
+	 * Get plugin secret.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function getPluginSecret() : string
+	{
+		$default = $this->getSecret();
+		return $this->getPluginOption('secret', $default, false);
+	}
+
+	/**
 	 * Get plugin transient.
 	 *
 	 * @access protected
@@ -725,18 +754,18 @@ trait VanillePluginOption
 	}
 
 	/**
-	 * Purge all plugin transients.
+	 * Remove all plugin transients.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function purgePluginTransients() : bool
+	protected function removePluginTransients() : bool
 	{
 		$namespace = $this->getNameSpace();
 		if ( $this->isMultisite() && $this->allowedMultisite() ) {
-			return $this->purgeSiteTransients($namespace);
+			return $this->removeSiteTransients($namespace);
 		}
-		return $this->purgeTransients($namespace);
+		return $this->removeTransients($namespace);
 	}
 
 	/**
@@ -940,7 +969,7 @@ trait VanillePluginOption
 
 	/**
 	 * Load plugin translation (Overridden).
-	 * [Action: init].
+	 * [Action: front-init].
 	 * [Filter: {plugin}-translation-path].
 	 *
 	 * @access public
@@ -983,7 +1012,7 @@ trait VanillePluginOption
 	}
 
 	/**
-	 * Load plugin translated strings,
+	 * Load plugin translated strings.
 	 * Admin and Front.
 	 *
 	 * @access public
@@ -992,23 +1021,11 @@ trait VanillePluginOption
 	 */
 	public function loadStrings(?string $type = null) : array
 	{
-		$strings = $this->getStrings();
-		switch ($type) {
-			case 'admin':
-				return $this->translateDeep(
-					$strings['admin']
-				);
-				break;
-
-			case 'front':
-				return $this->translateDeep(
-					$strings['front']
-				);
-				break;
-		}
-		return $this->translateDeep($strings);
+		return $this->translateDeep(
+			$this->getStrings($type)
+		);
 	}
-	
+
 	/**
 	 * Translate string.
 	 * May require quotes escaping.
@@ -1023,7 +1040,7 @@ trait VanillePluginOption
 	}
 
 	/**
-	 * Translate string with variables,
+	 * Translate string with variables.
 	 * May require quotes escaping.
 	 *
 	 * @access public
@@ -1070,7 +1087,7 @@ trait VanillePluginOption
 	}
 
 	/**
-	 * Set HTTP response,
+	 * Set HTTP response.
 	 * Including translated message.
 	 *
 	 * @access protected

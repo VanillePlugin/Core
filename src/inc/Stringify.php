@@ -468,7 +468,7 @@ final class Stringify
 	}
 
 	/**
-	 * Unserialize value only if it was serialized.
+	 * Unserialize serialized value.
 	 *
 	 * @access public
 	 * @param string $value
@@ -492,7 +492,7 @@ final class Stringify
 	}
 
 	/**
-	 * Check whether value is serialized.
+	 * Check serialized value.
 	 *
 	 * @access public
 	 * @param string $value
@@ -635,7 +635,7 @@ final class Stringify
 	 */
 	public static function sanitizeTitle(string $string, ?string $fallback = null, string $context = 'save') : string
 	{
-		return sanitize_title($string, $fallback, $context);
+		return (string)sanitize_title($string, $fallback, $context);
 	}
 
 	/**
@@ -966,12 +966,12 @@ final class Stringify
 
 	/**
 	 * Parse URL (URL toolkit).
-	 * 
-	 * [SCHEME : 0]
-	 * [HOST   : 1]
-	 * [PATH   : 5]
-	 * [QUERY  : 6]
-	 * 
+	 *
+	 * [SCHEME: 0]
+	 * [HOST: 1]
+	 * [PATH: 5]
+	 * [QUERY: 6]
+	 *
 	 * @access public
 	 * @param string $url
 	 * @param int $component
@@ -1104,7 +1104,6 @@ final class Stringify
 	{
 		$i = self::lowercase($string);
 		if ( !self::contains($i, 'interface') ) {
-			$string = self::capitalize($string);
 			$string = "{$string}Interface";
 		}
 		return $string;

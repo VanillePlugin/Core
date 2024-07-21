@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "plugin.settings.schema.json",
+  "type": "object",
+  "properties": {
+    "settings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "group": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object"
+          },
+          "lang": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "group",
+          "type",
+          "value",
+          "lang"
+        ]
+      }
+    }
+  },
+  "required": [
+    "settings"
+  ]
+}

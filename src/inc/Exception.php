@@ -59,18 +59,20 @@ final class Exception extends \Exception
 	/**
 	 * Trigger user error.
 	 *
+	 * [E_USER_NOTICE: 1024]
+	 *
 	 * @access public
 	 * @param string $error
 	 * @param int $type
 	 * @return bool
 	 */
-	public static function trigger(string $error, int $type = E_USER_NOTICE) : bool
+	public static function trigger(string $error, int $type = 1024) : bool
 	{
 		return trigger_error($error, $type);
 	}
 
 	/**
-	 * Return WordPress error object.
+	 * Return error object.
 	 *
 	 * @access public
 	 * @param mixed $code
@@ -84,8 +86,7 @@ final class Exception extends \Exception
 	}
 
 	/**
-	 * Kill WordPress execution,
-	 * Display optional message.
+	 * Throw error and stop execution.
 	 *
 	 * @access public
 	 * @param mixed $message
@@ -99,7 +100,7 @@ final class Exception extends \Exception
 	}
 
 	/**
-	 * Kill WordPress execution.
+	 * Stop execution.
 	 *
 	 * @access public
 	 * @return void
@@ -110,19 +111,7 @@ final class Exception extends \Exception
 	}
 
 	/**
-	 * Check for WordPress error.
-	 *
-	 * @access public
-	 * @param mixed $object
-	 * @return bool
-	 */
-	public static function isError($object) : bool
-	{
-		return is_wp_error($object);
-	}
-
-	/**
-	 * Get WordPress error.
+	 * Get object error message.
 	 *
 	 * @access public
 	 * @param mixed $object
@@ -134,5 +123,17 @@ final class Exception extends \Exception
 			return $object->get_error_message();
 		}
 		return false;
+	}
+
+	/**
+	 * Check object error.
+	 *
+	 * @access public
+	 * @param mixed $object
+	 * @return bool
+	 */
+	public static function isError($object) : bool
+	{
+		return is_wp_error($object);
 	}
 }

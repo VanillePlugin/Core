@@ -18,7 +18,7 @@ interface ShortcodeInterface
 {
 	/**
 	 * Init shortcode(s).
-	 * [Action: init].
+	 * [Action: front-init].
 	 *
 	 * @return void
 	 */

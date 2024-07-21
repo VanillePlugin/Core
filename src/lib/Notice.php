@@ -17,15 +17,34 @@ namespace VanillePlugin\lib;
 use VanillePlugin\int\NoticeInterface;
 
 /**
- * Plugin admin notice.
+ * Plugin notice manager.
  */
 class Notice extends View implements NoticeInterface
 {
 	/**
 	 * @inheritdoc
 	 */
-    public function add($callable)
+    public final function display(callable $callable)
 	{
 		$this->addAction('admin-notices', $callable);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+    public function do(string $message, string $type = 'info', array $args = [])
+	{
+		$args = $this->mergeArray([
+			'icon'   => 'info',
+			'class'  => 'notice',
+			'title'  => 'Notice',
+			'detail' => false
+		], $args);
+
+		$this->render('admin/inc/notice', [
+			'message' => $message,
+			'type'    => $type,
+			'args'    => $args
+		]);
 	}
 }

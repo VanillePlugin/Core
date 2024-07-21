@@ -17,7 +17,7 @@ namespace VanillePlugin\inc;
 final class Attachment
 {
 	/**
-	 * Insert attachment,
+	 * Insert attachment.
 	 * Returns attachment data if success.
 	 *
 	 * @access public
@@ -38,7 +38,7 @@ final class Attachment
 	}
 
 	/**
-	 * Pre-insert attachment,
+	 * Pre-insert attachment.
 	 * Returns attachment Id on success.
 	 *
 	 * @access public

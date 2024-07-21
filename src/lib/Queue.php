@@ -21,7 +21,7 @@ class Queue
 {
     use \VanillePlugin\VanillePluginConfig,
         \VanillePlugin\tr\TraitCacheable;
-		
+
 	/**
 	 * Add item to queue.
 	 *

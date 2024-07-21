@@ -14,8 +14,11 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\inc\Request;
+use VanillePlugin\inc\{
+	Request, TypeCheck
+};
 use VanillePlugin\int\RequestInterface;
+use VanillePlugin\exc\RequestException;
 
 /**
  * Plugin API helper.
@@ -402,7 +405,18 @@ class API extends Request implements RequestInterface
 	 */
 	public static function instance(string $name, $path = 'api', ...$args)
 	{
-		return (new Loader())->i($path, $name, ...$args);
+		$class = (new Loader())->i($path, $name, ...$args);
+
+		$int = TypeCheck::hasInterface($class, 'RequestInterface');
+		$obj = TypeCheck::isObject($class, static::class);
+
+		if ( $int || $obj ) {
+			return $class;
+		}
+
+		throw new RequestException(
+			RequestException::invalidInstance()
+		);
 	}
 
 	/**

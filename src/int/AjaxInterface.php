@@ -14,4 +14,28 @@ declare(strict_types=1);
 
 namespace VanillePlugin\int;
 
-interface AjaxInterface {}
+interface AjaxInterface
+{
+    /**
+     * Init Ajax actions.
+     * [Action: admin-init].
+     */
+	function __construct();
+
+    /**
+     * Register Ajax actions.
+	 * [Action: wp-ajax-nopriv-{plugin}-{action}].
+	 * [Action: wp-ajax-{plugin}-{action}].
+     *
+     * @return void
+     */
+	function register();
+
+    /**
+     * Ajax action callback.
+     * [Uses: isAction()].
+     *
+     * @return void
+     */
+	function callback();
+}

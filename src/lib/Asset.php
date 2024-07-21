@@ -14,13 +14,14 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
+use VanillePlugin\inc\Request;
+
 /**
  * Plugin assets manager.
  */
 final class Asset
 {
-	use \VanillePlugin\VanillePluginConfig,
-		\VanillePlugin\tr\TraitRequestable;
+	use \VanillePlugin\VanillePluginConfig;
 
 	/**
 	 * @access private
@@ -49,49 +50,45 @@ final class Asset
      */
     public function __construct(string $dir = self::DIR)
 	{
-		// Set base dir
 		$this->dir = $this->getAssetPath(
 			$this->basename($dir)
 		);
-
-		// Set remote assets
 		$this->assets = $this->getRemoteAssets();
-
-		// Set cdn url
 		$this->cdn = self::CDN;
 	}
 
 	/**
-	 * Check asset lock.
+	 * Check asset path lock.
 	 *
 	 * @access public
 	 * @return bool
 	 */
 	public function hasAsset() : bool
 	{
-		return $this->isFile($this->dir . '/' . self::LOCK);
+		return $this->isFile("{$this->dir}/" . self::LOCK);
 	}
 
 	/**
-	 * Lock asset.
+	 * Lock asset path.
 	 *
 	 * @access public
 	 * @return bool
 	 */
 	public function lock() : bool
 	{
-		return $this->writeFile($this->dir . '/' . self::LOCK);
+		return $this->writeFile("{$this->dir}/" . self::LOCK);
 	}
 
 	/**
-	 * Unlock asset.
+	 * Unlock asset path.
 	 *
 	 * @access public
 	 * @return bool
 	 */
 	public function unlock() : bool
 	{
-		return $this->removeFile($this->dir . '/' . self::LOCK);
+		$file = "{$this->dir}/" . self::LOCK;
+		return $this->removeFile($file, $this->getRoot());
 	}
 
 	/**
@@ -121,41 +118,50 @@ final class Asset
 	}
 
 	/**
-	 * Download remote assets.
+	 * Download assets.
 	 *
 	 * @access public
-	 * @return void
-	 * @todo
+	 * @return bool
 	 */
-	public function download()
+	public function download() : bool
 	{
-		// Allow CDN by default
-		$cdn = true;
+		if ( !$this->isAdmin() ) {
+			return false;
+		}
 
-		// Get from remote
+		$downloaded = false;
+		
 		if ( $this->remote ) {
-			$api = $this->getHttpClient('GET', [
+
+			$response = Request::do($this->remote, [
 				'timeout'     => 30,
 				'redirection' => 1
 			]);
-			$api->send($this->remote);
-			if ( $api->getStatusCode() == 200 ) {
-				$archive = "{$this->dir}/{$this->getFileName($this->remote)}";
-				if ( $this->writeFile($archive, $api->getBody()) ) {
+
+			if ( Request::getStatusCode($response) == 200 ) {
+
+				$body = Request::getBody($response);
+				$file = $this->getFileName($this->remote);
+				$zip  = "{$this->dir}/{$file}";
+
+				if ( $this->writeFile($zip, $body) ) {
+
 					$this->reset();
-					$this->extract($archive);
-					if ( $this->check() ) {
-						$cdn = false;
+					if ( $this->extract($zip) && $this->check() ) {
+						$downloaded = true;
 						$this->lock();
 					}
+
 				}
 			}
+
 		}
 
-		// Get from CDN
-		if ( $cdn ) {
-			$this->downloadCdn();
+		if ( !$downloaded ) {
+			return $this->downloadCdn();
 		}
+
+		return true;
 	}
 
 	/**
@@ -166,25 +172,37 @@ final class Asset
 	 */
 	private function downloadCdn()
 	{
-		$api = $this->getHttpClient('GET', [
-			'timeout'     => 10,
-			'redirection' => 1
-		]);
 		foreach ($this->assets as $asset => $files) {
 			foreach ($files as $file) {
-				$filename = "{$this->dir}/{$asset}/{$this->getFileName($file)}";
+
+				$filename = $this->getFileName($file);
+				$filename = "{$this->dir}/{$asset}/{$filename}";
+
 				if ( !$this->check($filename) ) {
-					$api->send("{$this->cdn}/{$file}");
-					if ( $api->getStatusCode() == 200 ) {
+
+					$remote   = "{$this->cdn}/{$file}";
+					$response = Request::do($remote, [
+						'timeout'     => 5,
+						'redirection' => 2
+					]);
+
+					if ( Request::getStatusCode($response) == 200 ) {
+						$body = Request::getBody($response);
 						$this->addDir("{$this->dir}/{$asset}");
-						$this->writeFile($filename, $api->getBody());
+						$this->writeFile($filename, $body);
 					}
+
 				}
+
 			}
 		}
+
 		if ( $this->check() ) {
 			$this->lock();
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -197,7 +215,7 @@ final class Asset
 	private function extract(string $archive) : bool
 	{
 		if ( $this->uncompressArchive($archive, $this->dir, false) ) {
-			$this->removeFile("{$this->dir}/assets.zip");
+			$this->removeFile("{$this->dir}/assets.zip", $this->getRoot());
 			return true;
 		}
 		return false;
@@ -212,12 +230,10 @@ final class Asset
 	 */
 	private function check(?string $path = null) : bool
 	{
-		// Check for single asset
 		if ( $this->isType('string', $path) && !empty($path) ) {
 			return $this->isFile($path);
 		}
 
-		// Check for all assets
 		foreach ($this->get() as $asset => $files) {
 			foreach ($files as $file) {
 				if ( !$this->isFile("{$this->dir}/{$asset}/{$file}") ) {
@@ -237,15 +253,10 @@ final class Asset
 	 */
 	private function reset()
 	{
-		// Secured removing
 		foreach ($this->get() as $asset => $files) {
 			$dir = "{$this->dir}/{$asset}";
-			if ( $this->isDir($dir) ) {
-				if ( $this->hasString($dir, "/{$this->getNameSpace()}/") ) {
-					$this->clearDir($dir);
-					$this->removeDir($dir);
-				}
-			}
+			$this->clearDir($dir, $this->getRoot());
+			$this->removeDir($dir, $this->getRoot());
 		}
 	}
 
@@ -256,7 +267,7 @@ final class Asset
 	 * @param string $path
 	 * @return string
 	 */
-	private function getFileName($path)
+	private function getFileName(string $path) : string
 	{
 		return $this->basename($path);
 	}
@@ -267,11 +278,11 @@ final class Asset
 	 * @access private
 	 * @return array
 	 */
-	private function get()
+	private function get() : array
 	{
 		$wrapper = [];
 		foreach ($this->assets as $asset => $files) {
-			$wrapper[$asset] = $this->mapArray(function($file) {
+			$wrapper[$asset] = $this->map(function($file) {
 				return $this->getFileName($file);
 			}, $files);
 		}

@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "plugin.global.schema.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "link": {
+      "type": "string"
+    },
+    "path": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string"
+        },
+        "view": {
+          "type": "string"
+        },
+        "migrate": {
+          "type": "string"
+        },
+        "logs": {
+          "type": "string"
+        },
+        "temp": {
+          "type": "string"
+        },
+        "cache": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset",
+        "view",
+        "migrate",
+        "logs",
+        "temp",
+        "cache"
+      ]
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "ttl": {
+          "type": "number"
+        },
+        "timeout": {
+          "type": "number"
+        },
+        "secret": {
+          "type": "string"
+        },
+        "footprint": {
+          "type": "boolean"
+        },
+        "debug": {
+          "type": "boolean"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "multiling": {
+          "type": "boolean"
+        },
+        "multisite": {
+          "type": "boolean"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "remote": {
+          "type": "object",
+          "properties": {
+            "host": {
+              "type": ["string","boolean"]
+            }
+          },
+          "required": [
+            "host"
+          ]
+        },
+        "view": {
+          "type": "object",
+          "properties": {
+            "extension": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "extension"
+          ]
+        }
+      },
+      "required": [
+        "ttl",
+        "timeout",
+        "secret",
+        "footprint",
+        "debug",
+        "environment",
+        "multiling",
+        "multisite",
+        "roles",
+        "remote",
+        "view"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "author",
+    "description",
+    "link",
+    "path",
+    "options"
+  ]
+}

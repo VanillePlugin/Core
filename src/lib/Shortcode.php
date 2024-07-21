@@ -18,13 +18,20 @@ use VanillePlugin\inc\{
 	TypeCheck, Shortcode as Core
 };
 use VanillePlugin\int\CallableInterface;
+use VanillePlugin\int\ShortcodedInterface;
 use VanillePlugin\exc\ShortcodeException;
 
 /**
  * Plugin shortcode manager.
  */
-class Shortcode extends View
+abstract class Shortcode extends View
 {
+	/**
+	 * @access protected
+	 */
+	protected const PATH = 'shortcode';
+	protected const TEMPLATE = 'front/shortcode';
+
 	/**
 	 * @access protected
 	 * @var array $atts
@@ -37,8 +44,10 @@ class Shortcode extends View
 
 	/**
 	 * @access private
+	 * @var mixed $name, Shortcode name
 	 * @var string $output, Shortcode output
 	 */
+	private $name;
 	private $output;
 
 	/**
@@ -46,36 +55,48 @@ class Shortcode extends View
 	 */
 	public function __construct(?CallableInterface $callable = null)
 	{
-		// Set custom view callables
-		if ( $callable ) {
-			$this->setCallables(
-				$callable->getCallables()
-			);
-		}
+		// Set extended view callables
+		$this->setCallables($callable);
 
 		// Init output
 		$this->setOutput();
 	}
 
 	/**
-	 * Set shortcode content.
-	 * [Filter: {plugin}-shortcode-nested].
-	 * [Filter: {plugin}-shortcode-content].
+	 * Geenrate shortcode output.
 	 *
 	 * @access public
-	 * @param string $atts
+	 * @return string
+	 */
+	abstract public function generate() : string;
+
+	/**
+	 * Set attributes.
+	 * [Filter: {plugin}-shortcode-global].
+	 *
+	 * @access protected
+	 * @param array $atts
 	 * @return void
 	 */
-	public function setContent(?string $content = null)
+	protected function setAttributes(array $atts = [])
 	{
-		unset($this->content);
-	    if ( $content ) {
-			if ( $this->applyPluginFilter('shortcode-nested', false) ) {
-				$content = $this->do($content);
-			}
-			$content = $this->applyPluginFilter('shortcode-content', $content);
+		$this->atts = $this->formatAtts($atts);
+		if ( $this->applyPluginFilter('shortcode-global', false) ) {
+			$namespace = $this->undash($this->getNameSpace());
+			global ${$namespace};
+			${$namespace} = $this->atts;
 		}
-		$this->content = $this->applyPluginFilter('shortcode-content', $content, $this->atts);
+	}
+
+	/**
+	 * Set attributes (Alias).
+	 * [Filter: {plugin}-shortcode-global].
+	 *
+	 * @inheritdoc
+	 */
+	public function setAtts(array $atts = [])
+	{
+		$this->setAttributes($atts);
 	}
 
 	/**
@@ -92,68 +113,22 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Set shortcode output.
+	 * Set shortcode content.
+	 * [Filter: {plugin}-shortcode-nested].
+	 * [Filter: {plugin}-shortcode-content].
 	 *
 	 * @access public
-	 * @param string $output
+	 * @param string $content
 	 * @return void
 	 */
-	public function setOutput(string $output = '')
+	public function setContent(?string $content = null)
 	{
-		unset($this->output);
-		$this->output = $output;
-	}
-
-	/**
-	 * Add shortcode output.
-	 *
-	 * @access public
-	 * @param string $output
-	 * @return void
-	 */
-	public function addOutput(string $output)
-	{
-		$this->output .= $output;
-	}
-
-	/**
-	 * Get shortcode output.
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function getOutput() : string
-	{
-		return $this->output;
-	}
-	
-	/**
-	 * Geenrate shortcode output.
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function generate() : string
-	{
-        return "{$this->getNameSpace()}";
-	}
-
-	/**
-	 * Set shortcode atts.
-	 * [Filter: {plugin}-shortcode-global].
-	 *
-	 * @access public
-	 * @param array $atts
-	 * @return void
-	 */
-	public function setAtts(array $atts = [])
-	{
-		$this->atts = $this->formatAtts($atts);
-		if ( $this->applyPluginFilter('shortcode-global', false) ) {
-			$namespace = $this->undash($this->getNameSpace());
-			global ${$namespace};
-			${$namespace} = $this->atts;
+		unset($this->content);
+		if ( $this->applyPluginFilter('shortcode-nested', false) ) {
+			$content = $this->do($content);
 		}
+		$hook = 'shortcode-content';
+		$this->content = $this->applyPluginFilter($hook, $content, $this->atts);
 	}
 
 	/**
@@ -166,7 +141,7 @@ class Shortcode extends View
 	 * @return mixed
 	 * @throws ShortcodeException
 	 */
-	public static function instance(string $name, $path = 'shortcode', ...$args)
+	public static function instance(string $name, ?string $path = self::PATH, ...$args)
 	{
 		$class = (new Loader())->i($path, $name, ...$args);
 		if ( !TypeCheck::hasInterface($class, 'ShortcodedInterface') ) {
@@ -178,89 +153,247 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Show shortcode error.
-	 * [Filter: {plugin}-shortcode-error].
-	 * [Filter: {plugin}-shortcode-template].
+	 * Set shortcode output.
 	 *
 	 * @access protected
-	 * @param string $error
-	 * @return string
+	 * @param string $output
+	 * @return void
 	 */
-	protected function error(string $error) : string
+	protected function setOutput(string $output = '')
 	{
-		$error = $this->applyPluginFilter('shortcode-error', $error, $this->atts);
-		if ( $error ) {
-			$template = $this->applyPluginFilter('shortcode-template', 'front/error');
-			return $this->assign($template, [
-				'error' => $error,
-				'atts'  => $this->filterArray($this->atts)
-			]);
-		}
+		unset($this->output);
+		$this->output = $output;
 	}
 
 	/**
-	 * Get shortcode default atts.
+	 * Add shortcode output.
+	 *
+	 * @access protected
+	 * @param string $output
+	 * @return void
+	 */
+	protected function addOutput(string $output)
+	{
+		$this->output .= $output;
+	}
+
+	/**
+	 * Get shortcode current output.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getCurrentOutput() : string
+	{
+		return (string)$this->output;
+	}
+
+	/**
+	 * Get filtered shortcode output.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getOutput() : string
+	{
+		$hook = 'shortcode-output';
+		return (string)$this->applyPluginFilter($hook, $this->output, $this->atts);
+	}
+
+	/**
+	 * Get shortcode instance.
+	 *
+	 * @access protected
+	 * @param string $name
+	 * @param mixed $args
+	 * @return mixed
+	 */
+	protected function get(string $name, ...$args)
+	{
+		$this->name = $name;
+		$instance = self::instance($name, static::PATH, ...$args);
+		$this->sanitizeAtts($instance);
+		return $instance;
+	}
+
+	/**
+	 * Get shortcode identifier keyword.
+	 *
+	 * @access protected
+	 * @return mixed
+	 */
+	protected function getKeyword()
+	{
+		$keyword = $this->atts[$this->name] ?? null;
+		if ( $keyword ) {
+			$this->removeAttr($this->name);
+		}
+		return $keyword;
+	}
+
+	/**
+	 * Get shortcode name.
+	 *
+	 * @access protected
+	 * @return mixed
+	 */
+	protected function getName()
+	{
+		return $this->name;
+	}
+
+	/**
+	 * Get shortcode instance name.
+	 *
+	 * @access protected
+	 * @param ShortcodedInterface $instance
+	 * @return string
+	 */
+	protected function getInstanceName(ShortcodedInterface $instance) : string
+	{
+		$class = new \ReflectionClass($instance);
+		$name  = $this->basename($class->getName());
+		return $this->slugify($name);
+	}
+
+	/**
+	 * Sanitize shortcode attributes.
 	 * [Filter: {plugin}-shortcode-default-atts].
 	 *
 	 * @access protected
-	 * @param string $type
-	 * @return array
-	 */
-	protected function getDefaults(string $type) : array
-	{
-		$defaults = [];
-		if ( $this->hasPluginFilter('shortcode-default-atts') ) {
-			$defaults = $this->applyPluginFilter('shortcode-default-atts', $type, $defaults);
-		}
-		return $defaults;
-	}
-
-	/**
-	 * Apply object default atts.
-	 * [Filter: {plugin}-shortcode-atts].
-	 *
-	 * @access protected
-	 * @param string $type
+	 * @param ShortcodedInterface $instance
 	 * @return void
 	 */
-	protected function applyDefaults(string $type)
+	protected function sanitizeAtts(ShortcodedInterface $instance)
 	{
-		$this->atts = $this->getAtts(
-			$this->getDefaults($type),
-			$this->atts,
-			$this->tag
-		);
-		$this->atts = $this->applyPluginFilter('shortcode-atts', $this->atts);
+		$hook = 'shortcode-default-atts';
+		$name = $this->getInstanceName($instance);
+
+		$default = $this->setAttsValues($instance::atts());
+		$default = (array)$this->applyPluginFilter($hook, $default, $name);
+
+		$this->atts = $this->getAtts($default, $this->atts, $this->tag);
 	}
 
 	/**
-	 * Set attribute.
+	 * Add attributes.
+	 *
+	 * @access protected
+	 * @param array $atts
+	 * @return void
+	 */
+	protected function addAttributes(array $atts)
+	{
+		$this->atts = $this->mergeArray($atts, $this->atts);
+	}
+
+	/**
+	 * Add attributes (Alias).
+	 *
+	 * @inheritdoc
+	 */
+	protected function addAtts(array $atts)
+	{
+		$this->addAttributes($atts);
+	}
+
+	/**
+	 * Add single attribute.
 	 *
 	 * @access protected
 	 * @param string $attr
 	 * @param mixed $value
 	 * @return void
 	 */
-	protected function setAttribute(string $attr, $value)
+	protected function addAttribute(string $attr, $value)
 	{
 		$this->atts[$attr] = $value;
 	}
 
 	/**
-	 * Set attribute (Alias).
+	 * Add single attribute (Alias).
 	 *
-	 * @access protected
-	 * @param string $attr
-	 * @param mixed $value
-	 * @return void
+	 * @inheritdoc
 	 */
-	protected function setAttr(string $attr, $value)
+	protected function addAttr(string $attr, $value)
 	{
-		$this->setAttribute($attr, $value);
+		$this->addAttribute($attr, $value);
 	}
 
 	/**
-	 * Get attribute.
+	 * Remove single attribute.
+	 *
+	 * @access protected
+	 * @param string $attr
+	 * @return void
+	 */
+	protected function removeAttribute(string $attr)
+	{
+		unset($this->atts[$attr]);
+	}
+
+	/**
+	 * Remove single attribute (Alias).
+	 *
+	 * @inheritdoc
+	 */
+	protected function removeAttr(string $attr)
+	{
+		$this->removeAttribute($attr);
+	}
+
+	/**
+	 * Get output attributes.
+	 * [Filter: {plugin}-shortcode-atts].
+	 *
+	 * @access protected
+	 * @return array
+	 */
+	protected function getOutputAtts() : array
+	{
+		$hook = 'shortcode-atts';
+		return $this->uniqueMultiArray(
+			(array)$this->applyPluginFilter($hook, $this->atts)
+		);
+	}
+
+	/**
+	 * Get output template.
+	 * [Filter: {plugin}-shortcode-output-template].
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getTemplate() : string
+	{
+		$hook = 'shortcode-output-template';
+		$template = static::TEMPLATE;
+		$template = "{$template}/{$this->name}";
+		return (string)$this->applyPluginFilter($hook, $template, $this->name);
+	}
+
+	/**
+	 * Get attributes.
+	 *
+	 * @inheritdoc
+	 */
+	protected function getAttributes(array $default = [], array $atts = [], ?string $tag = null) : array
+	{
+		return Core::getAtts($default, $atts, $tag);
+	}
+
+	/**
+	 * Get attributes (Alias).
+	 *
+	 * @inheritdoc
+	 */
+	protected function getAtts(array $default = [], array $atts = [], ?string $tag = null) : array
+	{
+		return $this->getAttributes($default, $atts, $tag);
+	}
+
+	/**
+	 * Get single attribute.
 	 *
 	 * @access protected
 	 * @param string $attr
@@ -272,11 +405,9 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Get attribute (Alias).
+	 * Get single attribute (Alias).
 	 *
-	 * @access protected
-	 * @param string $attr
-	 * @return mixed
+	 * @inheritdoc
 	 */
 	protected function getAttr(string $attr)
 	{
@@ -284,9 +415,94 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Assign content to shortcode.
+	 * Get hashed attributes.
 	 *
 	 * @access protected
+	 * @return mixed
+	 */
+	protected function getHash()
+	{
+		return (new Hasher())->hash($this->atts);
+	}
+
+	/**
+	 * Format attributes.
+	 *
+	 * @access protected
+	 * @param array $atts
+	 * @return array
+	 */
+	protected function formatAttributes(array $atts) : array
+	{
+		$attributes = [];
+		$atts = $this->formatKeyCase($atts);
+		foreach ($atts as $key => $value) {
+			if ( $this->isType('string', $key) ) {
+				$key = $this->formatAttrName($key);
+			}
+			$attributes[$key] = $value;
+		}
+		return $attributes;
+	}
+
+	/**
+	 * Format attributes (Alias).
+	 *
+	 * @access protected
+	 * @param array $atts
+	 * @return array
+	 */
+	protected function formatAtts(array $atts) : array
+	{
+		return $this->formatAttributes($atts);
+	}
+
+	/**
+	 * Format single attribute name.
+	 *
+	 * @access protected
+	 * @param string $attr
+	 * @return string
+	 */
+	protected function formatAttrName(string $attr) : string
+	{
+		return $this->undash(
+			$this->lowercase($attr)
+		);
+	}
+
+	/**
+	 * Show shortcode error.
+	 * [Filter: {plugin}-shortcode-error].
+	 * [Filter: {plugin}-shortcode-template].
+	 *
+	 * @access protected
+	 * @param string $error
+	 * @return mixed
+	 */
+	protected function error(string $error)
+	{
+		$hook  = 'shortcode-error';
+		$error = $this->applyPluginFilter($hook, $error, $this->atts);
+
+		if ( $error ) {
+
+			$hook     = 'shortcode-template';
+			$template = static::TEMPLATE;
+			$template = "{$template}/error";
+			$template = $this->applyPluginFilter($hook, $template, 'error');
+	
+			return $this->assign($template, [
+				'error' => $error,
+				'atts'  => $this->getOutputAtts()
+			]);
+
+		}
+	}
+
+	/**
+	 * Assign content to shortcode.
+	 *
 	 * @inheritdoc
 	 */
 	protected function do(string $content, bool $ignore = false) : string
@@ -295,19 +511,8 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Get shortcode attributes.
+	 * Check whether attribute is empty to allow override.
 	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getAtts(array $default = [], array $atts = [], ?string $tag = null) : array
-	{
-		return Core::getAtts($default, $atts, $tag);
-	}
-
-	/**
-	 * Check shortcode attribute empty to allow override.
-	 * 
 	 * @access protected
 	 * @param array $atts
 	 * @param string $attr
@@ -324,40 +529,6 @@ class Shortcode extends View
 			return empty($atts[$attr]);
 		}
 		return false;
-	}
-
-	/**
-	 * Format shortcode attributes.
-	 *
-	 * @access protected
-	 * @param array $atts
-	 * @return array
-	 */
-	protected function formatAtts(array $atts) : array
-	{
-		$attributes = [];
-		$atts = $this->formatKeyCase($atts);
-		foreach ($atts as $key => $value) {
-			if ( $this->isType('string', $key) ) {
-				$key = $this->formatAttrName($key);
-			}
-			$attributes[$key] = $value;
-		}
-		return $attributes;
-	}
-
-	/**
-	 * Format shortcode attribute name.
-	 * 
-	 * @access protected
-	 * @param string $attr
-	 * @return string
-	 */
-	protected function formatAttrName(string $attr) : string
-	{
-		return $this->undash(
-			$this->lowercase($attr)
-		);
 	}
 
 	/**
@@ -379,7 +550,7 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Set shortcode attributes default values.
+	 * Set attributes default values.
 	 *
 	 * @access protected
 	 * @param array $atts
@@ -395,8 +566,8 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Check shortcode has attribute (Not flag attribut).
-	 * 
+	 * Check shortcode has attribute (Not flag).
+	 *
 	 * @access protected
 	 * @param array $atts
 	 * @param string $attr
@@ -407,6 +578,16 @@ class Shortcode extends View
 		$attr = $this->formatAttrName($attr);
 		$atts = $this->formatAtts($atts);
 		return isset($atts[$attr]) ? true : false;
+	}
+
+	/**
+	 * Check shortcode has attribute (Alias).
+	 *
+	 * @inheritdoc
+	 */
+	protected function hasAttr(array $atts, string $attr) : bool
+	{
+		return $this->hasAttribute($atts, $attr);
 	}
 
 	/**
@@ -428,9 +609,9 @@ class Shortcode extends View
 		}
 		return $this->inArray($attr, $flags);
 	}
-	
+
 	/**
-	 * Get shortcode attribute value.
+	 * Get attribute value.
 	 * 
 	 * @access protected
 	 * @param array $atts
@@ -469,7 +650,7 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Check shortcode attribute value.
+	 * Check attribute value.
 	 * 
 	 * @access protected
 	 * @param array $atts
@@ -495,7 +676,7 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Check shortcode attribute disabled.
+	 * Check attribute disabled.
 	 * 
 	 * @access protected
 	 * @param array $atts
@@ -514,7 +695,7 @@ class Shortcode extends View
 	}
 
 	/**
-	 * Check shortcode attribute enabled.
+	 * Check attribute enabled.
 	 * 
 	 * @access protected
 	 * @param array $atts

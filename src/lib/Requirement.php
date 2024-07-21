@@ -20,276 +20,297 @@ namespace VanillePlugin\lib;
 class Requirement extends Notice
 {
 	/**
-	 * @access private
-	 * @var string $tpl
-	 * @var array $strings
+	 * @access protected
+	 * @var array $dependency
+	 * @var array $messages
+	 * @var string $template
 	 */
-	private $tpl;
-	private $strings;
+	protected $dependency;
+	protected $messages;
+	protected $template;
 
 	/**
-	 * Init requirement.
-	 * [Filter: {plugin}-requirement-template].
-	 * [Filter: {plugin}-requirement-strings].
+	 * Init requirements.
+	 * [Action: admin-init].
 	 */
 	public function __construct()
 	{
-		$this->add([$this, 'requirePath']);
-		$this->add([$this, 'requirePlugins']);
-		$this->add([$this, 'requireOptions']);
-		$this->add([$this, 'requireTemplates']);
-		$this->add([$this, 'requireModules']);
-		$this->add([$this, 'php']);
-
-		// Set template
-		$this->tpl = 'admin/inc/notice/requirement';
-		$this->tpl = $this->applyPluginFilter('requirement-template', $this->tpl);
-
-		// Set strings
-		$this->strings = $this->applyPluginFilter('requirement-strings', [
-			'path'     => [
-				'exists'   => '%1$s requires path \'%2$s\''
-			],
-			'plugin'   => [
-				'install'  => 'Required, Please install it',
-				'activate' => 'Required, Please activate it'
-			],
-			'option'   => [
-				'missing' => 'Option Required',
-				'empty'   => 'Option Not Defined'
-			],
-			'template' => [
-				'single'   => 'Template Required',
-				'multiple' => 'One Of Templates Required'
-			],
-			'module'   => [
-				'required' => 'Required on server, Please activate it',
-				'config'   => 'Required on server, Please activate it, Otherwise set \'%1$s\' to \'%2$s\''
-			],
-			'php'      => [
-				'required' => 'Required'
-			]
-		]);
+		$data = $this->getRequirements();
+		$this->dependency = $data['dependency'];
+		$this->messages = $data['messages'];
+		$this->template = $data['template'];
+		$this->verify();
 	}
-	
+
 	/**
-	 * @inheritdoc
+	 * Verify requirements.
+	 *
+	 * @access protected
+	 * @return void
 	 */
-	public function requirePath()
+	protected function verify()
 	{
-		// Get required paths
-		$paths = [];
-		if ( $this->getCachePath() ) {
-			$paths[] = $this->getCachePath();
-		}
-		if ( $this->getTempPath() ) {
-			$paths[] = $this->getTempPath();
-		}
-		if ( $this->getLoggerPath() ) {
-			$paths[] = $this->getLoggerPath();
+		$this->requirePaths();
+		$this->requirePlugins();
+		$this->requireThemes();
+		$this->requireOptions();
+		$this->requireModules();
+		$this->requirePhp();
+	}
+
+	/**
+	 * Verify required paths.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function requirePaths()
+	{
+		if ( !($paths = $this->dependency['paths']) ) {
+			return;
 		}
 
+		$paths = $this->uniqueMultiArray($paths);
 		foreach ($paths as $path) {
+			
+			$path = $this->getRoot($path);
 
-			// Check path
-			if ( !$this->isDir($path) || !$this->isWritable($path) ) {
+			if ( !$this->isDir($path) ) {
+				$message = $this->messages['paths']['missing'];
+				$message = $this->transVar($message, [$path]);
+				$this->display(function() use ($message) {
+					$this->do($message, 'error');
+				});
+				continue;
+			}
 
-		        // Try creating path
-				if ( !$this->addDir($this->formatPath($path)) ) {
+			if ( !$this->isReadable($path) ) {
+				$message = $this->messages['paths']['readable'];
+				$message = $this->transVar($message, [$path]);
+				$this->display(function() use ($message) {
+					$this->do($message, 'error');
+				});
+				continue;
+			}
 
-					$message = $this->transVar(
-						$this->strings['path']['exists'],
-						[
-							$this->getPluginName(),
-							$this->basename($path)
-						]
-					);
-
-					$notice  = '<div class="';
-					$notice .= $this->getNameSpace();
-					$notice .= '-notice notice notice-error">';
-					$notice .= '<p>';
-					$notice .= '<i class="icon-close"></i> ';
-					$notice .= '<strong>';
-					$notice .= $this->trans('Warning') . ' : ';
-					$notice .= '</strong>';
-					$notice .= $message;
-					$notice .= '</p>';
-					$notice .= '<small>';
-					$notice .= $path;
-					$notice .= '</small>';
-					$notice .= '</div>';
-
-					echo $notice;
-				}
-
+			if ( !$this->isWritable($path) ) {
+				$message = $this->messages['paths']['writable'];
+				$message = $this->transVar($message, [$path]);
+				$this->display(function() use ($message) {
+					$this->do($message, 'error');
+				});
+				continue;
 			}
 
 		}
 	}
 	
 	/**
-	 * @inheritdoc
+	 * Verify required plugins.
+	 *
+	 * @access protected
+	 * @return void
 	 */
-	public function requirePlugins()
+	protected function requirePlugins()
 	{
-		// Check plugins
-		if ( !($plugins = $this->getConfig()->requirements->plugins) ) {
+		if ( !($plugins = $this->dependency['plugins']) ) {
 			return;
 		}
 
-		// Requires plugins
-		foreach ($this->uniqueMultiArray($plugins) as $plugin) {
+		$plugins = $this->uniqueMultiArray($plugins);
+		foreach ($plugins as $plugin) {
 
-			$name = $plugin->name ?? $plugin->slug;
-			if ( !$this->isInstalled($plugin->slug) ) {
-				
-				$this->render($this->tpl, [
-					'item'   => $name,
-					'notice' => $this->trans($this->strings['plugin']['install'])
+			$slug = $plugin['slug'] ?? false;
+			if ( !$slug ) {
+				$slug = $this->slugify($plugin['name']);
+			}
+
+			if ( !$this->isInstalled($slug) ) {
+				$message = $this->messages['plugins']['missing'];
+				$message = $this->transVar($message, [$plugin['name']]);
+				$this->display(function() use ($message) {
+					$this->do($message, 'error');
+				});
+				continue;
+			}
+
+			$callable = $plugin['callable'] ?? false;
+			if ( !$callable ) {
+				$callable = $this->undash(
+					$this->slugify($plugin['name'])
+				);
+			}
+
+			if ( !$this->isActivated($callable) ) {
+				$message = $this->messages['plugins']['missing'];
+				$message = $this->transVar($message, [$plugin['name']]);
+				$this->display(function() use ($message) {
+					$this->do($message, 'error');
+				});
+				continue;
+			}
+
+		}
+	}
+
+	/**
+	 * Verify required themes.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function requireThemes()
+	{
+		if ( !($themes = $this->dependency['themes']) ) {
+			return;
+		}
+
+		$themes = $this->uniqueMultiArray($themes);
+		foreach ($themes as $key => $theme) {
+			$themes[$theme['slug']] = $theme['name'];
+			unset($themes[$key]);
+		}
+
+		$active = $this->getOption('template');
+		if ( !$this->inArray($active, $this->arrayKeys($themes)) ) {
+
+			$count   = (count($themes) > 1 ) ? 'multiple' : 'single';
+			$themes  = $this->arrayValues($themes);
+			$themes  = implode(', ', $themes);
+			
+			$message = $this->messages['themes'][$count];
+			$message = $this->transVar($message, [$themes]);
+			
+			$this->display(function() use ($message) {
+				$this->do($message, 'error');
+			});
+
+		}
+	}
+
+	/**
+	 * Verify required options.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function requireOptions()
+	{
+		if ( !($options = $this->dependency['options']) ) {
+			return;
+		}
+
+		$options = $this->uniqueMultiArray($options);
+		foreach ($options as $option) {
+
+			$slug = $option['slug'] ?? false;
+			if ( !$slug ) {
+				$slug = $this->undash(
+					$this->slugify($option['name'])
+				);
+			}
+
+			if ( !$this->isOption($slug) ) {
+				$message = $this->messages['options']['missing'];
+				$message = $this->transVar($message, [$option['name']]);
+				$this->display(function() use ($message) {
+					$this->do($message, 'error');
+				});
+				continue;
+			}
+
+			if ( $this->getOption($slug) !== $option['value'] ) {
+				$message = $this->messages['options']['invalid'];
+				$message = $this->transVar($message, [
+					$option['name'], $option['value']
 				]);
-
-			} else {
-				$callable = $plugin->callable ?? $plugin->slug;
-				if ( !$this->isActivated($callable) ) {
-					$this->render($this->tpl, [
-						'item'   => $name,
-						'notice' => $this->trans($this->strings['plugin']['activate'])
-					]);
-				}
-			}
-		}
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function requireOptions()
-	{
-		// Check options
-		if ( !($options = $this->getConfig()->requirements->options) ) {
-			return;
-		}
-
-		// Requires options
-		foreach ($this->uniqueMultiArray($options) as $option) {
-
-			$name = $option->name ?? $option->slug;
-			if ( $this->getOption($option->slug) !== $option->value ) {
-				$this->render($this->tpl, [
-					'item'   => $name,
-					'notice' => $this->trans($this->strings['option']['missing'])
-				]);
-
-			} elseif ( empty($this->getOption($option->slug)) ) {
-				$this->render($this->tpl, [
-					'item'   => $name,
-					'notice' => $this->trans($this->strings['option']['empty'])
-				]);
+				$this->display(function() use ($message) {
+					$this->do($message, 'error');
+				});
+				continue;
 			}
 
 		}
 	}
 
 	/**
-	 * @inheritdoc
+	 * Verify required modules.
+	 *
+	 * @access protected
+	 * @return void
 	 */
-	public function requireTemplates()
+	protected function requireModules()
 	{
-		// Check templates
-		if ( !($templates = $this->getConfig()->requirements->templates) ) {
+		if ( !($modules = $this->dependency['modules']) ) {
 			return;
 		}
 
-		// Requires templates
-		$slugs = [];
-		$names = [];
+		$modules = $this->uniqueMultiArray($modules);
+		foreach ($modules as $module) {
 
-		foreach ($this->uniqueMultiArray($templates) as $template) {
-			$slugs[] = $template->slug;
-			$names[] = $template->name ?? $template->slug;
-		}
-
-		if ( !$this->hasString($slugs, $this->getOption('template')) ) {
-
-			if ( count($slugs) > 1 ) {
-				// Check for multiple templates
-				$item = implode(', ',$names);
-				$notice = $this->trans($this->strings['template']['multiple']);
-
-			} else {
-				// Check for single template
-				$item = trim(implode('',$names));
-				$notice = $this->trans($this->strings['template']['single']);
+			$slug = $module['slug'] ?? false;
+			if ( !$slug ) {
+				$slug = $this->undash(
+					$this->slugify($module['name'])
+				);
 			}
 
-			$this->render($this->tpl, [
-				'item'   => $item,
-				'notice' => $notice,
-			]);
+			if ( !$this->isModule($slug) && !$this->isServerModule($slug) ) {
 
-		}
-	}
+				if ( isset($module['override']) ) {
 
-	/**
-	 * @inheritdoc
-	 */
-	public function requireModules()
-	{
-		// Check modules
-		if ( !($modules = $this->getConfig()->requirements->modules) ) {
-			return;
-		}
+					$option = $module['override'];
+					$oSlug  = $option['slug'] ?? false;
+					if ( !$oSlug ) {
+						$oSlug = $this->undash(
+							$this->slugify($option['name'])
+						);
+					}
 
-		// Requires modules
-		foreach ($this->uniqueMultiArray($modules) as $module) {
+					if ( $this->getOption($oSlug) !== $option['value'] ) {
+						$message = $this->messages['modules']['override'];
+						$message = $this->transVar($message, [
+							$module['name'], $option['name'], $option['value']
+						]);
+						$this->display(function() use ($message) {
+							$this->do($message, 'error');
+						});
+						continue;
+					}
 
-			if ( isset($module->override) ) {
-
-				// Overrided module check
-				$name  = $module->override->name ?? '';
-				$value = $module->override->value ?? '';
-
-				if ( !$this->isActivated($module->callable) && !$this->isConfig($name,$value) ) {
-					$notice = $this->transVar(
-						$this->strings['module']['config'],
-						[$name, $value]
-					);
-					$this->render($this->tpl, [
-						'item'   => $module->name,
-						'notice' => $notice
-					]);
 				}
 
-			} else {
-				
-				// Single module check
-				if ( !$this->isActivated($module->callable) ) {
-					$this->render($this->tpl, [
-						'item'   => $module->name,
-						'notice' => $this->trans($this->strings['module']['required'])
-					]);
-				}
+				$message = $this->messages['modules']['missing'];
+				$message = $this->transVar($message, [$module['name']]);
+				$this->display(function() use ($message) {
+					$this->do($message, 'error');
+				});
+				continue;
+
 			}
+
 		}
 	}
 
 	/**
-	 * @inheritdoc
+	 * Verify required PHP version.
+	 *
+	 * @access protected
+	 * @return void
 	 */
-	public function php()
+	protected function requirePhp()
 	{
-		// Check version
-		if ( !($version = $this->getConfig()->requirements->php) ) {
+		if ( !($php = $this->dependency['php']) ) {
 			return;
 		}
 
-		if ( $this->isVersion(phpversion(), $version, '<') ) {
-			$this->render($this->tpl, [
-				'item'   => "PHP {$version}",
-				'notice' => $this->trans($this->strings['php']['required'])
-			]);
-		};
+		if ( $this->isVersion(phpversion(), $php, '<') ) {
+			$message = $this->messages['php']['version'];
+			$message = $this->transVar($message, $php);
+			$this->display(function() use ($message) {
+				$this->do($message, 'error');
+			});
+		}
 	}
 
 	/**
@@ -301,17 +322,26 @@ class Requirement extends Notice
 	 */
 	protected function isInstalled(string $slug) : bool
 	{
-		if ( $this->isFile($this->getPluginDir("/{$slug}/{$slug}.php")) ) {
+		$file = "{$slug}.php";
+		if ( !$this->hasString($slug, '/') ) {
+			$file = "{$slug}/{$file}";
+		}
+
+		if ( $this->isFile($this->getPluginDir($file)) ) {
 			return true;
 
-		} elseif ( $this->isFile($this->getPluginDir("/{$slug}.php")) ) {
+		} elseif ( $this->isFile($this->getPluginDir("{$slug}.php")) ) {
+			return true;
+
+		} elseif ( $this->isFile($this->getPluginMuDir("{$slug}.php")) ) {
 			return true;
 		}
+		
 		return false;
 	}
 
 	/**
-	 * Check whether plugin or PHP module activated.
+	 * Check whether plugin activated.
 	 *
 	 * @access protected
 	 * @param string $callable
@@ -319,7 +349,12 @@ class Requirement extends Notice
 	 */
 	protected function isActivated(string $callable) : bool
 	{
-		if ( $this->isPlugin("{$callable}/{$callable}.php") ) {
+		$file = "{$callable}.php";
+		if ( !$this->hasString($callable, '/') ) {
+			$file = "{$callable}/{$file}";
+		}
+
+		if ( $this->isPlugin($file) ) {
 			return true;
 			
 		} elseif ( $this->isPluginClass($callable) ) {
@@ -330,10 +365,8 @@ class Requirement extends Notice
 
 		} elseif ( defined($callable) ) {
 			return true;
-
-		} elseif ( $this->isModule($callable) ) {
-			return true;
 		}
+
 		return false;
 	}
 }

@@ -14,61 +14,66 @@ declare(strict_types=1);
 
 namespace VanillePlugin;
 
-use VanillePlugin\inc\TypeCheck;
-use VanillePlugin\exc\ConfigurationException;
+use VanillePlugin\exc\ConfigException;
+use VanillePlugin\inc\{
+    TypeCheck, Stringify, Arrayify
+};
 use JsonSchema\Validator;
 
+/**
+ * Configuration validator.
+ */
 final class VanillePluginValidator
 {
 	/**
-	 * Check configuration object.
-	 * 
+	 * Validate config data using schema.
+	 *
 	 * @access public
-	 * @var mixed $global,
-	 * @var string $file
+	 * @var mixed $data
+	 * @var string $schema
 	 * @return void
-	 * @throws ConfigurationException
+	 * @throws ConfigException
 	 */
-	public static function checkConfig($global, ?string $file = null)
+	public static function validate($data, string $schema)
 	{
-		$error = self::isValidConfig($global);
-		if ( TypeCheck::isString($error) ) {
-	        throw new ConfigurationException(
-	            ConfigurationException::invalidPluginConfiguration($error, $file)
-	        );
+		if ( !self::isValid($data, $schema, $error) ) {
 
-		} elseif ( $error === false ) {
-	        throw new ConfigurationException(
-	            ConfigurationException::invalidPluginConfigurationFormat($file)
+			if ( TypeCheck::isString($error) ) {
+				throw new ConfigException(
+					ConfigException::invalidConfig($error, $schema)
+				);
+			}
+
+	        throw new ConfigException(
+	            ConfigException::invalidConfigFormat($schema)
 	        );
 		}
 	}
 
 	/**
-	 * Validate plugin configuration.
-	 * 
+	 * Check whether config has valid schema.
+	 *
 	 * @access private
-	 * @var mixed $config
-	 * @return mixed
+	 * @var mixed $data
+	 * @var string $schema
+	 * @var string $error
+	 * @return bool
 	 */
-	private static function isValidConfig($config)
+	private static function isValid($data, string $schema, &$error = null) : bool
 	{
-		if ( TypeCheck::isObject($config) ) {
-			$validator = new Validator();
-			$validator->validate($config, (object)[
-				'$ref' => 'file://' . __DIR__ . '/bin/config.schema.json'
-			]);
-			if ( $validator->isValid() ) {
-				return true;
+		$validator = new Validator();
+		$path = Stringify::formatPath(__DIR__ . "/bin/{$schema}.schema.json");
+		$validator->validate($data, (object)[
+			'$ref' => "file://{$path}"
+		]);
 
-			} else {
-				$errors = [];
-			    foreach ($validator->getErrors() as $error) {
-			        $errors[] = sprintf("[%s] %s", $error['property'], $error['message']);
-			    }
-			    return implode("\n", $errors);
-			}
+		if ( !$validator->isValid() ) {
+			$errors = $validator->getErrors();
+			$error  = Arrayify::shift($errors);
+			$error  = "{$error['message']} [{$error['property']}]";
+			return false;
 		}
-		return false;
+
+		return true;
 	}
 }

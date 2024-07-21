@@ -173,6 +173,19 @@ final class User
 	}
 
 	/**
+	 * Get user by login.
+	 *
+	 * @access public
+	 * @param string $login
+	 * @param bool $format
+	 * @return mixed
+	 */
+	public static function getByLogin(string $login, bool $format = true)
+	{
+		return self::getBy('login', $login, $format);
+	}
+
+	/**
      * Get users by meta.
      *
 	 * @access public
@@ -587,7 +600,7 @@ final class User
 	}
 
 	/**
-	 * Add role(s) to user.
+	 * Add role.
 	 *
 	 * @access public
 	 * @param string $display
@@ -595,7 +608,7 @@ final class User
 	 * @param array $cap
 	 * @return mixed
 	 */
-	public static function addRole(string $display, string $role = null, array $cap = [])
+	public static function addRole(string $display, ?string $role = null, array $cap = [])
 	{
 		$role = ($role) ? (string)$role : $display;
 		$role = Stringify::undash(

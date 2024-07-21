@@ -1189,6 +1189,9 @@ class Form
 	 */
 	protected function applyVars()
 	{
-		$this->output = Stringify::replaceArray($this->vars, $this->output);
+		$this->output = Stringify::replaceArray(
+			$this->vars,
+			$this->output
+		);
 	}
 }

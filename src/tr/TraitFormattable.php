@@ -19,18 +19,21 @@ use VanillePlugin\inc\{
     Json, Xml, TypeCheck, Validator
 };
 
+/**
+ * Define formatting functions.
+ */
 trait TraitFormattable
 {
     use TraitSerializable,
-		TraitMapable;
+		TraitMappable;
 
 	/**
 	 * Format path.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function formatPath(string $path, bool $untrailing = false) : string
+	public function formatPath(string $path, bool $untrailing = false) : string
 	{
 		return Stringify::formatPath($path, $untrailing);
 	}
@@ -38,10 +41,10 @@ trait TraitFormattable
 	/**
 	 * Format key.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function formatKey(string $key) : string
+	public function formatKey(string $key) : string
 	{
 		return Stringify::formatKey($key);
 	}
@@ -49,10 +52,10 @@ trait TraitFormattable
 	/**
 	 * Format whitespaces.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function formatSpace(string $string) : string
+	public function formatSpace(string $string) : string
 	{
 		return Stringify::formatSpace($string);
 	}
@@ -60,10 +63,10 @@ trait TraitFormattable
 	/**
 	 * Strip spaces in string.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function stripSpace(string $string) : string
+	public function stripSpace(string $string) : string
 	{
 		return Stringify::stripSpace($string);
 	}
@@ -71,10 +74,10 @@ trait TraitFormattable
 	/**
 	 * Lowercase string.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function lowercase(string $string) : string
+	public function lowercase(string $string) : string
 	{
 		return Stringify::lowercase($string);
 	}
@@ -82,10 +85,10 @@ trait TraitFormattable
 	/**
 	 * Uppercase string.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function uppercase(string $string) : string
+	public function uppercase(string $string) : string
 	{
 		return Stringify::uppercase($string);
 	}
@@ -93,10 +96,10 @@ trait TraitFormattable
 	/**
 	 * Capitalize string.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function capitalize(string $string) : string
+	public function capitalize(string $string) : string
 	{
 		return Stringify::capitalize($string);
 	}
@@ -104,10 +107,10 @@ trait TraitFormattable
 	/**
 	 * Camelcase string.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function camelcase(string $string) : string
+	public function camelcase(string $string) : string
 	{
 		return Stringify::camelcase($string);
 	}
@@ -115,10 +118,10 @@ trait TraitFormattable
 	/**
 	 * Slugify string.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function slugify(string $string) : string
+	public function slugify(string $string) : string
 	{
 		return Stringify::slugify($string);
 	}
@@ -126,10 +129,10 @@ trait TraitFormattable
 	/**
 	 * Format dash (hyphen) into underscore.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function undash(string $string, bool $isGlobal = false) : string
+	public function undash(string $string, bool $isGlobal = false) : string
 	{
 		return Stringify::undash($string, $isGlobal);
 	}
@@ -140,7 +143,7 @@ trait TraitFormattable
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	protected function unSlash($value)
+	public function unSlash($value)
 	{
 		return Stringify::unSlash($value);
 	}
@@ -148,10 +151,10 @@ trait TraitFormattable
 	/**
 	 * Strip slashes in quotes or single quotes.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function stripSlash($value)
+	public function stripSlash($value)
 	{
 		return Stringify::deepStripSlash($value);
 	}
@@ -159,10 +162,10 @@ trait TraitFormattable
 	/**
 	 * Add slashes to value.
 	 * 
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function slash($value)
+	public function slash($value)
 	{
 		return Stringify::slash($value);
 	}
@@ -170,10 +173,10 @@ trait TraitFormattable
 	/**
 	 * Remove trailing slashes and backslashes if exist.
 	 * 
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function untrailingSlash(string $string) : string
+	public function untrailingSlash(string $string) : string
 	{
 	    return Stringify::untrailingSlash($string);
 	}
@@ -181,10 +184,10 @@ trait TraitFormattable
 	/**
 	 * Append trailing slashes.
 	 * 
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function trailingSlash(string $string) : string
+	public function trailingSlash(string $string) : string
 	{
 		return Stringify::trailingSlash($string);
 	}
@@ -192,10 +195,10 @@ trait TraitFormattable
 	/**
 	 * Search string.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function hasString($string, $search) : bool
+	public function hasString($string, $search) : bool
     {
         return Stringify::contains($string, $search);
     }
@@ -203,10 +206,10 @@ trait TraitFormattable
 	/**
 	 * Remove string in other string.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function removeString(string $search, string $subject, bool $regex = false) : string
+	public function removeString(string $search, string $subject, bool $regex = false) : string
 	{
         if ( $regex ) {
             return Stringify::removeRegex($search, $subject);
@@ -215,13 +218,12 @@ trait TraitFormattable
 	}
 	
 	/**
-	 * Search replace string(s),
-     * Accept regex.
+	 * Search replace string(s).
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function replaceString($search, $replace, $subject, bool $regex = false)
+	public function replaceString($search, $replace, $subject, bool $regex = false)
     {
         if ( $regex ) {
             return Stringify::replaceRegex($search, $replace, $subject);
@@ -232,10 +234,10 @@ trait TraitFormattable
 	/**
 	 * Search replace string(s) using array.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function replaceStringArray(array $replace, string $subject) : string
+	public function replaceStringArray(array $replace, string $subject) : string
 	{
 		return Stringify::replaceArray($replace, $subject);
 	}
@@ -243,10 +245,10 @@ trait TraitFormattable
 	/**
 	 * Match string using regex.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function matchString(string $regex, string $string, int $index = 0, int $flags = 0, int $offset = 0)
+	public function matchString(string $regex, string $string, int $index = 0, int $flags = 0, int $offset = 0)
 	{
 		return Stringify::match($regex, $string, $index, $flags, $offset);
 	}
@@ -254,10 +256,10 @@ trait TraitFormattable
 	/**
 	 * Match all strings using regex (g).
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function matchEveryString(string $regex, string $string, int $index = 0, int $flags = 0, int $offset = 0)
+	public function matchEveryString(string $regex, string $string, int $index = 0, int $flags = 0, int $offset = 0)
 	{
 		return Stringify::matchAll($regex, $string, $index, $flags, $offset);
 	}
@@ -265,10 +267,10 @@ trait TraitFormattable
 	/**
 	 * Parse string.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function parseString(string $string, &$result = [])
+	public function parseString(string $string, &$result = [])
 	{
 		return Stringify::parse($string, $result);
 	}
@@ -276,10 +278,10 @@ trait TraitFormattable
 	/**
 	 * Limit string.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function limitString(?string $string, int $limit = 150) : string
+	public function limitString(?string $string, int $limit = 150) : string
 	{
 		return Stringify::limit((string)$string, $limit);
 	}
@@ -287,10 +289,10 @@ trait TraitFormattable
 	/**
 	 * Get basename with path format.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function basename(string $path, string $suffix = '') : string
+	public function basename(string $path, string $suffix = '') : string
 	{
 		return Stringify::basename($path, $suffix);
 	}
@@ -298,10 +300,10 @@ trait TraitFormattable
 	/**
 	 * Get break to line.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function breakString() : string
+	public function breakString() : string
 	{
 		return Stringify::break();
 	}
@@ -309,10 +311,10 @@ trait TraitFormattable
 	/**
 	 * Escape HTML.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function escapeHTML(string $string) : string
+	public function escapeHTML(string $string) : string
 	{
 		return Stringify::escapeHTML($string);
 	}
@@ -320,10 +322,10 @@ trait TraitFormattable
 	/**
 	 * Escape HTML attribute.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function escapeAttr(string $string) : string
+	public function escapeAttr(string $string) : string
 	{
 		return Stringify::escapeAttr($string);
 	}
@@ -331,10 +333,10 @@ trait TraitFormattable
 	/**
 	 * Escape textarea.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function escapeTextarea(string $string) : string
+	public function escapeTextarea(string $string) : string
 	{
 		return Stringify::escapeTextarea($string);
 	}
@@ -342,10 +344,10 @@ trait TraitFormattable
 	/**
 	 * Escape JS.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function escapeJS(string $string) : string
+	public function escapeJS(string $string) : string
 	{
 		return Stringify::escapeJS($string);
 	}
@@ -353,10 +355,10 @@ trait TraitFormattable
 	/**
 	 * Escape SQL.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function escapeSQL(string $string) : string
+	public function escapeSQL(string $string) : string
 	{
 		return Stringify::escapeSQL($string);
 	}
@@ -364,10 +366,10 @@ trait TraitFormattable
 	/**
 	 * Escape Url.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function escapeUrl(string $url) : string
+	public function escapeUrl(string $url) : string
 	{
 		return Stringify::escapeUrl($url);
 	}
@@ -375,10 +377,10 @@ trait TraitFormattable
 	/**
 	 * Sanitize text field.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sanitizeText(string $string) : string
+	public function sanitizeText(string $string) : string
 	{
 		return Stringify::sanitizeText($string);
 	}
@@ -386,10 +388,10 @@ trait TraitFormattable
 	/**
 	 * Sanitize textarea field.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sanitizeTextarea(string $string) : string
+	public function sanitizeTextarea(string $string) : string
 	{
 		return Stringify::sanitizeTextarea($string);
 	}
@@ -397,10 +399,10 @@ trait TraitFormattable
 	/**
 	 * Sanitize title.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sanitizeTitle(string $string) : string
+	public function sanitizeTitle(string $string) : string
 	{
 		return Stringify::sanitizeTitle($string);
 	}
@@ -408,10 +410,10 @@ trait TraitFormattable
 	/**
 	 * Sanitize email.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sanitizeEmail(string $string) : string
+	public function sanitizeEmail(string $string) : string
 	{
 		return Stringify::sanitizeEmail($string);
 	}
@@ -419,10 +421,10 @@ trait TraitFormattable
 	/**
 	 * Sanitize option value.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sanitizeOption(string $key, string $value) : string
+	public function sanitizeOption(string $key, string $value) : string
 	{
 		return Stringify::sanitizeOption($key, $value);
 	}
@@ -430,10 +432,10 @@ trait TraitFormattable
 	/**
 	 * Sanitize meta value.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sanitizeMeta(string $key, string $value) : string
+	public function sanitizeMeta(string $key, string $value) : string
 	{
 		return Stringify::sanitizeMeta($key, $value);
 	}
@@ -441,10 +443,10 @@ trait TraitFormattable
 	/**
 	 * Sanitize username.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sanitizeUsername(string $key, string $value) : string
+	public function sanitizeUsername(string $key, string $value) : string
 	{
 		return Stringify::sanitizeUsername($key, $value);
 	}
@@ -452,10 +454,10 @@ trait TraitFormattable
 	/**
 	 * Sanitize url.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sanitizeUrl(string $url) : string
+	public function sanitizeUrl(string $url) : string
 	{
 		return Stringify::sanitizeUrl($url);
 	}
@@ -463,10 +465,10 @@ trait TraitFormattable
 	/**
 	 * Sanitize HTML content (XSS).
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sanitizeHTML(string $string) : string
+	public function sanitizeHTML(string $string) : string
 	{
 		return Stringify::sanitizeHTML($string);
 	}
@@ -474,10 +476,10 @@ trait TraitFormattable
 	/**
 	 * Check array item.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function inArray($value, array $array) : bool
+    public function inArray($value, array $array) : bool
     {
         return Arrayify::inArray($value, $array);
     }
@@ -485,10 +487,10 @@ trait TraitFormattable
 	/**
 	 * Merge arrays.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function mergeArray(array $array, array $arrays) : array
+    public function mergeArray(array $array, array $arrays) : array
     {
         return Arrayify::merge($array, $arrays);
     }
@@ -496,10 +498,10 @@ trait TraitFormattable
 	/**
 	 * Filter array.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function filterArray(array $array, $callback = null, $mode = 0) : array
+    public function filterArray(array $array, $callback = null, $mode = 0) : array
     {
         return Arrayify::filter($array, $callback, $mode);
     }
@@ -507,10 +509,10 @@ trait TraitFormattable
 	/**
 	 * Check array key.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function hasArrayKey($key, array $array) : bool
+	public function hasArrayKey($key, array $array) : bool
 	{
 		return Arrayify::hasKey($key, $array);
 	}
@@ -518,21 +520,32 @@ trait TraitFormattable
 	/**
 	 * Get array keys.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function arrayKeys(array $array, $value = null, bool $search = false) : array
+	public function arrayKeys(array $array, $value = null, bool $search = false) : array
 	{
 		return Arrayify::keys($array, $value, $search);
 	}
 
 	/**
-	 * Get array values.
+	 * Get single array key.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function arrayValues(array $array) : array
+	public function arrayKey(array $array)
+	{
+		return Arrayify::key($array);
+	}
+
+	/**
+	 * Get array values.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function arrayValues(array $array) : array
 	{
 		return Arrayify::values($array);
 	}
@@ -540,10 +553,10 @@ trait TraitFormattable
 	/**
 	 * Shift array.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function shiftArray(array &$array) : array
+	public function shiftArray(array &$array) : array
 	{
 		return Arrayify::shift($array);
 	}
@@ -551,10 +564,10 @@ trait TraitFormattable
 	/**
 	 * Get array diff.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function diffArray(array $array, array $arrays) : array
+	public function diffArray(array $array, array $arrays) : array
 	{
 		return Arrayify::diff($array, $arrays);
 	}
@@ -562,10 +575,10 @@ trait TraitFormattable
     /**
      * Sort array.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
      */
-    protected function sortArray(array $array, $orderby = [], $order = 'ASC', bool $preserve = false)
+    public function sortArray(array $array, $orderby = [], $order = 'ASC', bool $preserve = false)
 	{
 		return Arrayify::sort($array, $orderby, $order, $preserve);
 	}
@@ -573,10 +586,10 @@ trait TraitFormattable
 	/**
 	 * Slice array.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function sliceArray(array $array, int $offset, ?int $length = null, bool $preserve = false) : array
+	public function sliceArray(array $array, int $offset, ?int $length = null, bool $preserve = false) : array
 	{
 		return Arrayify::slice($array, $offset, $length, $preserve);
 	}
@@ -584,10 +597,10 @@ trait TraitFormattable
 	/**
 	 * Unique array.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function uniqueArray(array $array, $flags = SORT_STRING) : array
+	public function uniqueArray(array $array, $flags = SORT_STRING) : array
 	{
 		return Arrayify::unique($array, $flags);
 	}
@@ -595,10 +608,10 @@ trait TraitFormattable
 	/**
 	 * Unique arrays.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function uniqueMultiArray(array $array) : array
+	public function uniqueMultiArray(array $array) : array
 	{
 		return Arrayify::uniqueMultiple($array);
 	}
@@ -606,32 +619,21 @@ trait TraitFormattable
 	/**
 	 * Format array key case.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function formatKeyCase(array $array, int $case = CASE_LOWER) : array
+	public function formatKeyCase(array $array, int $case = CASE_LOWER) : array
 	{
 		return Arrayify::formatKeyCase($array, $case);
 	}
 
 	/**
-	 * Map array.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function map($callback, array $array, ?array $arrays = null)
-	{
-		return Arrayify::map($callback, $array, $arrays);
-	}
-
-	/**
 	 * Push array.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function pushArray(array &$array, $values) : int
+	public function pushArray(array &$array, $values) : int
 	{
 		return Arrayify::push($array, $values);
 	}
@@ -639,10 +641,10 @@ trait TraitFormattable
 	/**
 	 * Format array.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function formatArray(array $array) : array
+	public function formatArray(array $array) : array
 	{
 		return Arrayify::format($array);
 	}
@@ -650,10 +652,10 @@ trait TraitFormattable
 	/**
 	 * Decode JSON.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function decodeJson(string $value, bool $isArray = false)
+	public function decodeJson(string $value, bool $isArray = false)
 	{
 		return Json::decode($value, $isArray);
 	}
@@ -661,10 +663,10 @@ trait TraitFormattable
 	/**
 	 * Encode JSON without flags.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function encodeJson($value)
+	public function encodeJson($value)
 	{
 		return Json::encode($value);
 	}
@@ -672,10 +674,10 @@ trait TraitFormattable
 	/**
 	 * Encode JSON using flags.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function formatJson($value, int $flags = 64|256, int $depth = 512)
+	public function formatJson($value, int $flags = 64|256, int $depth = 512)
 	{
 		return Json::format($value, $flags, $depth);
 	}
@@ -683,10 +685,10 @@ trait TraitFormattable
 	/**
 	 * Parse XML string.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function parseXml(string $xml, int $args = 16384|20908)
+	public function parseXml(string $xml, int $args = 16384|20908)
 	{
 		return Xml::parse($xml, $args);
 	}
@@ -694,21 +696,32 @@ trait TraitFormattable
 	/**
 	 * Validate PHP module.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function isModule(string $extension) : bool
+	public function isModule(string $module) : bool
 	{
-		return Validator::isModule($extension);
+		return Validator::isModule($module);
+	}
+
+	/**
+	 * Validate server module.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isServerModule(string $module) : bool
+	{
+		return Validator::isServerModule($module);
 	}
 
 	/**
 	 * Validate server config.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function isConfig(string $name, $value) : bool
+	public function isConfig(string $name, $value) : bool
 	{
 		return Validator::isConfig($name, $value);
 	}
@@ -716,10 +729,10 @@ trait TraitFormattable
 	/**
 	 * Validate version.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function isVersion(string $v1, string $v2, string $operator = '==') : bool
+	public function isVersion(string $v1, string $v2, string $operator = '==') : bool
 	{
 		return Validator::isVersion($v1, $v2, $operator);
 	}
@@ -727,10 +740,10 @@ trait TraitFormattable
 	/**
 	 * Validate plugin file.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function isPlugin(string $file) : bool
+	public function isPlugin(string $file) : bool
 	{
 		return Validator::isPlugin($file);
 	}
@@ -738,10 +751,10 @@ trait TraitFormattable
 	/**
 	 * Validate plugin class.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function isPluginClass(string $callable) : bool
+	public function isPluginClass(string $callable) : bool
 	{
 		return Validator::isPluginClass($callable);
 	}
@@ -749,10 +762,10 @@ trait TraitFormattable
 	/**
 	 * Validate plugin version.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function isPluginVersion(string $file, string $version, string $operator = '>=') : bool
+	public function isPluginVersion(string $file, string $version, string $operator = '>=') : bool
 	{
 		return Validator::isPluginVersion($file, $version, $operator);
 	}
@@ -760,10 +773,10 @@ trait TraitFormattable
 	/**
      * Check value type.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function isType($type, $value) : bool
+    public function isType($type, $value) : bool
     {
         switch ($this->lowercase($type)) {
             case 'array':
@@ -849,10 +862,10 @@ trait TraitFormattable
 	/**
      * Check object.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function hasObject($type, $object, $item) : bool
+    public function hasObject($type, $object, $item) : bool
     {
         switch ($this->lowercase($type)) {
             case 'interface':
@@ -878,10 +891,10 @@ trait TraitFormattable
 	/**
 	 * Convert array to object.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function toObject(array $array, $strict = false) : object
+	public function toObject(array $array, $strict = false) : object
 	{
 		return Converter::toObject($array, $strict);
 	}
@@ -889,10 +902,10 @@ trait TraitFormattable
 	/**
 	 * Convert object to array.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function toArray(object $object) : array
+	public function toArray(object $object) : array
 	{
 	    return Converter::toArray($object);
 	}
@@ -900,10 +913,10 @@ trait TraitFormattable
 	/**
 	 * Convert data to key.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function toKey($data) : string
+	public function toKey($data) : string
 	{
 	    return Converter::toKey($data);
 	}
@@ -911,11 +924,31 @@ trait TraitFormattable
 	/**
 	 * Convert dynamic types.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function toTypes($value)
+	public function toTypes($value)
 	{
 		return Converter::toTypes($value);
+	}
+
+	/**
+	 * Format credentials.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function toCredentials($data)
+	{
+		if ( TypeCheck::isArray($data) ) {
+			foreach ($data as $input => $value) {
+				$data[$input] = Stringify::stripSpace($value);
+			}
+
+		} else {
+			$data = Stringify::stripSpace($data);
+		}
+		
+		return $data;
 	}
 }

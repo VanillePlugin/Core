@@ -16,59 +16,9 @@ namespace VanillePlugin\inc;
 
 /**
  * Built-in tokenizer class.
- * JWT for external use is recommended.
  */
 class Tokenizer
 {
-    /**
-     * Get token authentication.
-     *
-     * @access public
-     * @param string $user
-     * @param string $pswd
-     * @param string $prefix
-     * @return array
-     */
-    public static function get(string $user, string $pswd, ?string $prefix = null) : array
-    {
-        $secret = self::getUniqueId();
-        $token  = trim("{user:{$user}}{pswd:{$pswd}}");
-
-        $encryption = new Encryption($token, $secret);
-        $encryption->setPrefix((string)$prefix);
-
-        return [
-            'token'  => $encryption->encrypt(),
-            'secret' => $secret
-        ];
-    }
-
-    /**
-     * Match token authentication.
-     *
-     * @access public
-     * @param string $token
-     * @param string $secret
-     * @param string $prefix
-     * @return mixed
-     */
-    public static function match(string $token, string $secret, ?string $prefix = null)
-    {
-        $pattern = '/{user:(.*?)}{pswd:(.*?)}/';
-        $cryptor = new Encryption($token, $secret);
-        $cryptor->setPrefix((string)$prefix);
-
-        $access = $cryptor->decrypt();
-        $user   = Stringify::match($pattern, $access, 1);
-        $pswd   = Stringify::match($pattern, $access, 2);
-
-        if ( $user && $pswd ) {
-            return ['user' => $user, 'pswd' => $pswd];
-        }
-
-        return false;
-    }
-
     /**
      * Get range of numbers.
      *
@@ -99,7 +49,7 @@ class Tokenizer
     }
 
     /**
-     * Generate token.
+     * Generate random token.
      *
      * @access public
      * @param int $length
@@ -161,13 +111,13 @@ class Tokenizer
      * Get unique Id.
      *
      * @access public
+     * @param bool $md5
      * @return string
      */
-    public static function getUniqueId() : string
+    public static function getUniqueId(bool $md5 = true) : string
     {
-        return md5(
-            uniqid((string)time())
-        );
+        $id = uniqid((string)time());
+        return ($md5) ? md5($id) : $id;
     }
 
     /**
@@ -185,6 +135,7 @@ class Tokenizer
         }
         return $uuid;
     }
+
 	/**
 	 * Create nonce.
 	 *
@@ -234,7 +185,7 @@ class Tokenizer
 	public static function hash($data, string $salt = 'Y3biC') : string
 	{
         if ( !TypeCheck::isString($data) ) {
-            $data = String::serialize($data);
+            $data = Stringify::serialize($data);
         }
 		$data = "{$salt}{$data}";
 		return hash('sha256', $data);

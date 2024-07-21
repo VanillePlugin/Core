@@ -37,7 +37,8 @@ class File
 			'accessed'    => self::getLastAccess($path),
 			'changed'     => self::getLastChange($path),
 			'size'        => self::getSize($path),
-			'permissions' => self::getPermissions($path)
+			'permissions' => self::getPermissions($path),
+			'type'        => self::getMimeType($path)
 		];
 	}
 
@@ -57,6 +58,7 @@ class File
 
 	/**
 	 * Get file extension.
+	 * [PATHINFO_EXTENSION: 4].
 	 *
 	 * @access public
 	 * @param string $path
@@ -65,10 +67,8 @@ class File
 	 */
 	public static function getExtension(string $path, bool $format = true) : string
 	{
-		$ext = pathinfo(
-			Stringify::formatPath($path),
-			PATHINFO_EXTENSION
-		);
+		$path = Stringify::formatPath($path);
+		$ext  = pathinfo($path, 4);
 		if ( $format ) {
 			$ext = strtolower($ext);
 		}
@@ -431,12 +431,11 @@ class File
 	 */
     public static function clearDir(string $path) : bool
     {
-		$handler = false;
-
-		if ( self::isDir($path) ) {
-			$handler = @opendir($path);
+		if ( !self::isDir($path) ) {
+			return false;
 		}
 
+		$handler = @opendir($path);
 		if ( !TypeCheck::isResource($handler) ) {
 			return false;
 		}
@@ -463,6 +462,7 @@ class File
 			    }
 			}
 	   }
+	   
 	   closedir($handler);
 	   return true;
     }
@@ -696,48 +696,42 @@ class File
 	}
 
 	/**
-	 * Validate file.
-	 *
-	 * @access public
-	 * @param string $file
-	 * @param array $allowed
-	 * @return mixed
-	 */
-	public static function validate($file, $allowed = [])
-	{
-		// Check filename
-		if ( empty($name = self::getFileName($file)) ) {
-			return false;
-		}
-
-		// Basic security check by mime type
-		if ( Validator::isValidMime($name, $allowed) ) {
-			return $name;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Get file mime type.
+	 * [FILEINFO_MIME_TYPE: 16].
 	 *
 	 * @access public
 	 * @param string $path
-	 * @param array $mimes
-	 * @return array
+	 * @param string $ext
+	 * @param array $types
+	 * @return string
 	 */
-	public static function getMime($path, ?array $mimes = null) : array
+	public static function getMimeType(string $path, ?string $ext = null, ?array $types = []) : string
 	{
-		return wp_check_filetype($path, $mimes);
+		if ( TypeCheck::isClass('\finfo') ) {
+			return (new \finfo(16))->file($path) ?: 'undefined';
+		}
+
+		if ( !$ext ) {
+			$ext = self::getExtension($path);
+		}
+
+		foreach ($types as $match => $type) {
+			$match = explode('|', $match);
+			if ( Arrayify::inArray($ext, $match)) {
+				return $type;
+			}
+		}
+
+		return 'undefined';
 	}
 
 	/**
-	 * Get allowed files mimes types.
+	 * Get file allowed mime types.
 	 *
 	 * @access public
 	 * @return array
 	 */
-	public static function mimes() : array
+	public static function getMimes() : array
 	{
 		return get_allowed_mime_types();
 	}

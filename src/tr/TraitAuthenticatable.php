@@ -16,11 +16,135 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\User;
 
+/**
+ * Define authentication functions.
+ */
 trait TraitAuthenticatable
 {
 	use TraitSessionable,
 		TraitPermissionable,
 		TraitSecurable;
+
+	/**
+	 * Check whether user exists.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isUser($user, string $property = 'username') : bool
+	{
+		return User::isUser($user, $property);
+	}
+
+	/**
+	 * Check whether user is logged-in.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isLoggedIn() : bool
+	{
+		return User::isLoggedIn();
+	}
+
+	/**
+	 * Validate user password.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isPassword(string $pswd, string $hash, $id = null) : bool
+	{
+		return User::isPassword($pswd, $hash, $id);
+	}
+
+	/**
+	 * Get user by Id.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getUser($id = null)
+	{
+		return User::get($id);
+	}
+
+	/**
+	 * Get current user Id.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getUserId() : int
+	{
+		return User::getId();
+	}
+
+	/**
+     * Get user by field.
+     *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getUserBy(string $key, $value)
+	{
+		return User::getBy($key, $value);
+	}
+
+	/**
+     * Get user by Id.
+     *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getUserById($id = null)
+	{
+		return User::getById($id);
+	}
+
+	/**
+     * Get user by login.
+     *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getUserByLogin(string $login)
+	{
+		return User::getByLogin($login);
+	}
+
+	/**
+     * Get user by email.
+     *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getUserByEmail(string $email)
+	{
+		return User::getByEmail($email);
+	}
+
+	/**
+     * Get users by meta.
+     *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getUserByMeta(string $key, $value) : array
+	{
+		return User::getByMeta($key, $value);
+	}
+
+	/**
+     * Get user meta.
+     *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getUserMeta(string $key, $id = null)
+	{
+		return User::getMeta($key, $id);
+	}
 
 	/**
 	 * Register user.
@@ -67,39 +191,6 @@ trait TraitAuthenticatable
 	}
 
 	/**
-	 * Check whether user exists.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isUser($user, string $property = 'username') : bool
-	{
-		return User::isUser($user, $property);
-	}
-
-	/**
-	 * Check whether user is logged-in.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isLoggedIn() : bool
-	{
-		return User::isLoggedIn();
-	}
-
-	/**
-	 * Validate user password.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isPassword(string $pswd, string $hash, $id = null) : bool
-	{
-		return User::isPassword($pswd, $hash, $id);
-	}
-
-	/**
 	 * Send user password.
 	 *
 	 * @access protected
@@ -111,50 +202,6 @@ trait TraitAuthenticatable
 	}
 
 	/**
-	 * Get user by Id.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getUser($id = null)
-	{
-		return User::get($id);
-	}
-
-	/**
-	 * Get current user Id.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getUserId() : int
-	{
-		return User::getId();
-	}
-
-	/**
-     * Get user by field.
-     * 
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getUserBy(string $key, $value)
-	{
-		return User::getBy($key, $value);
-	}
-
-	/**
-     * Get users by meta.
-     *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getUserByMeta(string $key, $value) : array
-	{
-		return User::getByMeta($key, $value);
-	}
-
-	/**
      * Add user meta.
      *
 	 * @access protected
@@ -163,17 +210,6 @@ trait TraitAuthenticatable
 	protected function addUserMeta(string $key, $value, $id = null)
 	{
 		return User::addMeta($key, $value, $id);
-	}
-
-	/**
-     * Get user meta.
-     *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getUserMeta(string $key, $id = null)
-	{
-		return User::getMeta($key, $id);
 	}
 
 	/**

@@ -167,10 +167,10 @@ final class Migrate extends Orm
 	 *
 	 * @access public
 	 * @param string $table
-	 * @param mixed $column
+	 * @param string $column
 	 * @return mixed
 	 */
-	public function export(string $table, $column)
+	public function export(string $table, ?string $column = null)
 	{
 		$file = $this->getTempPath("{$table}.csv");
 		$res = fopen($file, 'w');
@@ -229,9 +229,8 @@ final class Migrate extends Orm
 	 */
 	public function unlock() : bool
 	{
-		return $this->removeFile(
-			$this->getMigratePath(self::LOCK)
-		);
+		$file = $this->getMigratePath(self::LOCK);
+		return $this->removeFile($file, $this->getRoot());
 	}
 
 	/**

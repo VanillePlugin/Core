@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\exc\ModelException;
 use VanillePlugin\inc\TypeCheck;
 use VanillePlugin\int\ModelInterface;
+use VanillePlugin\exc\ModelException;
 
 /**
  * Plugin table helper.
@@ -249,12 +249,17 @@ class Model extends Orm implements ModelInterface
 	public static function instance(string $name, $path = 'db', ...$args)
 	{
 		$class = (new Loader())->i($path, $name, ...$args);
-		if ( !TypeCheck::hasInterface($class, 'ModelInterface') ) {
-			throw new ModelException(
-				ModelException::invalidInstance()
-			);
+
+		$int = TypeCheck::hasInterface($class, 'ModelInterface');
+		$obj = TypeCheck::isObject($class, static::class);
+
+		if ( $int || $obj ) {
+			return $class;
 		}
-		return $class;
+
+		throw new ModelException(
+			ModelException::invalidInstance()
+		);
 	}
 	
 	/**

@@ -17,12 +17,12 @@ namespace VanillePlugin\int;
 interface AdminHelperInterface
 {
 	/**
-	 * Init admin helper.
+	 * Trigger admin helper hooks.
 	 */
 	function __construct();
 
 	/**
-	 * Plugin activate action.
+	 * Plugin activate.
 	 * [Action: {plugin}-activate].
      *
 	 * @return void
@@ -30,7 +30,7 @@ interface AdminHelperInterface
 	function activate();
 
 	/**
-	 * Plugin deactivate action.
+	 * Plugin deactivate.
 	 * [Action: {plugin}-deactivate].
 	 *
 	 * @return void
@@ -38,7 +38,7 @@ interface AdminHelperInterface
 	function deactivate();
 
 	/**
-	 * Plugin upgrade action.
+	 * Plugin upgrade.
 	 * [Action: {plugin}-upgrade].
 	 *
 	 * @return void
@@ -46,7 +46,7 @@ interface AdminHelperInterface
 	function upgrade();
 
 	/**
-	 * Plugin load action.
+	 * Plugin admin load.
 	 * [Action: {plugin}-load].
 	 *
 	 * @return void
@@ -54,12 +54,44 @@ interface AdminHelperInterface
 	function load();
 
 	/**
-	 * Plugin admin loaded action.
-	 * [Action: {plugin}-admin-loaded].
+	 * Plugin admin scripts.
+	 * [Action: {plugin}-admin-script].
+	 *
+	 * @return void
+	 */
+	function adminScript();
+
+	/**
+	 * Plugin global scripts.
+	 * [Action: {plugin}-global-script].
+	 *
+	 * @return void
+	 */
+	function globalScript();
+
+	/**
+	 * Admin loaded (Core, Plugins, Themes).
+	 * [Action: loaded].
 	 *
 	 * @return void
 	 */
 	function loaded();
+
+	/**
+	 * Admin init.
+	 * [Action: admin-init].
+	 * 
+	 * @return void
+	 */
+	function init();
+
+	/**
+	 * Admin dashboard.
+	 * [Action: dashboard-setup].
+	 * 
+	 * @return void
+	 */
+	function dashboard();
 
 	/**
 	 * Plugin action links.
@@ -72,7 +104,7 @@ interface AdminHelperInterface
 
 	/**
 	 * Plugin about.
-	 * [Filter: {plugin}-about].
+	 * [Filter: {plugin}-about-text].
 	 * 
 	 * @param string $output
 	 * @return string
@@ -81,7 +113,7 @@ interface AdminHelperInterface
 
 	/**
 	 * Plugin version.
-	 * [Filter: {plugin}-version].
+	 * [Filter: {plugin}-about-version].
 	 * 
 	 * @param string $output
 	 * @return string
@@ -117,28 +149,13 @@ interface AdminHelperInterface
 	function globalData(array $data) : array;
 
 	/**
-	 * Plugin init action.
-	 * [Action: admin-init].
-	 * 
-	 * @return void
-	 */
-	function init();
-
-	/**
-	 * Plugin dashboard action.
-	 * [Action: dashboard-setup].
-	 * 
-	 * @return void
-	 */
-	function dashboard();
-
-	/**
-	 * Disable plugin auto-update.
+	 * Plugin auto-update.
 	 * [Filter: auto-update-plugin].
+	 * [Filter: {plugin}-disable-auto-update].
 	 *
 	 * @param mixed $update
 	 * @param object $item
 	 * @return mixed
 	 */
-	function disableAutoUpdate($update, object $item);
+	function autoUpdate($update, object $item);
 }

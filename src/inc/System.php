@@ -55,8 +55,8 @@ final class System
      */
     public static function getMemoryLimit() : int
     {
-    	if ( TypeCheck::isFunction('ini_get') ) {
-    		$limit = self::getIni('memory_limit');
+    	if ( TypeCheck::isFunction('ini-get') ) {
+    		$limit = self::getIni('memory-limit');
     		if ( Stringify::contains(Stringify::lowercase($limit), 'g') ) {
     			$limit = intval($limit) * 1024;
     			$limit = "{$limit}M";
@@ -250,7 +250,7 @@ final class System
      */
     public static function setMemoryLimit($value = '128M')
     {
-        return self::setIni('memory_limit', $value);
+        return self::setIni('memory-limit', $value);
     }
 
     /**
@@ -323,11 +323,11 @@ final class System
     public static function getCpuCores() : int
     {
         $count = 1; // Init with min
-        if ( !TypeCheck::isFunction('ini_get') ) {
+        if ( !TypeCheck::isFunction('ini-get') ) {
             return $count;
         }
 
-        if ( self::getIni('open_basedir') ) {
+        if ( self::getIni('open-basedir') ) {
             return $count;
         }
 

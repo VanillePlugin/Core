@@ -74,6 +74,17 @@ final class Globals
 	}
 
 	/**
+	 * Get site installing status.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public static function installing() : bool
+	{
+		return wp_installing();
+	}
+
+	/**
 	 * Get site debug status.
 	 *
 	 * @access public
@@ -107,7 +118,7 @@ final class Globals
 	}
 
 	/**
-	 * Check mobile.
+	 * Check mobile device.
 	 *
 	 * @access public
 	 * @return bool
@@ -118,7 +129,7 @@ final class Globals
 	}
 	
 	/**
-	 * Check ajax.
+	 * Check Ajax request.
 	 *
 	 * @access public
 	 * @return bool
@@ -126,7 +137,8 @@ final class Globals
 	public static function ajax() : bool
 	{
 		$request = Server::get('request-uri');
-		return Stringify::contains($request, 'admin-ajax.php');
+		$ajax = Stringify::basename(self::ajaxUrl());
+		return (Stringify::contains($request, $ajax));
 	}
 
 	/**
@@ -207,7 +219,7 @@ final class Globals
 	 */
 	public static function pluginMuDir() : string
 	{
-		return WPMU_PLUGIN_URL;
+		return WPMU_PLUGIN_DIR;
 	}
 
 	/**
@@ -259,7 +271,7 @@ final class Globals
 	}
 
 	/**
-	 * Get front url.
+	 * Get front URL.
 	 *
 	 * @access public
 	 * @param string $path
@@ -301,7 +313,7 @@ final class Globals
 	}
 
 	/**
-	 * Get admin url.
+	 * Get admin URL.
 	 *
 	 * @access public
 	 * @param string $path
@@ -315,7 +327,7 @@ final class Globals
 	}
 
 	/**
-	 * Get includes url.
+	 * Get includes URL.
 	 *
 	 * @access public
 	 * @param string $path
@@ -329,7 +341,7 @@ final class Globals
 	}
 
 	/**
-	 * Get REST url.
+	 * Get REST URL.
 	 *
 	 * @access public
 	 * @param string $path
@@ -342,7 +354,7 @@ final class Globals
 	}
 
 	/**
-	 * Get ajax url.
+	 * Get Ajax URL.
 	 *
 	 * @access public
 	 * @param string $scheme
@@ -387,5 +399,19 @@ final class Globals
 	public static function privacyUrl() : string
 	{
 		return get_privacy_policy_url();
+	}
+
+	/**
+	 * Get upload directory info.
+	 *
+	 * @access public
+	 * @param string $time
+	 * @param bool $create
+	 * @param bool $refresh
+	 * @return array
+	 */
+	public static function upload(?string $time = null, bool $create = true, bool $refresh = false) : array
+	{
+		return wp_upload_dir($time, $create, $refresh);
 	}
 }

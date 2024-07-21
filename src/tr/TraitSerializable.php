@@ -16,32 +16,52 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\Stringify;
 
+/**
+ * Define serializing functions.
+ */
 trait TraitSerializable
 {
 	/**
-	 * @access protected
+	 * Serialize value if not serialized.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function serialize($value)
+    public function serialize($value)
     {
         return Stringify::serialize($value);
     }
 
 	/**
-	 * @access protected
+	 * Unserialize serialized value.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function unserialize(string $value)
+    public function unserialize(string $value)
     {
         return Stringify::unserialize($value);
     }
 
 	/**
-	 * @access protected
+	 * Check serialized value.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function isSerialized(string $value) : bool
+	public function isSerialized(string $value) : bool
     {
         return Stringify::isSerialized($value);
+    }
+
+	/**
+	 * Check serialized value.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function toString(string $value) : bool
+    {
+        return $this->__toString();
     }
 }

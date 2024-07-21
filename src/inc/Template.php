@@ -27,7 +27,7 @@ final class Template
     /**
      * Get view environment.
      * Used single path for security.
-     * 
+     *
      * @access public
      * @param string $path
      * @param array $options
@@ -40,7 +40,7 @@ final class Template
 
     /**
      * Add view callable.
-     * 
+     *
      * @access public
      * @param string $name
      * @param callable $callable

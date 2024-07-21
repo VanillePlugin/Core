@@ -341,20 +341,25 @@ final class TypeCheck
 	 *
 	 * @access public
 	 * @param string $type
-	 * @param string $value
+	 * @param mixed $value
 	 * @return mixed
 	 * @internal
 	 */
-	public static function isDynamicType(string $type, ?string $value = null)
+	public static function isDynamicType(string $type, $value = null)
 	{
+		if ( !self::isString($value) ) {
+			return false;
+		}
+
         $pattern = sprintf('/^%s\|(.+)$/', $type);
-		if ( ($match = Stringify::match($pattern, (string)$value, -1)) ) {
+		if ( ($match = Stringify::match($pattern, $value, -1)) ) {
 			$match = $match[1] ?? 'NaN';
 			if ( $type == 'bool' && $match == '0' ) {
 				$match = 'NaN';
 			}
 			return $match;
 		}
+
 		return false;
 	}
 }

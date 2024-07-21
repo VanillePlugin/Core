@@ -123,7 +123,7 @@ final class Server
 	}
 
 	/**
-	 * Get prefered protocol.
+	 * Get protocol.
 	 *
 	 * @access public
 	 * @return string
@@ -161,7 +161,7 @@ final class Server
 		
 		return false;
 	}
-	
+
 	/**
 	 * Redirect request.
 	 *
@@ -173,7 +173,6 @@ final class Server
 	public static function redirect(string $location, int $status = 301)
 	{
 		wp_redirect($location, $status);
-		exit();
 	}
 
 	/**
@@ -357,7 +356,7 @@ final class Server
 	}
 
 	/**
-	 * Get get basic authentication password.
+	 * Get basic authentication password.
 	 *
 	 * @access public
 	 * @return string
@@ -381,7 +380,7 @@ final class Server
         } elseif ( self::isSetted('http-authorization') ) {
             return trim(self::get('http-authorization'));
 
-        } elseif ( function_exists('apache_request_headers') ) {
+        } elseif ( TypeCheck::isFunction('apache-request-headers') ) {
             $requestHeaders = apache_request_headers();
             $requestHeaders = Arrayify::combine(
             	Arrayify::map('ucwords', Arrayify::keys($requestHeaders)),
@@ -469,5 +468,20 @@ final class Server
     public static function getReferer()
     {
 		return wp_get_referer();
+    }
+
+    /**
+     * Get server modules.
+     *
+     * @access public
+     * @return array
+     */
+    public static function getModules() : array
+    {
+		$modules = [];
+		if ( TypeCheck::isFunction('apache-get-modules') ) {
+			$modules = apache_get_modules();
+		}
+		return $modules;
     }
 }

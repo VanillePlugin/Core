@@ -29,16 +29,15 @@ interface SettingsInterface
 	function init();
 
 	/**
-	 * Set default settings.
-	 * 
+	 * Define default settings.
 	 *
 	 * @return void
 	 */
-	static function setDefault();
+	function define();
 
     /**
      * Remove plugin settings.
-     * [Action: uninstall_{plugin}].
+     * [Action: uninstall-{plugin}].
      *
      * @return void
      */

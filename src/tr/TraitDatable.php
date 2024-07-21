@@ -16,15 +16,18 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\Date;
 
+/**
+ * Define date and time functions.
+ */
 trait TraitDatable
 {
 	/**
      * Get date (Default current).
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function getDate(string $date = 'now', string $to = Date::FORMAT, bool $isObject = false)
+    public function getDate(string $date = 'now', string $to = Date::FORMAT, bool $isObject = false)
     {
         return Date::get($date, $to, $isObject);
     }
@@ -32,10 +35,10 @@ trait TraitDatable
 	/**
      * Get date difference interval.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function getDateDiff($date, $expire, ?string $i = null, string $to = Date::FORMAT) : int
+    public function getDateDiff($date, $expire, ?string $i = null, string $to = Date::FORMAT) : int
     {
         return Date::difference($date, $expire, $i, $to);
     }
@@ -43,10 +46,10 @@ trait TraitDatable
     /**
      * Create date object from string.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
      */
-    protected function createDate(string $date, string $format, string $to = Date::FORMAT) : object
+    public function createDate(string $date, string $format, string $to = Date::FORMAT) : object
     {
     	return Date::create($date, $format, $to);
     }
@@ -54,10 +57,10 @@ trait TraitDatable
     /**
      * Convert date format.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
      */
-    protected function convertDate(string $date, string $format, string $to = Date::FORMAT) : string
+    public function convertDate(string $date, string $format, string $to = Date::FORMAT) : string
     {
     	return Date::convert($date, $format, $to);
     }
@@ -65,10 +68,10 @@ trait TraitDatable
     /**
      * Convert date to string format.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
      */
-    protected function dateToString($date, string $to = Date::FORMAT) : string
+    public function dateToString($date, string $to = Date::FORMAT) : string
     {
     	return Date::toString($date, $to);
     }
@@ -76,10 +79,10 @@ trait TraitDatable
 	/**
      * Get current time.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function getTimeNow() : int
+    public function getTimeNow() : int
     {
         return Date::timeNow();
     }
@@ -87,12 +90,23 @@ trait TraitDatable
 	/**
      * Generate new time.
      *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function newTime($h = 0, $m = 0, $s = 0, $mt = 0, $d = 0, $y = 0) : int
+    public function newTime($h = 0, $m = 0, $s = 0, $mt = 0, $d = 0, $y = 0) : int
     {
         return Date::newTime($h, $m, $s, $mt, $d, $y);
+    }
+
+    /**
+     * Get date timezone.
+     *
+	 * @access public
+	 * @inheritdoc
+     */
+    public function getDefaultTimezone() : string
+    {
+        return Date::getDefaultTimezone();
     }
 
 	/**
@@ -104,16 +118,5 @@ trait TraitDatable
     protected function setDefaultTimezone(string $timezone) : bool
     {
         return Date::setDefaultTimezone($timezone);
-    }
-
-    /**
-     * Get date timezone.
-     *
-	 * @access protected
-	 * @inheritdoc
-     */
-    protected function getDefaultTimezone() : string
-    {
-        return Date::getDefaultTimezone();
     }
 }

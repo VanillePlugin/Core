@@ -16,27 +16,80 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\User;
 
+/**
+ * Define permissions functions.
+ */
 trait TraitPermissionable
 {
 	/**
-	 * @access protected
+	 * Get user roles.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function getRoles($id = null) : array
+	public function getRoles($id = null) : array
 	{
 		return User::getRoles($id);
 	}
 
 	/**
-	 * @access protected
+	 * Get role object.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function getRole(string $role)
+	public function getRole(string $role)
 	{
 		return User::getRole($role);
 	}
 
 	/**
+	 * Check whether user has role.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function hasRole(string $role, $id = null) : bool
+	{
+		return User::hasRole($role, $id);
+	}
+
+	/**
+	 * Check whether user is administrator.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isAdministrator($id = null) : bool
+	{
+		return $this->hasRole('administrator', $id);
+	}
+
+	/**
+	 * Get user capabilities.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getCaps($id = null) : array
+	{
+		return User::getCaps($id);
+	}
+
+	/**
+	 * Check user capability.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function hasCap(string $cap = 'edit-posts', $id = null, ...$args) : bool
+	{
+		return User::hasCap($cap, $id, ...$args);
+	}
+
+	/**
+	 * Add role.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -46,6 +99,8 @@ trait TraitPermissionable
 	}
 
 	/**
+	 * Remove role.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -55,48 +110,8 @@ trait TraitPermissionable
 	}
 
 	/**
-	 * Check whether user has role.
+	 * Add role capability.
 	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function hasRole(string $role, $id = null) : bool
-	{
-		return User::hasRole($role, $id);
-	}
-
-	/**
-	 * Check whether user is administrator.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isAdministrator($id = null) : bool
-	{
-		return $this->hasRole('administrator', $id);
-	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getCaps($id = null) : array
-	{
-		return User::getCaps($id);
-	}
-	
-	/**
-	 * Check user capability.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function hasCap(string $cap = 'edit-posts', $id = null, ...$args) : bool
-	{
-		return User::hasCap($cap, $id, ...$args);
-	}
-
-	/**
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -106,6 +121,8 @@ trait TraitPermissionable
 	}
 
 	/**
+	 * Remove role capability.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */

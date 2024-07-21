@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace VanillePlugin;
 
-use VanillePlugin\exc\ConfigurationException;
+use VanillePlugin\exc\ConfigException;
 
 /**
- * Define base configuration used by plugin.
+ * Define plugin configuration.
  *
  * - Configuration
  * - Translation
@@ -39,16 +39,16 @@ trait VanillePluginConfig
 	 * @access private
 	 * @var int $depth, Base path depth
 	 * @var bool $cacheable, Config cache
-	 * @var string $config, Config path
+	 * @var string $path, Config root path
 	 * @var object $global, Config global
 	 */
 	private $depth = 5;
 	private $cacheable = true;
-	private $config = '/core/storage/config/global.json';
+	private $root = '/core/storage/config';
 	private $global;
 
 	/**
-	 * Init configuration.
+	 * Init config.
 	 */
 	public function __construct()
 	{
@@ -72,8 +72,7 @@ trait VanillePluginConfig
     }
 
 	/**
-	 * Get static instance,
-	 * Allows access to plugin config.
+	 * Get static instance.
 	 *
 	 * @access protected
 	 * @return object
@@ -84,7 +83,7 @@ trait VanillePluginConfig
 	}
 	
 	/**
-	 * Init plugin config.
+	 * Init plugin global config.
 	 *
 	 * @access protected
 	 * @return void
@@ -100,7 +99,7 @@ trait VanillePluginConfig
 			$this->depth = (int)constant('VanillePluginDepth');
 		}
 		if ( defined('VanillePluginConfigPath') ) {
-			$this->config = (string)constant('VanillePluginConfigPath');
+			$this->root = (string)constant('VanillePluginConfigPath');
 		}
 		if ( defined('VanillePluginCache') ) {
 			$this->cacheable = (bool)constant('VanillePluginCache');
@@ -110,36 +109,42 @@ trait VanillePluginConfig
 
 			$key = $this->applyPrefix('global');
 			if ( !($this->global = $this->getTransient($key)) ) {
-				$this->global = $this->parseConfig();
+				$this->global = $this->parseConfig('global');
 				$this->setTransient($key, $this->global, 0);
 			}
 
 		} else {
-			$this->global = $this->parseConfig();
+			$this->global = $this->parseConfig('global');
 		}
 	}
-	
+
 	/**
-	 * Parse plugin configuration file.
+	 * Parse plugin config file.
 	 *
 	 * @access protected
+	 * @param string $config
+	 * @param bool $validate
 	 * @return mixed
-	 * @throws ConfigurationException
+	 * @throws ConfigException
 	 */
-	protected function parseConfig()
+	protected function parseConfig(string $config, bool $validate = true)
 	{
-		$json = $this->getRoot($this->config);
-		if ( $this->isFile($json) ) {
+		$file = $this->getRoot(
+			"{$this->root}/{$config}.json"
+		);
 
-			$global = $this->parseJson($json);
-			VanillePluginValidator::checkConfig($global, $json);
-			return $global;
-
-		} else {
-	        throw new ConfigurationException(
-	            ConfigurationException::invalidPluginConfigurationFile($json)
+		if ( !$this->isFile($file) ) {
+	        throw new ConfigException(
+	            ConfigException::invalidConfigFile($file)
 	        );
 		}
+
+		$data = $this->parseJson($file);
+		if ( $validate ) {
+			VanillePluginValidator::validate($data, $config);
+		}
+
+		return $data;
 	}
 
 	/**
@@ -174,17 +179,27 @@ trait VanillePluginConfig
 	}
 
 	/**
-	 * Update global custom options.
+	 * Update global config options.
 	 *
 	 * @access protected
 	 * @param array $options
 	 * @param int $args
 	 * @return bool
 	 */
-	protected function updateConfig(array $options = [], $args = 64|128|256) : bool
+	protected function updateConfig(array $options = [], int $args = 64|256) : bool
 	{
-		$json = $this->getRoot($this->config);
-		$data = $this->parseJson($json, true);
+		if ( $this->getEnv() == 'dev' ) {
+			return false;
+		}
+
+		if ( $this->hasDebug() ) {
+			$args = 64|128|256;
+		}
+
+		$file = $this->getRoot(
+			"{$this->root}/global.json"
+		);
+		$data = $this->parseJson($file);
 
 		foreach ($options as $option => $value) {
 			if ( isset($data['options'][$option]) ) {
@@ -192,61 +207,41 @@ trait VanillePluginConfig
 			}
 		}
 
-		$data['cron']     = (object)$data['cron'];
-		$data['hooks']    = (object)$data['hooks'];
-		$data['settings'] = (object)$data['settings'];
-		$data['inputs']   = (object)$data['inputs'];
-		$data['assets']   = (object)$data['assets'];
+		VanillePluginValidator::validate($data, 'global');
 		
 		$data = $this->formatJson($data, $args);
-		return $this->writeFile($this->getRoot($this->config), $data);
+		return $this->writeFile($file, $data);
 	}
 
 	/**
-	 * Load configuration file.
+	 * Load partial config file.
 	 *
 	 * @access protected
 	 * @param string $config
-	 * @param bool $isArray
-	 * @return mixed
+	 * @param bool $validate
+	 * @return array
 	 */
-	protected function loadConfig(string $config, bool $isArray = false)
+	protected function loadConfig(string $config, bool $validate = true) : array
 	{
-		$value = false;
-		$dir = dirname($this->getRoot($this->config));
+		$data = [];
 
 		if ( $this->cacheable ) {
+
 			$key = $this->applyPrefix($config);
-			if ( !($value = $this->getTransient($key)) ) {
-				if ( $this->isFile( ($json = "{$dir}/{$config}.json") ) ) {
-					$value = $this->decodeJson($this->readfile($json), $isArray);
-				}
-				$this->setTransient($key, $value, 0);
+			if ( !($data = $this->getTransient($key)) ) {
+				$data = $this->parseConfig($config, $validate);
+				$this->setTransient($key, $data, 0);
 			}
 
 		} else {
-			if ( $this->isFile( ($json = "{$dir}/{$config}.json") ) ) {
-				$value = $this->decodeJson($this->readfile($json), $isArray);
-			}
+			$data = $this->parseConfig($config, $validate);
 		}
 
-		return $value;
-	}
-	
-	/**
-	 * Set global config path.
-	 *
-	 * @access protected
-	 * @param string $path
-	 * @return void
-	 */
-	protected function setConfigPath($path = '/global.json')
-	{
-		$this->config = $path;
+		return $this->toArray($data);
 	}
 
 	/**
-	 * Get dynamic relative root.
+	 * Get dynamic root path.
 	 *
 	 * @access protected
 	 * @param string $sub
@@ -275,6 +270,24 @@ trait VanillePluginConfig
 		return $this->slugify(
 			$this->basename($this->getRoot())
 		);
+	}
+
+	/**
+	 * Get static prefix.
+	 *
+	 * @access protected
+	 * @param bool $sep, Separator
+	 * @return string
+	 */
+	protected function getPrefix(bool $sep = true) : string
+	{
+		$prefix = $this->undash(
+			$this->getNameSpace()
+		);
+		if ( $sep ) {
+			$prefix = "{$prefix}_";
+		}
+		return $prefix;
 	}
 
 	/**
@@ -330,24 +343,6 @@ trait VanillePluginConfig
 	protected function getPluginVersion() : string
 	{
 		return $this->getConfig('version');
-	}
-
-	/**
-	 * Get static prefix.
-	 *
-	 * @access protected
-	 * @param bool $sep, Separator
-	 * @return string
-	 */
-	protected function getPrefix(bool $sep = true) : string
-	{
-		$prefix = $this->undash(
-			$this->getNameSpace()
-		);
-		if ( $sep ) {
-			$prefix = "{$prefix}_";
-		}
-		return $prefix;
 	}
 
 	/**
@@ -452,8 +447,7 @@ trait VanillePluginConfig
 	protected function getExpireIn() : int
 	{
 		$config = $this->getConfig('options');
-		$data = $config->ttl ?? 0;
-		return (int)$data;
+		return$config->ttl;
 	}
 
 	/**
@@ -465,8 +459,7 @@ trait VanillePluginConfig
 	protected function getTimeout() : int
 	{
 		$config = $this->getConfig('options');
-		$data = $config->timeout ?? 0;
-		return (int)$data;
+		return $config->timeout;
 	}
 
 	/**
@@ -478,8 +471,7 @@ trait VanillePluginConfig
 	protected function getSecret() : string
 	{
 		$config = $this->getConfig('options');
-		$data = $config->secret ?? 0;
-		return (string)$data;
+		return $config->secret;
 	}
 	
 	/**
@@ -517,10 +509,84 @@ trait VanillePluginConfig
 	protected function getViewExtension() : string
 	{
 		$config = $this->getConfig('options');
-		$data = $config->view->extension ?? '.html';
-		return (string)$data;
+		return $config->view->extension;
 	}
 
+	/**
+	 * Get plugin roles.
+	 *
+	 * @access protected
+	 * @return array
+	 */
+	protected function getPluginRoles() : array
+	{
+		$config = $this->getConfig('options');
+		return $config->roles;
+	}
+
+	/**
+	 * Get multiling status.
+	 *
+	 * @access protected
+	 * @return bool
+	 */
+	protected function isMultilingual() : bool
+	{
+		$config = $this->getConfig('options');
+		return $config->multiling;
+	}
+
+	/**
+	 * Get multisite status.
+	 *
+	 * @access protected
+	 * @return bool
+	 */
+	protected function allowedMultisite() : bool
+	{
+		$config = $this->getConfig('options');
+		return $config->multisite;
+	}
+
+	/**
+	 * Get plugin debug status.
+	 *
+	 * @access protected
+	 * @return bool
+	 */
+	protected function hasDebug() : bool
+	{
+		$config = $this->getConfig('options');
+		return $config->debug;
+	}
+
+	/**
+	 * Get static environment.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getEnv() : string
+	{
+		$config = $this->getConfig('options');
+		return $config->environment;
+	}
+
+	/**
+	 * Get plugin remote server host.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getHost() : string
+	{
+		$config = $this->getConfig('options');
+		if ( !($data = $config->remote->host) ) {
+			$data = $this->getRemoteServer('host');
+		}
+		return $data;
+	}
+	
 	/**
 	 * Get main filename.
 	 *
@@ -541,7 +607,9 @@ trait VanillePluginConfig
 	 */
 	protected function getMainFilePath() : string
 	{
-		return $this->getRoot("{$this->getNameSpace()}.php");
+		return $this->getRoot(
+			"{$this->getNameSpace()}.php"
+		);
 	}
 
 	/**
@@ -552,23 +620,24 @@ trait VanillePluginConfig
 	 */
 	protected function getBaseUrl() : string
 	{
-		return $this->getPluginUrl("{$this->getNameSpace()}");
+		return $this->getPluginUrl(
+			"{$this->getNameSpace()}"
+		);
 	}
 
 	/**
 	 * Get ajax actions.
 	 *
 	 * @access protected
-	 * @return object
+	 * @param string $type
+	 * @return array
 	 */
-	protected function getAjax() : object
+	protected function getAjax(?string $type = null) : array
 	{
 		$this->initConfig();
-		if ( !($data = $this->loadConfig('ajax')) ) {
-			$data = $this->global->ajax ?? [];
-		}
+		$data = $this->loadConfig('ajax');
 		$this->resetConfig();
-		return (object)$data;
+		return ($type) ? $data[$type] : $data;
 	}
 
 	/**
@@ -579,8 +648,7 @@ trait VanillePluginConfig
 	 */
 	protected function getAdminAjax() : array
 	{
-		$data = $this->getAjax()->admin ?? [];
-		return (array)$data;
+		return $this->getAjax('admin');
 	}
 
 	/**
@@ -591,40 +659,50 @@ trait VanillePluginConfig
 	 */
 	protected function getFrontAjax() : array
 	{
-		$data = $this->getAjax()->front ?? [];
-		return (array)$data;
+		return $this->getAjax('front');
 	}
 
 	/**
-	 * Get plugin roles.
+	 * Get cron data.
+	 *
+	 * @access protected
+	 * @param string $type
+	 * @return array
+	 */
+	protected function getCron(?string $type = null) : array
+	{
+		$this->initConfig();
+		$data = $this->loadConfig('cron');
+		$this->resetConfig();
+		return ($type) ? $data[$type] : $data;
+	}
+
+	/**
+	 * Get cron events.
 	 *
 	 * @access protected
 	 * @return array
 	 */
-	protected function getPluginRoles() : array
+	protected function getEvents() : array
 	{
-		$this->initConfig();
-		if ( !($data = $this->loadConfig('roles', true)) ) {
-			$data = $this->global->roles ?? [];
-		}
-		$this->resetConfig();
-		return (array)$data;
+		return $this->getCron('events');
 	}
 
 	/**
-	 * Get cron actions.
+	 * Get cron schedules.
 	 *
 	 * @access protected
 	 * @return array
 	 */
-	protected function getCron() : array
+	protected function getSchedules() : array
 	{
-		$this->initConfig();
-		if ( !($data = $this->loadConfig('cron', true)) ) {
-			$data = $this->global->cron ?? [];
+		$data = [];
+		foreach ($this->getCron('schedules') as $schedule) {
+			$name = $schedule['name'];
+			unset($schedule['name']);
+			$data[$name] = $schedule;
 		}
-		$this->resetConfig();
-		return (array)$data;
+		return $data;
 	}
 
 	/**
@@ -636,43 +714,23 @@ trait VanillePluginConfig
 	protected function getRoutes() : array
 	{
 		$this->initConfig();
-		if ( !($data = $this->loadConfig('routes', true)) ) {
-			$data = $this->global->routes ?? [];
-		}
+		$data = $this->loadConfig('routes');
 		$this->resetConfig();
-		return (array)$data;
+		return $data['routes'];
 	}
 
 	/**
 	 * Get requirements.
 	 *
 	 * @access protected
-	 * @return object
-	 */
-	protected function getRequirements() : object
-	{
-		$this->initConfig();
-		if ( !($data = $this->loadConfig('requirements')) ) {
-			$data = $this->global->requirements ?? [];
-		}
-		$this->resetConfig();
-		return (object)$data;
-	}
-
-	/**
-	 * Get hooks.
-	 *
-	 * @access protected
 	 * @return array
 	 */
-	protected function getHooks() : array
+	protected function getRequirements() : array
 	{
 		$this->initConfig();
-		if ( !($data = $this->loadConfig('hooks', true)) ) {
-			$data = $this->global->hooks ?? [];
-		}
+		$data = $this->loadConfig('requirements');
 		$this->resetConfig();
-		return (array)$data;
+		return $data;
 	}
 
 	/**
@@ -684,11 +742,27 @@ trait VanillePluginConfig
 	protected function getInputs() : array
 	{
 		$this->initConfig();
-		if ( !($data = $this->loadConfig('inputs', true)) ) {
-			$data = $this->global->inputs ?? [];
-		}
+		$data = $this->loadConfig('inputs');
 		$this->resetConfig();
-		return (array)$data;
+		return $data;
+	}
+
+	/**
+	 * Get hooks.
+	 *
+	 * @access protected
+	 * @return array
+	 */
+	protected function getHooks() : array
+	{
+		$data = [];
+		foreach ($this->getInputs() as $key => $value) {
+			$active = $value['hook'] ?? false;
+			if ( $active === true ) {
+				$data[] = $key;
+			}
+		}
+		return $data;
 	}
 
 	/**
@@ -700,11 +774,9 @@ trait VanillePluginConfig
 	protected function getSettings() : array
 	{
 		$this->initConfig();
-		if ( !($data = $this->loadConfig('settings', true)) ) {
-			$data = $this->global->settings ?? [];
-		}
+		$data = $this->loadConfig('settings');
 		$this->resetConfig();
-		return (array)$data;
+		return $data['settings'];
 	}
 
 	/**
@@ -716,28 +788,28 @@ trait VanillePluginConfig
 	protected function getGroupSettings() : array
 	{
 		$data = [];
-		foreach ($this->getSettings() as $group) {
-			$name = $group['group'];
-			unset($group['group']);
-			$data[$name][] = $group;
+		foreach ($this->getSettings() as $option) {
+			$data[$option['name']] = [
+				'value' => $option['value'],
+				'lang'  => $option['lang']
+			];
 		}
-		return (array)$data;
+		return $data;
 	}
 
 	/**
 	 * Get plugin assets.
 	 *
 	 * @access protected
+	 * @param string $type
 	 * @return array
 	 */
-	protected function getAssets() : array
+	protected function getAssets(?string $type = null) : array
 	{
 		$this->initConfig();
-		if ( !($data = $this->loadConfig('assets', true)) ) {
-			$data = $this->global->assets ?? [];
-		}
+		$data = $this->loadConfig('assets');
 		$this->resetConfig();
-		return (array)$data;
+		return ($type) ? $data[$type] : $data;
 	}
 
 	/**
@@ -748,20 +820,24 @@ trait VanillePluginConfig
 	 */
 	protected function getRemoteAssets() : array
 	{
-		$data = $this->getAssets()['remote'] ?? [];
-		return (array)$data;
+		$data = [];
+		foreach ($this->getAssets('remote') as $asset) {
+			$data[$asset['name']] = $asset['src'];
+		}
+		return $data;
 	}
 
 	/**
 	 * Get plugin local assets.
 	 *
 	 * @access protected
+	 * @param string $type
 	 * @return array
 	 */
-	protected function getLocalAssets() : array
+	protected function getLocalAssets(?string $type = null) : array
 	{
-		$data = $this->getAssets()['local'] ?? [];
-		return (array)$data;
+		$data = $this->getAssets('local');
+		return ($type) ? $data[$type] : $data;
 	}
 
 	/**
@@ -774,8 +850,8 @@ trait VanillePluginConfig
 	 */
 	protected function getAdminAssets(string $type, string $env = 'main') : array
 	{
-		$data = $this->getLocalAssets()['admin'] ?? [];
-		$data = $this->mapArray(function($item) use ($type, $env) {
+		$data = $this->getLocalAssets('admin');
+		$data = $this->map(function($item) use ($type, $env) {
 			if ( $item['type'] === $type && $item['env'] === $env ) {
 				return $item['path'];
 			}
@@ -792,8 +868,8 @@ trait VanillePluginConfig
 	 */
 	protected function getFrontAssets(string $type, string $env = 'main') : array
 	{
-		$data = $this->getLocalAssets()['front'] ?? [];
-		$data = $this->mapArray(function($item) use ($type, $env) {
+		$data = $this->getLocalAssets('front');
+		$data = $this->map(function($item) use ($type, $env) {
 			if ( $item['type'] === $type && $item['env'] === $env ) {
 				return $item['path'];
 			}
@@ -806,96 +882,30 @@ trait VanillePluginConfig
 	 * Get strings.
 	 *
 	 * @access protected
+	 * @param string $type
 	 * @return array
 	 */
-	protected function getStrings() : array
+	protected function getStrings(?string $type = null) : array
 	{
 		$this->initConfig();
-		if ( !($data = $this->loadConfig('strings', true)) ) {
-			$data = $this->global->strings ?? [];
-		}
+		$data = $this->loadConfig('strings');
 		$this->resetConfig();
-		return (array)$data;
-	}
-
-	/**
-	 * Get multiling status.
-	 *
-	 * @access protected
-	 * @return bool
-	 */
-	protected function isMultilingual() : bool
-	{
-		$config = $this->getConfig('options');
-		$data = $config->multiling ?? false;
-		return (bool)$data;
-	}
-
-	/**
-	 * Get multisite status.
-	 *
-	 * @access protected
-	 * @return bool
-	 */
-	protected function allowedMultisite() : bool
-	{
-		$config = $this->getConfig('options');
-		$data = $config->multisite ?? false;
-		return (bool)$data;
-	}
-
-	/**
-	 * Get plugin debug status.
-	 *
-	 * @access protected
-	 * @return bool
-	 */
-	protected function hasDebug() : bool
-	{
-		$config = $this->getConfig('options');
-		$data = $config->debug ?? false;
-		return (bool)$data;
-	}
-
-	/**
-	 * Get static environment.
-	 *
-	 * @access protected
-	 * @return string
-	 */
-	protected function getEnv() : string
-	{
-		$config = $this->getConfig('options');
-		$data = $config->environment ?? 'dev';
-		return (string)$data;
+		return ($type) ? $data[$type] : $data;
 	}
 
 	/**
 	 * Get plugin remote server.
 	 *
 	 * @access protected
-	 * @return array
+	 * @param string $var
+	 * @return mixed
 	 */
-	protected function getRemoteServer() : array
+	protected function getRemoteServer(?string $var = null)
 	{
 		$this->initConfig();
-		if ( !($data = $this->loadConfig('remote', true)) ) {
-			$data = $this->global->remote ?? [];
-		}
+		$data = $this->loadConfig('remote');
 		$this->resetConfig();
-		return (array)$data;
-	}
-
-	/**
-	 * Get plugin remote server host.
-	 *
-	 * @access protected
-	 * @return string
-	 */
-	protected function getHost() : string
-	{
-		$host = $this->getRemoteServer()['host'] ?? false;
-		return $host ?: '';
+		return ($var) ? $data[$var] : $data;
 	}
 
 	/**

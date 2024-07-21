@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "plugin.strings.schema.json",
+  "type": "object",
+  "properties": {
+    "admin": {
+      "type": "object"
+    },
+    "front": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "admin",
+    "front"
+  ]
+}

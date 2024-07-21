@@ -115,9 +115,7 @@ final class Converter
 	public static function toTypes($value)
 	{
 		if ( TypeCheck::isArray($value) ) {
-			return Arrayify::map(function($item){
-				return self::toType($item);
-			}, $value);
+			return Arrayify::map([static::class, 'toTypes'], $value);
 		}
 		return Converter::toType($value);
 	}

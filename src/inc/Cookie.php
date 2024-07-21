@@ -32,7 +32,7 @@ final class Cookie
 	}
 
 	/**
-	 * Sey _COOKIE value.
+	 * Set _COOKIE value.
 	 * 
 	 * @access public
 	 * @param string $key

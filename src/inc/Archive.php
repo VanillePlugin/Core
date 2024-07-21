@@ -18,6 +18,10 @@ use \ZipArchive as ZIP;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 
+/**
+ * Built-in archive class.
+ * Filesystem API is recommended for external use.
+ */
 final class Archive extends File
 {
 	/**
@@ -107,7 +111,7 @@ final class Archive extends File
 				$status = self::unGzip($archive);
 
 			} else {
-				self::init();
+				Filesystem::init();
 				$unzip = unzip_file($archive, $to);
 				if ( !Exception::isError($unzip) ) {
 					$status = true;

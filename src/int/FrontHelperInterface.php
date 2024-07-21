@@ -17,25 +17,42 @@ namespace VanillePlugin\int;
 interface FrontHelperInterface
 {
 	/**
-	 * Init front helper.
+	 * Trigger front helper hooks.
 	 */
 	function __construct();
 
 	/**
-	 * Apply AMP.
-	 * [Action: amp-css].
+	 * Plugin front load.
+	 * [Action: {plugin}-load].
 	 *
 	 * @return void
 	 */
-    function amp();
+	function load();
 
 	/**
-	 * Front loaded.
+	 * Front loaded (Core, Plugins, Themes).
 	 * [Action: loaded].
 	 *
 	 * @return void
 	 */
 	function loaded();
+
+	/**
+	 * Front setup (Core).
+	 * [Action: setup].
+	 *
+	 * @return void
+	 */
+	function setup();
+
+	/**
+	 * Front AMP.
+	 * [Action: amp-css].
+	 * [Action: amp-head].
+	 *
+	 * @return void
+	 */
+    function amp();
 
 	/**
 	 * Front head.
@@ -47,11 +64,20 @@ interface FrontHelperInterface
 
 	/**
 	 * Front init.
-	 * [Action: init].
+	 * [Action: front-init].
 	 *
 	 * @return void
 	 */
 	function init();
+
+	/**
+	 * Front template (Redirect).
+	 * [Action: template].
+	 * [Action: template-redirect].
+	 *
+	 * @return void
+	 */
+	function template();
 
 	/**
 	 * Plugin front data (JS).

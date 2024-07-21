@@ -56,7 +56,7 @@ final class Rewrite
 
     /**
      * Add rules.
-     * [Action: init].
+     * [Action: front-init].
      *
      * @access public
      * @param string $regex
@@ -71,7 +71,7 @@ final class Rewrite
 
     /**
      * Add endpoint.
-     * [Action: init].
+     * [Action: front-init].
      * [EP_ALL: 8191].
      *
      * @access public

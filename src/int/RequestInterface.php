@@ -239,6 +239,7 @@ interface RequestInterface
 	 * @param string $path
 	 * @param mixed $args
 	 * @return mixed
+	 * @throws RequestException
 	 */
 	static function instance(string $name, $path = 'api', ...$args);
 }

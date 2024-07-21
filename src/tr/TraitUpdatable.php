@@ -14,30 +14,34 @@ declare(strict_types=1);
 
 namespace VanillePlugin\tr;
 
+use VanillePlugin\int\UpgraderInterface;
 use VanillePlugin\lib\Updater;
 
+/**
+ * Define updating and upgrading functions.
+ */
 trait TraitUpdatable
 {
+	/**
+     * Get update status.
+     *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isUpdated() : bool
+	{
+		return (new Updater())->isUpdated();
+	}
+
 	/**
 	 * Set update listener.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function update(array $auth = [], array $urls = [])
+	protected function doUpdate(array $auth = [], array $urls = [])
 	{
 		(new Updater($auth, $urls))->listen();
-	}
-
-	/**
-     * Get update status.
-     *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isUpdated() : bool
-	{
-		return (new Updater())->isUpdated();
 	}
 
 	/**
@@ -60,5 +64,18 @@ trait TraitUpdatable
 	protected function removeUpdates() : bool
 	{
 		return (new Updater())->remove();
+	}
+
+	/**
+     * Set upgrader listener.
+     *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function doUpgrade(UpgraderInterface $upgrader)
+	{
+		if ( $this->isUpdated() ) {
+			$upgrader->upgrade();
+		}
 	}
 }

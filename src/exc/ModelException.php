@@ -23,6 +23,6 @@ class ModelException extends VanillePluginException
 
     public static function invalidInstance() : string
     {
-        return 'Invalid shortcode part instance';
+        return 'Invalid db instance';
     }
 }

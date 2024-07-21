@@ -30,14 +30,6 @@ final class Backup extends Orm
 	private $tables = [];
 	private $options = [];
 
-    /**
-	 * Init backup.
-     */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
 	/**
 	 * Set backup tables.
 	 * 

@@ -33,14 +33,10 @@ class RestAPI implements RestfulInterface
 	/**
 	 * @access protected
 	 * @var string AUTH REST auth method
-	 * @var string TOKEN User token key
-	 * @var string SECRET User secret key
 	 * @var string VERSION Default REST version
 	 * @var array SETTINGS Default REST settings
 	 */
-	protected const AUTH     = 'token';
-	protected const TOKEN    = '--token';
-	protected const SECRET   = '--secret';
+	protected const AUTH     = 'basic';
 	protected const VERSION  = 'v1';
 	protected const SETTINGS = [
 		'show-in-index' => false
@@ -55,6 +51,7 @@ class RestAPI implements RestfulInterface
 	protected $namespace;
 	protected $version;
 	protected $prefix;
+	protected $auth;
 
 	/**
 	 * @inheritdoc
@@ -63,18 +60,29 @@ class RestAPI implements RestfulInterface
 	{
 		$this->namespace = $namespace ?: $this->getNameSpace();
 		$this->version   = $version   ?: static::VERSION;
+		$this->auth      = static::AUTH;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function init() : self
+	public final function register() : self
 	{
 		$this->namespace = $this->formatPath(
 			"{$this->namespace}/{$this->version}"
 		);
 		$this->addAction('rest-api-init', [$this, 'addRoutes']);
 		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function addRoutes($server)
+	{
+		foreach ($this->getRoutes() as $item) {
+			$this->add($item);
+		}
 	}
 
 	/**
@@ -220,16 +228,6 @@ class RestAPI implements RestfulInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function addRoutes($server)
-	{
-		foreach ($this->getRoutes() as $item) {
-			$this->register($item);
-		}
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function action($request)
 	{
 		return $this->doResponse('default');
@@ -258,6 +256,14 @@ class RestAPI implements RestfulInterface
     }
 
 	/**
+	 * @inheritdoc
+	 */
+	public function setAuthMethod(string $auth)
+    {
+        $this->auth = $auth;
+    }
+
+	/**
      * Fetch response body.
      *
 	 * @access public
@@ -269,30 +275,6 @@ class RestAPI implements RestfulInterface
 	public function fetch(string $method, string $route, array $atts = []) : string
 	{
 	    return Restful::fetch($method, $route, $atts);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function addToken(int $user, string $token) : bool
-	{
-		return (bool)$this->addUserMeta(static::TOKEN, $token, $user);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function updateToken(int $user, string $token) : bool
-	{
-		return (bool)$this->updateUserMeta(static::TOKEN, $token, $user);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function deleteToken(int $user) : bool
-	{
-		return (bool)$this->deleteUserMeta(static::TOKEN, $user);
 	}
 
 	/**
@@ -444,6 +426,17 @@ class RestAPI implements RestfulInterface
 	}
 
 	/**
+     * Get request header value.
+     *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function getHeader($request, string $key)
+	{
+		return Restful::getHeader($request, $key);
+	}
+
+	/**
      * Get request method.
      *
 	 * @access protected
@@ -499,13 +492,30 @@ class RestAPI implements RestfulInterface
 	}
 
 	/**
-	 * Register plugin route item.
+     * Check DELETE method.
+     *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function isDelete($request) : bool
+	{
+		if ( $this->getMethod($request) == 'DELETE' ) {
+			return true;
+		}
+		if ( $this->isPost($request) ) {
+			return ($this->getHeader($request, 'X-Method') == 'DELETE');
+		}
+		return false;
+	}
+
+	/**
+	 * Add route.
 	 *
 	 * @access protected
 	 * @param array $item
 	 * @return void
 	 */
-	protected function register(array $item)
+	protected function add(array $item)
 	{
 		// Parse args
 		$route = $item['route'];
@@ -534,7 +544,7 @@ class RestAPI implements RestfulInterface
 
 	    $this->registerRoute($this->namespace, $route, $args, $override);
 	}
-	
+
 	/**
 	 * Restrict REST by rules.
 	 * [ip, user, role, cap].
@@ -634,16 +644,35 @@ class RestAPI implements RestfulInterface
 	 */
 	protected function isAuthorized() : bool
 	{
-		if ( static::AUTH == 'token' ) {
+		if ( $this->auth == 'token' ) {
 			return $this->doTokenAuth();
 		}
 
-		if ( static::AUTH == 'basic' ) {
+		if ( $this->auth == 'basic' ) {
 			return $this->doAuth();
 		}
 
-		if ( static::AUTH == 'any' ) {
+		if ( $this->auth == 'any' ) {
 			return ($this->doAuth() || $this->doTokenAuth());
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get authentication status.
+	 *
+	 * @access protected
+	 * @return bool
+	 */
+	protected function isAuthenticated() : bool
+	{
+		if ( $this->getBearerToken() ) {
+			return true;
+		}
+
+		if ( $this->isBasicAuth() ) {
+			return true;
 		}
 
 		return false;
@@ -659,24 +688,12 @@ class RestAPI implements RestfulInterface
 	{
 		if ( ($token = $this->getBearerToken()) ) {
 
-			// Get user
-			if ( !($id = $this->getUserByToken($token) ) ) {
-				return false;
-			}
-
-			// Get secret
-			if ( !($secret = $this->getUserSecret($id)) ) {
-				return false;
-			}
-
-			// Match token
-			if ( !($match = $this->matchToken($token, $secret)) ) {
-				return false;
-			}
+			$secret = $this->getPluginSecret();
+			$access = $this->getAccess($token, $secret);
+			$user   = (string)$access['user'];
+			$pswd   = (string)$access['pswd'];
 
 			// Try authentication
-			$user = $match['user'] ?? false;
-			$pswd = $match['pswd'] ?? false;
 			$auth = $this->authenticate($user, $pswd);
 
 			if ( !$this->isError($auth) ) {
@@ -713,32 +730,6 @@ class RestAPI implements RestfulInterface
 	}
 
 	/**
-	 * Get user by token.
-	 *
-	 * @access protected
-	 * @param string $token
-	 * @return mixed
-	 */
-	protected function getUserByToken(string $token)
-	{
-		$users = $this->getUserByMeta(static::TOKEN, $token);
-		$user  = $this->shiftArray($users);
-		return ($user) ? (int)$user['id'] : false;
-	}
-
-	/**
-	 * Get user secret.
-	 *
-	 * @access protected
-	 * @param int $id
-	 * @return mixed
-	 */
-	protected function getUserSecret(int $id)
-	{
-		return $this->getUserMeta(static::SECRET, $id);
-	}
-
-	/**
 	 * Get user Id by auth.
 	 *
 	 * @access protected
@@ -747,19 +738,28 @@ class RestAPI implements RestfulInterface
 	protected function getUserByAuth() : int
 	{
 		$id = 0;
-		
+
 		if ( $this->isBasicAuth() ) {
+
 			$login = $this->getBasicAuthUser();
-			$user  = $this->getUserBy('login', $login);
+			$user  = $this->getUserByLogin($login);
+
 			if ( isset($user['id']) ) {
 				$id = (int)$user['id'];
 			}
 		}
 
 		if ( ($token = $this->getBearerToken()) ) {
-			$id = (int)$this->getUserByToken($token);
+
+			$secret = $this->getPluginSecret();
+			$access = $this->getAccess($token, $secret);
+
+			$email  = (string)$access['user'];
+			$user   = $this->getUserByEmail($email);
+			$id     = (int)$user['id'];
+
 		}
-		
+
 		return $id;
 	}
 }

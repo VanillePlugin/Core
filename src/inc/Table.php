@@ -18,7 +18,9 @@ if ( !TypeCheck::isFunction('\WP_List_Table') ) {
 	require_once Globals::rootDir('wp-admin/includes/class-wp-list-table.php');
 }
 
-class Table extends \WP_List_Table
+use \WP_List_Table as Core;
+
+class Table extends Core
 {
 	/**
 	 * @access protected

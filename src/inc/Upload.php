@@ -18,7 +18,7 @@ final class Upload
 {
 	/**
 	 * Get _FILES value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @return mixed
@@ -33,7 +33,7 @@ final class Upload
 
 	/**
 	 * Set _FILES value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @param mixed $value
@@ -43,10 +43,10 @@ final class Upload
 	{
 		$_FILES[$key] = $value;
 	}
-	
+
 	/**
 	 * Check _FILES value.
-	 * 
+	 *
 	 * @access public
 	 * @param string $key
 	 * @return bool
@@ -61,7 +61,7 @@ final class Upload
 
     /**
      * Unset _FILES value.
-     * 
+     *
      * @access public
      * @param string $key
      * @return void
@@ -77,58 +77,162 @@ final class Upload
     }
 
 	/**
-	 * Move uploaded file.
-	 * 
+	 * Move uploaded files.
+	 *
 	 * @access public
-	 * @param string $temp
-	 * @param string $path
+	 * @param string $from
+	 * @param string $to
 	 * @return bool
 	 */
-	public static function moveUploadedFile(string $temp, string $path) : bool
+	public static function move(string $from, string $to) : bool
 	{
-		return move_uploaded_file($temp, $path);
+		$to = Stringify::formatPath($to);
+		return move_uploaded_file($from, $to);
+	}
+
+	/**
+	 * Sanitize uploaded files.
+	 *
+	 * @access public
+	 * @param array $files, $_FILES
+	 * @param array $types, Mime types
+	 * @return array
+	 */
+	public static function sanitize(array $files, ?array $types = []) : array
+	{
+		$data  = [];
+		$types = self::getMimes($types);
+
+		foreach ($files as $file) {
+
+			if ( $file['error'] ) {
+				continue;
+			}
+
+			$name = $file['name'];
+			if ( !($ext = File::getExtension($name)) ) {
+				continue;
+			}
+
+			$temp = $file['tmp_name'];
+			$type = File::getMimeType($temp, $ext, $types);
+			if ( $type == 'undefined' ) {
+				continue;
+			}
+
+			if ( !Validator::isValidMime($name, $types) ) {
+				continue;
+			}
+
+			$rand = Tokenizer::getUniqueId(false);
+			$name = Stringify::remove(".{$ext}", $name);
+			$name = Stringify::slugify("{$name}");
+			$path = "{$name}.{$ext}";
+			$path = (substr($path, 0, 1) !== '.') ? "{$rand}-{$path}" : "{$rand}{$path}";
+
+			$key = (!empty($name)) ? $name : $ext;
+			$data[$key] = [
+				'path' => $path,
+				'temp' => $temp
+			];
+
+		}
+
+		return $data;
 	}
 
 	/**
 	 * Handle uploaded file.
-	 * 
+	 *
 	 * @access public
-	 * @param array $file, $_FILES
-	 * @param array $args, Override default args
+	 * @param array $file, single $_FILES
+	 * @param array $args, Override
 	 * @param string $time
-	 * @return mixed
+	 * @return array
 	 */
-	public static function handle($file, $args = [], $time = null)
+	public static function handle(array $file, array $args = [], ?string $time = null) : array
 	{
-		// Validate global file
-		if ( !TypeCheck::isArray($file) ) {
-			return false;
-		}
+		$args = (!$args) ? ['test-form' => false] : $args;
 
-		// Include upload handler
-		if ( !TypeCheck::isFunction('wp_handle_upload') ) {
+		if ( !TypeCheck::isFunction('wp-handle-upload') ) {
 		    require_once Globals::rootDir('wp-admin/includes/file.php');
 		}
 
-		// Set defaut handler args
-		if ( !$args ) {
-			$args = [
-				'test_form' => false
-			];
-		}
-
-		return wp_handle_upload($file, $args, $time);
+		return wp_handle_upload($file, Format::undash($args), $time);
 	}
 
 	/**
+	 * Get upload directory.
+	 *
 	 * @access public
-	 * @param int $time
-	 * @param bool $create
-	 * @param bool $refresh
+	 * @param string $sub
+	 * @return string
+	 */
+	public static function getDir(?string $sub = null) : string
+	{
+		$dir  = Globals::upload();
+		$path = $dir['basedir'] ?? '';
+		if ( $sub ) {
+			$path .= "/{$sub}";
+		}
+		return Stringify::formatPath($path);
+	}
+
+	/**
+	 * Get upload URL.
+	 *
+	 * @access public
+	 * @param string $sub
+	 * @return string
+	 */
+	public static function getUrl(?string $sub = null) : string
+	{
+		$dir = Globals::upload();
+		$url = $dir['baseurl'] ?? '';
+		if ( $sub ) {
+			$url .= "/{$sub}";
+		}
+		return Stringify::formatPath($url);
+	}
+
+	/**
+	 * Get upload allowed mime types.
+	 *
+	 * @access public
+	 * @param array $types
 	 * @return array
 	 */
-	public static function dir($time = null, $create = true, $refresh = false)
+	public static function getMimes(?array $types = []) : array
 	{
-		return wp_upload_dir($time, $create, $refresh);
+		$mimes = [
+			'txt'  => 'text/plain',
+			'csv'  => 'text/csv',
+			'tsv'  => 'text/tab-separated-values',
+			'ics'  => 'text/calendar',
+			'rtx'  => 'text/richtext',
+			'jpg'  => 'image/jpeg',
+			'jpeg' => 'image/jpeg',
+			'gif'  => 'image/gif',
+			'png'  => 'image/png',
+			'bmp'  => 'image/bmp',
+			'mp3'  => 'audio/mpeg',
+			'ogg'  => 'audio/ogg',
+			'wav'  => 'audio/wav',
+			'mp4'  => 'video/mp4',
+			'mpeg' => 'video/mpeg',
+			'ogv'  => 'video/ogg',
+			'zip'  => 'application/zip',
+			'rar'  => 'application/rar',
+			'7z'   => 'application/x-7z-compressed',
+			'pdf'  => 'application/pdf',
+			'doc'  => 'application/msword',
+			'xls'  => 'application/vnd.ms-excel',
+			'xla'  => 'application/vnd.ms-excel',
+			'ppt'  => 'application/vnd.ms-powerpoint',
+			'mdb'  => 'application/vnd.ms-access',
+			'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		];
+		return Arrayify::merge($types, $mimes);
 	}
 }

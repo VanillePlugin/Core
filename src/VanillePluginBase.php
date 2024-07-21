@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace VanillePlugin;
 
 /**
- * Define base functions used by plugin.
+ * Define base functions.
  *
  * - Hooking
  * - Rendering

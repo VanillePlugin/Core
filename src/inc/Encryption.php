@@ -24,7 +24,7 @@ class Encryption
 	 * @access public
 	 * @var string PREFIX Default encryption prefix
 	 */
-	public const PREFIX = '[vanillecrypt]';
+	public const PREFIX = '[VanilleCrypt]';
 
 	/**
 	 * @access private
@@ -45,7 +45,7 @@ class Encryption
 	/**
 	 * @access private
 	 * @var mixed $data
-	 * @var string $key, Secret key (Passphrase)
+	 * @var string $secret, Secret key (Passphrase)
 	 * @var string $vector, Initialzation vector
 	 * @var int $length, Encryption vector length
 	 * @var string $prefix, Encryption prefix
@@ -55,7 +55,7 @@ class Encryption
 	 * @var bool $bypass, Bypass encrypted string
 	 */
 	private $data;
-	private $key;
+	private $secret;
 	private $vector;
 	private $length;
 	private $prefix;
@@ -68,26 +68,26 @@ class Encryption
 	 * Init encryption (Encrypt / Decrypt).
 	 *
 	 * @param mixed $data
-	 * @param string $key
+	 * @param string $secret
 	 * @param string $vector
 	 * @param int $length
 	 */
-	public function __construct($data, ?string $key = self::SECRET, ?string $vector = self::VECTOR, ?int $length = self::LENGTH)
+	public function __construct($data, ?string $secret = self::SECRET, ?string $vector = self::VECTOR, ?int $length = self::LENGTH)
 	{
 		// Set data
 		$this->data = $data;
 
 		// Set secret key
-		$this->key = $key;
+		$this->secret = $secret;
 
 		// Set vector
 		$this->vector = $vector;
 		$this->length = $length;
 
 		// Initialize
+		$this->setPrefix(self::PREFIX);
 		$this->setOptions();
 		$this->setCipher();
-		$this->setPrefix();
 		$this->initialize();
 	}
 
@@ -124,11 +124,9 @@ class Encryption
 	 * @param string $prefix
 	 * @param object
 	 */
-	public function setPrefix(string $prefix = self::PREFIX) : self
+	public function setPrefix(?string $prefix = null) : self
 	{
-		$prefix = Stringify::remove('[', $prefix);
-		$prefix = Stringify::remove(']', $prefix);
-		$this->prefix = ($prefix) ? "[$prefix]" : $prefix;
+		$this->prefix = (string)$prefix;
 		return $this;
 	}
 
@@ -141,7 +139,7 @@ class Encryption
 	 */
 	public function initialize(string $algo = self::ALGO) : self
 	{
-		$this->key = hash($algo, $this->key);
+		$this->secret = hash($algo, $this->secret);
 		$this->vector = substr(hash($algo, $this->vector), 0, $this->length);
 		return $this;
 	}
@@ -168,7 +166,7 @@ class Encryption
 		$encrypt = openssl_encrypt(
 			$this->data,
 			$this->cipher,
-			$this->key,
+			$this->secret,
 			$this->options,
 			$this->vector
 		);
@@ -196,7 +194,7 @@ class Encryption
 		$decrypted = (string)openssl_decrypt(
 			Tokenizer::unbase64($crypted, $loop),
 			$this->cipher,
-			$this->key,
+			$this->secret,
 			$this->options,
 			$this->vector
 		);
@@ -232,7 +230,7 @@ class Encryption
 		$this->bypass = true;
 		return $this;
 	}
-	
+
 	/**
 	 * Check whether data is crypted using prefix.
 	 *
@@ -241,6 +239,7 @@ class Encryption
 	 */
 	public function isCrypted() : bool
 	{
-		return (substr($this->data, 0, strlen($this->prefix)) === $this->prefix);
+		$prefix = substr($this->data, 0, strlen($this->prefix));
+		return ($prefix === $this->prefix);
 	}
 }

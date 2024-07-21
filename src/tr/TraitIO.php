@@ -15,18 +15,21 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-    File, Arrayify, Json, Archive
+    File, Json, Archive, Stringify, TypeCheck
 };
 
+/**
+ * Define filesystem IO functions.
+ */
 trait TraitIO
 {
 	/**
 	 * Check file.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-    protected function isFile(string $path) : bool
+    public function isFile(string $path) : bool
     {
 		return File::isFile($path);
     }
@@ -34,10 +37,10 @@ trait TraitIO
 	/**
 	 * Check file readable.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function isReadable(string $path, bool $fileType = false) : bool
+	public function isReadable(string $path, bool $fileType = false) : bool
 	{
 		if ( $fileType && !$this->isFile($path) ) {
 			return false;
@@ -48,10 +51,10 @@ trait TraitIO
 	/**
 	 * Check file writable.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function isWritable(string $path, bool $fileType = false) : bool
+	public function isWritable(string $path, bool $fileType = false) : bool
 	{
 		if ( $fileType && !$this->isFile($path) ) {
 			return false;
@@ -62,14 +65,69 @@ trait TraitIO
 	/**
 	 * Read file.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function readFile(string $path, bool $inc = false, $context = null, int $offset = 0)
+	public function readFile(string $path, bool $inc = false, $context = null, int $offset = 0)
 	{
 		return File::r($path, $inc, $context, $offset);
 	}
 
+    /**
+     * Check directory.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+    public function isDir(string $path) : bool
+    {
+    	return File::isDir($path);
+    }
+
+	/**
+	 * Scan directory.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function scanDir(string $path = '.', int $sort = 0, array $except = []) : array
+    {
+    	return File::scanDir($path, $sort, $except);
+    }
+
+	/**
+	 * Get all file lines.
+	 * 
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getLines(string $path) : array
+	{
+		return File::getLines($path);
+	}
+
+	/**
+	 * Parse file lines using stream.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function parseLines(string $path, int $limit = 10) : array
+	{
+		return File::parseLines($path, $limit);
+	}
+
+	/**
+	 * Parse JSON file.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function parseJson(string $file, bool $isArray = false)
+	{
+		return Json::parse($file, $isArray);
+	}
+	
 	/**
 	 * Write file.
 	 *
@@ -87,21 +145,13 @@ trait TraitIO
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removeFile(string $path)
+	protected function removeFile(string $path, $from = [])
 	{
+		if ( !$this->secureRemove($path, $from) ) {
+			return false;
+		}
 		return File::remove($path);
 	}
-
-    /**
-     * Check directory.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-    protected function isDir(string $path) : bool
-    {
-    	return File::isDir($path);
-    }
 
     /**
      * Add directory.
@@ -114,27 +164,15 @@ trait TraitIO
     	return File::addDir($path, $p, $r, $c);
     }
 
-	/**
-	 * Scan directory.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function scanDir(string $path = '.', int $sort = 0, array $except = []) : array
-    {
-    	return File::scanDir($path, $sort, $except);
-    }
-
     /**
      * Clear directory recursively.
 	 *
 	 * @access protected
-	 * @param array $secure
 	 * @inheritdoc
 	 */
-    protected function clearDir(string $path, array $secure = []) : bool
+    protected function clearDir(string $path, $from = []) : bool
 	{
-		if ( !$this->secureRemove($path, $secure) ) {
+		if ( !$this->secureRemove($path, $from) ) {
 			return false;
 		}
 		return File::clearDir($path);
@@ -144,50 +182,16 @@ trait TraitIO
      * Remove directory.
 	 *
 	 * @access protected
-	 * @param array $secure
 	 * @inheritdoc
 	 */
-    protected function removeDir(string $path, bool $clear = false, array $secure = []) : bool
+    protected function removeDir(string $path, bool $clear = false, $from = []) : bool
     {
-		if ( !$this->secureRemove($path, $secure) ) {
+		if ( !$this->secureRemove($path, $from) ) {
 			return false;
 		}
     	return File::removeDir($path, $clear);
     }
 
-	/**
-	 * Get all file lines.
-	 * 
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getLines(string $path) : array
-	{
-		return File::getLines($path);
-	}
-	
-	/**
-	 * Parse file lines using stream.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function parseLines(string $path, int $limit = 10) : array
-	{
-		return File::parseLines($path, $limit);
-	}
-
-	/**
-	 * Parse JSON file.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function parseJson(string $file, bool $isArray = false)
-	{
-		return Json::parse($file, $isArray);
-	}
-	
 	/**
 	 * Compress archive.
 	 * 
@@ -215,18 +219,23 @@ trait TraitIO
 	 *
 	 * @access private
 	 * @param string $path
-	 * @param array $secure
+	 * @param mixed $secure
 	 * @return bool
 	 */
-    private function secureRemove(string $path, array $secure = []) : bool
+    private function secureRemove(string $path, $secure = []) : bool
     {
-		$paths  = explode('/', $path);
-		$secure = Arrayify::merge(['storage'], $secure);
+		if ( $secure && !TypeCheck::isArray($secure) ) {
+			$secure = (string)$secure;
+			$secure = [$secure];
+		}
+
+		$secure = ($secure) ? $secure : ['core/storage'];
 		foreach ($secure as $include) {
-			if ( !Arrayify::inArray($include, $paths) ) {
+			if ( !Stringify::contains($path, $include) ) {
 				return false;
 			}
 		}
+
 		return true;
     }
 }

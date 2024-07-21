@@ -16,74 +16,271 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
     HttpRequest, HttpPost, HttpGet,
-	Response, Server, Stringify, Converter
+	Response, Server, Stringify,
+    Upload
 };
 
+/**
+ * Define HTTP functions.
+ */
 trait TraitRequestable
 {
 	/**
-	 * @access protected
+	 * Get request value.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function getRequest(?string $key = null)
+	public function getRequest(?string $key = null)
     {
         return HttpRequest::get($key);
     }
 
 	/**
-	 * @access protected
+	 * Check request value.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function hasRequest(?string $key = null) : bool
+	public function hasRequest(?string $key = null) : bool
     {
         return HttpRequest::isSetted($key);
     }
 
 	/**
-	 * @access protected
+	 * Get HTTP POST value.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function getHttpPost(?string $key = null, bool $type = false)
+	public function getHttpPost(?string $key = null)
     {
-		$data = HttpPost::get($key);
-		if ( $type ) {
-			return Converter::toTypes($data);
-		}
-        return $data;
+        return HttpPost::get($key);
     }
 
 	/**
-	 * @access protected
+	 * Check HTTP POST value.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function hasHttpPost(?string $key = null) : bool
+	public function hasHttpPost(?string $key = null) : bool
     {
         return HttpPost::isSetted($key);
     }
 
 	/**
-	 * @access protected
+	 * Get HTTP GET value.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function getHttpGet(?string $key = null, bool $type = false)
+	public function getHttpGet(?string $key = null)
     {
-		$data = HttpGet::get($key);
-		if ( $type ) {
-			return Converter::toTypes($data);
-		}
-        return $data;
+        return HttpGet::get($key);
     }
 
 	/**
-	 * @access protected
+	 * Get HTTP GET value.
+	 *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function hasHttpGet(?string $key = null) : bool
+	public function hasHttpGet(?string $key = null) : bool
     {
         return HttpGet::isSetted($key);
     }
 
 	/**
+	 * Get blob value.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getBlob(?string $key = null)
+    {
+        return Upload::get($key);
+    }
+
+	/**
+	 * Check blob value.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function hasBlob(?string $key = null) : bool
+    {
+        return Upload::isSetted($key);
+    }
+
+	/**
+	 * Get server value.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getServer(?string $key = null)
+    {
+        return Server::get($key);
+    }
+
+	/**
+	 * Check server value.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function hasHttpServer(?string $key = null) : bool
+    {
+        return Server::isSetted($key);
+    }
+
+	/**
+	 * Get base URL.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getServerBaseUrl() : string
+    {
+        return Server::getBaseUrl();
+    }
+
+	/**
+	 * Get current URL.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getServerCurrentUrl($escape = false) : string
+	{
+		return Server::getCurrentUrl($escape);
+	}
+
+	/**
+	 * Get protocol.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getServerProtocol() : string
+    {
+        return Server::getProtocol();
+    }
+
+	/**
+	 * Get remote IP address.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getServerIp(?string $domain = null)
+	{
+		return Server::getIp($domain);
+	}
+
+	/**
+	 * Check basic authentication.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isBasicAuth() : bool
+	{
+		return Server::isBasicAuth();
+	}
+
+	/**
+	 * Get basic authentication user.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getBasicAuthUser() : string
+	{
+		return Server::getBasicAuthUser();
+	}
+
+	/**
+	 * Get basic authentication password.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getBasicAuthPwd() : string
+	{
+		return Server::getBasicAuthPwd();
+	}
+
+	/**
+	 * Get authorization token.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+    public function getBearerToken() : string
+    {
+        return Server::getBearerToken();
+    }
+
+	/**
+	 * Check whether protocol is HTTPS (SSL).
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isSsl() : bool
+	{
+		return Server::isSsl();
+	}
+
+    /**
+     * Check if SSL verify is required (SNI).
+     *
+	 * @access public
+	 * @inheritdoc
+     */
+    public function mayRequireSSL(bool $verify = true) : bool
+    {
+    	return Server::mayRequireSSL($verify);
+    }
+
+    /**
+     * Get domain name from URL.
+     *
+	 * @access public
+	 * @inheritdoc
+     */
+    public function getDomainName(?string $url = null) : string
+    {
+    	return Server::getDomain($url);
+    }
+
+    /**
+     * Parse base from URL.
+     *
+	 * @access public
+	 * @inheritdoc
+     */
+    public function parseBaseUrl(string $url) : string
+    {
+    	return Server::parseBaseUrl($url);
+    }
+
+    /**
+     * Parse URL.
+     *
+	 * @access public
+	 * @inheritdoc
+     */
+    public function parseUrl(string $url, int $component = -1)
+    {
+    	return Stringify::parseUrl($url, $component);
+    }
+
+	/**
+	 * Set HTTP response.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -93,87 +290,8 @@ trait TraitRequestable
 	}
 
 	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getServer(?string $key = null, $format = true)
-    {
-        return Server::get($key, $format);
-    }
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getServerBaseUrl() : string
-    {
-        return Server::getBaseUrl();
-    }
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getServerCurrentUrl($escape = false) : string
-	{
-		return Server::getCurrentUrl($escape);
-	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getServerProtocol() : string
-    {
-        return Server::getProtocol();
-    }
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getServerIp(?string $domain = null)
-	{
-		return Server::getIp($domain);
-	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isBasicAuth() : bool
-	{
-		return Server::isBasicAuth();
-	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getBasicAuthUser() : string
-	{
-		return Server::getBasicAuthUser();
-	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getBasicAuthPwd() : string
-	{
-		return Server::getBasicAuthPwd();
-	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-    protected function getBearerToken() : string
-    {
-        return Server::getBearerToken();
-    }
-
-	/**
+	 * Redirect request.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -181,46 +299,4 @@ trait TraitRequestable
 	{
 		Server::redirect($location, $status);
 	}
-
-	/**
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isSsl() : bool
-	{
-		return Server::isSsl();
-	}
-
-    /**
-     * Check if SSL verify is required (SNI).
-     *
-	 * @access protected
-	 * @inheritdoc
-     */
-    protected function mayRequireSSL(bool $verify = true) : bool
-    {
-    	return Server::mayRequireSSL($verify);
-    }
-
-    /**
-     * Get domain name from URL.
-     *
-	 * @access protected
-	 * @inheritdoc
-     */
-    protected function getDomainName(?string $url = null) : string
-    {
-    	return Server::getDomain($url);
-    }
-
-    /**
-     * Parse URL.
-     *
-	 * @access protected
-	 * @inheritdoc
-     */
-    protected function parseUrl(string $url, int $component = -1)
-    {
-    	return Stringify::parseUrl($url, $component);
-    }
 }

@@ -16,27 +16,30 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\lib\Asset;
 
+/**
+ * Define downloading functions.
+ */
 trait TraitDownloadable
 {
 	/**
      * Check whether plugin has asset.
-     * 
-	 * @access protected
+     *
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function hasAsset() : bool
+	public function hasAsset() : bool
 	{
 		return (new Asset())->hasAsset();
 	}
 
 	/**
      * Download plugin remote assets.
-     * 
+     *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function download(string $url)
 	{
-		(new Asset())->setRemote($url)->download();
+		return (new Asset())->setRemote($url)->download();
 	}
 }

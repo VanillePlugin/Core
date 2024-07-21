@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
+/**
+ * @see https://developer.wordpress.org/apis/hooks/
+ */
 final class Hook
 {
 	/**
@@ -46,8 +49,7 @@ final class Hook
 
 	/**
 	 * Register plugin uninstall hook.
-	 * Use class name instead of object ['Plugin', 'uninstall'].
-	 * @uses isAdmin()
+	 * Use static class [static::class, 'uninstall'].
 	 *
 	 * @access public
 	 * @param string $file
@@ -56,9 +58,7 @@ final class Hook
 	 */
 	public static function uninstall(string $file, $callback)
 	{
-		if ( Page::isAdmin() ) {
-			register_uninstall_hook($file, $callback);
-		}
+		register_uninstall_hook($file, $callback);
 	}
 
 	/**
@@ -322,13 +322,14 @@ final class Hook
 	 */
 	public static function removeScripts(array $exclude)
 	{
-		foreach (Globals::scripts()->queue as $script) {
+		$scripts = Globals::scripts()->queue ?? [];
+		foreach ($scripts as $script) {
 			if ( self::hasScript($script, $exclude) !== false ) {
 				self::removeJS($script);
 			}
 		}
-
-		foreach (Globals::styles()->queue as $style) {
+		$styles = Globals::styles()->queue ?? [];
+		foreach ($styles as $style) {
 			if ( self::hasScript($style, $exclude) !== false ) {
 				self::removeCSS($style);
 			}

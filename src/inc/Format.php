@@ -74,8 +74,11 @@ final class Format
 		// Format custom hooks
 		$format = [
 			'loaded'              => 'wp_loaded',
+			'setup'               => 'wp',
 			'headers'             => 'wp_headers',
 			'head'                => 'wp_head',
+			'front-init'          => 'init',
+			'template'            => 'template_redirect',
 			'body'                => 'wp_body_open',
 			'title'               => 'the_title',
 			'content'             => 'the_content',
@@ -134,6 +137,10 @@ final class Format
 			'rest-api-dispatch'   => 'rest_pre_dispatch',
 			'rest-api-callback'   => 'rest_request_before_callbacks',
 			'rest-api-nocache'    => 'rest_send_nocache_headers',
+			'app-password'        => 'wp_is_application_passwords_available',
+			'app-password-user'   => 'wp_is_application_passwords_available_for_user',
+			'user-profile'        => 'show_user_profile',
+			'update-profile'      => 'personal_options_update'
 		];
 
 		if ( isset($format[$name]) ) {
@@ -232,7 +239,7 @@ final class Format
 		}
 		return $args;
 	}
-	
+
 	/**
      * Get post formatted data.
      *
@@ -277,7 +284,7 @@ final class Format
 				$name = $user->data->user_nicename;
 			}
             return [
-                'id'    => $user->data->ID,
+                'id'    => (int)$user->data->ID,
                 'login' => $user->data->user_login,
                 'name'  => $name,
                 'email' => $user->data->user_email,

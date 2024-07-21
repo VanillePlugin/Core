@@ -77,8 +77,11 @@ final class Arrayify
 	 * @param array $arrays
 	 * @return array
 	 */
-	public static function map($callback, array $array, ?array $arrays = null)
+	public static function map($callback, array $array, ?array $arrays = null) : array
 	{
+		if ( TypeCheck::isString($callback) ) {
+			$callback = Stringify::undash($callback);
+		}
 		if ( TypeCheck::isArray($arrays) ) {
 			return array_map($callback, $array, $arrays);
 		}
@@ -150,6 +153,18 @@ final class Arrayify
 			return array_keys($array, $value, true);
 		}
 		return array_keys($array);
+	}
+
+	/**
+	 * Get single array key.
+	 *
+	 * @access public
+	 * @param array $array
+	 * @return mixed
+	 */
+	public static function key(array $array)
+	{
+		return array_key_first($array);
 	}
 
 	/**

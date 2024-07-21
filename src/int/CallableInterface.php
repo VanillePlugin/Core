@@ -17,9 +17,8 @@ namespace VanillePlugin\int;
 interface CallableInterface
 {
 	/**
-	 * Incude custom callables.
-	 * 
-	 * @access public
+	 * Get extended view callables.
+	 *
 	 * @return array
 	 */
 	function getCallables() : array;

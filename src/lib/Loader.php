@@ -68,7 +68,7 @@ class Loader
 	}
 
 	/**
-	 * Instance alias.
+	 * Instance class (Alias).
 	 *
 	 * @access public
 	 * @param string $path
@@ -76,7 +76,7 @@ class Loader
 	 * @param mixed $args
 	 * @return mixed
 	 */
-	public function i($path, $className, ...$args)
+	public final function i($path, $className, ...$args)
 	{
 		return $this->instance($path, $className, ...$args);
 	}

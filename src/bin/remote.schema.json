@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id":"plugin.remote.schema.json",
+    "type":"object",
+    "properties":{
+        "host":{
+            "type":"string"
+        },
+        "backup":{
+            "type":"string"
+        },
+        "token":{
+            "type":"string"
+        },
+        "user":{
+            "type":"string"
+        },
+        "pswd":{
+            "type":"string"
+        },
+        "key":{
+            "type":"string"
+        }
+    },
+    "required":[
+        "host",
+        "backup",
+        "token",
+        "user",
+        "pswd",
+        "key"
+    ]
+}

@@ -19,17 +19,42 @@ use VanillePlugin\inc\{
 };
 use VanillePlugin\lib\Orm;
 
+/**
+ * Define caching functions.
+ */
 trait TraitCacheable
 {
 	/**
 	 * Get cache value.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function getCache(string $key, ?bool &$status = null, ?string $group = null)
+	public function getCache(string $key, ?bool &$status = null, ?string $group = null)
 	{
 		return Cache::get($key, (string)$group, false, $status);
+	}
+
+	/**
+	 * Get transient.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getTransient(string $key)
+	{
+		return Transient::get($key);
+	}
+
+	/**
+	 * Get site transient.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getSiteTransient(string $key)
+	{
+		return Transient::getSite($key);
 	}
 
 	/**
@@ -88,28 +113,6 @@ trait TraitCacheable
 	}
 
 	/**
-	 * Get transient.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getTransient(string $key)
-	{
-		return Transient::get($key);
-	}
-
-	/**
-	 * Get site transient.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getSiteTransient(string $key)
-	{
-		return Transient::getSite($key);
-	}
-
-	/**
 	 * Set transient.
 	 *
 	 * @access protected
@@ -154,38 +157,44 @@ trait TraitCacheable
 	}
 
 	/**
-	 * Purge transients,
+	 * Remove transients.
 	 * Under namespace.
 	 *
 	 * @access protected
 	 * @param string $namespace
 	 * @return bool
 	 */
-	protected function purgeTransients(string $namespace) : bool
+	protected function removeTransients(string $namespace) : bool
 	{
 		if ( empty($namespace) ) {
 			return false;
 		}
-		$db = new Orm();
-		$sql = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_transient_{$namespace}%';";
+
+		$db   = new Orm();
+		$sql  = "DELETE FROM `{$db->prefix}options` ";
+		$sql .= "WHERE `option_name` LIKE '%_transient_{$namespace}%';";
+
 		return (bool)$db->execute($sql);
 	}
 
 	/**
-	 * Purge site transients,
+	 * Remove site transients.
 	 * Under namespace.
 	 *
 	 * @access protected
 	 * @param string $namespace
 	 * @return bool
 	 */
-	protected function purgeSiteTransients(string $namespace) : bool
+	protected function removeSiteTransients(string $namespace) : bool
 	{
 		if ( empty($namespace) ) {
 			return false;
 		}
-		$db = new Orm();
-		$sql = "DELETE FROM {$db->prefix}options WHERE `option_name` LIKE '%_site_transient_{$namespace}%';";
+
+		$db   = new Orm();
+		$sql  = "DELETE FROM {$db->prefix}options ";
+		$sql .= "WHERE `option_name` LIKE '%_site_transient_{$namespace}%';";
+
 		return (bool)$db->execute($sql);
 	}
 }

@@ -17,15 +17,18 @@ namespace VanillePlugin\tr;
 use VanillePlugin\inc\Localization;
 use VanilleThird\Translator;
 
+/**
+ * Define translation functions.
+ */
 trait TraitTranslatable
 {
 	/**
 	 * Get site locale.
 	 *
-	 * @access protected
+	 * @access public
 	 * @inheritdoc
 	 */
-	protected function getLocale($user = null) : string
+	public function getLocale($user = null) : string
 	{
 		return Localization::getLocale($user);
 	}

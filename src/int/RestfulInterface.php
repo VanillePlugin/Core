@@ -25,13 +25,21 @@ interface RestfulInterface
 	function __construct(?string $namespace = null, ?string $version = null);
 
 	/**
-	 * Init REST API.
-	 * [Action: init].
-	 * [Action: admin-init].
+	 * Register REST routes.
+	 * [Action: front-init].
 	 *
 	 * @return object
 	 */
-	function init() : self;
+	function register() : self;
+
+	/**
+	 * Add REST routes.
+	 * [Action: rest-api-init].
+	 *
+	 * @param object $server
+	 * @return void
+	 */
+	function addRoutes($server);
 
 	/**
 	 * Set REST prefix.
@@ -45,7 +53,7 @@ interface RestfulInterface
 
 	/**
 	 * Disable REST index.
-	 * [Action: init].
+	 * [Action: front-init].
 	 * [Filter: rest-api-index].
 	 *
 	 * @param bool $grant
@@ -55,7 +63,7 @@ interface RestfulInterface
 
 	/**
 	 * Disable REST endpoints.
-	 * [Action: init].
+	 * [Action: front-init].
 	 * [Filter: rest-api-endpoint].
 	 *
 	 * @param bool $grant
@@ -65,7 +73,7 @@ interface RestfulInterface
 
 	/**
 	 * Disable REST JSONP.
-	 * [Action: init].
+	 * [Action: front-init].
 	 * [Filter: rest-api-jsonp].
 	 *
 	 * @return object
@@ -74,7 +82,7 @@ interface RestfulInterface
 
 	/**
 	 * Override REST response.
-	 * [Action: init].
+	 * [Action: front-init].
 	 * [Filter: rest-api-response].
 	 *
 	 * @return object
@@ -83,7 +91,7 @@ interface RestfulInterface
 
 	/**
 	 * Disable REST.
-	 * [Action: init].
+	 * [Action: front-init].
 	 * [Filter: rest-api-error].
 	 *
 	 * @return void
@@ -92,25 +100,16 @@ interface RestfulInterface
 
 	/**
 	 * Restrict REST by rules.
-	 * [Action: init].
+	 * [Action: front-init].
 	 * [Filter: rest-api-error].
 	 *
 	 * @param array $rules
 	 * @return void
 	 */
 	function restrict(array $rules);
-	
-	/**
-	 * Add REST routes.
-	 * [Action: rest-api-init].
-	 *
-	 * @param $server
-	 * @return void
-	 */
-	function addRoutes($server);
 
 	/**
-	 * Set endpoint action callback.
+	 * Set endpoint default action callback.
 	 *
 	 * @param object $request
 	 * @return mixed
@@ -118,7 +117,7 @@ interface RestfulInterface
 	function action($request);
 
 	/**
-	 * Set endpoint access callback.
+	 * Set endpoint default access callback.
 	 *
 	 * @param object $request
 	 * @return mixed
@@ -132,30 +131,12 @@ interface RestfulInterface
 	 * @return mixed
 	 */
 	function internal($request);
-	
-	/**
-	 * Add auth token.
-	 *
-	 * @param int $user
-	 * @param string $token
-	 * @return bool
-	 */
-	function addToken(int $user, string $token) : bool;
 
 	/**
-	 * Update auth token.
+	 * Set REST authentication method.
 	 *
-	 * @param int $user
-	 * @param string $token
-	 * @return bool
+	 * @param string $auth
+	 * @return void
 	 */
-	function updateToken(int $user, string $token) : bool;
-
-	/**
-	 * Delete auth token.
-	 *
-	 * @param int $user
-	 * @return bool
-	 */
-	function deleteToken(int $user) : bool;
+	function setAuthMethod(string $auth);
 }

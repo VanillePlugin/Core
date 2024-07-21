@@ -19,19 +19,24 @@ interface AdminInterface
     /**
      * Setup plugin admin.
      * [Action: plugins-loaded].
+     * [Filter: {plugin}-load-menu].
+     * [Filter: {plugin}-load-admin].
+     * [Uses: isAdmin()].
      *
      * @param MenuInterface $menu
      * @param SettingsInterface $settings
-     * @uses isAdmin()
+     * @uses 
      */
     function __construct(?MenuInterface $menu = null, ?SettingsInterface $settings = null);
 
     /**
 	 * Init plugin admin.
-     * [Action: plugins-loaded].
+     * [Action: admin-init].
+     * [Action: {plugin}-admin-loaded].
+	 * [Filter: {plugin}-load-ajax].
+	 * [Filter: {plugin}-requirements].
 	 * 
 	 * @return void
-	 * @uses isPluginAdmin()
 	 */
 	function init();
 
@@ -46,6 +51,8 @@ interface AdminInterface
 	/**
 	 * Add admin JS.
 	 * [Action: admin-enqueue-scripts].
+	 * [Filter: {plugin}-remove-jquery].
+	 * [Filter: {plugin}-admin-data].
 	 * 
      * @return void
      */
@@ -62,6 +69,7 @@ interface AdminInterface
     /**
      * Add global admin JS.
      * [Action: admin-enqueue-scripts].
+	 * [Filter: {plugin}-global-data].
      * 
      * @return void
      */
@@ -79,6 +87,7 @@ interface AdminInterface
 	/**
 	 * Display plugin about.
 	 * [Filter: admin-footer-text].
+	 * [Filter: {plugin}-about-text].
 	 * 
 	 * @return string
 	 */
@@ -87,6 +96,7 @@ interface AdminInterface
 	/**
 	 * Display plugin version.
 	 * [Filter: update-footer].
+	 * [Filter: {plugin}-about-version].
 	 * 
 	 * @return string
 	 */

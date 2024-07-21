@@ -16,8 +16,44 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\Page;
 
+/**
+ * Define admin page functions.
+ */
 trait TraitRenderable
 {
+	/**
+	 * Get current screen.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getScreen()
+	{
+		return Page::screen();
+	}
+
+	/**
+	 * Check is current screen.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isScreen(string $screen) : bool
+	{
+		return Page::isScreen($screen);
+	}
+
+	/**
+	 * Get checkbox attribute.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function getCheckbox($data, $value = true) : string
+	{
+		return Page::getCheckbox($data, $value);
+	}
+
 	/**
 	 * Add options page.
 	 *
@@ -93,50 +129,6 @@ trait TraitRenderable
 	}
 
 	/**
-	 * Check whether page is admin.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isAdmin() : bool
-	{
-		return Page::isAdmin();
-	}
-
-	/**
-	 * Check whether page is login.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isLogin() : bool
-	{
-		return Page::isLogin();
-	}
-
-	/**
-	 * Get current screen.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getScreen()
-	{
-		return Page::screen();
-	}
-
-	/**
-	 * Check is current screen.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isScreen(string $screen) : bool
-	{
-		return Page::isScreen($screen);
-	}
-
-	/**
 	 * Add help menu (tab).
 	 *
 	 * @access protected
@@ -200,16 +192,5 @@ trait TraitRenderable
 	protected function addDashboardWidget(string $id, string $name, $cb, $ctrl = null, ?array $args = null, string $c = 'normal', string $p = 'core')
 	{
 		Page::addDashboardWidget($id, $name, $cb, $ctrl, $args, $c, $p);
-	}
-
-	/**
-	 * Get checkbox attribute.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function getCheckbox($data, $value = true) : string
-	{
-		return Page::getCheckbox($data, $value);
 	}
 }

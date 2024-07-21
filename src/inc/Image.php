@@ -27,14 +27,14 @@ final class Image extends File
 	public static function importUrl(string $url, bool $override = true)
 	{
 		// Check valid image
-		if ( !($name = self::validateMime($url)) ) {
+		if ( !($name = self::isValidMime($url)) ) {
 			return false;
 		}
 
 		// Set image upload data
-		$data = self::getMime($name);
+		$data = self::getMimeType($name);
 		$mime = $data['type'];
-		$dir  = Upload::dir();
+		$dir  = Globals::upload();
 		$path = "{$dir['path']}/{$name}"; // Keep non formatted path
 
 		// Get existing image from gallery by filename (Title)
@@ -83,7 +83,7 @@ final class Image extends File
 		? (array)Upload::get('file') : [];
 
 		// Check valid image mime
-		if ( !self::validateMime($file['name']) ) {
+		if ( !self::isValidMime($file['name']) ) {
 			return false;
 		}
 
@@ -99,20 +99,17 @@ final class Image extends File
 	 *
 	 * @access public
 	 * @param string $file
-	 * @param array $allowed
-	 * @return mixed
+	 * @return bool
 	 */
-	public static function validateMime(string $file, array $allowed = [])
+	public static function isValidMime(string $file) : bool
 	{
-		$allowed = self::mimes(Arrayify::merge([
+		return Validator::isValidMime($file, [
 			'jpg'  => 'image/jpeg',
 			'jpeg' => 'image/jpeg',
 			'bmp'  => 'image/bmp',
 			'png'  => 'image/png',
 			'gif'  => 'image/gif'
-		], $allowed));
-
-		return self::validate($file, $allowed);
+		]);
 	}
 
 	/**

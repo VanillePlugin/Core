@@ -257,7 +257,7 @@ class Updater extends API implements UpdaterInterface
 	    	if ( isset($options['plugins']) ) {
 		        foreach ($options['plugins'] as $plugin) {
 			        if ( $plugin == $this->file ) {
-						$this->purgePluginTransients();
+						$this->removePluginTransients();
 						$this->purgePluginCache();
 						break;
 			        }

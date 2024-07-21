@@ -1,0 +1,238 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id":"plugin.requirements.schema.json",
+  "type": "object",
+  "properties": {
+    "dependency": {
+      "type": "object",
+      "properties": {
+        "php": {
+          "type": "string"
+        },
+        "plugins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "callable": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          }
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "slug",
+              "name"
+            ]
+          }
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ]
+          }
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "callable": {
+                "type": "string"
+              },
+              "override": {
+                "type": "object",
+                "properties": {
+                  "slug": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "callable"
+            ]
+          }
+        }
+      },
+      "required": [
+        "php",
+        "plugins",
+        "themes",
+        "paths",
+        "options",
+        "modules"
+      ]
+    },
+    "messages": {
+      "type": "object",
+      "properties": {
+        "php": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "version"
+          ]
+        },
+        "plugins": {
+          "type": "object",
+          "properties": {
+            "missing": {
+              "type": "string"
+            },
+            "disabled": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "missing",
+            "disabled"
+          ]
+        },
+        "themes": {
+          "type": "object",
+          "properties": {
+            "single": {
+              "type": "string"
+            },
+            "multiple": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "single",
+            "multiple"
+          ]
+        },
+        "paths": {
+          "type": "object",
+          "properties": {
+            "missing": {
+              "type": "string"
+            },
+            "readable": {
+              "type": "string"
+            },
+            "writable": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "missing",
+            "readable",
+            "writable"
+          ]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "missing": {
+              "type": "string"
+            },
+            "invalid": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "missing",
+            "invalid"
+          ]
+        },
+        "modules": {
+          "type": "object",
+          "properties": {
+            "missing": {
+              "type": "string"
+            },
+            "override": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "missing",
+            "override"
+          ]
+        }
+      },
+      "required": [
+        "php",
+        "plugins",
+        "themes",
+        "paths",
+        "options",
+        "modules"
+      ]
+    },
+    "template": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "dependency",
+    "messages",
+    "template"
+  ]
+}

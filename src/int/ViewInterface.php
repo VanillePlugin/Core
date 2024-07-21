@@ -17,13 +17,13 @@ namespace VanillePlugin\int;
 interface ViewInterface
 {
 	/**
-	 * Set custom view callables.
+	 * Set extended view callables.
 	 *
-     * @param array $callables
+     * @param CallableInterface $callable
 	 * @return void
 	 */
-	function setCallables(array $callables = []);
-    
+	function setCallables(?CallableInterface $callable = null);
+
     /**
      * Render view.
      *

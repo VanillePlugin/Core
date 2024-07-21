@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "plugin.routes.schema.json",
+  "type": "object",
+  "properties": {
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "route": {
+            "type": "string"
+          },
+          "method": {
+            "type": ["string","array"]
+          }
+        },
+        "required": [
+          "route",
+          "method"
+        ]
+      }
+    }
+  },
+  "required": [
+    "routes"
+  ]
+}

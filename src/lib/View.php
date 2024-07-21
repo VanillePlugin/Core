@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\ViewInterface;
+use VanillePlugin\int\{
+    ViewInterface, CallableInterface
+};
 
 /**
  * Plugin view controller.
@@ -46,12 +48,11 @@ class View implements ViewInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setCallables(array $callables = [])
+	public function setCallables(?CallableInterface $callable = null)
 	{
-		$this->callables = $this->mergeArray(
-            $this->getDefaultCallables(),
-            $callables
-        );
+        $default   = $this->getDefaultCallables();
+        $callables = ($callable) ? $callable->getCallables() : [];
+		$this->callables = $this->mergeArray($default, $callables);
 	}
 
     /**
@@ -70,7 +71,7 @@ class View implements ViewInterface
 	 */
 	public function assign(string $tpl = 'default', array $content = []) : string
 	{
-        // Get View environment
+        // Get environment
         $env = $this->getEnvironment($this->getPath($tpl), [
             'cache' => $this->getCachePath(),
             'debug' => $this->hasDebug()
@@ -91,9 +92,9 @@ class View implements ViewInterface
             $view = $env->load("{$tpl}{$this->getViewExtension()}");
             return $view->render($content);
 
-        } catch (\Exception $e) {
+        } catch (\Exception | \RuntimeException $e) {
             if ( $this->hasDebug() ) {
-                die($e);
+                die($e->getMessage());
             }
             $this->clearLastError();
         }
@@ -141,7 +142,10 @@ class View implements ViewInterface
                 return $this->createToken($action);
             },
 			'translate' => function(?string $string) : string {
-                return $this->trans($string);
+                return $this->translate($string);
+            },
+			'translateVar' => function(string $string, $vars = null) : string {
+                return $this->translateVar($string, $vars);
             },
 			'unJson' => function(string $value, bool $isArray = false) {
                 return $this->decodeJson($value, $isArray);
@@ -211,11 +215,11 @@ class View implements ViewInterface
      * Get view path (Overridden),
      * [Filter: {plugin}-template-path].
      *
-     * @access private
+     * @access protected
      * @param string $tpl
      * @return string
      */
-    private function getPath(string $tpl) : string
+    protected function getPath(string $tpl) : string
     {
         $path = $this->getThemeDir($this->getNameSpace());
         $path = $this->applyPluginFilter('template-path', $path);

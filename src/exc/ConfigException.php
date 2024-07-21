@@ -14,20 +14,20 @@ declare(strict_types=1);
 
 namespace VanillePlugin\exc;
 
-class ConfigurationException extends VanillePluginException
+class ConfigException extends VanillePluginException
 {
-	public static function invalidPluginConfigurationFile($file) : string
+	public static function invalidConfigFile(string $file) : string
 	{
 		return "Couldn't find plugin configuration file: '{$file}'";
 	}
 
-    public static function invalidPluginConfigurationFormat($file) : string
+    public static function invalidConfigFormat(string $schema) : string
     {
-        return "Invalid plugin configuration JSON format: '{$file}'";
+        return "Invalid plugin configuration JSON format: '{$schema}'";
     }
 
-    public static function invalidPluginConfiguration($error, $file) : string
+    public static function invalidConfig(string $error, string $schema) : string
     {
-        return "Invalid plugin configuration: '{$error}' in '{$file}'";
+        return "Invalid plugin configuration: '{$error}' in '{$schema}'";
     }
 }

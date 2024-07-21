@@ -17,10 +17,10 @@ namespace VanillePlugin\int;
 interface NoticeInterface
 {
     /**
-	 * Add notice.
+	 * Display notice.
 	 * [Action: admin-notices].
 	 * 
 	 * @param mixed $callable
      */
-    function add($callable);
+    function display(callable $callable);
 }

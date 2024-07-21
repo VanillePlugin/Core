@@ -17,7 +17,7 @@ namespace VanillePlugin\lib;
 /**
  * Plugin cache manager.
  */
-final class Cache
+class Cache
 {
 	use \VanillePlugin\VanillePluginOption;
 
@@ -90,9 +90,7 @@ final class Cache
 			$path[] = $this->getTempPath();
 			$path[] = $this->getCachePath();
 			foreach ($path as $path) {
-				$count += (int)$this->clearDir($path, [
-					$this->getNameSpace()
-				]);
+				$count += (int)$this->clearDir($path, $this->getRoot());
 			}
 		}
 
@@ -125,5 +123,18 @@ final class Cache
 	public function hasInternalCache() : bool
 	{
 		return $this->isType('class', self::INTERNAL);
+	}
+
+	/**
+	 * Get internal cache.
+	 *
+	 * @access public
+	 * @param string $driver
+	 * @return object
+	 */
+	public function getInternalCache(string $driver = 'File') : object
+	{
+		$cache = self::INTERNAL;
+		return new $cache($driver);
 	}
 }

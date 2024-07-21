@@ -15,14 +15,17 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-	Hook, Shortcode
+    Hook, Shortcode, Globals
 };
 
+/**
+ * Define hooking and shortcoding functions.
+ */
 trait TraitHookable
 {
 	/**
 	 * Register plugin activation hook.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -33,7 +36,7 @@ trait TraitHookable
 
 	/**
 	 * Register plugin uninstall hook.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -44,7 +47,7 @@ trait TraitHookable
 
 	/**
 	 * Register plugin uninstall hook.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -55,7 +58,7 @@ trait TraitHookable
 
 	/**
 	 * Register plugin action links hook.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -77,7 +80,7 @@ trait TraitHookable
 
 	/**
 	 * Remove hook action.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -88,7 +91,7 @@ trait TraitHookable
 
 	/**
 	 * Do hook action.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -99,7 +102,7 @@ trait TraitHookable
 
 	/**
 	 * Check hook action.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -110,7 +113,7 @@ trait TraitHookable
 
 	/**
 	 * Add hook filter.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -121,7 +124,7 @@ trait TraitHookable
 
 	/**
 	 * Remove hook filter.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -132,7 +135,7 @@ trait TraitHookable
 
 	/**
 	 * Apply hook filter.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -143,7 +146,7 @@ trait TraitHookable
 
 	/**
 	 * Check hook filter.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -154,7 +157,7 @@ trait TraitHookable
 
 	/**
 	 * Add CSS.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -164,8 +167,19 @@ trait TraitHookable
 	}
 
 	/**
+	 * Include existing CSS.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function includeCSS(string $id, string $path, array $deps = [], $version = false, string $media = 'all')
+	{
+		$this->addCSS($id, Globals::includesUrl($path), $deps, $version, $media);
+	}
+
+	/**
 	 * Add JS.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -173,10 +187,21 @@ trait TraitHookable
 	{
 		Hook::addJS($id, $path, $deps, $version, $footer);
 	}
-	
+
+	/**
+	 * Include existing JS.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function includeJS(string $id, string $path, array $deps = [], $version = false, bool $footer = false)
+	{
+		$this->addJS($id, Globals::includesUrl($path), $deps, $version, $footer);
+	}
+
 	/**
 	 * Check enqueued CSS.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -187,7 +212,7 @@ trait TraitHookable
 
 	/**
 	 * Check enqueued JS.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -198,7 +223,7 @@ trait TraitHookable
 
 	/**
 	 * Remove CSS.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -209,7 +234,7 @@ trait TraitHookable
 
 	/**
 	 * Remove JS.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -220,7 +245,7 @@ trait TraitHookable
 
 	/**
 	 * Assign enqueued JS data.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -231,7 +256,7 @@ trait TraitHookable
 	
 	/**
 	 * Check whether script exists.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -242,7 +267,7 @@ trait TraitHookable
 
 	/**
 	 * Remove excluded scripts.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -253,7 +278,7 @@ trait TraitHookable
 
 	/**
 	 * Add shortcode.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -264,7 +289,7 @@ trait TraitHookable
 
 	/**
 	 * Assign content to shortcode.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -275,7 +300,7 @@ trait TraitHookable
 
 	/**
 	 * Render shortcode.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -286,7 +311,7 @@ trait TraitHookable
 
 	/**
 	 * Remove shortcode.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -297,7 +322,7 @@ trait TraitHookable
 
 	/**
 	 * Check whether shortcode registered.
-	 * 
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */

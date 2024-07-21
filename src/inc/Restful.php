@@ -227,6 +227,18 @@ final class Restful
 	}
 
 	/**
+     * Get request header value.
+     *
+	 * @access public
+	 * @param RestfulRequest $request
+	 * @return mixed
+	 */
+	public static function getHeader(RestfulRequest $request, string $key)
+	{
+		return $request->get_header($key);
+	}
+
+	/**
      * Get request method.
      *
 	 * @access public

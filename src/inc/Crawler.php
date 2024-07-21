@@ -29,9 +29,11 @@ final class Crawler extends Request
 	 * @access private
 	 * @var string $pattern
 	 * @var array $args
+	 * @var int $status
 	 */
 	private $pattern;
 	private $args;
+	private $status = 0;
 
 	/**
 	 * Init crawler.
@@ -55,9 +57,9 @@ final class Crawler extends Request
 	 *
 	 * @access public
 	 * @param int $try
-	 * @return void
+	 * @return bool
 	 */
-	public function start(int $try = 2)
+	public function start(int $try = 2) : bool
 	{
 		if ( self::canStart() ) {
 			$try = ($try <= 5) ? $try : 2;
@@ -67,6 +69,7 @@ final class Crawler extends Request
 				}
 			}
 		}
+		return (bool)$this->status;
 	}
 
 	/**
@@ -81,7 +84,10 @@ final class Crawler extends Request
 	{
 		$i = 1;
 		while ( $i <= $try ) {
-			self::do($url, $this->args);
+			$response = self::do($url, $this->args);
+			if ( self::getStatusCode($response) == 200 ) {
+				$this->status += 1;
+			}
 			$i++;
 			sleep(1);
 		}

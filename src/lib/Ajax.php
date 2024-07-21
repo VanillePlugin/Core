@@ -14,133 +14,130 @@ declare(strict_types=1);
 
 namespace VanillePlugin\lib;
 
-use VanillePlugin\int\{
-	AjaxCoreInterface, AjaxInterface
-};
+use VanillePlugin\int\AjaxInterface;
 
 /**
  * Plugin AJAX manager.
  */
-final class Ajax implements AjaxCoreInterface
+class Ajax implements AjaxInterface
 {
 	use \VanillePlugin\VanillePluginOption;
 
 	/**
 	 * @access private
-	 * @var object $callable
 	 * @var array $actions
+	 * @var bool $isAdmin
 	 */
-	private AjaxInterface $callable;
 	private $actions = [];
+	private $isAdmin = false;
 
-	/**
-	 * @inheritdoc
-	 */
-	public function __construct(AjaxInterface $callable)
+    /**
+     * @inheritdoc
+     */
+	public final function __construct()
 	{
-		// Set callable
-		$this->callable = $callable;
-
-		// Init admin actions
-		if ( $this->isAdminCallable() ) {
-			$this->actions = $this->getAdminAjax();
-			$this->initAdminActions();
+		if ( !$this->isAjax() ) {
+			return;
 		}
 
-		// Init front actions
-		if ( $this->isFrontCallable() ) {
+		if ( $this->isAdminCallable() ) {
+			$this->isAdmin = true;
+			$this->actions = $this->getAdminAjax();
+
+		} elseif ( $this->isFrontCallable() ) {
 			$this->actions = $this->getFrontAjax();
-			$this->initFrontActions();
 		}
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function callback()
+    /**
+     * @inheritdoc
+     */
+	public final function register()
 	{
 		foreach ($this->actions as $action) {
+			$action = $this->applyNamespace($action);
+			$this->addAction("wp-ajax-{$action}", [$this, 'callback']);
+			if ( !$this->isAdmin ) {
+				$this->addAction("wp-ajax-nopriv-{$action}", [$this, 'callback']);
+			}
+		}
+	}
+
+    /**
+     * @inheritdoc
+     */
+	public final function callback()
+	{
+		foreach ($this->actions as $action) {
+
 			if ( $this->isAction($action) ) {
 
 				$this->verifyToken($action);
-				if ( $this->isAdminCallable() ) {
+				if ( $this->isAdmin ) {
 					$this->verifyPermission();
 				}
 
 				$action = $this->camelcase($action);
-				$this->callable->{$action}();
+				$this->{$action}();
 				break;
+				
 			}
 		}
+
 		die();
 	}
 
 	/**
-	 * @inheritdoc
+	 * Validate Ajax action.
+	 * [Methods: GET|POST].
+	 *
+	 * @access protected
+	 * @param string $action
+	 * @return bool
 	 */
-	public function isAction(string $action) : bool
+	protected function isAction(string $action) : bool
 	{
-		if ( $this->hasRequest('action') ) {
-			if ( $this->getRequest('action') == $this->applyNamespace($action) ) {
-				return true;
-			}
+		$action = $this->applyNamespace($action);
+		if ( $this->getRequest('action') == $action ) {
+			return true;
 		}
 		return false;
 	}
 
 	/**
+	 * Check request value in payload.
+	 *
+	 * @access protected
+	 * @param string $item
+	 * @return mixed
+	 */
+	protected function inPayload(string $item)
+	{
+		if ( !($value = $this->getRequest($item)) ) {
+			return false;
+		}
+		return $value;
+	}
+
+	/**
 	 * Check whether Ajax callable is admin.
 	 *
-	 * @access private
+	 * @access protected
 	 * @return bool
 	 */
-	private function isAdminCallable() : bool
+	protected function isAdminCallable() : bool
 	{
-		return $this->hasObject('interface', $this->callable, 'AdminAjaxInterface');
+		return $this->hasObject('interface', $this, 'AdminAjax');
 	}
 
 	/**
 	 * Check whether Ajax callable is front.
 	 *
-	 * @access private
+	 * @access protected
 	 * @return bool
 	 */
-	private function isFrontCallable() : bool
+	protected function isFrontCallable() : bool
 	{
-		return $this->hasObject('interface', $this->callable, 'FrontAjaxInterface');
-	}
-
-	/**
-	 * Init admin actions.
-	 * [Action: wp-ajax-{plugin}-{action}].
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function initAdminActions()
-	{
-		foreach ($this->actions as $action) {
-			$this->addAction(
-				"wp-ajax-{$this->applyNamespace($action)}",
-				[$this, 'callback']
-			);
-		}
-	}
-
-	/**
-	 * Init front actions.
-	 * [Action: wp-ajax-nopriv-{plugin}-{action}].
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function initFrontActions()
-	{
-		foreach ($this->actions as $action) {
-			$this->addAction(
-				"wp-ajax-nopriv-{$this->applyNamespace($action)}",
-				[$this, 'callback']
-			);
-		}
+		return $this->hasObject('interface', $this, 'FrontAjax');
 	}
 }

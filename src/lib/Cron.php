@@ -25,77 +25,70 @@ class Cron implements CronInterface
 
 	/**
 	 * @access protected
-	 * @var array $schedules
-	 * @var array $actions
+	 * @var string SERVER, Server constant
+	 */
+	protected const SERVER = 'disable-wp-cron';
+
+	/**
+	 * @access protected
+	 * @var array $schedules, Cron custom schedules
+	 * @var array $events, Cron events
+	 * @var int $timestamp, Cron timestamp
 	 */
 	protected $schedules = [];
-	protected $actions = [];
+	protected $events = [];
+	protected $timestamp;
 
 	/**
 	 * @inheritdoc
 	 */
-	public function __construct()
+	public function __construct(?int $timestamp = null)
 	{
-		foreach ($this->getCron() as $scheduler) {
-			$this->addSchedulerAction($scheduler);
-		}
+		$this->timestamp = $timestamp ?: time();
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function apply(array $schedules) : array
+	public function register()
 	{
-		foreach ($this->sanitizeSchedules() as $schedule) {
-			if ( !isset($schedules[$schedule['name']]) ) {
-		        $schedules[$schedule['name']] = [
-		            'display'  => $schedule['display'],
-		            'interval' => $schedule['interval']
-		        ];
-			}
+		$this->addFilter('cron-schedules', function($schedules) {
+			$custom = $this->sanitizeSchedules(
+				$this->getSchedules()
+			);
+			return $this->mergeArray($custom, $schedules);
+		});
+
+		$events = $this->sanitizeEvents(
+			$this->getEvents()
+		);
+
+		foreach ($events as $event) {
+			$name = $this->applyNameSpace("do-{$event['name']}");
+			$this->addAction($name, $event['callback']);
 		}
-	    return $schedules;
+		$this->doPluginAction("{$this->getNameSpace()}-cron");
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function start()
+	public function run()
 	{
-		$this->addFilter('cron-schedules', [$this, 'apply']);
+		if ( $this->isInstalling() ) {
+			return;
+		}
+		
+		$events = $this->sanitizeEvents(
+			$this->getEvents()
+		);
 
-		foreach ($this->sanitizeActions() as $action) {
-			$name = $this->applyNameSpace($action['name']);
+		foreach ($events as $event) {
+			$name = $this->applyNameSpace("do-{$event['name']}");
 			if ( !$this->next($name) ) {
-				$this->schedule($action['schedule'], $name);
+				$this->schedule($event['schedule'], $name);
 			}
-			$this->addAction($name, $action['callable']);
 		}
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function next($name)
-	{
-		return wp_next_scheduled($name);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function schedule(string $interval, string $hook)
-	{
-		return wp_schedule_event(time(), $interval, $hook);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function clear(string $name)
-	{
-		$name = $this->applyNameSpace($name);
-		return wp_clear_scheduled_hook($name);
 	}
 
 	/**
@@ -103,100 +96,132 @@ class Cron implements CronInterface
 	 */
 	public function remove()
 	{
-		foreach ($this->getCron() as $scheduler) {
-			$this->clear($scheduler['name']);
-		}
-	}
-
-	/**
-	 * Add schedule.
-	 *
-	 * @access protected
-	 * @param array $schedule
-	 * @return void
-	 */
-	protected function addSchedule(array $schedule = [])
-	{
-		$this->schedules[] = $schedule;
-	}
-
-	/**
-	 * Add scheduler action.
-	 *
-	 * @access protected
-	 * @param array $actions
-	 * @return void
-	 */
-	protected function addSchedulerAction(array $action = [])
-	{
-		$this->actions[] = $action;
-	}
-
-	/**
-	 * Sanitize schedulers actions.
-	 * [Filter: {plugin}-schedulers-actions].
-	 *
-	 * @access protected
-	 * @return array
-	 */
-	protected function sanitizeActions()
-	{
-		$this->actions = $this->uniqueMultiArray(
-			$this->applyPluginFilter('schedulers-actions', $this->actions)
+		$events = $this->sanitizeEvents(
+			$this->getEvents()
 		);
 
-		foreach ($this->actions as $key => $action) {
-
-			if ( !isset($action['name']) ) {
-				unset($this->actions[$key]);
-			}
-
-			if ( !isset($action['schedule']) ) {
-				$this->actions[$key]['schedule'] = 'daily';
-			}
-
-			if ( !isset($action['callable']) && isset($action['name']) ) {
-
-				$callable = $this->camelcase($action['name']);
-				if ( $this->hasObject('method', $this, $callable) ) {
-					$this->actions[$key]['callable'] = [$this, $callable];
-
-				} else {
-					unset($this->actions[$key]);
-				}
-
-			} else {
-				unset($this->actions[$key]);
-			}
-
+		foreach ($events as $event) {
+			$name = $this->applyNameSpace("do-{$event['name']}");
+			$this->clear($name);
 		}
-		return $this->actions;
 	}
 
 	/**
-	 * Sanitize schedulers,
+	 * @inheritdoc
+	 */
+	public function useServer()
+	{
+		$const = $this->undash(static::SERVER, true);
+		if ( !defined($const) ) {
+			define($const, true);
+		}
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function isServer() : bool
+	{
+		$const = $this->undash(static::SERVER, true);
+		return defined($const);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function next(string $name, array $args = []) : int
+	{
+		return (int)wp_next_scheduled($name, $args);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function schedule(string $interval, string $hook, array $args = []) : bool
+	{
+		return wp_schedule_event($this->timestamp, $interval, $hook, $args, false);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function once(string $hook, array $args = []) : bool
+	{
+		return wp_schedule_single_event($this->timestamp, $hook, $args, false);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function unschedule(string $hook, array $args = []) : bool
+	{
+		return wp_unschedule_event($this->timestamp, $hook, $args);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function clear(string $hook, array $args = []) : int
+	{
+		return (int)wp_clear_scheduled_hook($hook, $args);
+	}
+
+	/**
+	 * Sanitize cron event.
+	 * [Filter: {plugin}-cron-events].
+	 *
+	 * @access protected
+	 * @param array $events
+	 * @return array
+	 */
+	protected function sanitizeEvents(array $events) : array
+	{
+		$events = $this->uniqueMultiArray(
+			$this->applyPluginFilter('cron-events', $events)
+		);
+
+		foreach ($events as $key => $event) {
+
+			if ( !isset($event['callback'])  ) {
+				$callback = $this->camelcase($event['name']);
+
+				if ( $this->hasObject('method', static::class, $callback) ) {
+					$events[$key]['callback'] = [$this, $callback];
+
+				} else {
+					unset($events[$key]);
+					continue;
+				}
+			}
+
+		}
+
+		return $events;
+	}
+
+	/**
+	 * Sanitize event schedules.
 	 * [Filter: {plugin}-cron-schedules].
 	 *
 	 * @access protected
+	 * @param array $schedules
 	 * @return array
 	 */
-	protected function sanitizeSchedules()
+	protected function sanitizeSchedules(array $schedules) : array
 	{
-		$this->schedules = $this->uniqueMultiArray(
-			$this->applyPluginFilter('cron-schedules', $this->schedules)
+		$schedules = $this->uniqueMultiArray(
+			(array)$this->applyPluginFilter('cron-schedules', $schedules)
 		);
 
-		foreach ($this->schedules as $key => $schedule) {
-			if ( !isset($schedule['name']) 
-			  || !isset($schedule['display']) 
-			  || !isset($schedule['interval']) ) {
-				unset($this->schedules[$key]);
-
-			} else {
-				$this->schedules[$key]['interval'] = (int)$schedule['interval'];
+		foreach ($schedules as $name => $data) {
+			$display = $data['display'] ?? false;
+			if ( !$display ) {
+				$display = $this->capitalize($name);
 			}
+			$display = $this->translate($display);
+			$schedules[$name]['display'] = $display;
 		}
 
-		return $this->schedules;
+		return $schedules;
 	}
 }

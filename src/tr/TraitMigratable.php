@@ -16,8 +16,22 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\lib\Migrate;
 
+/**
+ * Define database migration functions.
+ */
 trait TraitMigratable
 {
+	/**
+	 * Check whether plugin has migrate lock.
+	 *
+	 * @access public
+	 * @inheritdoc
+	 */
+	public function isMigrated() : bool
+	{
+		return (new Migrate())->isMigrated();
+	}
+
 	/**
 	 * Install plugin database tables.
 	 *
@@ -74,23 +88,12 @@ trait TraitMigratable
 	}
 
 	/**
-	 * Check whether plugin has migrate lock.
-	 *
-	 * @access protected
-	 * @inheritdoc
-	 */
-	protected function isMigrated() : bool
-	{
-		return (new Migrate())->isMigrated();
-	}
-
-	/**
 	 * Export plugin database table.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function exportTable(string $table, $column)
+	protected function exportTable(string $table, ?string $column = null)
 	{
 		return (new Migrate())->export($table, $column);
 	}

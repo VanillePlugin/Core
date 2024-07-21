@@ -135,6 +135,7 @@ interface ModelInterface
 	 * @param string $path
 	 * @param mixed $args
 	 * @return mixed
+	 * @throws ModelException
 	 */
 	static function instance(string $name, $path = 'db', ...$args);
 }

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id":"plugin.inputs.schema.json",
+  "type":"object",
+  "items":[
+    {
+      "type":"object",
+      "properties":{
+        "inputs":{
+          "type":"object"
+        },
+        "hook":{
+          "type":"boolean"
+        }
+      },
+      "required": [
+        "inputs",
+        "hook"
+      ]
+    }
+  ]
+}

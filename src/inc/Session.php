@@ -23,7 +23,7 @@ use VanillePlugin\inc\Date;
 final class Session
 {
     /**
-     * Start session.
+     * Start session if not active.
      */
     public function __construct()
     {
@@ -195,7 +195,7 @@ final class Session
     }
     
     /**
-     * Close session (Write data).
+     * Close session (Read-only).
      *
      * @access public
      * @return bool
@@ -206,7 +206,7 @@ final class Session
     }
 
     /**
-     * End session (Destroy data).
+     * End session (Destroy).
      *
      * @access public
      * @return bool

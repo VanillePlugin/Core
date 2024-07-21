@@ -16,6 +16,9 @@ namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\Template;
 
+/**
+ * Define template engine functions.
+ */
 trait TraitViewable
 {
     /**
@@ -30,7 +33,7 @@ trait TraitViewable
     }
 
     /**
-     * Add view callable.
+     * Extend view callables.
      * 
      * @access protected
      * @inheritdoc

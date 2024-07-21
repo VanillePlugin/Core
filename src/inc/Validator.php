@@ -87,20 +87,17 @@ class Validator
 	}
 
     /**
-     * Validate mime type.
+     * Validate file mime type.
      *
 	 * @access public
-	 * @param string $filename
-	 * @param array $mimes
+	 * @param string $file
+	 * @param array $types
 	 * @return bool
 	 */
-	public static function isValidMime(string $filename, ?array $mimes = null) : bool
+	public static function isValidMime(string $file, ?array $types = null) : bool
 	{
-		$data = wp_check_filetype($filename, $mimes);
-		if ( $data['ext'] && $data['type'] ) {
-			return true;
-		}
-		return false;
+		$data = wp_check_filetype($file, $types);
+		return ($data['ext'] && $data['type']);
 	}
 
     /**
@@ -122,12 +119,25 @@ class Validator
 	 * Validate PHP module.
 	 *
 	 * @access public
-	 * @param string $extension
+	 * @param string $ext
 	 * @return bool
 	 */
-	public static function isModule(string $extension) : bool
+	public static function isModule(string $module) : bool
 	{
-		return extension_loaded($extension);
+		return extension_loaded($module);
+	}
+
+	/**
+	 * Validate server module.
+	 *
+	 * @access public
+	 * @param string $module
+	 * @return bool
+	 */
+	public static function isServerModule(string $module) : bool
+	{
+		$module = Stringify::undash($module);
+		return Arrayify::inArray($module, Server::getModules());
 	}
 
 	/**
@@ -158,7 +168,7 @@ class Validator
 	}
 
 	/**
-	 * Validate plugin file,
+	 * Validate plugin file.
 	 * [{pluginDir}/{pluginMain}.php].
 	 *
 	 * @access public

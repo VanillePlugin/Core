@@ -18,29 +18,31 @@ interface FrontInterface
 {
 	/**
 	 * Setup plugin front.
+	 * [Action: plugins-loaded].
+	 * [Uses: !isAdmin()].
 	 *
 	 * @param ShortcodeInterface $shortcode
-	 * @uses !isAdmin()
 	 */
 	function __construct(?ShortcodeInterface $shortcode = null);
 
 	/**
 	 * Init front.
-	 * [Action: wp].
+	 * [Action: front-init].
+	 * [Action: front-init].
+	 * [Uses: !AMP::isEnabled()].
 	 *
 	 * @return void
-	 * @uses !AMP::isActive()
 	 */
 	function init();
 
 	/**
-	 * Init login.
-	 * [Action: init].
+	 * Init amp.
+	 * [Action: setup].
+	 * [Uses: !AMP::isActive()].
 	 *
 	 * @return void
-	 * @uses isLogin()
 	 */
-	function initLogin();
+	function amp();
 
 	/**
 	 * Add front CSS.
@@ -78,18 +80,10 @@ interface FrontInterface
 	/**
 	 * Add front body class.
 	 * [Filter: body-class].
-	 * 
+	 * [Filter: login-body-class].
+	 *
 	 * @param array $classes
 	 * @return array
 	 */
 	function addClass(array $classes) : array;
-
-	/**
-	 * Add login body class.
-	 * [Filter: login-body-class].
-	 * 
-	 * @param array $classes
-	 * @return array
-	 */
-	function addLoginClass(array $classes) : array;
 }

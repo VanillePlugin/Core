@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "plugin.ajax.schema.json",
+  "type": "object",
+  "properties": {
+    "admin": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "front": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "admin",
+    "front"
+  ]
+}
