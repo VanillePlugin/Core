@@ -68,6 +68,19 @@ final class Page
 	}
 
 	/**
+	 * Remove submenu page.
+	 *
+	 * @access public
+	 * @param string $menu, Menu slug
+	 * @param string $sub, Sub slug
+	 * @return mixed
+	 */
+	public static function removeSubMenu(string $menu, string $sub)
+	{
+		return remove_submenu_page($menu, $sub);
+	}
+
+	/**
 	 * Reset submenu first item.
 	 *
 	 * @access public
