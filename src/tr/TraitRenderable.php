@@ -96,6 +96,17 @@ trait TraitRenderable
 	}
 
 	/**
+	 * Remove submenu page.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function removeSubMenu(string $menu, string $sub)
+	{
+		return Page::removeSubMenu($menu, $sub);
+	}
+
+	/**
 	 * Reset submenu first item.
 	 *
 	 * @access protected
