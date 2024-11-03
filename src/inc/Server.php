@@ -185,7 +185,7 @@ final class Server
 	{
 		$url = self::get('http-host');
 		$schema = (self::isSsl()) ? 'https://' : 'http://';
-		return "{$schema}}{$url}";
+		return "{$schema}{$url}";
 	}
 
 	/**
