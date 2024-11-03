@@ -39,15 +39,15 @@ final class Stringify
 	 * Search replace substring(s).
 	 * 
 	 * @access public
-	 * @param mixed $string
+	 * @param mixed $search
 	 * @param mixed $replace
 	 * @param mixed $offset
 	 * @param mixed $length
 	 * @return mixed
 	 */
-	public static function subReplace($string, $replace, $offset = 0, $length = null)
+	public static function subReplace($search, $replace, $offset = 0, $length = null)
 	{
-		return substr_replace($string, $replace, $offset, $length);
+		return substr_replace($search, $replace, $offset, $length);
 	}
 
 	/**
@@ -83,8 +83,24 @@ final class Stringify
 	}
 
 	/**
+	 * Search replace string(s) using regex callback.
+	 *
+	 * @access public
+	 * @param mixed $regex
+	 * @param mixed $callback
+	 * @param mixed $subject
+	 * @param int $limit
+	 * @param int $count
+	 * @return mixed
+	 */
+	public static function replaceRegexCb($regex, $callback, $subject, $limit = -1, &$count = null)
+	{
+		return preg_replace_callback($regex, $callback, $subject, $limit, $count);
+	}
+
+	/**
 	 * Remove string from other string.
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @param string $subject
@@ -137,7 +153,7 @@ final class Stringify
 	{
 		return str_repeat($string, $times);
 	}
-	
+
 	/**
 	 * Lowercase string.
 	 * 
@@ -320,7 +336,7 @@ final class Stringify
 	{
 		return wp_unslash($value);
 	}
-	
+
 	/**
 	 * Add slashes to value,
 	 * Accept string and array.
@@ -361,7 +377,7 @@ final class Stringify
 	/**
 	 * Strip slashes in quotes or single quotes,
 	 * Removes double backslashs.
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @return string
@@ -375,7 +391,7 @@ final class Stringify
 	 * Strip slashes in quotes or single quotes,
 	 * Removes double backslashs.
 	 * (array, object, scalar).
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $value
 	 * @return mixed
@@ -388,7 +404,7 @@ final class Stringify
 	/**
 	 * Strip HTML tags in string,
 	 * Including script and style.
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @param bool $unbreak
@@ -402,7 +418,7 @@ final class Stringify
 	/**
 	 * Strip numbers in string,
 	 * Using custom replace string.
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @param string $replace
@@ -416,7 +432,7 @@ final class Stringify
 	/**
 	 * Strip special characters in string,
 	 * Using custom replace string.
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @param string $replace
@@ -430,7 +446,7 @@ final class Stringify
 	/**
 	 * Strip spaces in string,
 	 * Using custom replace string.
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @param string $replace
@@ -444,7 +460,7 @@ final class Stringify
 	/**
 	 * Strip break in string,
 	 * Using custom replace string.
-	 * 
+	 *
 	 * @access public
 	 * @param string $string
 	 * @param string $replace
@@ -828,7 +844,7 @@ final class Stringify
 
 	/**
 	 * Match all strings using regex (g).
-	 * 
+	 *
 	 * @access public
 	 * @param string $regex
 	 * @param string $string
@@ -881,17 +897,16 @@ final class Stringify
 	 * @param string $suffix
 	 * @return string
 	 */
-	public static function limit(string $string, int $length = 128, int $offset = 0, string $suffix = '...') : string
+	public static function limit(string $string, int $length = 128, int $offset = 0, ?string $suffix = '...') : string
 	{
 		$limit = $string;
-
-        $words = self::split($string, [
+		$words = self::split($string, [
 			'regex' => '/([\s\n\r]+)/u',
 			'limit' => 0,
 			'flags' => 2 // PREG_SPLIT_DELIM_CAPTURE
 		]);
 
-        if ( ($count = count($words)) ) {
+		if ( ($count = count($words)) ) {
 			$strlen = 0;
 			$last = $offset;
 			for (; $last < $count; ++$last) {
@@ -966,12 +981,12 @@ final class Stringify
 
 	/**
 	 * Parse URL (URL toolkit).
-	 *
-	 * [SCHEME: 0]
-	 * [HOST: 1]
-	 * [PATH: 5]
-	 * [QUERY: 6]
-	 *
+	 * 
+	 * [SCHEME : 0]
+	 * [HOST   : 1]
+	 * [PATH   : 5]
+	 * [QUERY  : 6]
+	 * 
 	 * @access public
 	 * @param string $url
 	 * @param int $component
@@ -984,10 +999,10 @@ final class Stringify
 
 	/**
 	 * Build query args from string (URL toolkit).
-	 *
+	 * 
 	 * [PHP_QUERY_RFC1738: 1]
 	 * [PHP_QUERY_RFC3986: 2]
-	 *
+	 * 
 	 * @access public
 	 * @param mixed $args
 	 * @param string $prefix, Numeric index for args (array)
