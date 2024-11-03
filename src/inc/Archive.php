@@ -46,8 +46,8 @@ final class Archive extends File
 			if ( empty($to) ) {
 				$to = dirname($path);
 			}
-			
-			$to = Stringify::formatPath($to);
+
+			$to = Stringify::formatPath($to, true);
 			$to = "{$to}/{$archive}.zip";
 			$zip = new ZIP();
 
@@ -67,7 +67,6 @@ final class Archive extends File
 				} elseif ( self::isFile($path) ) {
 					$zip->addFile($path, basename($path));
 				}
-				
 				$zip->close();
 				return true;
 			}
