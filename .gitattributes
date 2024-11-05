@@ -1,6 +1,8 @@
-# Auto detect text files and perform LF normalization
+# Text break
 * text=auto
 * text eol=lf
+
+# Archive ignore
 /.github export-ignore
 .gitignore export-ignore
 .gitattributes export-ignore
