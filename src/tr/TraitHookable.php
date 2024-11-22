@@ -73,9 +73,9 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addAction(string $hook, $callback, int $priority = 10, int $args = 1)
+	protected function addAction(string $name, $callback, int $priority = 10, int $args = 1)
 	{
-		Hook::addAction($hook, $callback, $priority, $args);
+		Hook::addAction($name, $callback, $priority, $args);
 	}
 
 	/**
@@ -84,9 +84,20 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removeAction(string $hook, $callback, int $priority = 10) : bool
+	protected function removeAction(string $name, $callback, int $priority = 10) : bool
 	{
-		return Hook::removeAction($hook, $callback, $priority);
+		return Hook::removeAction($name, $callback, $priority);
+	}
+
+	/**
+	 * Remove all actions.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function removeActions(string $name, $priority = false)
+	{
+		return Hook::removeActions($name, $priority);
 	}
 
 	/**
@@ -95,9 +106,9 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function doAction(string $hook, $args = null)
+	protected function doAction(string $name, ...$args)
 	{
-		Hook::doAction($hook, $args);
+		Hook::doAction($name,...$args);
 	}
 
 	/**
@@ -106,9 +117,9 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function hasAction(string $hook, $callback = false)
+	protected function hasAction(string $name, $callback = false)
 	{
-		return Hook::hasAction($hook, $callback);
+		return Hook::hasAction($name, $callback);
 	}
 
 	/**
@@ -117,9 +128,9 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addFilter(string $hook, $callback, int $priority = 10, int $args = 1)
+	protected function addFilter(string $name, $callback, int $priority = 10, int $args = 1)
 	{
-		Hook::addFilter($hook, $callback, $priority, $args);
+		Hook::addFilter($name, $callback, $priority, $args);
 	}
 
 	/**
@@ -128,9 +139,20 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removeFilter(string $hook, $callback, int $priority = 10) : bool
+	protected function removeFilter(string $name, $callback, int $priority = 10) : bool
 	{
-		return Hook::removeFilter($hook, $callback, $priority);
+		return Hook::removeFilter($name, $callback, $priority);
+	}
+
+	/**
+	 * Remove all filters.
+	 *
+	 * @access protected
+	 * @inheritdoc
+	 */
+	protected function removeFilters(string $name, $priority = false)
+	{
+		return Hook::removeFilters($name, $priority);
 	}
 
 	/**
@@ -139,9 +161,9 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function applyFilter(string $hook, $value, ...$args)
+	protected function applyFilter(string $name, $value, ...$args)
 	{
-		return Hook::applyFilter($hook, $value, ...$args);
+		return Hook::applyFilter($name, $value, ...$args);
 	}
 
 	/**
@@ -150,9 +172,9 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function hasFilter(string $hook, $callback = false)
+	protected function hasFilter(string $name, $callback = false)
 	{
-		return Hook::hasFilter($hook, $callback);
+		return Hook::hasFilter($name, $callback);
 	}
 
 	/**
