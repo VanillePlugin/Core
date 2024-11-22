@@ -79,111 +79,137 @@ final class Hook
 	 * Add hook action.
 	 *
 	 * @access public
-	 * @param string $hook
+	 * @param string $name
 	 * @param callable $callback
 	 * @param int $priority
 	 * @param int $args
 	 * @return void
 	 */
-	public static function addAction(string $hook, $callback, int $priority = 10, int $args = 1)
+	public static function addAction(string $name, $callback, int $priority = 10, int $args = 1)
 	{
-		add_action(Format::hook($hook), $callback, $priority, $args);
+		add_action(Format::hook($name), $callback, $priority, $args);
 	}
 
 	/**
 	 * Remove hook action.
 	 *
 	 * @access public
-	 * @param string $hook
+	 * @param string $name
 	 * @param callable $callback
 	 * @param int $priority
 	 * @return bool
 	 */
-	public static function removeAction(string $hook, $callback, int $priority = 10) : bool
+	public static function removeAction(string $name, $callback, int $priority = 10) : bool
 	{
-		return remove_action(Format::hook($hook), $callback, $priority);
+		return remove_action(Format::hook($name), $callback, $priority);
+	}
+
+	/**
+	 * Remove all actions.
+	 *
+	 * @access public
+	 * @param string $name
+	 * @param mixed $priority
+	 * @return bool
+	 */
+	public static function removeActions(string $name, $priority = false)
+	{
+		return remove_all_actions($name, $priority);
 	}
 
 	/**
 	 * Do hook action.
 	 *
 	 * @access public
-	 * @param string $hook
+	 * @param string $name
 	 * @param mixed $args
 	 * @return void
 	 */
-	public static function doAction(string $hook, ...$args)
+	public static function doAction(string $name, ...$args)
 	{
-		do_action(Format::hook($hook), ...$args);
+		do_action(Format::hook($name), ...$args);
 	}
 
 	/**
 	 * Check hook action.
 	 *
 	 * @access public
-	 * @param string $hook
+	 * @param string $name
 	 * @param mixed $callback
 	 * @return mixed
 	 */
-	public static function hasAction(string $hook, $callback = false)
+	public static function hasAction(string $name, $callback = false)
 	{
-		return has_action(Format::hook($hook), $callback);
+		return has_action(Format::hook($name), $callback);
 	}
 
 	/**
 	 * Add hook filter.
 	 *
 	 * @access public
-	 * @param string $hook
+	 * @param string $name
 	 * @param callable $callback
 	 * @param int $priority
 	 * @param int $args
 	 * @return void
 	 */
-	public static function addFilter(string $hook, $callback, int $priority = 10, int $args = 1)
+	public static function addFilter(string $name, $callback, int $priority = 10, int $args = 1)
 	{
-		add_filter(Format::hook($hook), $callback, $priority, $args);
+		add_filter(Format::hook($name), $callback, $priority, $args);
 	}
 
 	/**
 	 * Remove hook filter.
 	 *
 	 * @access public
-	 * @param string $hook
+	 * @param string $name
 	 * @param callable $callback
 	 * @param int $priority
 	 * @return bool
 	 */
-	public static function removeFilter(string $hook, $callback, int $priority = 10) : bool
+	public static function removeFilter(string $name, $callback, int $priority = 10) : bool
 	{
-		return remove_filter(Format::hook($hook), $callback, $priority);
+		return remove_filter(Format::hook($name), $callback, $priority);
+	}
+
+	/**
+	 * Remove all filters.
+	 *
+	 * @access public
+	 * @param string $name
+	 * @param mixed $priority
+	 * @return bool
+	 */
+	public static function removeFilters(string $name, $priority = false)
+	{
+		return remove_all_filters($name, $priority);
 	}
 
 	/**
 	 * Apply hook filter.
 	 *
 	 * @access public
-	 * @param string $hook
+	 * @param string $name
 	 * @param mixed $value
 	 * @param mixed $args
 	 * @return mixed
 	 */
-	public static function applyFilter(string $hook, $value, ...$args)
+	public static function applyFilter(string $name, $value, ...$args)
 	{
-		return apply_filters(Format::hook($hook), $value, ...$args);
+		return apply_filters(Format::hook($name), $value, ...$args);
 	}
 
 	/**
 	 * Check hook filter.
 	 *
 	 * @access public
-	 * @param string $hook
+	 * @param string $name
 	 * @param mixed $callback
 	 * @return mixed
 	 */
-	public static function hasFilter(string $hook, $callback = false)
+	public static function hasFilter(string $name, $callback = false)
 	{
-		return has_filter(Format::hook($hook), $callback);
+		return has_filter(Format::hook($name), $callback);
 	}
 
 	/**
