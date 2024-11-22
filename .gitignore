@@ -1,6 +1,5 @@
 composer.phar
 /vendor/
 .vscode
-*.lock
 *.bak.*
 *.zip

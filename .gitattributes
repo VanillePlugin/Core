@@ -8,12 +8,10 @@
 .gitignore export-ignore
 .gitattributes export-ignore
 LICENSE export-ignore
-README.md export-ignore
-CODE-OF-CONDUCT.md export-ignore
-CONTRIBUTING.md export-ignore
-SECURITY.md export-ignore
+*.md export-ignore
+*.png export-ignore
+*.xml export-ignore
 _config.yml export-ignore
-logo.png export-ignore
 # Linguist
 *.bat linguist-detectable=false
 *.cmd linguist-detectable=false
