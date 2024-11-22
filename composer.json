@@ -1,43 +1,43 @@
 {
-  "name":"jakiboy/vanilleplugin",
-  "version":"1.0.10",
-  "type":"library",
-  "description":"WordPress Plugin Framework",
-  "keywords":[
+  "name": "jakiboy/vanilleplugin",
+  "version": "1.0.11",
+  "type": "library",
+  "description": "WordPress Plugin Framework",
+  "keywords": [
     "VanillePlugin",
     "WordPress",
     "WordPress-Plugin",
     "WordPress-Plugin-Framework",
     "Boilerplate"
   ],
-  "homepage":"https://jakiboy.github.io/VanillePlugin/",
-  "license":"MIT",
-  "authors":[
+  "homepage": "https://jakiboy.github.io/VanillePlugin/",
+  "license": "MIT",
+  "authors": [
     {
-      "name":"Jihad Sinnaour",
-      "email":"mail@jihadsinnaour.com",
-      "role":"Founder"
+      "name": "Jihad Sinnaour",
+      "email": "mail@jihadsinnaour.com",
+      "role": "Founder"
     }
   ],
-  "require":{
-    "php":">=7.4",
-    "twig/twig":"^3.11.1",
-    "justinrainbow/json-schema":"5.2.13"
+  "require": {
+    "php": ">=8.2",
+    "twig/twig": "^3.14.2",
+    "justinrainbow/json-schema": "^6.0.0"
   },
-  "require-dev":{
-    "phpunit/phpunit":"^9.6.19"
+  "require-dev": {
+    "phpunit/phpunit": "^11.4.3"
   },
-  "scripts":{
-    "test":[
+  "scripts": {
+    "test": [
       "phpunit --bootstrap vendor/autoload.php tests"
     ]
   },
-  "autoload":{
-    "psr-4":{
-      "VanillePlugin\\":"src/"
+  "autoload": {
+    "psr-4": {
+      "VanillePlugin\\": "src/"
     }
   },
-  "suggest":{
-    "jakiboy/vanilleplugin-packager":"Composer Namespaces Prefixer for WordPress Plugins"
+  "suggest": {
+    "jakiboy/vanilleplugin-packager": "Composer Namespaces Prefixer for WordPress Plugins"
   }
 }
