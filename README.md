@@ -8,7 +8,7 @@ That simplify [WordPress Plugin API](https://developer.wordpress.org/plugins/), 
 ## ⚡ Installing:
 
 ```
-composer require jakiboy/vanilleplugin
+composer require vanilleplugin/core
 ```
 
 ---
