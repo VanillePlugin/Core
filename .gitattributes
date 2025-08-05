@@ -1,17 +1,15 @@
-# Text break
 * text=auto
 * text eol=lf
-# Archive ignore
 /.github export-ignore
+/.static export-ignore
 /tests export-ignore
 .gitignore export-ignore
 .gitattributes export-ignore
 LICENSE export-ignore
 *.md export-ignore
-*.png filter=lfs diff=lfs merge=lfs -text
 *.xml export-ignore
 _config.yml export-ignore
-# Linguist
+*.png filter=lfs diff=lfs merge=lfs -text
 *.bat linguist-detectable=false
 *.cmd linguist-detectable=false
 * !text !filter !merge !diff
