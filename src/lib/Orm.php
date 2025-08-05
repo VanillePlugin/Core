@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,7 +17,8 @@ namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\Db;
 use VanillePlugin\int\{
-	OrmInterface, OrmQueryInterface
+	OrmInterface,
+	OrmQueryInterface
 };
 
 /**
@@ -50,7 +52,7 @@ class Orm extends Db implements OrmInterface
 	{
 		parent::__construct();
 
-		if ( !$this->hasDebug() ) {
+		if (!$this->hasDebug()) {
 			$this->silent();
 		}
 	}
@@ -74,7 +76,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function noPrepare() : self
+	public function noPrepare(): self
 	{
 		$this->hasPrepare = false;
 		return $this;
@@ -83,7 +85,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function noType() : self
+	public function noType(): self
 	{
 		$this->hasType = false;
 		return $this;
@@ -92,7 +94,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setTable(string $table) : self
+	public function setTable(string $table): self
 	{
 		$this->table = $table;
 		return $this;
@@ -101,7 +103,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setKey(string $key) : self
+	public function setKey(string $key): self
 	{
 		$this->key = $key;
 		return $this;
@@ -122,7 +124,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function read($id = null, ?string $key = null, ?string $table = null) : array
+	public function read($id = null, ?string $key = null, ?string $table = null): array
 	{
 		$this->hasPrepare = true;
 
@@ -137,14 +139,14 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function update(array $data, array $where = [], ?string $table = null) : int
+	public function update(array $data, array $where = [], ?string $table = null): int
 	{
 		$data  = $this->sanitizeData($data);
 		$where = $this->sanitizeData($where);
 		$table = $this->getTable($table);
 		$key   = $this->getKey();
 
-		if ( isset($data[$key]) ) {
+		if (isset($data[$key])) {
 			unset($data[$key]);
 		}
 
@@ -159,12 +161,12 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function delete(array $where = [], ?string $table = null) : int
+	public function delete(array $where = [], ?string $table = null): int
 	{
 		$table = $this->getTable($table);
 		$types = $this->getTypes($where);
 
-		if ( empty($where) ) {
+		if (empty($where)) {
 			$key = $this->getKey();
 			$where[$key] = $this->key;
 		}
@@ -180,11 +182,11 @@ class Orm extends Db implements OrmInterface
 		$sql = $this->prepareQuery($sql, $data);
 		return $this->db->query($sql);
 	}
-	
+
 	/**
 	 * @inheritdoc
 	 */
-	public function getResult(string $sql, array $data = []) : array
+	public function getResult(string $sql, array $data = []): array
 	{
 		$sql = $this->prepareQuery($sql, $data);
 		return $this->db->get_results($sql, 'ARRAY_A');
@@ -202,7 +204,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function getRow(string $sql, array $data = [], $y = 0) : array
+	public function getRow(string $sql, array $data = [], $y = 0): array
 	{
 		$sql = $this->prepareQuery($sql, $data);
 		return (array)$this->db->get_row($sql, 'ARRAY_A', $y);
@@ -211,7 +213,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function getColumn(string $sql, array $data = [], int $x = 0) : array
+	public function getColumn(string $sql, array $data = [], int $x = 0): array
 	{
 		$sql = $this->prepareQuery($sql, $data);
 		return (array)$this->db->get_col($sql, $x);
@@ -257,11 +259,11 @@ class Orm extends Db implements OrmInterface
 		$sql = "SELECT SUM(`{$column}`) FROM `{$this->getTable($table)}`;";
 		return $this->getField($sql);
 	}
-	
+
 	/**
 	 * @inheritdoc
 	 */
-	public function all(?string $table = null) : array
+	public function all(?string $table = null): array
 	{
 		$sql = "SELECT * FROM `{$this->getTable($table)}`;";
 		return $this->getResult($sql);
@@ -270,7 +272,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function count(?string $table = null) : int
+	public function count(?string $table = null): int
 	{
 		$sql = "SELECT COUNT(*) FROM `{$this->getTable($table)}`;";
 		return (int)$this->getField($sql);
@@ -279,26 +281,26 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-    public function insertId() : int
-    {
-        return (int)$this->db->insert_id;
-    }
+	public function insertId(): int
+	{
+		return (int)$this->db->insert_id;
+	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function clear(?string $table = null, bool $reset = true) : int
+	public function clear(?string $table = null, bool $reset = true): int
 	{
 		$sql = "DELETE FROM `{$this->getTable($table)}`;";
 		$count = $this->execute($sql);
-		if ( $reset ) $this->resetId($table);
+		if ($reset) $this->resetId($table);
 		return $count;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function resetId(?string $table = null) : bool
+	public function resetId(?string $table = null): bool
 	{
 		$sql = "ALTER TABLE `{$this->getTable($table)}` AUTO_INCREMENT = 1;";
 		return (bool)$this->execute($sql);
@@ -307,15 +309,14 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function hasTable(bool $wildcard = false, ?string $table = null) : bool
+	public function hasTable(bool $wildcard = false, ?string $table = null): bool
 	{
-		if ( !$wildcard ) {
+		if (!$wildcard) {
 			$table = $this->getTable($table);
-
 		} else {
 			$table = "%{$this->prefix}$table%";
 		}
-		
+
 		$sql = "SHOW TABLES LIKE '{$table}';";
 		return (bool)$this->execute($sql);
 	}
@@ -323,7 +324,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function hasColumn(string $column, ?string $table = null) : bool
+	public function hasColumn(string $column, ?string $table = null): bool
 	{
 		$table = $this->getTable($table);
 		$sql = "SHOW COLUMNS FROM `{$table}` LIKE '{$column}';";
@@ -333,7 +334,7 @@ class Orm extends Db implements OrmInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function columns(?string $table = null) : array
+	public function columns(?string $table = null): array
 	{
 		$sql  = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS ";
 		$sql .= "WHERE TABLE_NAME = '{$this->getTable($table)}' ";
@@ -341,11 +342,11 @@ class Orm extends Db implements OrmInterface
 		$columns = $this->getColumn($sql);
 		return $this->uniqueArray($columns);
 	}
-	
+
 	/**
 	 * @inheritdoc
 	 */
-	public function tables() : array
+	public function tables(): array
 	{
 		return $this->getColumn('SHOW TABLES;');
 	}
@@ -357,32 +358,31 @@ class Orm extends Db implements OrmInterface
 	{
 		$builder->setTable($this->table);
 		$prefix = "{$this->prefix}{$this->getPrefix()}";
-		if ( ($query = $builder->getQuery($prefix)) ) {
+		if (($query = $builder->getQuery($prefix))) {
 
-			switch ( $builder->result ) {
+			switch ($builder->result) {
 				case 'any':
 					return $this->getResult($query);
 					break;
-				
+
 				case 'field':
 					return $builder->format(
 						$this->getField($query)
 					);
 					break;
-				
+
 				case 'row':
 					return $this->getRow($query);
 					break;
-				
+
 				case 'column':
 					return $this->getColumn($query);
 					break;
-				
+
 				default:
 					return $this->execute($query);
 					break;
 			}
-
 		}
 	}
 
@@ -393,13 +393,13 @@ class Orm extends Db implements OrmInterface
 	 * @param string $table
 	 * @return string
 	 */
-	protected function getTable(?string $table = null) : string
+	protected function getTable(?string $table = null): string
 	{
 		$temp = (string)$this->table;
-		if ( $table ) $temp = $table;
+		if ($table) $temp = $table;
 		return "{$this->prefix}{$this->applyPrefix($temp)}";
 	}
-	
+
 	/**
 	 * Get table key.
 	 * 
@@ -407,13 +407,13 @@ class Orm extends Db implements OrmInterface
 	 * @param string $key
 	 * @return string
 	 */
-	protected function getKey(?string $key = null) : string
+	protected function getKey(?string $key = null): string
 	{
 		$temp = (string)$this->key;
-		if ( $key ) $temp = $key;
+		if ($key) $temp = $key;
 		return $temp;
 	}
-	
+
 	/**
 	 * Get table Id.
 	 * 
@@ -424,7 +424,7 @@ class Orm extends Db implements OrmInterface
 	protected function getId($id = null)
 	{
 		$temp = $this->{$this->key};
-		if ( $id ) $temp = $id;
+		if ($id) $temp = $id;
 		return $temp;
 	}
 
@@ -436,23 +436,21 @@ class Orm extends Db implements OrmInterface
 	 * @param array $data
 	 * @return string
 	 */
-	protected function prepareQuery(string $sql, array $data) : string
+	protected function prepareQuery(string $sql, array $data): string
 	{
-		if ( $this->hasPrepare && $data ) {
+		if ($this->hasPrepare && $data) {
 			foreach ($data as $key => $value) {
-				if ( $this->isType('int', $value) ) {
+				if ($this->isType('int', $value)) {
 					$sql = $this->replaceString("{{{$key}}}", '%d', $sql);
-	
-				} elseif ( $this->isType('float', $value) ) {
+				} elseif ($this->isType('float', $value)) {
 					$sql = $this->replaceString("{{{$key}}}", '%f', $sql);
-	
 				} else {
 					$sql = $this->replaceString("{{{$key}}}", '%s', $sql);
 				}
 			}
-	
+
 			$prepare = $this->db->prepare($sql, $data);
-			if ( $prepare ) {
+			if ($prepare) {
 				$sql = $prepare;
 			}
 		}
@@ -469,15 +467,13 @@ class Orm extends Db implements OrmInterface
 	 */
 	protected function getTypes(array $data)
 	{
-		if ( $this->hasType && $data ) {
+		if ($this->hasType && $data) {
 			$types = [];
 			foreach ($data as $key => $value) {
-				if ( $this->isType('int', $value) ) {
+				if ($this->isType('int', $value)) {
 					$types[] = '%d';
-	
-				} elseif ( $this->isType('float', $value) ) {
+				} elseif ($this->isType('float', $value)) {
 					$types[] = '%f';
-					
 				} else {
 					$types[] = '%s';
 				}
@@ -494,10 +490,10 @@ class Orm extends Db implements OrmInterface
 	 * @param string $sql
 	 * @return string
 	 */
-	protected function formatQuery(string $sql) : string
+	protected function formatQuery(string $sql): string
 	{
 		$sql = $this->formatSpace($sql);
-		if ( substr($sql, -1) !== ';' ) {
+		if (substr($sql, -1) !== ';') {
 			$sql .= ';';
 		}
 		return $sql;
@@ -510,10 +506,10 @@ class Orm extends Db implements OrmInterface
 	 * @param array $data
 	 * @return array
 	 */
-	protected function sanitizeData(array $data) : array
+	protected function sanitizeData(array $data): array
 	{
 		foreach ($data as $key => $value) {
-			if ( !$this->isType('string', $key) ) {
+			if (!$this->isType('string', $key)) {
 				unset($data[$key]);
 			}
 		}

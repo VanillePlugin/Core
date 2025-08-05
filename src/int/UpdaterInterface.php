@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -38,29 +39,29 @@ interface UpdaterInterface
 	 * @param mixed $host
 	 * @return bool
 	 */
-	function setHost($host) : bool;
+	function setHost($host): bool;
 
 	/**
 	 * Get update status.
 	 *
 	 * @return bool
 	 */
-	function isUpdated() : bool;
+	function isUpdated(): bool;
 
 	/**
 	 * Set updated status.
 	 *
 	 * @return bool
 	 */
-	function setAsUpdated() : bool;
+	function setAsUpdated(): bool;
 
 	/**
 	 * Remove plugin updates.
 	 *
 	 * @return bool
 	 */
-	function remove() : bool;
-	
+	function remove(): bool;
+
 	/**
 	 * Get plugin info.
 	 * [Filter: plugins-api].
@@ -79,7 +80,7 @@ interface UpdaterInterface
 	 * @param mixed $transient
 	 * @return object
 	 */
-	function checkUpdate($transient) : object;
+	function checkUpdate($transient): object;
 
 	/**
 	 * Check plugin translation update.
@@ -88,8 +89,8 @@ interface UpdaterInterface
 	 * @param mixed $transient
 	 * @return object
 	 */
-	function checkTranslation($transient) : object;
-	
+	function checkTranslation($transient): object;
+
 	/**
 	 * Clear plugin update cache.
 	 * [Action: upgrade-complete].
@@ -108,13 +109,13 @@ interface UpdaterInterface
 	 * @param string $action
 	 * @return int
 	 */
-	function ttl($ttl, $action) : int;
-	
+	function ttl($ttl, $action): int;
+
 	/**
 	 * Get updater timeout.
 	 * [Filter: {plugin}-updater-timeout].
 	 *
 	 * @return int
 	 */
-	function timeout() : int;
+	function timeout(): int;
 }

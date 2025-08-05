@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -23,9 +24,9 @@ final class Localization
 	 * @param mixed $user
 	 * @return string
 	 */
-	public static function getLocale($user = null) : string
+	public static function getLocale($user = null): string
 	{
-		if ( $user ) {
+		if ($user) {
 			return get_user_locale($user);
 		}
 		return get_locale();
@@ -39,7 +40,7 @@ final class Localization
 	 * @param string $mo
 	 * @return bool
 	 */
-	public static function load(string $domain, string $mo) : bool
+	public static function load(string $domain, string $mo): bool
 	{
 		return load_textdomain($domain, $mo);
 	}
@@ -52,7 +53,7 @@ final class Localization
 	 * @param string $path
 	 * @return bool
 	 */
-	public static function loadPlugin(string $domain, ?string $path = null) : bool
+	public static function loadPlugin(string $domain, ?string $path = null): bool
 	{
 		return load_plugin_textdomain($domain, false, (string)$path);
 	}
@@ -65,7 +66,7 @@ final class Localization
 	 * @param string $path
 	 * @return bool
 	 */
-	public static function loadTheme(string $domain, ?string $path = null) : bool
+	public static function loadTheme(string $domain, ?string $path = null): bool
 	{
 		return load_theme_textdomain($domain, (string)$path);
 	}
@@ -78,7 +79,7 @@ final class Localization
 	 * @param string $path
 	 * @return bool
 	 */
-	public static function loadChild(string $domain, ?string $path = null) : bool
+	public static function loadChild(string $domain, ?string $path = null): bool
 	{
 		return load_child_theme_textdomain($domain, (string)$path);
 	}
@@ -91,7 +92,7 @@ final class Localization
 	 * @param string $locale
 	 * @return string
 	 */
-	public static function parse(string $domain, string $locale) : string
+	public static function parse(string $domain, string $locale): string
 	{
 		return sprintf('/%1$s-%2$s.mo', $domain, $locale);
 	}
@@ -103,11 +104,11 @@ final class Localization
 	 * @param string $locale
 	 * @return string
 	 */
-	public static function parseLang(string $locale) : string
+	public static function parseLang(string $locale): string
 	{
 		$locale = self::normalizeLocale($locale);
-		if ( Stringify::contains($locale, '-') ) {
-			if ( ($locale = explode('-', $locale)) ) {
+		if (Stringify::contains($locale, '-')) {
+			if (($locale = explode('-', $locale))) {
 				$locale = $locale[0] ?? '';
 			}
 		}
@@ -121,11 +122,11 @@ final class Localization
 	 * @param string $locale
 	 * @return string
 	 */
-	public static function parseRegion(string $locale) : string
+	public static function parseRegion(string $locale): string
 	{
 		$locale = self::normalizeLocale($locale);
-		if ( Stringify::contains($locale, '-') ) {
-			if ( ($locale = explode('-', $locale)) ) {
+		if (Stringify::contains($locale, '-')) {
+			if (($locale = explode('-', $locale))) {
 				$locale = $locale[1] ?? '';
 			}
 		}
@@ -139,7 +140,7 @@ final class Localization
 	 * @param string $locale
 	 * @return string
 	 */
-	public static function normalizeLocale(string $locale) : string
+	public static function normalizeLocale(string $locale): string
 	{
 		$locale = Stringify::slugify($locale);
 		return Stringify::replace('_', '-', $locale);

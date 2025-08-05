@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -27,7 +28,7 @@ trait TraitPermissionable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getRoles($id = null) : array
+	public function getRoles($id = null): array
 	{
 		return User::getRoles($id);
 	}
@@ -49,7 +50,7 @@ trait TraitPermissionable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function hasRole(string $role, $id = null) : bool
+	public function hasRole(string $role, $id = null): bool
 	{
 		return User::hasRole($role, $id);
 	}
@@ -60,7 +61,7 @@ trait TraitPermissionable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isAdministrator($id = null) : bool
+	public function isAdministrator($id = null): bool
 	{
 		return $this->hasRole('administrator', $id);
 	}
@@ -71,7 +72,7 @@ trait TraitPermissionable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getCaps($id = null) : array
+	public function getCaps($id = null): array
 	{
 		return User::getCaps($id);
 	}
@@ -82,7 +83,7 @@ trait TraitPermissionable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function hasCap(string $cap = 'edit-posts', $id = null, ...$args) : bool
+	public function hasCap(string $cap = 'edit-posts', $id = null, ...$args): bool
 	{
 		return User::hasCap($cap, $id, ...$args);
 	}
@@ -115,7 +116,7 @@ trait TraitPermissionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addCap(string $role, string $cap, bool $grant = true) : bool
+	protected function addCap(string $role, string $cap, bool $grant = true): bool
 	{
 		return User::addCap($role, $cap, $grant);
 	}
@@ -126,7 +127,7 @@ trait TraitPermissionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removeCap(string $role, string $cap) : bool
+	protected function removeCap(string $role, string $cap): bool
 	{
 		return User::removeCap($role, $cap);
 	}

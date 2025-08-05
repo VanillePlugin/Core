@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -27,7 +28,7 @@ trait TraitLoggable
      * @access protected
      * @inheritdoc
      */
-    protected function debug($message, bool $isArray = false) : bool
+    protected function debug($message, bool $isArray = false): bool
     {
         return (new Logger())->debug($message, $isArray);
     }
@@ -38,7 +39,7 @@ trait TraitLoggable
      * @access protected
      * @inheritdoc
      */
-    protected function error(string $message) : bool
+    protected function error(string $message): bool
     {
         return (new Logger())->error($message);
     }
@@ -49,7 +50,7 @@ trait TraitLoggable
      * @access protected
      * @inheritdoc
      */
-    protected function warning(string $message) : bool
+    protected function warning(string $message): bool
     {
         return (new Logger())->warning($message);
     }

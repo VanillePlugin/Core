@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,7 +16,10 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\{
-    HttpRequest, Server, Globals, Stringify
+	HttpRequest,
+	Server,
+	Globals,
+	Stringify
 };
 
 /**
@@ -34,17 +38,17 @@ class Mobile extends View
 	 * @var array PROTOCOL
 	 * @var array VIEWPORT
 	 */
-    public const ENDPOINT  = 'mobile';
-    public const USERAGENT = 'mobile-app';
-    public const EXCEPTION = [];
-    public const EXTERNAL  = [];
-    public const PROTOCOL  = [
+	public const ENDPOINT  = 'mobile';
+	public const USERAGENT = 'mobile-app';
+	public const EXCEPTION = [];
+	public const EXTERNAL  = [];
+	public const PROTOCOL  = [
 		'mailto',
 		'tel',
 		'sms',
 		'whatsapp'
 	];
-    public const VIEWPORT = [
+	public const VIEWPORT = [
 		'width=device-width',
 		'initial-scale=1',
 		'minimum-scale=1',
@@ -85,17 +89,17 @@ class Mobile extends View
 	 * @access public
 	 * @return bool
 	 */
-	public function isApp() : bool
+	public function isApp(): bool
 	{
-		if ( !$this->isAjax() && !$this->isApi() ) {
+		if (!$this->isAjax() && !$this->isApi()) {
 
 			$ua = $this->getServer('http-user-agent');
-			
-			if ( $this->hasDebug() ) {
+
+			if ($this->hasDebug()) {
 				$this->debug("User-Agent: {$ua}");
 				return $this->isMobile();
 			}
-			
+
 			return $this->hasString($ua, $this->ua);
 		}
 
@@ -109,10 +113,10 @@ class Mobile extends View
 	 * @param string $url
 	 * @return string
 	 */
-	public static function getUrl(?string $url = null) : string
+	public static function getUrl(?string $url = null): string
 	{
 		$base = Globals::url(static::ENDPOINT) . '/';
-		if ( $url ) {
+		if ($url) {
 			$base .= $url;
 		}
 		return $base;
@@ -124,7 +128,7 @@ class Mobile extends View
 	 * @access public
 	 * @return string
 	 */
-	public static function getViewport() : string
+	public static function getViewport(): string
 	{
 		return implode(', ', static::VIEWPORT);
 	}
@@ -135,10 +139,10 @@ class Mobile extends View
 	 * @access public
 	 * @return bool
 	 */
-	public static function isEndpoint() : bool
+	public static function isEndpoint(): bool
 	{
 		$request  = Server::get('request-uri');
-		$endpoint = '/'. static::ENDPOINT . '/';
+		$endpoint = '/' . static::ENDPOINT . '/';
 		return Stringify::contains($request, $endpoint);
 	}
 
@@ -148,11 +152,11 @@ class Mobile extends View
 	 * @access public
 	 * @return bool
 	 */
-	public static function isException() : bool
+	public static function isException(): bool
 	{
 		$request = Server::get('request-uri');
 		foreach (static::EXCEPTION as $exception) {
-			if ( Stringify::contains($request, $exception) ) {
+			if (Stringify::contains($request, $exception)) {
 				return true;
 			}
 		}
@@ -166,9 +170,9 @@ class Mobile extends View
 	 * @param string $page
 	 * @return bool
 	 */
-	public static function isPage(string $page) : bool
+	public static function isPage(string $page): bool
 	{
-		if ( static::isEndpoint() ) {
+		if (static::isEndpoint()) {
 			return static::getPage() == $page;
 		}
 		return false;
@@ -180,10 +184,10 @@ class Mobile extends View
 	 * @access public
 	 * @return string
 	 */
-	public static function getPage() : string
+	public static function getPage(): string
 	{
 		$page = HttpRequest::get('page');
-		if ( !$page ) $page = 'index';
+		if (!$page) $page = 'index';
 		return (string)$page;
 	}
 
@@ -193,10 +197,10 @@ class Mobile extends View
 	 * @access public
 	 * @return array
 	 */
-	public static function getData() : array
+	public static function getData(): array
 	{
 		$data = HttpRequest::get('data');
-		if ( !$data ) $data = [];
+		if (!$data) $data = [];
 		return (array)$data;
 	}
 
@@ -206,7 +210,7 @@ class Mobile extends View
 	 * @access protected
 	 * @return string
 	 */
-	protected function getHeader() : string
+	protected function getHeader(): string
 	{
 		header('Content-Type: text/html');
 		header('HTTP/1.1 200 OK');

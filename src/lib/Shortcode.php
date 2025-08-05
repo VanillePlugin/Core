@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,7 +16,8 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\{
-	TypeCheck, Shortcode as Core
+	TypeCheck,
+	Shortcode as Core
 };
 use VanillePlugin\int\CallableInterface;
 use VanillePlugin\int\ShortcodedInterface;
@@ -68,7 +70,7 @@ abstract class Shortcode extends View
 	 * @access public
 	 * @return string
 	 */
-	abstract public function generate() : string;
+	abstract public function generate(): string;
 
 	/**
 	 * Set attributes.
@@ -81,7 +83,7 @@ abstract class Shortcode extends View
 	protected function setAttributes(array $atts = [])
 	{
 		$this->atts = $this->formatAtts($atts);
-		if ( $this->applyPluginFilter('shortcode-global', false) ) {
+		if ($this->applyPluginFilter('shortcode-global', false)) {
 			$namespace = $this->undash($this->getNameSpace());
 			global ${$namespace};
 			${$namespace} = $this->atts;
@@ -124,7 +126,7 @@ abstract class Shortcode extends View
 	public function setContent(?string $content = null)
 	{
 		unset($this->content);
-		if ( $this->applyPluginFilter('shortcode-nested', false) ) {
+		if ($this->applyPluginFilter('shortcode-nested', false)) {
 			$content = $this->do($content);
 		}
 		$hook = 'shortcode-content';
@@ -144,7 +146,7 @@ abstract class Shortcode extends View
 	public static function instance(string $name, ?string $path = self::PATH, ...$args)
 	{
 		$class = (new Loader())->i($path, $name, ...$args);
-		if ( !TypeCheck::hasInterface($class, 'ShortcodedInterface') ) {
+		if (!TypeCheck::hasInterface($class, 'ShortcodedInterface')) {
 			throw new ShortcodeException(
 				ShortcodeException::invalidInstance()
 			);
@@ -183,7 +185,7 @@ abstract class Shortcode extends View
 	 * @access protected
 	 * @return string
 	 */
-	protected function getCurrentOutput() : string
+	protected function getCurrentOutput(): string
 	{
 		return (string)$this->output;
 	}
@@ -194,7 +196,7 @@ abstract class Shortcode extends View
 	 * @access protected
 	 * @return string
 	 */
-	protected function getOutput() : string
+	protected function getOutput(): string
 	{
 		$hook = 'shortcode-output';
 		return (string)$this->applyPluginFilter($hook, $this->output, $this->atts);
@@ -225,7 +227,7 @@ abstract class Shortcode extends View
 	protected function getKeyword()
 	{
 		$keyword = $this->atts[$this->name] ?? null;
-		if ( $keyword ) {
+		if ($keyword) {
 			$this->removeAttr($this->name);
 		}
 		return $keyword;
@@ -249,7 +251,7 @@ abstract class Shortcode extends View
 	 * @param ShortcodedInterface $instance
 	 * @return string
 	 */
-	protected function getInstanceName(ShortcodedInterface $instance) : string
+	protected function getInstanceName(ShortcodedInterface $instance): string
 	{
 		$class = new \ReflectionClass($instance);
 		$name  = $this->basename($class->getName());
@@ -349,7 +351,7 @@ abstract class Shortcode extends View
 	 * @access protected
 	 * @return array
 	 */
-	protected function getOutputAtts() : array
+	protected function getOutputAtts(): array
 	{
 		$hook = 'shortcode-atts';
 		return $this->uniqueMultiArray(
@@ -364,7 +366,7 @@ abstract class Shortcode extends View
 	 * @access protected
 	 * @return string
 	 */
-	protected function getTemplate() : string
+	protected function getTemplate(): string
 	{
 		$hook = 'shortcode-output-template';
 		$template = static::TEMPLATE;
@@ -377,7 +379,7 @@ abstract class Shortcode extends View
 	 *
 	 * @inheritdoc
 	 */
-	protected function getAttributes(array $default = [], array $atts = [], ?string $tag = null) : array
+	protected function getAttributes(array $default = [], array $atts = [], ?string $tag = null): array
 	{
 		return Core::getAtts($default, $atts, $tag);
 	}
@@ -387,7 +389,7 @@ abstract class Shortcode extends View
 	 *
 	 * @inheritdoc
 	 */
-	protected function getAtts(array $default = [], array $atts = [], ?string $tag = null) : array
+	protected function getAtts(array $default = [], array $atts = [], ?string $tag = null): array
 	{
 		return $this->getAttributes($default, $atts, $tag);
 	}
@@ -432,12 +434,12 @@ abstract class Shortcode extends View
 	 * @param array $atts
 	 * @return array
 	 */
-	protected function formatAttributes(array $atts) : array
+	protected function formatAttributes(array $atts): array
 	{
 		$attributes = [];
 		$atts = $this->formatKeyCase($atts);
 		foreach ($atts as $key => $value) {
-			if ( $this->isType('string', $key) ) {
+			if ($this->isType('string', $key)) {
 				$key = $this->formatAttrName($key);
 			}
 			$attributes[$key] = $value;
@@ -452,7 +454,7 @@ abstract class Shortcode extends View
 	 * @param array $atts
 	 * @return array
 	 */
-	protected function formatAtts(array $atts) : array
+	protected function formatAtts(array $atts): array
 	{
 		return $this->formatAttributes($atts);
 	}
@@ -464,7 +466,7 @@ abstract class Shortcode extends View
 	 * @param string $attr
 	 * @return string
 	 */
-	protected function formatAttrName(string $attr) : string
+	protected function formatAttrName(string $attr): string
 	{
 		return $this->undash(
 			$this->lowercase($attr)
@@ -485,18 +487,17 @@ abstract class Shortcode extends View
 		$hook  = 'shortcode-error';
 		$error = $this->applyPluginFilter($hook, $error, $this->atts);
 
-		if ( $error ) {
+		if ($error) {
 
 			$hook     = 'shortcode-template';
 			$template = static::TEMPLATE;
 			$template = "{$template}/error";
 			$template = $this->applyPluginFilter($hook, $template, 'error');
-	
+
 			return $this->assign($template, [
 				'error' => $error,
 				'atts'  => $this->getOutputAtts()
 			]);
-
 		}
 	}
 
@@ -505,7 +506,7 @@ abstract class Shortcode extends View
 	 *
 	 * @inheritdoc
 	 */
-	protected function do(string $content, bool $ignore = false) : string
+	protected function do(string $content, bool $ignore = false): string
 	{
 		return Core::do($content, $ignore);
 	}
@@ -518,12 +519,12 @@ abstract class Shortcode extends View
 	 * @param string $attr
 	 * @return bool
 	 */
-	protected function isEmpty(array $atts, string $attr) : bool
+	protected function isEmpty(array $atts, string $attr): bool
 	{
 		$attr = $this->formatAttrName($attr);
 		$atts = $this->formatAtts($atts);
-		if ( isset($atts[$attr]) ) {
-			if ( $atts[$attr] === '0' || $atts[$attr] === 0 ) {
+		if (isset($atts[$attr])) {
+			if ($atts[$attr] === '0' || $atts[$attr] === 0) {
 				return false;
 			}
 			return empty($atts[$attr]);
@@ -541,7 +542,7 @@ abstract class Shortcode extends View
 	 */
 	protected function formatSep(string $value, bool $strip = false)
 	{
-		if ( $strip ) {
+		if ($strip) {
 			$value = $this->stripSpace($value);
 		}
 		$value = $this->replaceString(';', ',', $value);
@@ -556,7 +557,7 @@ abstract class Shortcode extends View
 	 * @param array $atts
 	 * @return array
 	 */
-	protected function setAttsValues(array $atts) : array
+	protected function setAttsValues(array $atts): array
 	{
 		$values = [];
 		foreach ($atts as $key => $name) {
@@ -573,7 +574,7 @@ abstract class Shortcode extends View
 	 * @param string $attr
 	 * @return bool
 	 */
-	protected function hasAttribute(array $atts, string $attr) : bool
+	protected function hasAttribute(array $atts, string $attr): bool
 	{
 		$attr = $this->formatAttrName($attr);
 		$atts = $this->formatAtts($atts);
@@ -585,7 +586,7 @@ abstract class Shortcode extends View
 	 *
 	 * @inheritdoc
 	 */
-	protected function hasAttr(array $atts, string $attr) : bool
+	protected function hasAttr(array $atts, string $attr): bool
 	{
 		return $this->hasAttribute($atts, $attr);
 	}
@@ -598,12 +599,12 @@ abstract class Shortcode extends View
 	 * @param string $attr
 	 * @return bool
 	 */
-	protected function hasFlag(array $atts, string $attr) : bool
+	protected function hasFlag(array $atts, string $attr): bool
 	{
 		$flags = [];
 		$attr  = $this->formatAttrName($attr);
 		foreach ($atts as $key => $name) {
-			if ( $this->isType('int', $key) && $this->isType('string', $name) ) {
+			if ($this->isType('int', $key) && $this->isType('string', $name)) {
 				$flags[] = $this->formatAttrName($name);
 			}
 		}
@@ -623,7 +624,7 @@ abstract class Shortcode extends View
 	{
 		$attr = $this->formatAttrName($attr);
 		$atts = $this->formatAtts($atts);
-		if ( isset($atts[$attr]) ) {
+		if (isset($atts[$attr])) {
 			$value = $atts[$attr];
 
 			switch ($type) {
@@ -658,16 +659,16 @@ abstract class Shortcode extends View
 	 * @param mixed $value
 	 * @return bool
 	 */
-	protected function hasValue(array $atts, string $attr, $value) : bool
+	protected function hasValue(array $atts, string $attr, $value): bool
 	{
 		$attr = $this->formatAttrName($attr);
 		$atts = $this->formatAtts($atts);
-		if ( isset($atts[$attr]) ) {
+		if (isset($atts[$attr])) {
 			$val = $atts[$attr];
-			if ( $this->isType('string', $val) ) {
+			if ($this->isType('string', $val)) {
 				$val = $this->lowercase($val);
 			}
-			if ( $this->isType('string', $value) ) {
+			if ($this->isType('string', $value)) {
 				$value = $this->lowercase($value);
 			}
 			return ($val === $value);
@@ -683,11 +684,11 @@ abstract class Shortcode extends View
 	 * @param string $attr
 	 * @return bool
 	 */
-	protected function isDisabled(array $atts, string $attr) : bool
+	protected function isDisabled(array $atts, string $attr): bool
 	{
 		$attr = $this->formatAttrName($attr);
 		$atts = $this->formatAtts($atts);
-		if ( isset($atts[$attr]) ) {
+		if (isset($atts[$attr])) {
 			$value = $this->lowercase((string)$atts[$attr]);
 			return $this->hasString(['off', 'no', 'non', 'false'], $value);
 		}
@@ -702,11 +703,11 @@ abstract class Shortcode extends View
 	 * @param string $attr
 	 * @return bool
 	 */
-	protected function isEnabled(array $atts, string $attr) : bool
+	protected function isEnabled(array $atts, string $attr): bool
 	{
 		$attr = $this->formatAttrName($attr);
 		$atts = $this->formatAtts($atts);
-		if ( isset($atts[$attr]) ) {
+		if (isset($atts[$attr])) {
 			$value = $this->lowercase((string)$atts[$attr]);
 			return $this->hasString(['on', 'yes', 'oui', 'true'], $value);
 		}

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -58,18 +59,18 @@ trait VanillePluginConfig
 	/**
 	 * Prevent object clone.
 	 */
-    public function __clone()
-    {
-        die(__METHOD__ . ': Clone denied');
-    }
+	public function __clone()
+	{
+		die(__METHOD__ . ': Clone denied');
+	}
 
 	/**
 	 * Prevent object serialization.
 	 */
-    public function __wakeup()
-    {
-        die(__METHOD__ . ': Unserialize denied');
-    }
+	public function __wakeup()
+	{
+		die(__METHOD__ . ': Unserialize denied');
+	}
 
 	/**
 	 * Get static instance.
@@ -77,11 +78,11 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return object
 	 */
-	protected static function getStatic() : object
+	protected static function getStatic(): object
 	{
 		return new static;
 	}
-	
+
 	/**
 	 * Init plugin global config.
 	 *
@@ -90,29 +91,28 @@ trait VanillePluginConfig
 	 */
 	protected function initConfig()
 	{
-		if ( isset($this->global) ) {
+		if (isset($this->global)) {
 			return;
 		}
-		
+
 		// Override config
-		if ( defined('VanillePluginDepth') ) {
+		if (defined('VanillePluginDepth')) {
 			$this->depth = (int)constant('VanillePluginDepth');
 		}
-		if ( defined('VanillePluginConfigPath') ) {
+		if (defined('VanillePluginConfigPath')) {
 			$this->root = (string)constant('VanillePluginConfigPath');
 		}
-		if ( defined('VanillePluginCache') ) {
+		if (defined('VanillePluginCache')) {
 			$this->cacheable = (bool)constant('VanillePluginCache');
 		}
 
-		if ( $this->cacheable ) {
+		if ($this->cacheable) {
 
 			$key = $this->applyPrefix('global');
-			if ( !($this->global = $this->getTransient($key)) ) {
+			if (!($this->global = $this->getTransient($key))) {
 				$this->global = $this->parseConfig('global');
 				$this->setTransient($key, $this->global, 0);
 			}
-
 		} else {
 			$this->global = $this->parseConfig('global');
 		}
@@ -133,14 +133,14 @@ trait VanillePluginConfig
 			"{$this->root}/{$config}.json"
 		);
 
-		if ( !$this->isFile($file) ) {
-	        throw new ConfigException(
-	            ConfigException::invalidConfigFile($file)
-	        );
+		if (!$this->isFile($file)) {
+			throw new ConfigException(
+				ConfigException::invalidConfigFile($file)
+			);
 		}
 
 		$data = $this->parseJson($file);
-		if ( $validate ) {
+		if ($validate) {
 			VanillePluginValidator::validate($data, $config);
 		}
 
@@ -168,9 +168,8 @@ trait VanillePluginConfig
 	protected function getConfig(?string $key = null)
 	{
 		$this->initConfig();
-		if ( $key ) {
+		if ($key) {
 			$data = $this->global->{$key} ?? null;
-
 		} else {
 			$data = $this->global;
 		}
@@ -186,14 +185,14 @@ trait VanillePluginConfig
 	 * @param int $args
 	 * @return bool
 	 */
-	protected function updateConfig(array $options = [], int $args = 64|256) : bool
+	protected function updateConfig(array $options = [], int $args = 64 | 256): bool
 	{
-		if ( $this->getEnv() == 'dev' ) {
+		if ($this->getEnv() == 'dev') {
 			return false;
 		}
 
-		if ( $this->hasDebug() ) {
-			$args = 64|128|256;
+		if ($this->hasDebug()) {
+			$args = 64 | 128 | 256;
 		}
 
 		$file = $this->getRoot(
@@ -202,13 +201,13 @@ trait VanillePluginConfig
 		$data = $this->parseJson($file);
 
 		foreach ($options as $option => $value) {
-			if ( isset($data['options'][$option]) ) {
+			if (isset($data['options'][$option])) {
 				$data['options'][$option] = $value;
 			}
 		}
 
 		VanillePluginValidator::validate($data, 'global');
-		
+
 		$data = $this->formatJson($data, $args);
 		return $this->writeFile($file, $data);
 	}
@@ -221,18 +220,17 @@ trait VanillePluginConfig
 	 * @param bool $validate
 	 * @return array
 	 */
-	protected function loadConfig(string $config, bool $validate = true) : array
+	protected function loadConfig(string $config, bool $validate = true): array
 	{
 		$data = [];
 
-		if ( $this->cacheable ) {
+		if ($this->cacheable) {
 
 			$key = $this->applyPrefix($config);
-			if ( !($data = $this->getTransient($key)) ) {
+			if (!($data = $this->getTransient($key))) {
 				$data = $this->parseConfig($config, $validate);
 				$this->setTransient($key, $data, 0);
 			}
-
 		} else {
 			$data = $this->parseConfig($config, $validate);
 		}
@@ -247,13 +245,13 @@ trait VanillePluginConfig
 	 * @param string $sub
 	 * @return string
 	 */
-	protected function getRoot(?string $sub = null) : string
+	protected function getRoot(?string $sub = null): string
 	{
 		$path = __DIR__;
-		for ($i=0; $i < $this->depth; $i++) {
+		for ($i = 0; $i < $this->depth; $i++) {
 			$path = dirname($path);
 		}
-		if ( $sub ) {
+		if ($sub) {
 			$path .= "/{$sub}";
 		}
 		return $this->formatPath($path);
@@ -265,7 +263,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getNameSpace() : string
+	protected function getNameSpace(): string
 	{
 		return $this->slugify(
 			$this->basename($this->getRoot())
@@ -279,12 +277,12 @@ trait VanillePluginConfig
 	 * @param bool $sep, Separator
 	 * @return string
 	 */
-	protected function getPrefix(bool $sep = true) : string
+	protected function getPrefix(bool $sep = true): string
 	{
 		$prefix = $this->undash(
 			$this->getNameSpace()
 		);
-		if ( $sep ) {
+		if ($sep) {
 			$prefix = "{$prefix}_";
 		}
 		return $prefix;
@@ -296,7 +294,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getPluginName() : string
+	protected function getPluginName(): string
 	{
 		return $this->getConfig('name');
 	}
@@ -307,7 +305,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getPluginDescription() : string
+	protected function getPluginDescription(): string
 	{
 		return $this->getConfig('description');
 	}
@@ -318,7 +316,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getPluginAuthor() : string
+	protected function getPluginAuthor(): string
 	{
 		return $this->getConfig('author');
 	}
@@ -329,7 +327,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getPluginLink() : string
+	protected function getPluginLink(): string
 	{
 		return $this->getConfig('link');
 	}
@@ -340,7 +338,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getPluginVersion() : string
+	protected function getPluginVersion(): string
 	{
 		return $this->getConfig('version');
 	}
@@ -351,7 +349,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getAsset() : string
+	protected function getAsset(): string
 	{
 		$config = $this->getConfig('path');
 		$data = $config->asset ?? '/assets';
@@ -364,13 +362,13 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getAssetUrl() : string
+	protected function getAssetUrl(): string
 	{
 		$config = $this->getConfig('path');
 		$data = $config->asset ?? '/assets';
 		return "{$this->getBaseUrl()}{$data}";
 	}
-	
+
 	/**
 	 * Get static assets path.
 	 *
@@ -378,12 +376,12 @@ trait VanillePluginConfig
 	 * @param string $sub
 	 * @return string
 	 */
-	protected function getAssetPath(?string $sub = null) : string
+	protected function getAssetPath(?string $sub = null): string
 	{
 		$config = $this->getConfig('path');
 		$data = $config->asset ?? '/assets';
 		$path = $this->getRoot($data);
-		if ( $sub ) {
+		if ($sub) {
 			$path .= "/{$sub}";
 		}
 		return $this->formatPath($path);
@@ -396,12 +394,12 @@ trait VanillePluginConfig
 	 * @param string $sub
 	 * @return string
 	 */
-	protected function getMigratePath(?string $sub = null) : string
+	protected function getMigratePath(?string $sub = null): string
 	{
 		$config = $this->getConfig('path');
 		$data = $config->migrate ?? '/migrate';
 		$path = $this->getRoot($data);
-		if ( $sub ) {
+		if ($sub) {
 			$path .= "/{$sub}";
 		}
 		return $this->formatPath($path);
@@ -413,7 +411,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getCachePath() : string
+	protected function getCachePath(): string
 	{
 		$config = $this->getConfig('path');
 		$data = $config->cache ?? '/cache';
@@ -427,12 +425,12 @@ trait VanillePluginConfig
 	 * @param string $sub
 	 * @return string
 	 */
-	protected function getTempPath(?string $sub = null) : string
+	protected function getTempPath(?string $sub = null): string
 	{
 		$config = $this->getConfig('path');
 		$data = $config->temp ?? '/temp';
 		$path = $this->getRoot($data);
-		if ( $sub ) {
+		if ($sub) {
 			$path .= "/{$sub}";
 		}
 		return $this->formatPath($path);
@@ -444,10 +442,10 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return int
 	 */
-	protected function getExpireIn() : int
+	protected function getExpireIn(): int
 	{
 		$config = $this->getConfig('options');
-		return$config->ttl;
+		return $config->ttl;
 	}
 
 	/**
@@ -456,7 +454,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return int
 	 */
-	protected function getTimeout() : int
+	protected function getTimeout(): int
 	{
 		$config = $this->getConfig('options');
 		return $config->timeout;
@@ -468,19 +466,19 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getSecret() : string
+	protected function getSecret(): string
 	{
 		$config = $this->getConfig('options');
 		return $config->secret;
 	}
-	
+
 	/**
 	 * Get static view path.
 	 *
 	 * @access protected
 	 * @return string
 	 */
-	protected function getViewPath() : string
+	protected function getViewPath(): string
 	{
 		$config = $this->getConfig('path');
 		$data = $config->view ?? '/view';
@@ -493,7 +491,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getLoggerPath() : string
+	protected function getLoggerPath(): string
 	{
 		$config = $this->getConfig('path');
 		$data = $config->logs ?? '/logs';
@@ -506,7 +504,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getViewExtension() : string
+	protected function getViewExtension(): string
 	{
 		$config = $this->getConfig('options');
 		return $config->view->extension;
@@ -518,7 +516,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getPluginRoles() : array
+	protected function getPluginRoles(): array
 	{
 		$config = $this->getConfig('options');
 		return $config->roles;
@@ -530,7 +528,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return bool
 	 */
-	protected function isMultilingual() : bool
+	protected function isMultilingual(): bool
 	{
 		$config = $this->getConfig('options');
 		return $config->multiling;
@@ -542,7 +540,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return bool
 	 */
-	protected function allowedMultisite() : bool
+	protected function allowedMultisite(): bool
 	{
 		$config = $this->getConfig('options');
 		return $config->multisite;
@@ -554,7 +552,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return bool
 	 */
-	protected function hasDebug() : bool
+	protected function hasDebug(): bool
 	{
 		$config = $this->getConfig('options');
 		return $config->debug;
@@ -566,7 +564,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getEnv() : string
+	protected function getEnv(): string
 	{
 		$config = $this->getConfig('options');
 		return $config->environment;
@@ -578,22 +576,22 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getHost() : string
+	protected function getHost(): string
 	{
 		$config = $this->getConfig('options');
-		if ( !($data = $config->remote->host) ) {
+		if (!($data = $config->remote->host)) {
 			$data = $this->getRemoteServer('host');
 		}
 		return $data;
 	}
-	
+
 	/**
 	 * Get main filename.
 	 *
 	 * @access protected
 	 * @return string
 	 */
-	protected function getMainFile() : string
+	protected function getMainFile(): string
 	{
 		$namespace = $this->getNameSpace();
 		return "{$namespace}/{$namespace}.php";
@@ -605,7 +603,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getMainFilePath() : string
+	protected function getMainFilePath(): string
 	{
 		return $this->getRoot(
 			"{$this->getNameSpace()}.php"
@@ -618,7 +616,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getBaseUrl() : string
+	protected function getBaseUrl(): string
 	{
 		return $this->getPluginUrl(
 			"{$this->getNameSpace()}"
@@ -632,7 +630,7 @@ trait VanillePluginConfig
 	 * @param string $type
 	 * @return array
 	 */
-	protected function getAjax(?string $type = null) : array
+	protected function getAjax(?string $type = null): array
 	{
 		$this->initConfig();
 		$data = $this->loadConfig('ajax');
@@ -646,7 +644,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getAdminAjax() : array
+	protected function getAdminAjax(): array
 	{
 		return $this->getAjax('admin');
 	}
@@ -657,7 +655,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getFrontAjax() : array
+	protected function getFrontAjax(): array
 	{
 		return $this->getAjax('front');
 	}
@@ -669,7 +667,7 @@ trait VanillePluginConfig
 	 * @param string $type
 	 * @return array
 	 */
-	protected function getCron(?string $type = null) : array
+	protected function getCron(?string $type = null): array
 	{
 		$this->initConfig();
 		$data = $this->loadConfig('cron');
@@ -683,7 +681,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getEvents() : array
+	protected function getEvents(): array
 	{
 		return $this->getCron('events');
 	}
@@ -694,7 +692,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getSchedules() : array
+	protected function getSchedules(): array
 	{
 		$data = [];
 		foreach ($this->getCron('schedules') as $schedule) {
@@ -711,7 +709,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getRoutes() : array
+	protected function getRoutes(): array
 	{
 		$this->initConfig();
 		$data = $this->loadConfig('routes');
@@ -725,7 +723,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getRequirements() : array
+	protected function getRequirements(): array
 	{
 		$this->initConfig();
 		$data = $this->loadConfig('requirements');
@@ -739,7 +737,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getInputs() : array
+	protected function getInputs(): array
 	{
 		$this->initConfig();
 		$data = $this->loadConfig('inputs');
@@ -753,12 +751,12 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getHooks() : array
+	protected function getHooks(): array
 	{
 		$data = [];
 		foreach ($this->getInputs() as $key => $value) {
 			$active = $value['hook'] ?? false;
-			if ( $active === true ) {
+			if ($active === true) {
 				$data[] = $key;
 			}
 		}
@@ -771,7 +769,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getSettings() : array
+	protected function getSettings(): array
 	{
 		$this->initConfig();
 		$data = $this->loadConfig('settings');
@@ -785,7 +783,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getGroupSettings() : array
+	protected function getGroupSettings(): array
 	{
 		$data = [];
 		foreach ($this->getSettings() as $option) {
@@ -804,7 +802,7 @@ trait VanillePluginConfig
 	 * @param string $type
 	 * @return array
 	 */
-	protected function getAssets(?string $type = null) : array
+	protected function getAssets(?string $type = null): array
 	{
 		$this->initConfig();
 		$data = $this->loadConfig('assets');
@@ -818,7 +816,7 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getRemoteAssets() : array
+	protected function getRemoteAssets(): array
 	{
 		$data = [];
 		foreach ($this->getAssets('remote') as $asset) {
@@ -834,7 +832,7 @@ trait VanillePluginConfig
 	 * @param string $type
 	 * @return array
 	 */
-	protected function getLocalAssets(?string $type = null) : array
+	protected function getLocalAssets(?string $type = null): array
 	{
 		$data = $this->getAssets('local');
 		return ($type) ? $data[$type] : $data;
@@ -848,11 +846,11 @@ trait VanillePluginConfig
 	 * @param string $env
 	 * @return array
 	 */
-	protected function getAdminAssets(string $type, string $env = 'main') : array
+	protected function getAdminAssets(string $type, string $env = 'main'): array
 	{
 		$data = $this->getLocalAssets('admin');
-		$data = $this->map(function($item) use ($type, $env) {
-			if ( $item['type'] === $type && $item['env'] === $env ) {
+		$data = $this->map(function ($item) use ($type, $env) {
+			if ($item['type'] === $type && $item['env'] === $env) {
 				return $item['path'];
 			}
 		}, $data);
@@ -866,11 +864,11 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return array
 	 */
-	protected function getFrontAssets(string $type, string $env = 'main') : array
+	protected function getFrontAssets(string $type, string $env = 'main'): array
 	{
 		$data = $this->getLocalAssets('front');
-		$data = $this->map(function($item) use ($type, $env) {
-			if ( $item['type'] === $type && $item['env'] === $env ) {
+		$data = $this->map(function ($item) use ($type, $env) {
+			if ($item['type'] === $type && $item['env'] === $env) {
 				return $item['path'];
 			}
 		}, $data);
@@ -885,7 +883,7 @@ trait VanillePluginConfig
 	 * @param string $type
 	 * @return array
 	 */
-	protected function getStrings(?string $type = null) : array
+	protected function getStrings(?string $type = null): array
 	{
 		$this->initConfig();
 		$data = $this->loadConfig('strings');
@@ -916,7 +914,7 @@ trait VanillePluginConfig
 	 * @param string $sep
 	 * @return string
 	 */
-	protected function applyNamespace(string $key, string $sep = '-') : string
+	protected function applyNamespace(string $key, string $sep = '-'): string
 	{
 		return "{$this->getNameSpace()}{$sep}{$key}";
 	}
@@ -929,7 +927,7 @@ trait VanillePluginConfig
 	 * @param bool $sep, Separator
 	 * @return string
 	 */
-	protected function applyPrefix(string $key, bool $sep = true) : string
+	protected function applyPrefix(string $key, bool $sep = true): string
 	{
 		$key = $this->undash($key);
 		return "{$this->getPrefix($sep)}{$key}";
@@ -943,10 +941,10 @@ trait VanillePluginConfig
 	 * @param bool $sep, Separator
 	 * @return string
 	 */
-	protected function applySufix(string $key, bool $sep = true) : string
+	protected function applySufix(string $key, bool $sep = true): string
 	{
 		$key = $this->undash($key);
-		if ( $sep ) {
+		if ($sep) {
 			$key = "{$key}_";
 		}
 		return "{$key}{$this->getPrefix(false)}";
@@ -959,7 +957,7 @@ trait VanillePluginConfig
 	 * @param string $path
 	 * @return string
 	 */
-	protected function applyAsset(string $path) : string
+	protected function applyAsset(string $path): string
 	{
 		return "{$this->getAsset()}{$path}";
 	}
@@ -970,7 +968,7 @@ trait VanillePluginConfig
 	 * @access public
 	 * @return bool
 	 */
-	public function hasMultilingual() : bool
+	public function hasMultilingual(): bool
 	{
 		return ($this->isMultilingual() && $this->hasTranslator());
 	}
@@ -981,18 +979,18 @@ trait VanillePluginConfig
 	 * @access protected
 	 * @return string
 	 */
-	protected function getLang() : string
+	protected function getLang(): string
 	{
 		// Get from system
 		$lang = $default = $this->getLocale();
 
 		// Get from third-party
-		if ( $this->hasMultilingual() ) {
+		if ($this->hasMultilingual()) {
 			$lang = $this->getTranslatorLocale();
 		}
 
 		// Get from default
-		if ( !$lang ) {
+		if (!$lang) {
 			$lang = $default;
 		}
 

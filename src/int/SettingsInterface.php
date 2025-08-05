@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -23,7 +24,7 @@ interface SettingsInterface
 	 * Template usage: {{ settingsFields('group') }}.
 	 * Template usage: {{ settingsSections('group') }}.
 	 * Template usage: {{ getOption('name') }}.
-     *
+	 *
 	 * @return void
 	 */
 	function init();
@@ -35,11 +36,11 @@ interface SettingsInterface
 	 */
 	function define();
 
-    /**
-     * Remove plugin settings.
-     * [Action: uninstall-{plugin}].
-     *
-     * @return void
-     */
-    static function remove();
+	/**
+	 * Remove plugin settings.
+	 * [Action: uninstall-{plugin}].
+	 *
+	 * @return void
+	 */
+	static function remove();
 }

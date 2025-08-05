@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -21,7 +22,7 @@ use VanillePlugin\int\UpdaterInterface;
  */
 class Updater extends API implements UpdaterInterface
 {
-    use \VanillePlugin\VanillePluginOption;
+	use \VanillePlugin\VanillePluginOption;
 
 	/**
 	 * @access protected
@@ -50,7 +51,7 @@ class Updater extends API implements UpdaterInterface
 	 */
 	public function __construct(array $auth = [], array $urls = [])
 	{
-		if ( $this->setHost($this->getHost()) ) {
+		if ($this->setHost($this->getHost())) {
 
 			// Set auth
 			$remote = $this->getRemoteServer();
@@ -77,8 +78,8 @@ class Updater extends API implements UpdaterInterface
 			$this->file    = $this->getMainFile();
 			$this->plugin  = $this->getPluginHeader($this->file);
 			$this->version = $this->plugin['Version'] ?? false;
-	
-			if ( !$this->version ) {
+
+			if (!$this->version) {
 				$this->version = $this->getPluginVersion() ?: 'na';
 			}
 		}
@@ -89,30 +90,29 @@ class Updater extends API implements UpdaterInterface
 	 */
 	public function listen()
 	{
-		if ( $this->host ) {
+		if ($this->host) {
 
 			// Set updater TTL
 			$this->addPluginFilter('updater-ttl', [$this, 'ttl'], 10, 2);
-		
+
 			// Get plugin info
 			$this->addFilter('plugins-api', [$this, 'getInfo'], 10, 3);
-		
+
 			// Check plugin update
 			$this->addFilter('update-plugins', [$this, 'checkUpdate']);
-		
+
 			// Check plugin translation
 			$this->addFilter('update-plugins', [$this, 'checkTranslation']);
-		
+
 			// Clear plugin update cache
 			$this->addAction('upgrade-complete', [$this, 'clearCache'], 10, 2);
-
 		}
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function setHost($host) : bool
+	public function setHost($host): bool
 	{
 		$this->host = $this->untrailingSlash((string)$host);
 		return ($this->host) ? true : false;
@@ -121,7 +121,7 @@ class Updater extends API implements UpdaterInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function isUpdated() : bool
+	public function isUpdated(): bool
 	{
 		return (bool)$this->getPluginTransient('updated');
 	}
@@ -129,7 +129,7 @@ class Updater extends API implements UpdaterInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setAsUpdated() : bool
+	public function setAsUpdated(): bool
 	{
 		return (bool)$this->setPluginTransient('updated', 1);
 	}
@@ -137,7 +137,7 @@ class Updater extends API implements UpdaterInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function remove() : bool
+	public function remove(): bool
 	{
 		$transient = new \stdClass();
 		return $this->setSiteTransient('update-plugins', $transient, 0);
@@ -149,15 +149,15 @@ class Updater extends API implements UpdaterInterface
 	public function getInfo($transient, $action, $args)
 	{
 		// Check action
-		if ( $action !== 'plugin_information' ) {
+		if ($action !== 'plugin_information') {
 			return false;
 		}
 
 		// Check plugin
-		if ( $args->slug === $this->slug ) {
+		if ($args->slug === $this->slug) {
 
 			// Check info URL
-			if ( !$this->urls['info'] ) {
+			if (!$this->urls['info']) {
 				return $transient;
 			}
 
@@ -165,9 +165,8 @@ class Updater extends API implements UpdaterInterface
 			$info = $this->fetch('info');
 
 			// Update transient
-			if ( $this->isValid('info', $info) ) {
+			if ($this->isValid('info', $info)) {
 				$transient = $info;
-
 			} else {
 				$transient = $this->getDefault('info');
 			}
@@ -179,10 +178,10 @@ class Updater extends API implements UpdaterInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function checkUpdate($transient) : object
+	public function checkUpdate($transient): object
 	{
 		// Fix transient
-		if ( !$this->isType('object', $transient) ) {
+		if (!$this->isType('object', $transient)) {
 			$transient = new \stdClass();
 		}
 
@@ -190,11 +189,10 @@ class Updater extends API implements UpdaterInterface
 		$update = $this->fetch('update');
 
 		// Update transient
-		if ( $this->isValid('update', $update) ) {
+		if ($this->isValid('update', $update)) {
 			$transient->response[$this->file] = $update;
-
 		} else {
-	        $transient->no_update[$this->file] = $this->getDefault('update');
+			$transient->no_update[$this->file] = $this->getDefault('update');
 		}
 
 		// Check transient
@@ -207,15 +205,15 @@ class Updater extends API implements UpdaterInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function checkTranslation($transient) : object
+	public function checkTranslation($transient): object
 	{
 		// Fix transient
-		if ( !$this->isType('object', $transient) ) {
+		if (!$this->isType('object', $transient)) {
 			$transient = new \stdClass();
 		}
 
 		// Check translation URL
-		if ( !$this->urls['translate'] ) {
+		if (!$this->urls['translate']) {
 			return $transient;
 		}
 
@@ -223,17 +221,17 @@ class Updater extends API implements UpdaterInterface
 		$update = $this->fetch('translate');
 
 		// Update transient
-		if ( $this->isValid('translation', $update) ) {
+		if ($this->isValid('translation', $update)) {
 
 			// Fix translation transient
-			if ( !isset($transient->translations) ) {
+			if (!isset($transient->translations)) {
 				$transient = new \stdClass();
 				$transient->translations = [];
 			}
 
 			// Remove oldest translations
 			foreach ($transient->translations as $key => $translation) {
-				if ( $translation['slug'] == $this->slug ) {
+				if ($translation['slug'] == $this->slug) {
 					unset($transient->translations[$key]);
 					break;
 				}
@@ -253,28 +251,27 @@ class Updater extends API implements UpdaterInterface
 	 */
 	public function clearCache($upgrader, $options)
 	{
-	    if ( $options['action'] == 'update' && $options['type'] == 'plugin' ) {
-	    	if ( isset($options['plugins']) ) {
-		        foreach ($options['plugins'] as $plugin) {
-			        if ( $plugin == $this->file ) {
+		if ($options['action'] == 'update' && $options['type'] == 'plugin') {
+			if (isset($options['plugins'])) {
+				foreach ($options['plugins'] as $plugin) {
+					if ($plugin == $this->file) {
 						$this->removePluginTransients();
 						$this->purgePluginCache();
 						break;
-			        }
-		        }
-	    	}
-	    }
+					}
+				}
+			}
+		}
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function ttl($ttl, $action) : int
+	public function ttl($ttl, $action): int
 	{
-		if ( $action == 'info' ) {
+		if ($action == 'info') {
 			$ttl = 0;
-
-		} elseif ( $action == 'translate' ) {
+		} elseif ($action == 'translate') {
 			$ttl = ($ttl + 300);
 		}
 		return abs($ttl);
@@ -283,7 +280,7 @@ class Updater extends API implements UpdaterInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function timeout() : int
+	public function timeout(): int
 	{
 		$timeout = parent::timeout();
 		return $this->applyPluginFilter('updater-timeout', $timeout);
@@ -303,7 +300,7 @@ class Updater extends API implements UpdaterInterface
 		$response = $this->getPluginTransient($key);
 		$response = false; // TODO
 
-		if ( !$response ) {
+		if (!$response) {
 
 			parent::__construct(self::GET, [
 				'timeout' => $this->timeout()
@@ -313,17 +310,16 @@ class Updater extends API implements UpdaterInterface
 			$this->setBody(
 				$this->generateBody($action)
 			);
-			
+
 			$url = $this->urls[$action] ?? 'update';
 			$response = $this->send($url)->response();
 
-			if ( $this->isType('string', $response) ) {
+			if ($this->isType('string', $response)) {
 				$response = $this->unserialize($response);
 			}
 
 			$ttl = $this->applyPluginFilter('updater-ttl', 1800, $action);
 			$this->setPluginTransient($key, $response, $ttl);
-
 		}
 
 		return $response;
@@ -336,40 +332,38 @@ class Updater extends API implements UpdaterInterface
 	 * @param string $action
 	 * @return object
 	 */
-	protected function getDefault(string $action) : object
+	protected function getDefault(string $action): object
 	{
 		$transient = new \stdClass();
 		$transient->name = $this->plugin['Name'];
 		$transient->slug = $this->slug;
 
-		if ( $action == 'update' ) {
+		if ($action == 'update') {
 			$transient->id            = $this->slug;
 			$transient->plugin        = $this->file;
 			$transient->new_version   = $this->version;
 			$transient->compatibility = new \stdClass();
+		} elseif ($action == 'info') {
 
-		} elseif ( $action == 'info' ) {
-			
 			$transient->homepage = $this->plugin['PluginURI'];
 			$transient->author   = $this->plugin['AuthorName'];
 			$transient->requires = $this->plugin['RequiresWP'];
 			$transient->tested   = $this->wp;
-		    $transient->sections = [
+			$transient->sections = [
 				'description' => $this->plugin['Description']
-		    ];
-		    
-			if ( ($url = $this->urls['public']) ) {
+			];
+
+			if (($url = $this->urls['public'])) {
 
 				$url = $this->untrailingSlash((string)$url);
-				if ( !$this->isType('url', $url) ) {
+				if (!$this->isType('url', $url)) {
 					$url = "{$this->host}/{$url}";
 				}
-				
+
 				$transient->banners = [
 					'low'  => "{$url}/banner/{$this->slug}-772x250.png",
 					'high' => "{$url}/banner/{$this->slug}-1544x500.png}"
-			    ];
-
+				];
 			}
 		}
 
@@ -383,7 +377,7 @@ class Updater extends API implements UpdaterInterface
 	 * @param string $action
 	 * @return array
 	 */
-	protected function generateBody(string $action) : array
+	protected function generateBody(string $action): array
 	{
 		$data = $this->serialize([
 			'slug'    => $this->slug,
@@ -408,17 +402,16 @@ class Updater extends API implements UpdaterInterface
 	 * @param mixed $response
 	 * @return bool
 	 */
-	protected function isValid(string $action, $response) : bool
+	protected function isValid(string $action, $response): bool
 	{
-		if ( $action == 'update' || $action == 'info' ) {
-			if ( $this->isType('object', $response) && isset($response->plugin) ) {
-				if ( $response->plugin == $this->file ) {
+		if ($action == 'update' || $action == 'info') {
+			if ($this->isType('object', $response) && isset($response->plugin)) {
+				if ($response->plugin == $this->file) {
 					return true;
 				}
 			}
-
-		} elseif ( $action == 'translation' ) {
-			if ( $this->isType('object', $response) && isset($response->translations) ) {
+		} elseif ($action == 'translation') {
+			if ($this->isType('object', $response) && isset($response->translations)) {
 				return true;
 			}
 		}

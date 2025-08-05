@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -27,7 +28,7 @@ final class Image extends File
 	public static function importUrl(string $url, bool $override = true)
 	{
 		// Check valid image
-		if ( !($name = self::isValidMime($url)) ) {
+		if (!($name = self::isValidMime($url))) {
 			return false;
 		}
 
@@ -38,17 +39,16 @@ final class Image extends File
 		$path = "{$dir['path']}/{$name}"; // Keep non formatted path
 
 		// Get existing image from gallery by filename (Title)
-		if ( ($id = Attachment::getIdByTitle(self::getName($path))) ) {
+		if (($id = Attachment::getIdByTitle(self::getName($path)))) {
 
-		    return [
-		    	'id'  => $id,
-		    	'url' => Attachment::getUrlById($id)
-		    ];
-
+			return [
+				'id'  => $id,
+				'url' => Attachment::getUrlById($id)
+			];
 		} else {
 
 			// Duplicate image
-			if ( !$override && self::exists($path) ) {
+			if (!$override && self::exists($path)) {
 				$ext  = $data['ext'];
 				$tmp  = self::getName($name);
 				$id   = Tokenizer::getUniqueId();
@@ -57,7 +57,7 @@ final class Image extends File
 			}
 
 			// Import image
-			if ( !self::import($url, $path) ) {
+			if (!self::import($url, $path)) {
 				return false;
 			}
 
@@ -79,11 +79,11 @@ final class Image extends File
 	public static function upload(array $args = [])
 	{
 		// Get file from global
-		$file = Upload::isSetted('file') 
-		? (array)Upload::get('file') : [];
+		$file = Upload::isSetted('file')
+			? (array)Upload::get('file') : [];
 
 		// Check valid image mime
-		if ( !self::isValidMime($file['name']) ) {
+		if (!self::isValidMime($file['name'])) {
 			return false;
 		}
 
@@ -101,7 +101,7 @@ final class Image extends File
 	 * @param string $file
 	 * @return bool
 	 */
-	public static function isValidMime(string $file) : bool
+	public static function isValidMime(string $file): bool
 	{
 		return Validator::isValidMime($file, [
 			'jpg'  => 'image/jpeg',

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -14,7 +15,7 @@ declare(strict_types=1);
 
 namespace VanillePlugin\inc;
 
-if ( !TypeCheck::isFunction('\WP_List_Table') ) {
+if (!TypeCheck::isFunction('\WP_List_Table')) {
 	require_once Globals::rootDir('wp-admin/includes/class-wp-list-table.php');
 }
 
@@ -56,7 +57,7 @@ class Table extends Core
 
 		$this->limit = $args['limit'];
 
-		if ( $args['type'] ) {
+		if ($args['type']) {
 			$this->type = $args['type'];
 			$conf = [
 				'singular' => "{$args['type']}",
@@ -75,7 +76,7 @@ class Table extends Core
 	 * @param array $columns
 	 * @return object
 	 */
-	public function setData(array $data = [], array $columns = []) : self
+	public function setData(array $data = [], array $columns = []): self
 	{
 		$this->data = $data;
 		$this->columns = $columns;
@@ -89,7 +90,7 @@ class Table extends Core
 	 * @param array $hidden
 	 * @return object
 	 */
-	public function hide(array $hidden = []) : self
+	public function hide(array $hidden = []): self
 	{
 		$this->hidden = $hidden;
 		return $this;
@@ -102,7 +103,7 @@ class Table extends Core
 	 * @param array $sortable
 	 * @return object
 	 */
-	public function sort(array $sortable = []) : self
+	public function sort(array $sortable = []): self
 	{
 		$this->sortable = $sortable;
 		return $this;
@@ -114,7 +115,7 @@ class Table extends Core
 	 * @access public
 	 * @return object
 	 */
-	public function noPagination() : self
+	public function noPagination(): self
 	{
 		$this->pagination = false;
 		return $this;
@@ -131,7 +132,7 @@ class Table extends Core
 	{
 		$this->openForm();
 		$this->prepare_items();
-		if ( $search ) {
+		if ($search) {
 			$this->search_box('Search', $this->id);
 		}
 		$this->display();
@@ -141,7 +142,7 @@ class Table extends Core
 	/**
 	 * @inheritdoc
 	 */
-	public function get_columns() : array
+	public function get_columns(): array
 	{
 		return $this->columns;
 	}
@@ -149,7 +150,7 @@ class Table extends Core
 	/**
 	 * @inheritdoc
 	 */
-	public function getColumns() : array
+	public function getColumns(): array
 	{
 		return $this->get_columns();
 	}
@@ -157,10 +158,10 @@ class Table extends Core
 	/**
 	 * @inheritdoc
 	 */
-	public function get_sortable_columns() : array
+	public function get_sortable_columns(): array
 	{
 		foreach ($this->sortable as $key => $value) {
-			if ( TypeCheck::isInt($key) ) {
+			if (TypeCheck::isInt($key)) {
 				$this->sortable[$value] = "{$value}";
 				unset($this->sortable[$key]);
 			}
@@ -171,7 +172,7 @@ class Table extends Core
 	/**
 	 * @inheritdoc
 	 */
-	public function getSortableColumns() : array
+	public function getSortableColumns(): array
 	{
 		return $this->get_sortable_columns();
 	}
@@ -179,7 +180,7 @@ class Table extends Core
 	/**
 	 * @inheritdoc
 	 */
-	public function get_hidden_columns() : array
+	public function get_hidden_columns(): array
 	{
 		return $this->hidden;
 	}
@@ -187,7 +188,7 @@ class Table extends Core
 	/**
 	 * @inheritdoc
 	 */
-	public function getHiddenColumns() : array
+	public function getHiddenColumns(): array
 	{
 		return $this->get_hidden_columns();
 	}
@@ -197,7 +198,7 @@ class Table extends Core
 	 */
 	public function column_default($item, $name)
 	{
-	    return $item[$name];
+		return $item[$name];
 	}
 
 	/**
@@ -205,7 +206,7 @@ class Table extends Core
 	 */
 	public function columnDefault($item, $name)
 	{
-	    return $this->column_default($item, $name);
+		return $this->column_default($item, $name);
 	}
 
 	/**
@@ -214,7 +215,7 @@ class Table extends Core
 	public function prepare_items()
 	{
 		// Set pagination
-		if ( $this->pagination == true ) {
+		if ($this->pagination == true) {
 
 			$current = $this->get_pagenum();
 			$total   = count($this->data);
@@ -257,10 +258,10 @@ class Table extends Core
 	{
 		$type = ($this->type) ? $this->type : 'data';
 		$page = HttpRequest::get('page');
-	    $output  = '<div class="table-wrap">';
-	    $output .= '<form id="' . $type . '-filter" method="GET">';
-	    $output .= '<input type="hidden" name="page" value="' . $page . '">';
-	    echo $output;
+		$output  = '<div class="table-wrap">';
+		$output .= '<form id="' . $type . '-filter" method="GET">';
+		$output .= '<input type="hidden" name="page" value="' . $page . '">';
+		echo $output;
 	}
 
 	/**
@@ -271,8 +272,8 @@ class Table extends Core
 	 */
 	protected function closeForm()
 	{
-	    $output  = '</form>';
-	    $output .= '</div>';
-	    echo $output;
+		$output  = '</form>';
+		$output .= '</div>';
+		echo $output;
 	}
 }

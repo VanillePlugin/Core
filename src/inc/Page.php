@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -45,7 +46,7 @@ final class Page
 	 * @param int $p position
 	 * @return string
 	 */
-	public static function addMenu(string $t, string $m, string $c, string $s, $cb, string $i = 'none', int $p = 20) : string
+	public static function addMenu(string $t, string $m, string $c, string $s, $cb, string $i = 'none', int $p = 20): string
 	{
 		return add_menu_page($t, $m, $c, $s, $cb, $i, $p);
 	}
@@ -92,19 +93,18 @@ final class Page
 	public static function resetSubMenu(string $parent, ?string $title = null, ?string $icon = null)
 	{
 		global $submenu;
-		if ( isset($submenu[$parent]) ) {
-			if ( $title ) {
-				if ( $icon ) {
+		if (isset($submenu[$parent])) {
+			if ($title) {
+				if ($icon) {
 					$title = "{$icon} {$title}";
 				}
 				$submenu[$parent][0][0] = $title;
-
 			} else {
 				unset($submenu[$parent][0]);
 			}
 		}
 	}
-	
+
 	/**
 	 * Add menu bar.
 	 *
@@ -144,7 +144,7 @@ final class Page
 	 * @access public
 	 * @return bool
 	 */
-	public static function isAdmin() : bool
+	public static function isAdmin(): bool
 	{
 		return is_admin();
 	}
@@ -155,7 +155,7 @@ final class Page
 	 * @access public
 	 * @return bool
 	 */
-	public static function isLogin() : bool
+	public static function isLogin(): bool
 	{
 		global $pagenow;
 		return ($pagenow == 'wp-login.php');
@@ -179,9 +179,9 @@ final class Page
 	 * @param string $screen
 	 * @return bool
 	 */
-	public static function isScreen(string $screen) : bool
+	public static function isScreen(string $screen): bool
 	{
-		if ( !self::screen() ) {
+		if (!self::screen()) {
 			return false;
 		}
 		$screen = "toplevel_page_{$screen}";
@@ -197,7 +197,7 @@ final class Page
 	 */
 	public static function addHelpMenu(array $settings)
 	{
-		if ( !self::screen() ) return;
+		if (!self::screen()) return;
 		self::screen()->add_help_tab($settings);
 	}
 
@@ -210,7 +210,7 @@ final class Page
 	 */
 	public static function addHelpSidebar(string $html)
 	{
-		if ( !self::screen() ) return;
+		if (!self::screen()) return;
 		self::screen()->set_help_sidebar($html);
 	}
 
@@ -280,7 +280,7 @@ final class Page
 	 * @param mixed $value
 	 * @return string
 	 */
-	public static function getCheckbox($data, $value = true) : string
+	public static function getCheckbox($data, $value = true): string
 	{
 		return ($data === $value) ? 'checked' : '';
 	}

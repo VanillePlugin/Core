@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -27,7 +28,7 @@ trait TraitMappable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function map($callback, array $array, ?array $arrays = null) : array
+	public function map($callback, array $array, ?array $arrays = null): array
 	{
 		return Arrayify::map($callback, $array, $arrays);
 	}
@@ -38,8 +39,8 @@ trait TraitMappable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function recursiveArray(&$array, $callback, $arg = null) : bool
-    {
-        return Arrayify::recursive($array, $callback, $arg);
-    }
+	public function recursiveArray(&$array, $callback, $arg = null): bool
+	{
+		return Arrayify::recursive($array, $callback, $arg);
+	}
 }

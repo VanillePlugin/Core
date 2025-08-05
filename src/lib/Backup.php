@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -65,7 +66,7 @@ final class Backup extends Orm
 	{
 		// Init options
 		$data = [];
-		if ( $this->options ) {
+		if ($this->options) {
 			foreach ($this->options as $key => $type) {
 				$temp  = $this->applyNamespace($key);
 				$value = $this->getOption($temp, $type);
@@ -74,9 +75,9 @@ final class Backup extends Orm
 		}
 
 		// Init tables
-		if ( $this->tables ) {
+		if ($this->tables) {
 			foreach ($this->tables as $table) {
-				if ( $this->hasTable($table) ) {
+				if ($this->hasTable($table)) {
 					$data['tables'][$table] = $this->all($table);
 				}
 			}
@@ -86,7 +87,7 @@ final class Backup extends Orm
 		$prefix = $this->applyNameSpace('backup');
 		$backup = $this->encrypt($data, $prefix);
 
-		if ( $asFile ) {
+		if ($asFile) {
 			$date = $this->getDate('now', 'd-m-Y');
 			$file = $this->applyNameSpace("backup-{$date}");
 			$file = $this->getTempPath($file);
@@ -104,23 +105,23 @@ final class Backup extends Orm
 	 * @param bool $file
 	 * @return bool
 	 */
-	public function import(string $backup, bool $isFile = false) : bool
+	public function import(string $backup, bool $isFile = false): bool
 	{
 		$count = 0;
-		if ( $isFile ) {
+		if ($isFile) {
 			$file = "{$this->getTempPath()}/{$backup}";
-			if ( $this->isFile($file) ) {
+			if ($this->isFile($file)) {
 				$backup = $this->readFile($file);
 			}
 		}
 
-		if ( !empty($backup) ) {
+		if (!empty($backup)) {
 
 			$prefix = $this->applyNameSpace('backup');
-			if ( ($backup = $this->decrypt($backup, $prefix)) ) {
+			if (($backup = $this->decrypt($backup, $prefix))) {
 
 				// Backup options
-				if ( isset($backup['options']) ) {
+				if (isset($backup['options'])) {
 					foreach ($backup['options'] as $key => $value) {
 						$key = $this->applyNamespace($key);
 						$count += (int)$this->updateOption($key, $value);
@@ -128,7 +129,7 @@ final class Backup extends Orm
 				}
 
 				// Backup tables
-				if ( isset($backup['tables']) ) {
+				if (isset($backup['tables'])) {
 					foreach ($backup['tables'] as $table => $value) {
 						$this->clear($table);
 						foreach ($value as $entry) {

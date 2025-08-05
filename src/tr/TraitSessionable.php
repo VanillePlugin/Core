@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,7 +16,8 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-	Session, Cookie
+	Session,
+	Cookie
 };
 
 /**
@@ -29,10 +31,10 @@ trait TraitSessionable
 	 * @access public
 	 * @inheritdoc
 	 */
-    public function getSession(?string $key = null)
-    {
-        return Session::get($key);
-    }
+	public function getSession(?string $key = null)
+	{
+		return Session::get($key);
+	}
 
 	/**
 	 * Check session value.
@@ -40,10 +42,10 @@ trait TraitSessionable
 	 * @access public
 	 * @inheritdoc
 	 */
-    public function hasSession(?string $key = null) : bool
-    {
-        return Session::isSetted($key);
-    }
+	public function hasSession(?string $key = null): bool
+	{
+		return Session::isSetted($key);
+	}
 
 	/**
 	 * Check whether session is registered.
@@ -51,7 +53,7 @@ trait TraitSessionable
 	 * @access public
 	 * @inheritdoc
 	 */
-    public function isSessionRegistered() : bool
+	public function isSessionRegistered(): bool
 	{
 		return Session::isRegistered();
 	}
@@ -62,7 +64,7 @@ trait TraitSessionable
 	 * @access public
 	 * @inheritdoc
 	 */
-    public function isSessionExpired() : bool
+	public function isSessionExpired(): bool
 	{
 		return Session::isExpired();
 	}
@@ -75,9 +77,9 @@ trait TraitSessionable
 	 */
 	public function getCookie(?string $key = null)
 	{
-        return Cookie::get($key);
+		return Cookie::get($key);
 	}
-	
+
 	/**
 	 * Check cookie value.
 	 *
@@ -86,7 +88,7 @@ trait TraitSessionable
 	 */
 	public function hasCookie(?string $key = null)
 	{
-        return Cookie::isSetted($key);
+		return Cookie::isSetted($key);
 	}
 
 	/**
@@ -95,10 +97,10 @@ trait TraitSessionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-    protected function startSession()
-    {
-        new Session();
-    }
+	protected function startSession()
+	{
+		new Session();
+	}
 
 	/**
 	 * Set session value.
@@ -106,10 +108,10 @@ trait TraitSessionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-    protected function setSession($key, $value = null)
-    {
-        Session::set($key, $value);
-    }
+	protected function setSession($key, $value = null)
+	{
+		Session::set($key, $value);
+	}
 
 	/**
 	 * Register session.
@@ -117,10 +119,10 @@ trait TraitSessionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-    protected function registerSession($time = 60)
-    {
-        Session::register($time);
-    }
+	protected function registerSession($time = 60)
+	{
+		Session::register($time);
+	}
 
 	/**
 	 * Close session (Read-only).
@@ -128,10 +130,10 @@ trait TraitSessionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-    protected function closeSession() : bool
-    {
-        return Session::close();
-    }
+	protected function closeSession(): bool
+	{
+		return Session::close();
+	}
 
 	/**
 	 * End session (Destroy).
@@ -139,10 +141,10 @@ trait TraitSessionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-    protected function endSession() : bool
-    {
-        return Session::end();
-    }
+	protected function endSession(): bool
+	{
+		return Session::end();
+	}
 
 	/**
 	 * Set cookie value.
@@ -161,8 +163,8 @@ trait TraitSessionable
 	 * @access protected
 	 * @inheritdoc
 	 */
-    protected function clearCookie() : bool
-    {
-        return Cookie::clear();
-    }
+	protected function clearCookie(): bool
+	{
+		return Cookie::clear();
+	}
 }

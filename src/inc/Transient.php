@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -54,7 +55,7 @@ final class Transient
 	 * @param int $ttl
 	 * @return bool
 	 */
-	public static function set(string $key, $value, int $ttl = 0) : bool
+	public static function set(string $key, $value, int $ttl = 0): bool
 	{
 		$key = self::formatKey($key);
 		return set_transient($key, $value, $ttl);
@@ -69,7 +70,7 @@ final class Transient
 	 * @param int $ttl
 	 * @return bool
 	 */
-	public static function setSite(string $key, $value, int $ttl = 0) : bool
+	public static function setSite(string $key, $value, int $ttl = 0): bool
 	{
 		$key = self::formatKey($key);
 		return set_site_transient($key, $value, $ttl);
@@ -82,7 +83,7 @@ final class Transient
 	 * @param string $key
 	 * @return bool
 	 */
-	public static function delete(string $key) : bool
+	public static function delete(string $key): bool
 	{
 		$key = self::formatKey($key);
 		return delete_transient($key);
@@ -95,7 +96,7 @@ final class Transient
 	 * @param string $key
 	 * @return bool
 	 */
-	public static function deleteSite(string $key) : bool
+	public static function deleteSite(string $key): bool
 	{
 		$key = self::formatKey($key);
 		return delete_site_transient($key);
@@ -108,12 +109,12 @@ final class Transient
 	 * @param string $key
 	 * @return string
 	 */
-	private static function formatKey(string $key) : string
+	private static function formatKey(string $key): string
 	{
 		$key = Stringify::undash(
 			Stringify::slugify($key)
 		);
-		if ( ($formatted = substr($key, 0, 172)) ) {
+		if (($formatted = substr($key, 0, 172))) {
 			return $formatted;
 		}
 		return $key;

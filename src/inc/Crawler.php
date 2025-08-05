@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -59,12 +60,12 @@ final class Crawler extends Request
 	 * @param int $try
 	 * @return bool
 	 */
-	public function start(int $try = 2) : bool
+	public function start(int $try = 2): bool
 	{
-		if ( self::canStart() ) {
+		if (self::canStart()) {
 			$try = ($try <= 5) ? $try : 2;
 			foreach (Post::all() as $post) {
-				if ( $this->pattern == '*' || $this->match($post['content']) ) {
+				if ($this->pattern == '*' || $this->match($post['content'])) {
 					$this->ping($post['link'], $try);
 				}
 			}
@@ -83,9 +84,9 @@ final class Crawler extends Request
 	private function ping(string $url, int $try = 2)
 	{
 		$i = 1;
-		while ( $i <= $try ) {
+		while ($i <= $try) {
 			$response = self::do($url, $this->args);
-			if ( self::getStatusCode($response) == 200 ) {
+			if (self::getStatusCode($response) == 200) {
 				$this->status += 1;
 			}
 			$i++;
@@ -99,7 +100,7 @@ final class Crawler extends Request
 	 * @access private
 	 * @return bool
 	 */
-	private function canStart() : bool
+	private function canStart(): bool
 	{
 		return (System::getCpuCores() >= 2) ?? false;
 	}
@@ -111,7 +112,7 @@ final class Crawler extends Request
 	 * @param string $content
 	 * @return bool
 	 */
-	private function match(string $content) : bool
+	private function match(string $content): bool
 	{
 		return Stringify::match($this->pattern, $content);
 	}

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -32,7 +33,7 @@ class Query extends Core
 	 * @access public
 	 * @return bool
 	 */
-	public function havePosts() : bool
+	public function havePosts(): bool
 	{
 		return $this->have_posts();
 	}

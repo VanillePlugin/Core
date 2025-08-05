@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -21,12 +22,12 @@ interface ShortcodedInterface
 	 *
 	 * @return array
 	 */
-	static function templates() : array;
+	static function templates(): array;
 
 	/**
 	 * Get shortcode part attributes.
 	 *
 	 * @return array
 	 */
-	static function atts() : array;
+	static function atts(): array;
 }

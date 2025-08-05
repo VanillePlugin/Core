@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -23,9 +24,9 @@ final class Format
 	 * @param string $hook
 	 * @return string
 	 */
-	public static function hook(string $hook) : string
+	public static function hook(string $hook): string
 	{
-        $name = Stringify::lowercase($hook);
+		$name = Stringify::lowercase($hook);
 
 		// Format dashed hooks
 		$format = [
@@ -67,7 +68,7 @@ final class Format
 			'rest-namespace-index'
 		];
 
-		if ( Arrayify::inArray($name, $format)) {
+		if (Arrayify::inArray($name, $format)) {
 			return Stringify::undash($name);
 		}
 
@@ -143,7 +144,7 @@ final class Format
 			'update-profile'      => 'personal_options_update'
 		];
 
-		if ( isset($format[$name]) ) {
+		if (isset($format[$name])) {
 			return $format[$name];
 		}
 
@@ -156,27 +157,27 @@ final class Format
 		];
 
 		foreach ($format as $value) {
-			if ( Stringify::contains($name, $value)) {
+			if (Stringify::contains($name, $value)) {
 				$replace = Stringify::undash($value);
 				return Stringify::replace($value, $replace, $name);
 			}
 		}
 
-        return $hook;
+		return $hook;
 	}
 
 	/**
-     * Get formatted request args.
-     *
+	 * Get formatted request args.
+	 *
 	 * @access public
 	 * @param array $args
 	 * @return array
 	 */
-	public static function request(array $args) : array
+	public static function request(array $args): array
 	{
 		foreach ($args as $key => $value) {
 			$k = Stringify::lowercase($key);
-			if ( $k !== 'user-agent' ) {
+			if ($k !== 'user-agent') {
 				$k = Stringify::undash($k);
 			}
 			unset($args[$key]);
@@ -186,13 +187,13 @@ final class Format
 	}
 
 	/**
-     * Get formatted restful args.
-     *
+	 * Get formatted restful args.
+	 *
 	 * @access public
 	 * @param array $args
 	 * @return array
 	 */
-	public static function restful(array $args) : array
+	public static function restful(array $args): array
 	{
 		$format = [
 			'method' => 'methods',
@@ -202,7 +203,7 @@ final class Format
 
 		foreach ($args as $key => $value) {
 
-			if ( isset($format[$key]) ) {
+			if (isset($format[$key])) {
 				$k = $format[$key];
 				unset($args[$key]);
 				$args[$k] = $value;
@@ -210,28 +211,27 @@ final class Format
 			}
 
 			$k = Stringify::lowercase($key);
-			if ( Stringify::contains($k, '-') ) {
+			if (Stringify::contains($k, '-')) {
 				$k = Stringify::undash($k);
 				unset($args[$key]);
 				$args[$k] = $value;
 			}
-			
 		}
-		
+
 		return $args;
 	}
 
 	/**
-     * Format dashed args.
-     *
+	 * Format dashed args.
+	 *
 	 * @access public
 	 * @param array $args
 	 * @return array
 	 */
-	public static function undash(array $args) : array
+	public static function undash(array $args): array
 	{
 		foreach ($args as $key => $value) {
-			if ( Stringify::contains($key, '-') ) {
+			if (Stringify::contains($key, '-')) {
 				$k = Stringify::undash($key);
 				unset($args[$key]);
 				$args[$k] = $value;
@@ -241,56 +241,56 @@ final class Format
 	}
 
 	/**
-     * Get post formatted data.
-     *
+	 * Get post formatted data.
+	 *
 	 * @access public
 	 * @param mixed $post
 	 * @return mixed
 	 */
 	public static function post($post)
 	{
-        if ( TypeCheck::isObject($post) ) {
-            return [
-                'id'      => $post->ID,
-                'slug'    => $post->post_name,
-                'title'   => $post->post_title,
-                'content' => $post->post_content,
-                'link'    => $post->guid,
-                'type'    => Stringify::lowercase($post->post_type),
-                'status'  => $post->post_status,
-                'author'  => $post->post_author,
-                'date'    => $post->post_date,
-                'edited'  => $post->post_modified
-            ];
-        }
-        return $post;
+		if (TypeCheck::isObject($post)) {
+			return [
+				'id'      => $post->ID,
+				'slug'    => $post->post_name,
+				'title'   => $post->post_title,
+				'content' => $post->post_content,
+				'link'    => $post->guid,
+				'type'    => Stringify::lowercase($post->post_type),
+				'status'  => $post->post_status,
+				'author'  => $post->post_author,
+				'date'    => $post->post_date,
+				'edited'  => $post->post_modified
+			];
+		}
+		return $post;
 	}
 
 	/**
-     * Get user formatted data.
-     *
+	 * Get user formatted data.
+	 *
 	 * @access public
 	 * @param mixed $user
 	 * @return mixed
 	 */
 	public static function user($user)
 	{
-        if ( TypeCheck::isObject($user) ) {
-			if ( !count((array)$user->data) ) {
+		if (TypeCheck::isObject($user)) {
+			if (!count((array)$user->data)) {
 				return [];
 			}
 			$name = $user->data->display_name;
-			if ( empty($name) ) {
+			if (empty($name)) {
 				$name = $user->data->user_nicename;
 			}
-            return [
-                'id'    => (int)$user->data->ID,
-                'login' => $user->data->user_login,
-                'name'  => $name,
-                'email' => $user->data->user_email,
-                'hash'  => $user->data->user_pass
-            ];
-        }
-        return $user;
+			return [
+				'id'    => (int)$user->data->ID,
+				'login' => $user->data->user_login,
+				'name'  => $name,
+				'email' => $user->data->user_email,
+				'hash'  => $user->data->user_pass
+			];
+		}
+		return $user;
 	}
 }

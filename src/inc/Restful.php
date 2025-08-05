@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -30,8 +31,8 @@ final class Restful
 	public const METHODS   = RestfulServer::ALLMETHODS;
 
 	/**
-     * Register route.
-     *
+	 * Register route.
+	 *
 	 * @access public
 	 * @param string $namespace
 	 * @param string $route
@@ -39,38 +40,38 @@ final class Restful
 	 * @param bool $override
 	 * @return bool
 	 */
-	public static function register(string $namespace, string $route, array $args, bool $override = false) : bool
+	public static function register(string $namespace, string $route, array $args, bool $override = false): bool
 	{
-	    return register_rest_route($namespace, $route, Format::restful($args), $override);
+		return register_rest_route($namespace, $route, Format::restful($args), $override);
 	}
 
 	/**
-     * Send response.
-     *
+	 * Send response.
+	 *
 	 * @access public
 	 * @param mixed $data
 	 * @param int $code
 	 * @param array $headers
 	 * @return RestfulResponse
 	 */
-	public static function response($data = [], int $code = 200, array $headers = []) : RestfulResponse
+	public static function response($data = [], int $code = 200, array $headers = []): RestfulResponse
 	{
-	    return new RestfulResponse($data, $code, $headers);
+		return new RestfulResponse($data, $code, $headers);
 	}
 
 	/**
-     * Send error.
-     *
+	 * Send error.
+	 *
 	 * @access public
 	 * @param int $code
 	 * @param string $message
 	 * @param mixed $data
 	 * @return object
 	 */
-	public static function error(int $code = 403, ?string $message = null, $data = []) : object
+	public static function error(int $code = 403, ?string $message = null, $data = []): object
 	{
 		$code = ($code < 400) ? 400 : $code;
-		if ( !$message ) {
+		if (!$message) {
 			$message = Status::getMessage($code);
 		}
 		$data = Arrayify::merge(['status' => $code], $data);
@@ -78,157 +79,157 @@ final class Restful
 	}
 
 	/**
-     * Send request.
-     *
+	 * Send request.
+	 *
 	 * @access public
 	 * @param string $method
 	 * @param string $route
 	 * @param array $atts
 	 * @return RestfulRequest
 	 */
-	public static function request(string $method, string $route, array $atts = []) : RestfulRequest
+	public static function request(string $method, string $route, array $atts = []): RestfulRequest
 	{
-	    return new RestfulRequest($method, $route, $atts);
+		return new RestfulRequest($method, $route, $atts);
 	}
 
 	/**
-     * Fetch response body.
-     *
+	 * Fetch response body.
+	 *
 	 * @access public
 	 * @param string $method
 	 * @param string $route
 	 * @param array $atts
 	 * @return string
 	 */
-	public static function fetch(string $method, string $route, array $atts = []) : string
+	public static function fetch(string $method, string $route, array $atts = []): string
 	{
 		$request = self::request($method, $route, $atts);
-	    return self::getBody($request);
+		return self::getBody($request);
 	}
 
 	/**
-     * Check response error.
-     *
+	 * Check response error.
+	 *
 	 * @access public
 	 * @param RestfulResponse $response
 	 * @return bool
 	 */
-	public static function isError(RestfulResponse $response) : bool
+	public static function isError(RestfulResponse $response): bool
 	{
-	    return $response->is_error();
+		return $response->is_error();
 	}
 
 	/**
-     * Get request route.
-     *
+	 * Get request route.
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return string
 	 */
-	public static function getRoute(RestfulRequest $request) : string
+	public static function getRoute(RestfulRequest $request): string
 	{
 		return $request->get_route();
 	}
 
 	/**
-     * Get request attributes.
-     *
+	 * Get request attributes.
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return array
 	 */
-	public static function getAttributes(RestfulRequest $request) : array
+	public static function getAttributes(RestfulRequest $request): array
 	{
 		return $request->get_attributes();
 	}
 
 	/**
-     * Get request params (POST).
-     *
+	 * Get request params (POST).
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return array
 	 */
-	public static function getParams(RestfulRequest $request) : array
+	public static function getParams(RestfulRequest $request): array
 	{
 		return $request->get_params();
 	}
 
 	/**
-     * Get request body content.
-     *
+	 * Get request body content.
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return string
 	 */
-	public static function getBody(RestfulRequest $request) : string
+	public static function getBody(RestfulRequest $request): string
 	{
 		return (string)$request->get_body();
 	}
 
 	/**
-     * Get request body parameters (POST).
-     *
+	 * Get request body parameters (POST).
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return array
 	 */
-	public static function getBodyParams(RestfulRequest $request) : array
+	public static function getBodyParams(RestfulRequest $request): array
 	{
 		return $request->get_body_params();
 	}
 
 	/**
-     * Get request query parameters (GET).
-     *
+	 * Get request query parameters (GET).
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return array
 	 */
-	public static function getQueryParams(RestfulRequest $request) : array
+	public static function getQueryParams(RestfulRequest $request): array
 	{
 		return $request->get_query_params();
 	}
 
 	/**
-     * Get request file parameters (FILES).
-     *
+	 * Get request file parameters (FILES).
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return array
 	 */
-	public static function getFileParams(RestfulRequest $request) : array
+	public static function getFileParams(RestfulRequest $request): array
 	{
 		return $request->get_file_params();
 	}
 
 	/**
-     * Get request url parameters (URL).
-     *
+	 * Get request url parameters (URL).
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return array
 	 */
-	public static function getUrlParams(RestfulRequest $request) : array
+	public static function getUrlParams(RestfulRequest $request): array
 	{
 		return $request->get_url_params();
 	}
 
 	/**
-     * Get request headers.
-     *
+	 * Get request headers.
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return array
 	 */
-	public static function getHeaders(RestfulRequest $request) : array
+	public static function getHeaders(RestfulRequest $request): array
 	{
 		return $request->get_headers();
 	}
 
 	/**
-     * Get request header value.
-     *
+	 * Get request header value.
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return mixed
@@ -239,39 +240,39 @@ final class Restful
 	}
 
 	/**
-     * Get request method.
-     *
+	 * Get request method.
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @return string
 	 */
-	public static function getMethod(RestfulRequest $request) : string
+	public static function getMethod(RestfulRequest $request): string
 	{
 		return $request->get_method();
 	}
 
 	/**
-     * Check request parameter.
-     *
+	 * Check request parameter.
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @param string $key
 	 * @return bool
 	 */
-	public static function hasParam(RestfulRequest $request, string $key) : bool
+	public static function hasParam(RestfulRequest $request, string $key): bool
 	{
 		return $request->has_param($key);
 	}
 
 	/**
-     * Check valid request parameter.
-     *
+	 * Check valid request parameter.
+	 *
 	 * @access public
 	 * @param RestfulRequest $request
 	 * @param string $key
 	 * @return bool
 	 */
-	public static function isValidParam(RestfulRequest $request, string $key) : bool
+	public static function isValidParam(RestfulRequest $request, string $key): bool
 	{
 		return $request->has_param($key);
 	}

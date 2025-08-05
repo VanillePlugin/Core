@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -31,7 +32,7 @@ trait TraitAuthenticatable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isUser($user, string $property = 'username') : bool
+	public function isUser($user, string $property = 'username'): bool
 	{
 		return User::isUser($user, $property);
 	}
@@ -42,7 +43,7 @@ trait TraitAuthenticatable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isLoggedIn() : bool
+	public function isLoggedIn(): bool
 	{
 		return User::isLoggedIn();
 	}
@@ -53,7 +54,7 @@ trait TraitAuthenticatable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isPassword(string $pswd, string $hash, $id = null) : bool
+	public function isPassword(string $pswd, string $hash, $id = null): bool
 	{
 		return User::isPassword($pswd, $hash, $id);
 	}
@@ -75,14 +76,14 @@ trait TraitAuthenticatable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getUserId() : int
+	public function getUserId(): int
 	{
 		return User::getId();
 	}
 
 	/**
-     * Get user by field.
-     *
+	 * Get user by field.
+	 *
 	 * @access public
 	 * @inheritdoc
 	 */
@@ -92,8 +93,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
-     * Get user by Id.
-     *
+	 * Get user by Id.
+	 *
 	 * @access public
 	 * @inheritdoc
 	 */
@@ -103,8 +104,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
-     * Get user by login.
-     *
+	 * Get user by login.
+	 *
 	 * @access public
 	 * @inheritdoc
 	 */
@@ -114,8 +115,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
-     * Get user by email.
-     *
+	 * Get user by email.
+	 *
 	 * @access public
 	 * @inheritdoc
 	 */
@@ -125,19 +126,19 @@ trait TraitAuthenticatable
 	}
 
 	/**
-     * Get users by meta.
-     *
+	 * Get users by meta.
+	 *
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getUserByMeta(string $key, $value) : array
+	public function getUserByMeta(string $key, $value): array
 	{
 		return User::getByMeta($key, $value);
 	}
 
 	/**
-     * Get user meta.
-     *
+	 * Get user meta.
+	 *
 	 * @access public
 	 * @inheritdoc
 	 */
@@ -163,7 +164,7 @@ trait TraitAuthenticatable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function login(string $user, string $pswd, bool $memory = false) : bool
+	protected function login(string $user, string $pswd, bool $memory = false): bool
 	{
 		return User::login($user, $pswd, $memory);
 	}
@@ -196,14 +197,14 @@ trait TraitAuthenticatable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function sendPassword($id = null) : bool
+	protected function sendPassword($id = null): bool
 	{
 		return User::sendPassword($id);
 	}
 
 	/**
-     * Add user meta.
-     *
+	 * Add user meta.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -213,8 +214,8 @@ trait TraitAuthenticatable
 	}
 
 	/**
-     * Update user meta.
-     *
+	 * Update user meta.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
@@ -224,12 +225,12 @@ trait TraitAuthenticatable
 	}
 
 	/**
-     * Delete user meta.
-     *
+	 * Delete user meta.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function deleteUserMeta(string $key, $id = null, $value = null) : bool
+	protected function deleteUserMeta(string $key, $id = null, $value = null): bool
 	{
 		return User::deleteMeta($key, $id, $value);
 	}

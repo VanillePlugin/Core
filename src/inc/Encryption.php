@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -98,7 +99,7 @@ class Encryption
 	 * @param int $options
 	 * @param object
 	 */
-	public function setOptions(int $options = self::OPTIONS) : self
+	public function setOptions(int $options = self::OPTIONS): self
 	{
 		$this->options = $options;
 		return $this;
@@ -111,7 +112,7 @@ class Encryption
 	 * @param string $options
 	 * @param object
 	 */
-	public function setCipher(string $cipher = self::CIPHER) : self
+	public function setCipher(string $cipher = self::CIPHER): self
 	{
 		$this->cipher = $cipher;
 		return $this;
@@ -124,7 +125,7 @@ class Encryption
 	 * @param string $prefix
 	 * @param object
 	 */
-	public function setPrefix(?string $prefix = null) : self
+	public function setPrefix(?string $prefix = null): self
 	{
 		$this->prefix = (string)$prefix;
 		return $this;
@@ -137,7 +138,7 @@ class Encryption
 	 * @param string $algo
 	 * @return object
 	 */
-	public function initialize(string $algo = self::ALGO) : self
+	public function initialize(string $algo = self::ALGO): self
 	{
 		$this->secret = hash($algo, $this->secret);
 		$this->vector = substr(hash($algo, $this->vector), 0, $this->length);
@@ -151,13 +152,12 @@ class Encryption
 	 * @param int $loop, Base64 loop (Max 5)
 	 * @param string
 	 */
-	public function encrypt(int $loop = 1) : string
+	public function encrypt(int $loop = 1): string
 	{
-		if ( TypeCheck::isString($this->data) ) {
-			if ( $this->bypass && $this->isCrypted() ) {
+		if (TypeCheck::isString($this->data)) {
+			if ($this->bypass && $this->isCrypted()) {
 				return $this->data;
 			}
-
 		} else {
 			$this->data = Stringify::serialize($this->data);
 		}
@@ -185,7 +185,7 @@ class Encryption
 	 */
 	public function decrypt(int $loop = 1)
 	{
-		if ( !TypeCheck::isString($this->data) ) {
+		if (!TypeCheck::isString($this->data)) {
 			return false;
 		}
 
@@ -199,7 +199,7 @@ class Encryption
 			$this->vector
 		);
 
-		if ( !$this->asString ) {
+		if (!$this->asString) {
 			$decrypted = Stringify::unserialize($decrypted);
 		}
 
@@ -213,7 +213,7 @@ class Encryption
 	 * @access public
 	 * @return object
 	 */
-	public function asString() : self
+	public function asString(): self
 	{
 		$this->asString = true;
 		return $this;
@@ -225,7 +225,7 @@ class Encryption
 	 * @access public
 	 * @return object
 	 */
-	public function bypass() : self
+	public function bypass(): self
 	{
 		$this->bypass = true;
 		return $this;
@@ -237,7 +237,7 @@ class Encryption
 	 * @access public
 	 * @param bool
 	 */
-	public function isCrypted() : bool
+	public function isCrypted(): bool
 	{
 		$prefix = substr($this->data, 0, strlen($this->prefix));
 		return ($prefix === $this->prefix);

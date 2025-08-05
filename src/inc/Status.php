@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -23,7 +24,7 @@ class Status
 	 * @param int $code
 	 * @return string
 	 */
-	public static function getMessage(int $code = 500) : string
+	public static function getMessage(int $code = 500): string
 	{
 		$status = [
 			100 => 'Continue',

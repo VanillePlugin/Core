@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -25,7 +26,7 @@ final class Password
      * @param bool $extra
      * @return string
      */
-    public static function generate(int $length = 8, bool $special = true, bool $extra = false) : string
+    public static function generate(int $length = 8, bool $special = true, bool $extra = false): string
     {
         return wp_generate_password($length, $special, $extra);
     }
@@ -39,7 +40,7 @@ final class Password
      * @param mixed $user
      * @return bool
      */
-    public static function isValid(string $pswd, string $hash, $user = null) : bool
+    public static function isValid(string $pswd, string $hash, $user = null): bool
     {
         return wp_check_password($pswd, $hash, (int)$user);
     }
@@ -51,26 +52,26 @@ final class Password
      * @param string $pswd
      * @return string
      */
-    public static function hash(string $pswd) : string
+    public static function hash(string $pswd): string
     {
         return wp_hash_password($pswd);
     }
 
-	/**
+    /**
      * Send password.
      *
-	 * @access public
-	 * @param string $login
-	 * @return bool
-	 */
-	public static function send(?string $login = null) : bool
-	{
-		$send = retrieve_password($login);
-		if ( !Exception::isError($send) ) {
-			return true;
-		}
-		return false;
-	}
+     * @access public
+     * @param string $login
+     * @return bool
+     */
+    public static function send(?string $login = null): bool
+    {
+        $send = retrieve_password($login);
+        if (!Exception::isError($send)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Check password is strong.
@@ -80,22 +81,23 @@ final class Password
      * @param int $length
      * @return bool
      */
-    public static function isStrong(string $pswd, int $length = 8) : bool
+    public static function isStrong(string $pswd, int $length = 8): bool
     {
-        if ( $length < 8 ) {
+        if ($length < 8) {
             $length = 8;
         }
-        
+
         $uppercase = Stringify::match('@[A-Z]@', $pswd);
         $lowercase = Stringify::match('@[a-z]@', $pswd);
         $number    = Stringify::match('@[0-9]@', $pswd);
         $special   = Stringify::match('@[^\w]@', $pswd);
 
-        if ( !$uppercase 
-          || !$lowercase 
-          || !$number 
-          || !$special 
-          || strlen($pswd) < $length 
+        if (
+            !$uppercase
+            || !$lowercase
+            || !$number
+            || !$special
+            || strlen($pswd) < $length
         ) {
             return false;
         }

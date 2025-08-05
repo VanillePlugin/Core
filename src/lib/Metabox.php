@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -31,11 +32,11 @@ class Metabox extends View
 		'customize_changeset',
 		'user_request',
 	];
-	
+
 	/**
 	 * @inheritdoc
 	 */
-    public function init($callable)
+	public function init($callable)
 	{
 		$this->addAction('admin-notices', $callable);
 	}
@@ -43,7 +44,7 @@ class Metabox extends View
 	/**
 	 * @inheritdoc
 	 */
-    public function add($callable)
+	public function add($callable)
 	{
 		$this->addAction('add-meta-boxes-', $callable);
 	}
@@ -51,7 +52,7 @@ class Metabox extends View
 	/**
 	 * @inheritdoc
 	 */
-    public function create($callable)
+	public function create($callable)
 	{
 		$this->addAction('add-meta-boxes-', $callable);
 	}
@@ -59,8 +60,5 @@ class Metabox extends View
 	/**
 	 * Init metabox.
 	 */
-	public function __construct()
-	{
-		
-	}
+	public function __construct() {}
 }

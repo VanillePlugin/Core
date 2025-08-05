@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -45,10 +46,10 @@ final class Asset
 	private $remote;
 	private $assets;
 
-    /**
+	/**
 	 * Init asset.
-     */
-    public function __construct(string $dir = self::DIR)
+	 */
+	public function __construct(string $dir = self::DIR)
 	{
 		$this->dir = $this->getAssetPath(
 			$this->basename($dir)
@@ -63,7 +64,7 @@ final class Asset
 	 * @access public
 	 * @return bool
 	 */
-	public function hasAsset() : bool
+	public function hasAsset(): bool
 	{
 		return $this->isFile("{$this->dir}/" . self::LOCK);
 	}
@@ -74,7 +75,7 @@ final class Asset
 	 * @access public
 	 * @return bool
 	 */
-	public function lock() : bool
+	public function lock(): bool
 	{
 		return $this->writeFile("{$this->dir}/" . self::LOCK);
 	}
@@ -85,7 +86,7 @@ final class Asset
 	 * @access public
 	 * @return bool
 	 */
-	public function unlock() : bool
+	public function unlock(): bool
 	{
 		$file = "{$this->dir}/" . self::LOCK;
 		return $this->removeFile($file, $this->getRoot());
@@ -98,7 +99,7 @@ final class Asset
 	 * @param string $url
 	 * @return object
 	 */
-	public function setRemote(string $url) : self
+	public function setRemote(string $url): self
 	{
 		$this->remote = $url;
 		return $this;
@@ -111,7 +112,7 @@ final class Asset
 	 * @param string $url
 	 * @return object
 	 */
-	public function setCdn(string $url) : self
+	public function setCdn(string $url): self
 	{
 		$this->cdn = $url;
 		return $this;
@@ -123,41 +124,39 @@ final class Asset
 	 * @access public
 	 * @return bool
 	 */
-	public function download() : bool
+	public function download(): bool
 	{
-		if ( !$this->isAdmin() ) {
+		if (!$this->isAdmin()) {
 			return false;
 		}
 
 		$downloaded = false;
-		
-		if ( $this->remote ) {
+
+		if ($this->remote) {
 
 			$response = Request::do($this->remote, [
 				'timeout'     => 30,
 				'redirection' => 1
 			]);
 
-			if ( Request::getStatusCode($response) == 200 ) {
+			if (Request::getStatusCode($response) == 200) {
 
 				$body = Request::getBody($response);
 				$file = $this->getFileName($this->remote);
 				$zip  = "{$this->dir}/{$file}";
 
-				if ( $this->writeFile($zip, $body) ) {
+				if ($this->writeFile($zip, $body)) {
 
 					$this->reset();
-					if ( $this->extract($zip) && $this->check() ) {
+					if ($this->extract($zip) && $this->check()) {
 						$downloaded = true;
 						$this->lock();
 					}
-
 				}
 			}
-
 		}
 
-		if ( !$downloaded ) {
+		if (!$downloaded) {
 			return $this->downloadCdn();
 		}
 
@@ -178,7 +177,7 @@ final class Asset
 				$filename = $this->getFileName($file);
 				$filename = "{$this->dir}/{$asset}/{$filename}";
 
-				if ( !$this->check($filename) ) {
+				if (!$this->check($filename)) {
 
 					$remote   = "{$this->cdn}/{$file}";
 					$response = Request::do($remote, [
@@ -186,18 +185,16 @@ final class Asset
 						'redirection' => 2
 					]);
 
-					if ( Request::getStatusCode($response) == 200 ) {
+					if (Request::getStatusCode($response) == 200) {
 						$body = Request::getBody($response);
 						$this->addDir("{$this->dir}/{$asset}");
 						$this->writeFile($filename, $body);
 					}
-
 				}
-
 			}
 		}
 
-		if ( $this->check() ) {
+		if ($this->check()) {
 			$this->lock();
 			return true;
 		}
@@ -212,9 +209,9 @@ final class Asset
 	 * @param string $archive
 	 * @return bool
 	 */
-	private function extract(string $archive) : bool
+	private function extract(string $archive): bool
 	{
-		if ( $this->uncompressArchive($archive, $this->dir, false) ) {
+		if ($this->uncompressArchive($archive, $this->dir, false)) {
 			$this->removeFile("{$this->dir}/assets.zip", $this->getRoot());
 			return true;
 		}
@@ -228,15 +225,15 @@ final class Asset
 	 * @param string $path
 	 * @return bool
 	 */
-	private function check(?string $path = null) : bool
+	private function check(?string $path = null): bool
 	{
-		if ( $this->isType('string', $path) && !empty($path) ) {
+		if ($this->isType('string', $path) && !empty($path)) {
 			return $this->isFile($path);
 		}
 
 		foreach ($this->get() as $asset => $files) {
 			foreach ($files as $file) {
-				if ( !$this->isFile("{$this->dir}/{$asset}/{$file}") ) {
+				if (!$this->isFile("{$this->dir}/{$asset}/{$file}")) {
 					return false;
 				}
 			}
@@ -267,7 +264,7 @@ final class Asset
 	 * @param string $path
 	 * @return string
 	 */
-	private function getFileName(string $path) : string
+	private function getFileName(string $path): string
 	{
 		return $this->basename($path);
 	}
@@ -278,11 +275,11 @@ final class Asset
 	 * @access private
 	 * @return array
 	 */
-	private function get() : array
+	private function get(): array
 	{
 		$wrapper = [];
 		foreach ($this->assets as $asset => $files) {
-			$wrapper[$asset] = $this->map(function($file) {
+			$wrapper[$asset] = $this->map(function ($file) {
 				return $this->getFileName($file);
 			}, $files);
 		}

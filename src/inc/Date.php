@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -36,9 +37,9 @@ final class Date extends DateTime
      */
     public static function get(string $date = 'now', string $to = self::FORMAT, bool $isObject = false)
     {
-    	$date = new self($date);
+        $date = new self($date);
         $formatted = $date->format($to);
-        if ( $isObject ) {
+        if ($isObject) {
             return $date;
         }
         return $formatted;
@@ -53,11 +54,11 @@ final class Date extends DateTime
      * @param string $to
      * @return object
      */
-    public static function create(string $date, string $format, string $to = self::FORMAT) : object
+    public static function create(string $date, string $format, string $to = self::FORMAT): object
     {
-    	$date = self::createFromFormat($format, $date);
-    	$date->format($to);
-    	return $date;
+        $date = self::createFromFormat($format, $date);
+        $date->format($to);
+        return $date;
     }
 
     /**
@@ -69,9 +70,9 @@ final class Date extends DateTime
      * @param string $to
      * @return string
      */
-    public static function convert(string $date, string $format, string $to = self::FORMAT) : string
+    public static function convert(string $date, string $format, string $to = self::FORMAT): string
     {
-    	return self::create($date, $format)->format($to);
+        return self::create($date, $format)->format($to);
     }
 
     /**
@@ -82,7 +83,7 @@ final class Date extends DateTime
      * @param string $to
      * @return string
      */
-    public static function toString(DateTime $date, string $to = self::FORMAT) : string
+    public static function toString(DateTime $date, string $to = self::FORMAT): string
     {
         return $date->format($to);
     }
@@ -98,36 +99,35 @@ final class Date extends DateTime
      * @param string $to
      * @return int
      */
-    public static function difference($date, $expire, ?string $i = null, string $to = self::FORMAT) : int
+    public static function difference($date, $expire, ?string $i = null, string $to = self::FORMAT): int
     {
         // Check date
-        if ( !Validator::isValidDate($date) || !Validator::isValidDate($expire) ) {
+        if (!Validator::isValidDate($date) || !Validator::isValidDate($expire)) {
             return -1;
         }
 
         // Set beginning date
-        if ( !self::isObject($date) ) {
+        if (!self::isObject($date)) {
             $date = new self($date);
         }
         $date->format($to);
 
         // Set expiring date
-        if ( !self::isObject($expire) ) {
+        if (!self::isObject($expire)) {
             $expire = new self($expire);
         }
         $expire->format($to);
 
         // Format difference interval
-        if ( $i ) {
+        if ($i) {
             $interval = $date->diff($expire)->format($i);
-
         } else {
             $interval = ($expire->getTimestamp() - $date->getTimestamp());
         }
 
         return (int)$interval;
     }
-    
+
     /**
      * Order dates.
      * 
@@ -136,13 +136,12 @@ final class Date extends DateTime
      * @param string $format
      * @return array
      */
-    public static function order(array $dates, $sort = 'asc', string $format = self::FORMAT) : array
+    public static function order(array $dates, $sort = 'asc', string $format = self::FORMAT): array
     {
-        usort($dates, function($a, $b) use ($sort, $format) {
-            if ( Stringify::lowercase($sort) == 'asc' ) {
+        usort($dates, function ($a, $b) use ($sort, $format) {
+            if (Stringify::lowercase($sort) == 'asc') {
                 return self::create($a, $format) <=> self::create($b, $format);
-
-            } elseif ( Stringify::lowercase($sort) == 'desc' ) {
+            } elseif (Stringify::lowercase($sort) == 'desc') {
                 return self::create($b, $format) <=> self::create($a, $format);
             }
         });
@@ -155,7 +154,7 @@ final class Date extends DateTime
      * @access public
      * @return int
      */
-    public static function timeNow() : int
+    public static function timeNow(): int
     {
         $currentHour = date('H');
         $currentMin  = date('i');
@@ -185,7 +184,7 @@ final class Date extends DateTime
      * @param int $y, Year
      * @return int
      */
-    public static function newTime($h = 0, $m = 0, $s = 0, $mt = 0, $d = 0, $y = 0) : int
+    public static function newTime($h = 0, $m = 0, $s = 0, $mt = 0, $d = 0, $y = 0): int
     {
         $currentHour = date('H');
         $currentMin  = date('i');
@@ -213,19 +212,21 @@ final class Date extends DateTime
      * @return int
      * @see https://www.php.net/manual/fr/dateinterval.construct.php
      */
-    public static function expireIn(string $duration = 'P1Y', $date = 'now') : int
+    public static function expireIn(string $duration = 'P1Y', $date = 'now'): int
     {
         // Check date
-        if ( !self::maybeDuration($duration) 
-          || !Validator::isValidDate($date) ) {
+        if (
+            !self::maybeDuration($duration)
+            || !Validator::isValidDate($date)
+        ) {
             return -1;
         }
 
         // Get date
-        if ( !self::isObject($date) ) {
+        if (!self::isObject($date)) {
             $date = new self($date);
         }
-        
+
         // Set now
         $now = mktime(
             (int)$date->format('H'),
@@ -257,7 +258,7 @@ final class Date extends DateTime
      * @param mixed $date
      * @return bool
      */
-    public static function isObject($date) : bool
+    public static function isObject($date): bool
     {
         return ($date instanceof DateTime);
     }
@@ -269,7 +270,7 @@ final class Date extends DateTime
      * @param string $duration
      * @return bool
      */
-    public static function maybeDuration(string $duration) : bool
+    public static function maybeDuration(string $duration): bool
     {
         $duration = Stringify::lowercase($duration);
         return (strpos($duration, 'p', 0) !== false);
@@ -282,7 +283,7 @@ final class Date extends DateTime
      * @param string $timezone
      * @return bool
      */
-    public static function setDefaultTimezone(string $timezone) : bool
+    public static function setDefaultTimezone(string $timezone): bool
     {
         return date_default_timezone_set($timezone);
     }
@@ -293,11 +294,11 @@ final class Date extends DateTime
      * @access public
      * @return string
      */
-    public static function getDefaultTimezone() : string
+    public static function getDefaultTimezone(): string
     {
         return wp_timezone_string();
     }
-    
+
     /**
      * Translate date format.
      * 
@@ -307,9 +308,9 @@ final class Date extends DateTime
      * @param bool $gmt
      * @return string
      */
-    public static function translate(string $date, string $to = self::FORMAT, bool $gmt = false) : string
+    public static function translate(string $date, string $to = self::FORMAT, bool $gmt = false): string
     {
-        if ( empty($date) ) {
+        if (empty($date)) {
             $date = self::get('now', $to);
         }
         $to = self::sanitizeFormat($to);
@@ -323,7 +324,7 @@ final class Date extends DateTime
      * @param string $format
      * @return string
      */
-    public static function sanitizeFormat(string $format) : string
+    public static function sanitizeFormat(string $format): string
     {
         return Stringify::replaceArray([
             'Ghi' => 'G\hi',

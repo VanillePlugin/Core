@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -140,15 +141,14 @@ final class OrmQuery implements OrmQueryInterface
 		$sql  = false;
 		$type = (string)$this->type;
 
-		if ( $this->lowercase($type) == 'select' ) {
+		if ($this->lowercase($type) == 'select') {
 			$sql  = "{$this->getSelectString()} ";
 			$sql .= "{$this->getWhereString()} ";
 			$sql .= "{$this->getGroupbyString()} ";
 			$sql .= "{$this->getOrderbyString()} ";
 			$sql .= "{$this->getLimitString()} ";
 			$sql .= "{$this->getOffsetString()} ";
-
-		} elseif ( $this->lowercase($type) == 'count' ) {
+		} elseif ($this->lowercase($type) == 'count') {
 
 			$this->result = 'field';
 			$this->format = 'int';
@@ -156,7 +156,7 @@ final class OrmQuery implements OrmQueryInterface
 			$sql  = "{$this->getSelectCountString()} ";
 			$sql .= "{$this->getWhereString()} ";
 		}
-		
+
 		$sql = trim($sql);
 		return "{$sql};";
 	}
@@ -167,16 +167,18 @@ final class OrmQuery implements OrmQueryInterface
 	public function format($value = null)
 	{
 		$format = $this->inArray($this->format, [
-			'int', 'float', 'bool'
+			'int',
+			'float',
+			'bool'
 		]);
-		if ( $format ) {
-			if ( $this->format == 'int' ) {
+		if ($format) {
+			if ($this->format == 'int') {
 				return intval($value);
 			}
-			if ( $this->format == 'float' ) {
+			if ($this->format == 'float') {
 				return floatval($value);
 			}
-			if ( $this->format == 'bool' ) {
+			if ($this->format == 'bool') {
 				return (bool)$value;
 			}
 		}
@@ -188,7 +190,7 @@ final class OrmQuery implements OrmQueryInterface
 	 */
 	public function setTable(?string $table = null)
 	{
-		if ( $table && !$this->table ) {
+		if ($table && !$this->table) {
 			$this->table = $table;
 		}
 	}
@@ -199,7 +201,7 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getSelectString() : string
+	private function getSelectString(): string
 	{
 		$sql  = 'SELECT ';
 		$sql .= "{$this->getSelectColumnString()} ";
@@ -213,7 +215,7 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getSelectCountString() : string
+	private function getSelectCountString(): string
 	{
 		$sql  = "SELECT COUNT({$this->getSelectColumnString()}) ";
 		$sql .= "FROM {$this->getTableString()}";
@@ -226,35 +228,32 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getWhereString() : string
+	private function getWhereString(): string
 	{
 		$sql = '';
-		if ( $this->where ) {
-			
-			if ( $this->isType('string', $this->where) ) {
+		if ($this->where) {
+
+			if ($this->isType('string', $this->where)) {
 				return "WHERE {$this->where}";
 			}
 
-			if ( $this->isType('array', $this->where) ) {
+			if ($this->isType('array', $this->where)) {
 
 				$keys = $this->arrayKeys($this->where);
 				$last = end($keys);
 				$sql .= 'WHERE ';
 				foreach ($this->where as $key => $value) {
-					
+
 					// Set type
-					if ( $this->isType('string', $value) ) {
-						if ( !$this->hasString($value, self::WRAPPER) ) {
+					if ($this->isType('string', $value)) {
+						if (!$this->hasString($value, self::WRAPPER)) {
 							$value = "'{$value}'";
 						}
-	
-					} elseif ( $this->isType('true', $value) ) {
+					} elseif ($this->isType('true', $value)) {
 						$value = 'TRUE';
-	
-					} elseif ( $this->isType('false', $value) ) {
+					} elseif ($this->isType('false', $value)) {
 						$value = 'FALSE';
-	
-					} elseif ( $this->isType('null', $value) ) {
+					} elseif ($this->isType('null', $value)) {
 						$value = 'NULL';
 					}
 
@@ -265,15 +264,14 @@ final class OrmQuery implements OrmQueryInterface
 					$sql .= "{$this->setNameWrapper($key)} ";
 
 					// Set comparator
-					$sql .= "{$this->getComparator($key, $value)} ";
+					$sql .= "{$this->getComparator($key,$value)} ";
 
 					// Set value
 					$sql .= "{$value} ";
 
 					// Set conjunction
-					if ( $last !== $key ) {
+					if ($last !== $key) {
 						$sql .= "{$this->getConjunction($key)} ";
-
 					} else {
 						$sql = rtrim($sql, ' ');
 					}
@@ -293,11 +291,11 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getOrderbyString() : string
+	private function getOrderbyString(): string
 	{
 		$sql = '';
 		$orderby = $this->parseOrderby();
-		if ( !empty($orderby) ) {
+		if (!empty($orderby)) {
 			$sql .= 'ORDER BY ' . implode(', ', $orderby);
 		}
 		return $sql;
@@ -309,11 +307,11 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getGroupbyString() : string
+	private function getGroupbyString(): string
 	{
 		$sql = '';
 		$groupby = $this->parseGroupby();
-		if ( !empty($groupby) ) {
+		if (!empty($groupby)) {
 			$sql .= 'GROUP BY ' . implode(', ', $groupby);
 		}
 		return $sql;
@@ -325,10 +323,10 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getLimitString() : string
+	private function getLimitString(): string
 	{
 		$sql = '';
-		if ( $this->isType('int', $this->limit) ) {
+		if ($this->isType('int', $this->limit)) {
 			$sql .= "LIMIT {$this->limit}";
 		}
 		return $sql;
@@ -340,10 +338,10 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getOffsetString() : string
+	private function getOffsetString(): string
 	{
 		$sql = '';
-		if ( $this->isType('int', $this->offset) ) {
+		if ($this->isType('int', $this->offset)) {
 			$sql .= "OFFSET {$this->offset}";
 		}
 		return $sql;
@@ -355,7 +353,7 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getTableString() : string
+	private function getTableString(): string
 	{
 		// Init
 		$sql   = '';
@@ -364,7 +362,7 @@ final class OrmQuery implements OrmQueryInterface
 		foreach ($table as $key => $tab) {
 			$tab = "{$this->getPrefix()}$tab";
 			$sql .= $this->setTableWrapper($tab);
-			if ( ($key+1) < count($table) ) {
+			if (($key + 1) < count($table)) {
 				$sql .= ', ';
 			}
 		}
@@ -378,79 +376,77 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getSelectColumnString() : string
+	private function getSelectColumnString(): string
 	{
 		// Init
 		$column   = $this->parseColumn();
 		$distinct = $this->parseDistinct();
 
 		// Set distinct all
-		if ( $distinct === true ) {
+		if ($distinct === true) {
 			$sql = 'DISTINCT ';
 			foreach ($column as $key => $col) {
 				$sql .= $this->setColumnWrapper($col);
-				if ( ($key+1) < count($column) ) {
+				if (($key + 1) < count($column)) {
 					$sql .= ', ';
-
 				} else {
 					$sql .= ' ';
 				}
 			}
 			return $sql;
 		}
-		
+
 		// Set distinct mixed
-		if ( $this->isType('array', $distinct) && !empty($distinct) ) {
+		if ($this->isType('array', $distinct) && !empty($distinct)) {
 
 			// Set distinct custom
-			if ( count($distinct) == 1 && $distinct[0] !== '*' ) {
+			if (count($distinct) == 1 && $distinct[0] !== '*') {
 				return "DISTINCT {$distinct[0]}";
 			}
 
 			// Set distinct any
-			if ( count($distinct) == 1 && $distinct[0] == '*' ) {
+			if (count($distinct) == 1 && $distinct[0] == '*') {
 				return 'DISTINCT(*)';
 			}
 
 			$distincted = [];
 			foreach ($column as $key => $col) {
-				if ( $this->inArray($col, $distinct) ) {
+				if ($this->inArray($col, $distinct)) {
 					$distincted[] = $col;
 					unset($column[$key]);
 				}
 			}
 
-			if ( $distincted ) {
+			if ($distincted) {
 
 				$sql = 'DISTINCT(';
 				foreach ($distincted as $key => $col) {
 					$sql .= $this->setColumnWrapper($col);
-					if ( ($key+1) < count($distincted) ) {
+					if (($key + 1) < count($distincted)) {
 						$sql .= ', ';
-	
 					} else {
 						$sql .= ')';
 					}
 				}
 
-				if ( $column ) {
+				if ($column) {
 					$sql .= ', ';
 					foreach ($column as $key => $col) {
 						$sql .= $this->setColumnWrapper($col);
-						if ( $key < count($column) ) {
+						if ($key < count($column)) {
 							$sql .= ', ';
 						}
 					}
 				}
-				
+
 				return $sql;
 			}
 		}
 
 		// Set distinct any
-		if ( count($column) == 1 && $column[0] == '*' ) {
+		if (count($column) == 1 && $column[0] == '*') {
 
-			if ( $distinct === true ) {
+			if ($distinct === true) {
 				return 'DISTINCT(*)';
 			}
 
@@ -462,7 +458,7 @@ final class OrmQuery implements OrmQueryInterface
 		$sql = '';
 		foreach ($column as $key => $col) {
 			$sql .= $this->setColumnWrapper($col);
-			if ( ($key+1) < count($column) ) {
+			if (($key + 1) < count($column)) {
 				$sql .= ', ';
 			}
 		}
@@ -479,34 +475,35 @@ final class OrmQuery implements OrmQueryInterface
 	 * @param mixed $value
 	 * @return string
 	 */
-	private function getComparator(string $key, $value) : string
+	private function getComparator(string $key, $value): string
 	{
 		$comparator = 'LIKE';
 
 		// Set comparator
-		if ( $this->isType('int', $value) 
-		  || $this->isType('float', $value)  ) {
+		if (
+			$this->isType('int', $value)
+			|| $this->isType('float', $value)
+		) {
 			$comparator = '=';
-
-		} elseif ( $this->isType('true', $value) 
-		        || $this->isType('false', $value) 
-				|| $this->isType('null', $value) ) {
+		} elseif (
+			$this->isType('true', $value)
+			|| $this->isType('false', $value)
+			|| $this->isType('null', $value)
+		) {
 			$comparator = 'is';
 		}
 
 		// Reverse comparator
-		if ( $this->isType('array', $this->reverse) ) {
-			if ( $this->inArray($key, $this->reverse) ) {
+		if ($this->isType('array', $this->reverse)) {
+			if ($this->inArray($key, $this->reverse)) {
 				$comparator = "NOT {$comparator}";
 			}
-
-		} elseif ( $this->isType('string', $this->reverse) ) {
-			if ( $this->reverse == $key ) {
+		} elseif ($this->isType('string', $this->reverse)) {
+			if ($this->reverse == $key) {
 				$comparator = "NOT {$comparator}";
 			}
-
-		} elseif ( $this->isType('bool', $this->reverse) ) {
-			if ( $this->reverse == true ) {
+		} elseif ($this->isType('bool', $this->reverse)) {
+			if ($this->reverse == true) {
 				$comparator = "NOT {$comparator}";
 			}
 		}
@@ -521,16 +518,15 @@ final class OrmQuery implements OrmQueryInterface
 	 * @param string $key
 	 * @return string
 	 */
-	private function getConjunction(string $key) : string
+	private function getConjunction(string $key): string
 	{
 		$conjunction = 'AND';
 
-		if ( $this->isType('array', $this->conjunct) ) {
-			if ( isset($this->conjunct[$key]) ) {
+		if ($this->isType('array', $this->conjunct)) {
+			if (isset($this->conjunct[$key])) {
 				$conjunction = $this->conjunct[$key];
 			}
-
-		} elseif ( $this->isType('string', $this->conjunct) ) {
+		} elseif ($this->isType('string', $this->conjunct)) {
 			$conjunction = $this->conjunct;
 		}
 
@@ -544,16 +540,15 @@ final class OrmQuery implements OrmQueryInterface
 	 * @param string $key
 	 * @return string
 	 */
-	private function getBefore(string $key) : string
+	private function getBefore(string $key): string
 	{
 		$before = '';
-		if ( $this->isType('array', $this->before) ) {
-			if ( $this->inArray($key, $this->before) ) {
+		if ($this->isType('array', $this->before)) {
+			if ($this->inArray($key, $this->before)) {
 				$before = '(';
 			}
-
-		} elseif ( $this->isType('string', $this->before) ) {
-			if ( $this->before == $key ) {
+		} elseif ($this->isType('string', $this->before)) {
+			if ($this->before == $key) {
 				$before = '(';
 			}
 		}
@@ -567,16 +562,15 @@ final class OrmQuery implements OrmQueryInterface
 	 * @param string $key
 	 * @return string
 	 */
-	private function getAfter(string $key) : string
+	private function getAfter(string $key): string
 	{
 		$after = '';
-		if ( $this->isType('array', $this->after) ) {
-			if ( $this->inArray($key, $this->after) ) {
+		if ($this->isType('array', $this->after)) {
+			if ($this->inArray($key, $this->after)) {
 				$after = ')';
 			}
-
-		} elseif ( $this->isType('string', $this->after) ) {
-			if ( $this->after == $key ) {
+		} elseif ($this->isType('string', $this->after)) {
+			if ($this->after == $key) {
 				$after = ')';
 			}
 		}
@@ -589,11 +583,11 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return string
 	 */
-	private function getPrefix() : string
+	private function getPrefix(): string
 	{
 		$prefix = (string)$this->prefix;
 		$prefix = $this->stripSpace($prefix);
-		if ( substr($prefix, -1) !== '_' ) {
+		if (substr($prefix, -1) !== '_') {
 			$prefix .= '_';
 		}
 		return $prefix;
@@ -608,7 +602,7 @@ final class OrmQuery implements OrmQueryInterface
 	 */
 	private function setPrefix(?string $prefix = null)
 	{
-		if ( $prefix && !$this->prefix ) {
+		if ($prefix && !$this->prefix) {
 			$this->prefix = $prefix;
 		}
 	}
@@ -621,13 +615,13 @@ final class OrmQuery implements OrmQueryInterface
 	 * @param string $name
 	 * @return string
 	 */
-	private function setNameWrapper(string $name) : string
+	private function setNameWrapper(string $name): string
 	{
-		if ( $this->hasString($name, 'count(') ) {
+		if ($this->hasString($name, 'count(')) {
 			$name = $this->replaceString('count(', 'COUNT(`', $name);
 			$name = $this->replaceString(')', '`)', $name);
 		}
-		if ( !$this->hasString($name, self::WRAPPER) ) {
+		if (!$this->hasString($name, self::WRAPPER)) {
 			$name = "`{$name}`";
 		}
 		return $name;
@@ -640,7 +634,7 @@ final class OrmQuery implements OrmQueryInterface
 	 * @param string $column
 	 * @return string
 	 */
-	private function setColumnWrapper(string $column) : string
+	private function setColumnWrapper(string $column): string
 	{
 		// Init
 		$wrapper = $column;
@@ -649,12 +643,12 @@ final class OrmQuery implements OrmQueryInterface
 		$wrapper = $this->setNameWrapper($wrapper);
 
 		// Apply alias
-		if ( !$this->hasString($wrapper, self::ALIASED) ) {
-			if ( isset($this->columnAlias[$column]) ) {
+		if (!$this->hasString($wrapper, self::ALIASED)) {
+			if (isset($this->columnAlias[$column])) {
 				$wrapper .= " AS `{$this->columnAlias[$column]}`";
 			}
 		}
-		
+
 		return $wrapper;
 	}
 
@@ -665,19 +659,19 @@ final class OrmQuery implements OrmQueryInterface
 	 * @param string $table
 	 * @return string
 	 */
-	private function setTableWrapper(string $table) : string
+	private function setTableWrapper(string $table): string
 	{
 		// Init
 		$wrapper = $table;
 
 		// Set wrapper
-		if ( !$this->hasString($wrapper, self::WRAPPER) ) {
+		if (!$this->hasString($wrapper, self::WRAPPER)) {
 			$wrapper = "`{$wrapper}`";
 		}
-		
+
 		// Apply alias
-		if ( !$this->hasString($wrapper, self::ALIAS) ) {
-			if ( isset($this->tableAlias[$table]) ) {
+		if (!$this->hasString($wrapper, self::ALIAS)) {
+			if (isset($this->tableAlias[$table])) {
 				$wrapper .= " {$this->tableAlias[$table]}";
 			}
 		}
@@ -697,11 +691,10 @@ final class OrmQuery implements OrmQueryInterface
 		$distinct = $this->distinct;
 
 		// Convert string
-		if ( $this->isType('string', $distinct) ) {
+		if ($this->isType('string', $distinct)) {
 			$distinct = $this->stripSpace($distinct);
-			if ( $this->hasString($distinct, ',') ) {
+			if ($this->hasString($distinct, ',')) {
 				return explode(',', $distinct);
-
 			} else {
 				return [$distinct];
 			}
@@ -716,36 +709,34 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return array
 	 */
-	private function parseColumn() : array
+	private function parseColumn(): array
 	{
 		// Init
 		$column = $this->column;
 
 		// Convert string
-		if ( $this->isType('string', $column) ) {
+		if ($this->isType('string', $column)) {
 			$column = $this->stripSpace($column);
-			if ( $column == '*' || empty($column) ) {
+			if ($column == '*' || empty($column)) {
 				$column = ['*'];
-
-			} elseif ( $this->hasString($column, ',') ) {
+			} elseif ($this->hasString($column, ',')) {
 				$column = explode(',', $column);
-
 			} else {
 				$column = [$column];
 			}
 		}
 
 		// Convert any
-		if ( !$this->isType('array', $column) || empty($column) ) {
+		if (!$this->isType('array', $column) || empty($column)) {
 			$column = ['*'];
 		}
 
 		// Set alias
 		foreach ($column as $key => $col) {
-			if ( $this->hasString($col, self::ALIAS) ) {
+			if ($this->hasString($col, self::ALIAS)) {
 				$col = $this->stripSpace($col);
 				$alias = explode(self::ALIAS, $col);
-				if ( count($alias) == 2 && !empty($alias[0]) && !empty($alias[1]) ) {
+				if (count($alias) == 2 && !empty($alias[0]) && !empty($alias[1])) {
 					$this->columnAlias[$alias[0]] = $alias[1];
 					$column[$key] = $alias[0];
 				}
@@ -761,33 +752,32 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return array
 	 */
-	private function parseTable() : array
+	private function parseTable(): array
 	{
 		// Init
 		$table = $this->table;
 
 		// Convert string
-		if ( $this->isType('string', $table) ) {
+		if ($this->isType('string', $table)) {
 			$table = $this->stripSpace($table);
-			if ( $this->hasString($table, ',') ) {
+			if ($this->hasString($table, ',')) {
 				$table = explode(',', $table);
-
 			} else {
 				$table = [$table];
 			}
 		}
-		
+
 		// Convert any
-		if ( !$this->isType('array', $table) ) {
+		if (!$this->isType('array', $table)) {
 			$table = [];
 		}
 
 		// Set alias
 		foreach ($table as $key => $tab) {
-			if ( $this->hasString($tab, self::ALIAS) ) {
+			if ($this->hasString($tab, self::ALIAS)) {
 				$tab = $this->stripSpace($tab);
 				$alias = explode(self::ALIAS, $tab);
-				if ( count($alias) == 2 && !empty($alias[0]) && !empty($alias[1]) ) {
+				if (count($alias) == 2 && !empty($alias[0]) && !empty($alias[1])) {
 					$this->tableAlias["{$this->getPrefix()}{$alias[0]}"] = $alias[1];
 					$table[$key] = $alias[0];
 				}
@@ -803,40 +793,38 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return array
 	 */
-	private function parseOrderby() : array
+	private function parseOrderby(): array
 	{
 		// Init
 		$orderby = $this->orderby;
 
-		if ( empty($orderby) ) {
+		if (empty($orderby)) {
 			return [];
 		}
 
 		// Convert string
-		if ( $this->isType('string', $orderby) ) {
+		if ($this->isType('string', $orderby)) {
 			$orderby = $this->stripSpace($orderby);
-			if ( $this->hasString($orderby, ',') ) {
+			if ($this->hasString($orderby, ',')) {
 				$orderby = explode(',', $orderby);
-
 			} else {
 				$orderby = [$orderby];
 			}
 		}
 
 		// Convert any
-		if ( !$this->isType('array', $orderby) ) {
+		if (!$this->isType('array', $orderby)) {
 			$orderby = [];
 		}
 
 		// Set sort
 		$sorted = [];
 		foreach ($orderby as $key => $order) {
-			if ( $this->isType('string', $key) ) {
-				if ( !$order ) $order = 'ASC';
+			if ($this->isType('string', $key)) {
+				if (!$order) $order = 'ASC';
 				$order = $this->uppercase($order);
 				$key = "{$key} {$order}";
 				$sorted[] = $key;
-
 			} else {
 				$sorted[] = $order;
 			}
@@ -851,28 +839,27 @@ final class OrmQuery implements OrmQueryInterface
 	 * @access private
 	 * @return array
 	 */
-	private function parseGroupby() : array
+	private function parseGroupby(): array
 	{
 		// Init
 		$groupby = $this->groupby;
 
-		if ( empty($groupby) ) {
+		if (empty($groupby)) {
 			return [];
 		}
 
 		// Convert string
-		if ( $this->isType('string', $groupby) ) {
+		if ($this->isType('string', $groupby)) {
 			$groupby = $this->stripSpace($groupby);
-			if ( $this->hasString($groupby, ',') ) {
+			if ($this->hasString($groupby, ',')) {
 				$groupby = explode(',', $groupby);
-
 			} else {
 				$groupby = [$groupby];
 			}
 		}
 
 		// Convert any
-		if ( !$this->isType('array', $groupby) ) {
+		if (!$this->isType('array', $groupby)) {
 			$groupby = [];
 		}
 

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -47,13 +48,13 @@ final class Migrate extends Orm
 	 * @access public
 	 * @return bool
 	 */
-	public function install() : bool
+	public function install(): bool
 	{
-		if ( $this->isMigrated() ) {
+		if ($this->isMigrated()) {
 			return false;
 		}
 
-		if ( !($tables = $this->load()) ) {
+		if (!($tables = $this->load())) {
 			return false;
 		}
 
@@ -62,7 +63,7 @@ final class Migrate extends Orm
 			$sql = $this->readFile(
 				$this->getMigratePath($table)
 			);
-			if ( !empty($sql) ) {
+			if (!empty($sql)) {
 				$sql = $this->applyVars($sql);
 				$count += (int)$this->execute($sql);
 			}
@@ -78,7 +79,7 @@ final class Migrate extends Orm
 	 * @access public
 	 * @return bool
 	 */
-	public function rebuild() : bool
+	public function rebuild(): bool
 	{
 		$this->unlock();
 		return $this->install();
@@ -90,14 +91,14 @@ final class Migrate extends Orm
 	 * @access public
 	 * @return bool
 	 */
-	public function drop() : bool
+	public function drop(): bool
 	{
 		$file = $this->getMigratePath(self::UNINSTALL);
-		if ( !$this->isFile($file) ) {
+		if (!$this->isFile($file)) {
 			return false;
 		}
 
-		if ( !empty(($sql = $this->readFile($file))) ) {
+		if (!empty(($sql = $this->readFile($file)))) {
 			$sql = $this->applyVars($sql);
 			return (bool)$this->execute($sql);
 		}
@@ -111,29 +112,28 @@ final class Migrate extends Orm
 	 * @access public
 	 * @return bool
 	 */
-	public function upgrade() : bool
+	public function upgrade(): bool
 	{
-		if ( $this->isMigrated() ) {
+		if ($this->isMigrated()) {
 			return false;
 		}
 
 		$file = $this->getMigratePath(self::UPGRADE);
-		if ( !$this->isFile($file) ) {
+		if (!$this->isFile($file)) {
 			return false;
 		}
 
 		$count = 0;
 		foreach ($this->getLines($file) as $line) {
 			$sql = $this->applyVars($line);
-			if ( $this->hasString($sql, 'ADD') ) {
+			if ($this->hasString($sql, 'ADD')) {
 
 				$column = $this->parseColumn($sql);
 				$table  = $this->parseTable($sql);
 
-				if ( !$this->hasColumn($column, $table) ) {
+				if (!$this->hasColumn($column, $table)) {
 					$count += (int)$this->execute($sql);
 				}
-
 			} else {
 				$count += (int)$this->execute($sql);
 			}
@@ -141,7 +141,7 @@ final class Migrate extends Orm
 
 		return (bool)$count;
 	}
-	
+
 	/**
 	 * Migrate plugin options.
 	 *
@@ -149,12 +149,12 @@ final class Migrate extends Orm
 	 * @param array $options
 	 * @return bool
 	 */
-	public function option(array $options) : bool
+	public function option(array $options): bool
 	{
 		$count = 0;
 		foreach ($options as $old => $new) {
 			$temp = $this->getOption($this->applyPrefix($old), null);
-			if ( !$this->isType('null', $temp) ) {
+			if (!$this->isType('null', $temp)) {
 				$count += (int)$this->updateOption($this->applyPrefix($new), $temp);
 				$count += (int)$this->removeOption($this->applyPrefix($old));
 			}
@@ -184,7 +184,7 @@ final class Migrate extends Orm
 			'table'  => $table,
 			'column' => $columns
 		]));
-		if ( empty($data) ) {
+		if (empty($data)) {
 			fclose($res);
 			return false;
 		}
@@ -203,7 +203,7 @@ final class Migrate extends Orm
 	 * @param array $data
 	 * @return bool
 	 */
-	public function import(string $table, array $data = []) : bool
+	public function import(string $table, array $data = []): bool
 	{
 		return false;
 	}
@@ -214,7 +214,7 @@ final class Migrate extends Orm
 	 * @access public
 	 * @return bool
 	 */
-	public function isMigrated() : bool
+	public function isMigrated(): bool
 	{
 		return $this->isFile(
 			$this->getMigratePath(self::LOCK)
@@ -227,7 +227,7 @@ final class Migrate extends Orm
 	 * @access public
 	 * @return bool
 	 */
-	public function unlock() : bool
+	public function unlock(): bool
 	{
 		$file = $this->getMigratePath(self::LOCK);
 		return $this->removeFile($file, $this->getRoot());
@@ -240,7 +240,7 @@ final class Migrate extends Orm
 	 * @param string $query
 	 * @return string
 	 */
-	private function parseTable(string $query) : string
+	private function parseTable(string $query): string
 	{
 		return $this->matchString(self::ALTER, $query);
 	}
@@ -252,7 +252,7 @@ final class Migrate extends Orm
 	 * @param string $query
 	 * @return string
 	 */
-	private function parseColumn(string $query) : string
+	private function parseColumn(string $query): string
 	{
 		return $this->matchString(self::ADD, $query);
 	}
@@ -265,7 +265,7 @@ final class Migrate extends Orm
 	 * @param string $query
 	 * @return string
 	 */
-	private function applyVars(string $query) : string
+	private function applyVars(string $query): string
 	{
 		$query = $this->replaceString('[DBPREFIX]', $this->prefix, $query);
 		$query = $this->replaceString('[COLLATE]', $this->collate, $query);
@@ -279,7 +279,7 @@ final class Migrate extends Orm
 	 * @access private
 	 * @return bool
 	 */
-	private function lock() : bool
+	private function lock(): bool
 	{
 		return $this->writeFile(
 			$this->getMigratePath(self::LOCK)
@@ -292,7 +292,7 @@ final class Migrate extends Orm
 	 * @access private
 	 * @return array
 	 */
-	private function load() : array
+	private function load(): array
 	{
 		$path = $this->getMigratePath();
 		return $this->scanDir($path, 0, [

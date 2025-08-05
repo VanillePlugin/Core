@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -48,7 +49,7 @@ final class Shortcode
 	 * @param string $tag
 	 * @return bool
 	 */
-	public static function has(string $tag) : bool
+	public static function has(string $tag): bool
 	{
 		return shortcode_exists($tag);
 	}
@@ -61,7 +62,7 @@ final class Shortcode
 	 * @param bool $ignore, Ignore HTML
 	 * @return string
 	 */
-	public static function do(string $content, bool $ignore = false) : string
+	public static function do(string $content, bool $ignore = false): string
 	{
 		return do_shortcode($content, $ignore);
 	}
@@ -87,11 +88,11 @@ final class Shortcode
 	 * @param string $tag
 	 * @return bool
 	 */
-	public static function contains(string $content, string $tag) : bool
+	public static function contains(string $content, string $tag): bool
 	{
 		return has_shortcode($content, $tag);
 	}
-	
+
 	/**
 	 * Get shortcode attributes.
 	 *
@@ -101,11 +102,11 @@ final class Shortcode
 	 * @param string $tag
 	 * @return array
 	 */
-	public static function getAtts(array $default = [], array $atts = [], ?string $tag = null) : array
+	public static function getAtts(array $default = [], array $atts = [], ?string $tag = null): array
 	{
 		return shortcode_atts($default, $atts, (string)$tag);
 	}
-	
+
 	/**
 	 * Strip content from shortcodes.
 	 *
@@ -113,7 +114,7 @@ final class Shortcode
 	 * @param string $content
 	 * @return string
 	 */
-	public static function strip(string $content) : string
+	public static function strip(string $content): string
 	{
 		return Stringify::unShortcode($content);
 	}

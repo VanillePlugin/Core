@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -37,14 +38,14 @@ interface OrmInterface
 	 *
 	 * @return object
 	 */
-	function noPrepare() : self;
+	function noPrepare(): self;
 
 	/**
 	 * Disable type format.
 	 *
 	 * @return object
 	 */
-	function noType() : self;
+	function noType(): self;
 
 	/**
 	 * Set table.
@@ -52,7 +53,7 @@ interface OrmInterface
 	 * @param string $table
 	 * @return object
 	 */
-	function setTable(string $table) : self;
+	function setTable(string $table): self;
 
 	/**
 	 * Set key.
@@ -60,7 +61,7 @@ interface OrmInterface
 	 * @param string $key
 	 * @return object
 	 */
-	function setKey(string $key) : self;
+	function setKey(string $key): self;
 
 	/**
 	 * Create row.
@@ -81,7 +82,7 @@ interface OrmInterface
 	 * @param string $table
 	 * @return array
 	 */
-	function read($id = null, ?string $key = null, ?string $table = null) : array;
+	function read($id = null, ?string $key = null, ?string $table = null): array;
 
 	/**
 	 * Update rows,
@@ -92,7 +93,7 @@ interface OrmInterface
 	 * @param string $table
 	 * @return int
 	 */
-	function update(array $data, array $where = [], ?string $table = null) : int;
+	function update(array $data, array $where = [], ?string $table = null): int;
 
 	/**
 	 * Delete rows.
@@ -102,7 +103,7 @@ interface OrmInterface
 	 * @param string $table
 	 * @return int
 	 */
-	function delete(array $where = [], ?string $table = null) : int;
+	function delete(array $where = [], ?string $table = null): int;
 
 	/**
 	 * Execute global query,
@@ -113,7 +114,7 @@ interface OrmInterface
 	 * @return mixed
 	 */
 	function execute(string $sql, array $data = []);
-	
+
 	/**
 	 * Execute result query,
 	 * Return rows values.
@@ -122,7 +123,7 @@ interface OrmInterface
 	 * @param array $data
 	 * @return array
 	 */
-	function getResult(string $sql, array $data = []) : array;
+	function getResult(string $sql, array $data = []): array;
 
 	/**
 	 * Execute field query,
@@ -146,7 +147,7 @@ interface OrmInterface
 	 * @param int $y Row index
 	 * @return array
 	 */
-	function getRow(string $sql, array $data = [], $y = 0) : array;
+	function getRow(string $sql, array $data = [], $y = 0): array;
 
 	/**
 	 * Execute column query,
@@ -157,7 +158,7 @@ interface OrmInterface
 	 * @param int $x, Column index
 	 * @return array
 	 */
-	function getColumn(string $sql, array $data = [], int $x = 0) : array;
+	function getColumn(string $sql, array $data = [], int $x = 0): array;
 
 	/**
 	 * Get min value.
@@ -194,14 +195,14 @@ interface OrmInterface
 	 * @return mixed
 	 */
 	function sum(string $column, ?string $table = null);
-	
+
 	/**
 	 * Get all rows.
 	 *
 	 * @param string $table
 	 * @return array
 	 */
-	function all(?string $table = null) : array;
+	function all(?string $table = null): array;
 
 	/**
 	 * Count rows.
@@ -209,14 +210,14 @@ interface OrmInterface
 	 * @param string $table
 	 * @return int
 	 */
-	function count(?string $table = null) : int;
+	function count(?string $table = null): int;
 
-    /**
-     * Get last inserted Id.
-     *
-     * @return int
-     */
-    function insertId() : int;
+	/**
+	 * Get last inserted Id.
+	 *
+	 * @return int
+	 */
+	function insertId(): int;
 
 	/**
 	 * Clear table,
@@ -226,7 +227,7 @@ interface OrmInterface
 	 * @param bool $reset
 	 * @return int
 	 */
-	function clear(?string $table = null, bool $reset = true) : int;
+	function clear(?string $table = null, bool $reset = true): int;
 
 	/**
 	 * Reset table Ids.
@@ -234,7 +235,7 @@ interface OrmInterface
 	 * @param string $table
 	 * @return bool
 	 */
-	function resetId(?string $table = null) : bool;
+	function resetId(?string $table = null): bool;
 
 	/**
 	 * Check database table.
@@ -243,7 +244,7 @@ interface OrmInterface
 	 * @param string $table
 	 * @return bool
 	 */
-	function hasTable(bool $wildcard = false, ?string $table = null) : bool;
+	function hasTable(bool $wildcard = false, ?string $table = null): bool;
 
 	/**
 	 * Check table column.
@@ -252,7 +253,7 @@ interface OrmInterface
 	 * @param string $table
 	 * @return bool
 	 */
-	function hasColumn(string $column, ?string $table = null) : bool;
+	function hasColumn(string $column, ?string $table = null): bool;
 
 	/**
 	 * Get database table columns.
@@ -260,14 +261,14 @@ interface OrmInterface
 	 * @param string $table
 	 * @return array
 	 */
-	function columns(?string $table = null) : array;
+	function columns(?string $table = null): array;
 
 	/**
 	 * Get database tables.
 	 *
 	 * @return array
 	 */
-	function tables() : array;
+	function tables(): array;
 
 	/**
 	 * Execute advanced query using query builder.

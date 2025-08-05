@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -45,7 +46,7 @@ final class ArrayifyTest extends TestCase
         $tmp = [0, 1];
         $item = Arrayify::push($tmp, '2');
         $this->assertCount($item, $tmp);
-        Arrayify::push($tmp,3);
+        Arrayify::push($tmp, 3);
         $this->assertEquals($tmp, [0, 1, '2', 3]);
     }
 
@@ -69,7 +70,7 @@ final class ArrayifyTest extends TestCase
     {
         $tmp = [];
         $array1 = [1, 2, 3, 4, 5];
-        $tmp = Arrayify::map(function($n){
+        $tmp = Arrayify::map(function ($n) {
             return ($n * $n * $n);
         }, $array1);
         $this->assertEquals([1, 8, 27, 64, 125], $tmp);
@@ -140,7 +141,7 @@ final class ArrayifyTest extends TestCase
 
     public function testSlice()
     {
-        $this->assertSame([0 => 4], Arrayify::slice([1, 2, 3, 4 ,5], -2, 1));
+        $this->assertSame([0 => 4], Arrayify::slice([1, 2, 3, 4, 5], -2, 1));
     }
 
     public function testFilter()
@@ -170,7 +171,7 @@ final class ArrayifyTest extends TestCase
     public function testWalkRecursive()
     {
         $arrays = [['1' => 'test-1'], ['2' => 'test-2'], ['3' => 'test-3']];
-        Arrayify::recursive($arrays, function(&$array) {
+        Arrayify::recursive($arrays, function (&$array) {
             $array = Stringify::replace('test-', 'tested-', $array);
         });
         $this->assertSame($arrays[0]['1'], 'tested-1');

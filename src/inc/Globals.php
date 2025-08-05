@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -22,7 +23,7 @@ final class Globals
 	 * @access public
 	 * @return string
 	 */
-	public static function website() : string
+	public static function website(): string
 	{
 		return get_bloginfo('name');
 	}
@@ -33,7 +34,7 @@ final class Globals
 	 * @access public
 	 * @return string
 	 */
-	public static function email() : string
+	public static function email(): string
 	{
 		return get_bloginfo('admin_email');
 	}
@@ -44,7 +45,7 @@ final class Globals
 	 * @access public
 	 * @return string
 	 */
-	public static function version() : string
+	public static function version(): string
 	{
 		global $wp_version;
 		return $wp_version;
@@ -60,7 +61,7 @@ final class Globals
 		global $wp_scripts;
 		return $wp_scripts;
 	}
-	
+
 	/**
 	 * Get website styles.
 	 *
@@ -79,7 +80,7 @@ final class Globals
 	 * @access public
 	 * @return bool
 	 */
-	public static function installing() : bool
+	public static function installing(): bool
 	{
 		return wp_installing();
 	}
@@ -90,7 +91,7 @@ final class Globals
 	 * @access public
 	 * @return bool
 	 */
-	public static function debug() : bool
+	public static function debug(): bool
 	{
 		return defined('WP_DEBUG') && (WP_DEBUG == true);
 	}
@@ -101,7 +102,7 @@ final class Globals
 	 * @access public
 	 * @return bool
 	 */
-	public static function cache() : bool
+	public static function cache(): bool
 	{
 		return defined('WP_CACHE') && (WP_CACHE == true);
 	}
@@ -112,7 +113,7 @@ final class Globals
 	 * @access public
 	 * @return bool
 	 */
-	public static function multisite() : bool
+	public static function multisite(): bool
 	{
 		return is_multisite();
 	}
@@ -123,18 +124,18 @@ final class Globals
 	 * @access public
 	 * @return bool
 	 */
-	public static function mobile() : bool
+	public static function mobile(): bool
 	{
 		return wp_is_mobile();
 	}
-	
+
 	/**
 	 * Check Ajax request.
 	 *
 	 * @access public
 	 * @return bool
 	 */
-	public static function ajax() : bool
+	public static function ajax(): bool
 	{
 		$request = Server::get('request-uri');
 		$ajax = Stringify::basename(self::ajaxUrl());
@@ -147,7 +148,7 @@ final class Globals
 	 * @access public
 	 * @return bool
 	 */
-	public static function api() : bool
+	public static function api(): bool
 	{
 		return wp_is_rest_endpoint();
 	}
@@ -158,7 +159,7 @@ final class Globals
 	 * @access public
 	 * @return array
 	 */
-	public static function roles() : array
+	public static function roles(): array
 	{
 		return Arrayify::keys(wp_roles()->roles);
 	}
@@ -169,20 +170,17 @@ final class Globals
 	 * @access public
 	 * @return string
 	 */
-	public static function server() : string
+	public static function server(): string
 	{
 		global $is_apache, $is_nginx, $is_iis7, $is_IIS;
 
-		if ( $is_apache ) {
+		if ($is_apache) {
 			return 'Apache';
-
-		} elseif ( $is_nginx ) {
+		} elseif ($is_nginx) {
 			return 'Nginx';
-
-		} elseif ( $is_iis7 ) {
+		} elseif ($is_iis7) {
 			return 'IIS 7';
-
-		} elseif ( $is_IIS ) {
+		} elseif ($is_IIS) {
 			return 'IIS';
 		}
 
@@ -195,7 +193,7 @@ final class Globals
 	 * @access public
 	 * @return string
 	 */
-	public static function pluginUrl() : string
+	public static function pluginUrl(): string
 	{
 		return WP_PLUGIN_URL;
 	}
@@ -206,7 +204,7 @@ final class Globals
 	 * @access public
 	 * @return string
 	 */
-	public static function pluginDir() : string
+	public static function pluginDir(): string
 	{
 		return WP_PLUGIN_DIR;
 	}
@@ -217,7 +215,7 @@ final class Globals
 	 * @access public
 	 * @return string
 	 */
-	public static function pluginMuDir() : string
+	public static function pluginMuDir(): string
 	{
 		return WPMU_PLUGIN_DIR;
 	}
@@ -229,15 +227,15 @@ final class Globals
 	 * @param string $path
 	 * @return string
 	 */
-	public static function contentUrl(?string $path = null) : string
+	public static function contentUrl(?string $path = null): string
 	{
 		$baseUrl = WP_CONTENT_URL;
-		if ( $path ) {
+		if ($path) {
 			return Stringify::formatPath("{$baseUrl}/{$path}", true);
 		}
 		return $baseUrl;
 	}
-	
+
 	/**
 	 * Get content directory without trailing slash.
 	 *
@@ -245,10 +243,10 @@ final class Globals
 	 * @param string $path
 	 * @return string
 	 */
-	public static function contentDir(?string $path = null) : string
+	public static function contentDir(?string $path = null): string
 	{
 		$baseDir = WP_CONTENT_DIR;
-		if ( $path ) {
+		if ($path) {
 			return Stringify::formatPath("{$baseDir}/{$path}", true);
 		}
 		return $baseDir;
@@ -261,10 +259,10 @@ final class Globals
 	 * @param string $path
 	 * @return string
 	 */
-	public static function rootDir(?string $path = null) : string
+	public static function rootDir(?string $path = null): string
 	{
 		$baseDir = ABSPATH;
-		if ( $path ) {
+		if ($path) {
 			return Stringify::formatPath("{$baseDir}/{$path}", true);
 		}
 		return $baseDir;
@@ -278,7 +276,7 @@ final class Globals
 	 * @param string $scheme
 	 * @return string
 	 */
-	public static function url(?string $path = null, ?string $scheme = null) : string
+	public static function url(?string $path = null, ?string $scheme = null): string
 	{
 		$url = home_url((string)$path, $scheme);
 		return Stringify::formatPath($url);
@@ -293,7 +291,7 @@ final class Globals
 	 * @param string $scheme
 	 * @return string
 	 */
-	public static function siteUrl(?string $path = null, string $scheme = 'relative') : string
+	public static function siteUrl(?string $path = null, string $scheme = 'relative'): string
 	{
 		$url = site_url((string)$path, $scheme);
 		return Stringify::formatPath($url);
@@ -305,7 +303,7 @@ final class Globals
 	 * @access public
 	 * @return string
 	 */
-	public static function siteDomain() : string
+	public static function siteDomain(): string
 	{
 		return Server::getDomain(
 			self::siteUrl()
@@ -320,7 +318,7 @@ final class Globals
 	 * @param string $scheme
 	 * @return string
 	 */
-	public static function adminUrl(?string $path = null, string $scheme = 'admin') : string
+	public static function adminUrl(?string $path = null, string $scheme = 'admin'): string
 	{
 		$url = admin_url((string)$path, $scheme);
 		return Stringify::formatPath($url);
@@ -334,7 +332,7 @@ final class Globals
 	 * @param string $scheme
 	 * @return string
 	 */
-	public static function includesUrl(?string $path = null, string $scheme = 'admin') : string
+	public static function includesUrl(?string $path = null, string $scheme = 'admin'): string
 	{
 		$url = includes_url((string)$path, $scheme);
 		return Stringify::formatPath($url);
@@ -373,7 +371,7 @@ final class Globals
 	 * @param bool $auth
 	 * @return string
 	 */
-	public static function loginUrl(?string $redirect = null, bool $auth = false) : string
+	public static function loginUrl(?string $redirect = null, bool $auth = false): string
 	{
 		return wp_login_url($redirect, $auth);
 	}
@@ -385,18 +383,18 @@ final class Globals
 	 * @param string $redirect
 	 * @return string
 	 */
-	public static function resetUrl(?string $redirect = null) : string
+	public static function resetUrl(?string $redirect = null): string
 	{
 		return wp_lostpassword_url($redirect);
 	}
-	
+
 	/**
 	 * Get privacy URL.
 	 *
 	 * @access public
 	 * @return string
 	 */
-	public static function privacyUrl() : string
+	public static function privacyUrl(): string
 	{
 		return get_privacy_policy_url();
 	}
@@ -410,7 +408,7 @@ final class Globals
 	 * @param bool $refresh
 	 * @return array
 	 */
-	public static function upload(?string $time = null, bool $create = true, bool $refresh = false) : array
+	public static function upload(?string $time = null, bool $create = true, bool $refresh = false): array
 	{
 		return wp_upload_dir($time, $create, $refresh);
 	}

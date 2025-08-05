@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -100,10 +101,10 @@ final class StringifyTest extends TestCase
     {
         $this->assertEquals(['test', 'text'], Stringify::split('testtext', ['length' => 4]));
         $args = [
-			'regex' => '/([\s\n\r]+)/u',
-			'limit' => 0,
-			'flags' => 2
-		];
+            'regex' => '/([\s\n\r]+)/u',
+            'limit' => 0,
+            'flags' => 2
+        ];
         $this->assertEquals(['test', ' ', 'text'], Stringify::split('test text', $args));
     }
 
@@ -249,16 +250,15 @@ final class StringifyTest extends TestCase
 
     public function testEscapeUrl()
     {
-        if ( !has_filter('clean_url') ) {
+        if (!has_filter('clean_url')) {
             $this->assertEquals('', Stringify::escapeUrl('https://example.com', ['http']));
             $this->assertEquals('', Stringify::escapeUrl('http://example.com', ['https']));
             $this->assertEquals('', Stringify::escapeUrl('test://example.com'));
-        
+
             $this->assertEquals('http://example.com', Stringify::escapeUrl('example.com'));
             $this->assertEquals('http://example.com', Stringify::escapeUrl('http://example.com'));
             $this->assertEquals('https://example.com', Stringify::escapeUrl('https://example.com'));
             $this->assertEquals('test://example.com', Stringify::escapeUrl('test://example.com', ['test']));
-
         } else {
             $this->assertTrue(true);
         }
@@ -266,11 +266,10 @@ final class StringifyTest extends TestCase
 
     public function testEscapeHTML()
     {
-        if ( !has_filter('esc_html') ) {
+        if (!has_filter('esc_html')) {
             $string = '<p>This is <strong>HTML</strong> content</p>';
             $result = '&lt;p&gt;This is &lt;strong&gt;HTML&lt;/strong&gt; content&lt;/p&gt;';
             $this->assertEquals($result, Stringify::escapeHTML($string));
-
         } else {
             $this->assertTrue(true);
         }
@@ -278,11 +277,10 @@ final class StringifyTest extends TestCase
 
     public function testEscapeXML()
     {
-        if ( !has_filter('esc_xml') ) {
+        if (!has_filter('esc_xml')) {
             $string = '<tag attribute="value">This is some content</tag>';
             $result = "&lt;tag attribute=&quot;value&quot;&gt;This is some content&lt;/tag&gt;";
             $this->assertEquals($result, Stringify::escapeXML($string));
-
         } else {
             $this->assertTrue(true);
         }
@@ -290,11 +288,10 @@ final class StringifyTest extends TestCase
 
     public function testEscapeJS()
     {
-        if ( !has_filter('js_escape') ) {
+        if (!has_filter('js_escape')) {
             $string = 'This is a "quoted" string with \'single quotes\'';
             $result = "This is a &quot;quoted&quot; string with \'single quotes\'";
             $this->assertEquals($result, Stringify::escapeJS($string));
-
         } else {
             $this->assertTrue(true);
         }
@@ -309,11 +306,10 @@ final class StringifyTest extends TestCase
 
     public function testEscapeAttr()
     {
-        if ( !has_filter('attribute_escape') ) {
+        if (!has_filter('attribute_escape')) {
             $string = 'This is a "quoted" string with \'single quotes\'';
             $result = "This is a &quot;quoted&quot; string with &#039;single quotes&#039;";
             $this->assertEquals($result, Stringify::escapeAttr($string));
-
         } else {
             $this->assertTrue(true);
         }
@@ -321,11 +317,10 @@ final class StringifyTest extends TestCase
 
     public function testEscapeTextarea()
     {
-        if ( !has_filter('esc_textarea') ) {
+        if (!has_filter('esc_textarea')) {
             $string = '<p>This is <strong>HTML</strong> content</p>';
             $result = '&lt;p&gt;This is &lt;strong&gt;HTML&lt;/strong&gt; content&lt;/p&gt;';
             $this->assertEquals($result, Stringify::escapeTextarea($string));
-
         } else {
             $this->assertTrue(true);
         }
@@ -333,11 +328,10 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeText()
     {
-        if ( !has_filter('sanitize_text_field') ) {
+        if (!has_filter('sanitize_text_field')) {
             $string = "<p>This is <strong>HTML</strong> \ncontent</p>";
             $result = 'This is HTML content';
             $this->assertEquals($result, Stringify::sanitizeText($string));
-
         } else {
             $this->assertTrue(true);
         }
@@ -345,11 +339,10 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeTextarea()
     {
-        if ( !has_filter('sanitize_textarea_field') ) {
+        if (!has_filter('sanitize_textarea_field')) {
             $string = "<p>This is <strong>HTML</strong> \ncontent</p>";
             $result = "This is HTML \ncontent";
             $this->assertEquals($result, Stringify::sanitizeTextarea($string));
-
         } else {
             $this->assertTrue(true);
         }
@@ -357,11 +350,10 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeTitle()
     {
-        if ( !has_filter('sanitize_title') ) {
+        if (!has_filter('sanitize_title')) {
             $string = 'This is a Title with 123 Numbers and Special-Chars!';
             $result = 'this-is-a-title-with-123-numbers-and-special-chars';
             $this->assertEquals($result, Stringify::sanitizeTitle($string));
-
         } else {
             $this->assertTrue(true);
         }
@@ -369,9 +361,8 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeKey()
     {
-        if ( !has_filter('sanitize_key') ) {
+        if (!has_filter('sanitize_key')) {
             $this->assertEquals('testexamplekey', Stringify::sanitizeKey('test  example  key'));
-
         } else {
             $this->assertTrue(true);
         }
@@ -379,9 +370,8 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeEmail()
     {
-        if ( !has_filter('sanitize_email') ) {
+        if (!has_filter('sanitize_email')) {
             $this->assertEquals('conact@example.com', Stringify::sanitizeEmail('conact@ example.com'));
-
         } else {
             $this->assertTrue(true);
         }
@@ -397,11 +387,10 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeHtmlClass()
     {
-        if ( !has_filter('sanitize_html_class') ) {
+        if (!has_filter('sanitize_html_class')) {
             $this->assertEquals('test', Stringify::sanitizeHtmlClass('test'));
             $this->assertEquals('1test', Stringify::sanitizeHtmlClass('1test'));
             $this->assertEquals('test', Stringify::sanitizeHtmlClass('@test'));
-
         } else {
             $this->assertTrue(true);
         }
@@ -409,10 +398,11 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeFilename()
     {
-        if ( !has_filter('sanitize_file_name') 
-          && !has_filter('sanitize_file_name_chars') ) {
+        if (
+            !has_filter('sanitize_file_name')
+            && !has_filter('sanitize_file_name_chars')
+        ) {
             $this->assertEquals('file-name.txt', Stringify::sanitizeFilename('file name.txt'));
-
         } else {
             $this->assertTrue(true);
         }
@@ -420,9 +410,8 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeMimeType()
     {
-        if ( !has_filter('sanitize_mime_type') ) {
+        if (!has_filter('sanitize_mime_type')) {
             $this->assertEquals('filename.txt', Stringify::sanitizeMimeType('filename .txt'));
-
         } else {
             $this->assertTrue(true);
         }
@@ -432,7 +421,7 @@ final class StringifyTest extends TestCase
     {
         $string = "test DECS";
         $this->assertEquals('', Stringify::sanitizeSqlOrder($string));
-        
+
         $string = "name ASC";
         $this->assertEquals($string, Stringify::sanitizeSqlOrder($string));
     }
@@ -440,11 +429,10 @@ final class StringifyTest extends TestCase
     public function testSanitizeOption()
     {
         $key = 'new_admin_email';
-        if ( !has_filter("sanitize_option_{$key}") ) {
+        if (!has_filter("sanitize_option_{$key}")) {
             $value  = 'conact @ example.com';
             $result = 'conact@example.com';
             $this->assertEquals($result, Stringify::sanitizeOption($key, $value));
-
         } else {
             $this->assertTrue(true);
         }
@@ -454,10 +442,9 @@ final class StringifyTest extends TestCase
     {
         $type = 'post';
         $key  = 'admin-email';
-        if ( !has_filter("sanitize_{$type}_meta_{$key}") ) {
+        if (!has_filter("sanitize_{$type}_meta_{$key}")) {
             $value = 'conact @ example.com';
             $this->assertEquals($value, Stringify::sanitizeMeta($key, $value, $type));
-
         } else {
             $this->assertTrue(true);
         }
@@ -465,9 +452,8 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeUser()
     {
-        if ( !has_filter('sanitize_user') ) {
+        if (!has_filter('sanitize_user')) {
             $this->assertEquals('@Admin', Stringify::sanitizeUser('@$Admin$'));
-
         } else {
             $this->assertTrue(true);
         }
@@ -475,16 +461,15 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeUrl()
     {
-        if ( !has_filter('clean_url') ) {
+        if (!has_filter('clean_url')) {
             $this->assertEquals('', Stringify::sanitizeUrl('https://example.com', ['http']));
             $this->assertEquals('', Stringify::sanitizeUrl('http://example.com', ['https']));
             $this->assertEquals('', Stringify::sanitizeUrl('test://example.com'));
-        
+
             $this->assertEquals('http://example.com', Stringify::sanitizeUrl('example.com'));
             $this->assertEquals('http://example.com', Stringify::sanitizeUrl('http://example.com'));
             $this->assertEquals('https://example.com', Stringify::sanitizeUrl('https://example.com'));
             $this->assertEquals('test://example.com', Stringify::sanitizeUrl('test://example.com', ['test']));
-                
         } else {
             $this->assertTrue(true);
         }
@@ -492,11 +477,10 @@ final class StringifyTest extends TestCase
 
     public function testSanitizeHTML()
     {
-        if ( !has_filter('wp_kses_allowed_html') ) {
+        if (!has_filter('wp_kses_allowed_html')) {
             $value  = '<strong>Value</strong> with <script>alert("XSS")</script>';
             $result = '<strong>Value</strong> with alert("XSS")';
             $this->assertEquals($result, Stringify::sanitizeHTML($value));
-                
         } else {
             $this->assertTrue(true);
         }
