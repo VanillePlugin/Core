@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -21,7 +22,7 @@ use VanillePlugin\int\LoggerInterface;
  */
 class Logger implements LoggerInterface
 {
-	use \VanillePlugin\VanillePluginConfig;
+    use \VanillePlugin\VanillePluginConfig;
 
     /**
      * @access private
@@ -46,10 +47,10 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function setPath(string $path) : self
+    public function setPath(string $path): self
     {
         $this->path = $path;
-        if ( !$this->isDir($this->path) ) {
+        if (!$this->isDir($this->path)) {
             $this->addDir($this->path);
         }
         return $this;
@@ -58,7 +59,7 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function setFilename(string $filename) : self
+    public function setFilename(string $filename): self
     {
         $this->filename = $filename;
         return $this;
@@ -67,7 +68,7 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function setExtension(string $extension) : self
+    public function setExtension(string $extension): self
     {
         $this->extension = $extension;
         return $this;
@@ -76,9 +77,9 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function debug($message, bool $isArray = false) : bool
+    public function debug($message, bool $isArray = false): bool
     {
-        if ( $isArray ) {
+        if ($isArray) {
             $message = print_r($message, true);
         }
         return $this->write('debug', $message);
@@ -87,7 +88,7 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function error(string $message) : bool
+    public function error(string $message): bool
     {
         return $this->write('error', $message);
     }
@@ -95,7 +96,7 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function warning(string $message) : bool
+    public function warning(string $message): bool
     {
         return $this->write('warning', $message);
     }
@@ -103,7 +104,7 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function info(string $message) : bool
+    public function info(string $message): bool
     {
         return $this->write('info', $message);
     }
@@ -111,7 +112,7 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function custom(string $message, string $type = 'custom') : bool
+    public function custom(string $message, string $type = 'custom'): bool
     {
         return $this->write($type, $message);
     }
@@ -119,7 +120,7 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public static function log(string $message, int $type = 0, ?string $path = null, ?string $headers = null) : bool
+    public static function log(string $message, int $type = 0, ?string $path = null, ?string $headers = null): bool
     {
         return error_log($message, $type, $path, $headers);
     }
@@ -132,7 +133,7 @@ class Logger implements LoggerInterface
      * @param string $message 
      * @return bool
      */
-    protected function write(string $status, string $message) : bool
+    protected function write(string $status, string $message): bool
     {
         $date = date('[d-m-Y]');
         $log  = "{$this->path}/{$this->filename}-{$date}.{$this->extension}";

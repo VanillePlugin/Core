@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -27,11 +28,11 @@ final class Session
      */
     public function __construct()
     {
-        if ( !self::isActive() ) {
+        if (!self::isActive()) {
             @session_start();
         }
     }
-    
+
     /**
      * Register session.
      *
@@ -54,9 +55,9 @@ final class Session
      * @access public
      * @return bool
      */
-    public static function isRegistered() : bool
+    public static function isRegistered(): bool
     {
-        if ( !empty(self::get('--session-id')) ) {
+        if (!empty(self::get('--session-id'))) {
             return true;
         }
         return false;
@@ -71,7 +72,7 @@ final class Session
      */
     public static function get(?string $key = null)
     {
-        if ( $key ) {
+        if ($key) {
             return self::isSetted($key) ? $_SESSION[$key] : null;
         }
         return self::isSetted() ? $_SESSION : null;
@@ -97,9 +98,9 @@ final class Session
      * @param string $key
      * @return bool
      */
-    public static function isSetted(?string $key = null) : bool
+    public static function isSetted(?string $key = null): bool
     {
-        if ( $key ) {
+        if ($key) {
             return isset($_SESSION[$key]);
         }
         return isset($_SESSION) && !empty($_SESSION);
@@ -114,9 +115,8 @@ final class Session
      */
     public static function unset(?string $key = null)
     {
-        if ( $key ) {
+        if ($key) {
             unset($_SESSION[$key]);
-
         } else {
             $_SESSION = [];
         }
@@ -128,7 +128,7 @@ final class Session
      * @access public
      * @return bool
      */
-    public static function isExpired() : bool
+    public static function isExpired(): bool
     {
         return (self::get('--session-start') < Date::timeNow());
     }
@@ -144,14 +144,14 @@ final class Session
         $time = self::get('--session-time');
         self::set('--session-start', Date::newTime(0, 0, $time));
     }
-    
+
     /**
      * Get current session id.
      *
      * @access public
      * @return int
      */
-    public static function getSessionId() : int
+    public static function getSessionId(): int
     {
         return (int)self::get('--session-id');
     }
@@ -176,7 +176,7 @@ final class Session
      * @access public
      * @return int
      */
-    public static function getStatus() : int
+    public static function getStatus(): int
     {
         return session_status();
     }
@@ -189,18 +189,18 @@ final class Session
      * @access public
      * @return bool
      */
-    public static function isActive() : bool
+    public static function isActive(): bool
     {
         return (session_status() == 1 || session_status() == 2);
     }
-    
+
     /**
      * Close session (Read-only).
      *
      * @access public
      * @return bool
      */
-    public static function close() : bool
+    public static function close(): bool
     {
         return session_write_close();
     }
@@ -211,9 +211,9 @@ final class Session
      * @access public
      * @return bool
      */
-    public static function end() : bool
+    public static function end(): bool
     {
-        if ( !self::isActive() ) {
+        if (!self::isActive()) {
             new self();
         }
         self::unset();

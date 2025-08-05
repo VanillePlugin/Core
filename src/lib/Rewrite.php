@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -21,7 +22,7 @@ final class Rewrite
 {
     use \VanillePlugin\VanillePluginConfig,
         \VanillePlugin\tr\TraitHookable;
-    
+
     /**
      * @access private
      * @var string $rules
@@ -37,7 +38,7 @@ final class Rewrite
     {
         // Load default rewrite
         $dir = "{$this->getRoot()}/core/storage/config/";
-        if ( $this->isFile( $rewrite = "{$dir}/.rewrite" ) ) {
+        if ($this->isFile($rewrite = "{$dir}/.rewrite")) {
             $this->rules = $this->writeFile($rewrite);
         }
     }
@@ -118,7 +119,7 @@ final class Rewrite
      * @param int $priority
      * @return bool
      */
-    public function removeRules(int $priority = 10) : bool
+    public function removeRules(int $priority = 10): bool
     {
         return $this->removeFilter('rewrite-rules', [$this, 'getRules'], $priority);
     }
@@ -131,7 +132,7 @@ final class Rewrite
      * @param string $rules
      * @return string
      */
-    public function getRules(string $rules) : string
+    public function getRules(string $rules): string
     {
         $this->rules = $this->replaceStringArray($this->vars, $this->rules);
         $this->rules = $this->replaceString('{root}', $this->geSiteUrl(), $this->rules);
@@ -146,9 +147,9 @@ final class Rewrite
      * @param string $rules
      * @return bool
      */
-    public function hasRules(string $rules) : bool
+    public function hasRules(string $rules): bool
     {
-        if ( $this->isFile( $htaccess = ABSPATH . '/.htaccess' ) ) {
+        if ($this->isFile($htaccess = ABSPATH . '/.htaccess')) {
             return $this->hasString($this->writeFile($htaccess), $rules);
         }
         return false;
@@ -172,10 +173,10 @@ final class Rewrite
      * @access public
      * @return bool
      */
-    public function backup() : bool
+    public function backup(): bool
     {
-        if ( $this->isFile( $htaccess = ABSPATH . '/.htaccess' ) ) {
-            if ( !$this->isFile( $backup = ABSPATH . '.htaccess.backup' ) ){
+        if ($this->isFile($htaccess = ABSPATH . '/.htaccess')) {
+            if (!$this->isFile($backup = ABSPATH . '.htaccess.backup')) {
                 return $this->writeFile($backup, $this->writeFile($htaccess));
             }
         }

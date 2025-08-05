@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,7 +16,8 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-	Transient, Cache
+	Transient,
+	Cache
 };
 use VanillePlugin\lib\Orm;
 
@@ -63,7 +65,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function setCache(string $key, $value, int $ttl = 0, ?string $group = null) : bool
+	protected function setCache(string $key, $value, int $ttl = 0, ?string $group = null): bool
 	{
 		return Cache::set($key, $value, $ttl, (string)$group);
 	}
@@ -74,7 +76,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addCache(string $key, $value, int $ttl = 0, ?string $group = null) : bool
+	protected function addCache(string $key, $value, int $ttl = 0, ?string $group = null): bool
 	{
 		return Cache::add($key, $value, $ttl, (string)$group);
 	}
@@ -85,7 +87,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function updateCache(string $key, $value, int $ttl = 0, ?string $group = null) : bool
+	protected function updateCache(string $key, $value, int $ttl = 0, ?string $group = null): bool
 	{
 		return Cache::update($key, $value, $ttl, (string)$group);
 	}
@@ -96,7 +98,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function deleteCache(string $key, ?string $group = null) : bool
+	protected function deleteCache(string $key, ?string $group = null): bool
 	{
 		return Cache::delete($key, (string)$group);
 	}
@@ -107,7 +109,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function purgeCache() : bool
+	protected function purgeCache(): bool
 	{
 		return Cache::purge();
 	}
@@ -118,7 +120,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function setTransient(string $key, $value = 1, int $ttl = 300) : bool
+	protected function setTransient(string $key, $value = 1, int $ttl = 300): bool
 	{
 		return Transient::set($key, $value, $ttl);
 	}
@@ -129,7 +131,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function setSiteTransient(string $key, $value = 1, int $ttl = 300) : bool
+	protected function setSiteTransient(string $key, $value = 1, int $ttl = 300): bool
 	{
 		return Transient::setSite($key, $value, $ttl);
 	}
@@ -140,7 +142,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function deleteTransient(string $key) : bool
+	protected function deleteTransient(string $key): bool
 	{
 		return Transient::delete($key);
 	}
@@ -151,7 +153,7 @@ trait TraitCacheable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function deleteSiteTransient(string $key) : bool
+	protected function deleteSiteTransient(string $key): bool
 	{
 		return Transient::deleteSite($key);
 	}
@@ -164,9 +166,9 @@ trait TraitCacheable
 	 * @param string $namespace
 	 * @return bool
 	 */
-	protected function removeTransients(string $namespace) : bool
+	protected function removeTransients(string $namespace): bool
 	{
-		if ( empty($namespace) ) {
+		if (empty($namespace)) {
 			return false;
 		}
 
@@ -185,9 +187,9 @@ trait TraitCacheable
 	 * @param string $namespace
 	 * @return bool
 	 */
-	protected function removeSiteTransients(string $namespace) : bool
+	protected function removeSiteTransients(string $namespace): bool
 	{
-		if ( empty($namespace) ) {
+		if (empty($namespace)) {
 			return false;
 		}
 

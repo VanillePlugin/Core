@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -27,7 +28,7 @@ trait TraitViewable
      * @access protected
      * @inheritdoc
      */
-    protected function getEnvironment(string $path, array $options = []) : object
+    protected function getEnvironment(string $path, array $options = []): object
     {
         return Template::getEnvironment($path, $options);
     }
@@ -38,7 +39,7 @@ trait TraitViewable
      * @access protected
      * @inheritdoc
      */
-    protected function extend(string $name, $callable = null, array $options = []) : object
+    protected function extend(string $name, $callable = null, array $options = []): object
     {
         return Template::extend($name, $callable, $options);
     }

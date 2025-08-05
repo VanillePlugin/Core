@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -28,7 +29,7 @@ trait TraitTranslatable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getLocale($user = null) : string
+	public function getLocale($user = null): string
 	{
 		return Localization::getLocale($user);
 	}
@@ -39,7 +40,7 @@ trait TraitTranslatable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function loadTranslation(string $domain, string $mo) : bool
+	protected function loadTranslation(string $domain, string $mo): bool
 	{
 		return Localization::load($domain, $mo);
 	}
@@ -50,7 +51,7 @@ trait TraitTranslatable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function loadPluginTranslation(string $domain, ?string $path = null) : bool
+	protected function loadPluginTranslation(string $domain, ?string $path = null): bool
 	{
 		return Localization::loadPlugin($domain, $path);
 	}
@@ -61,7 +62,7 @@ trait TraitTranslatable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function parseTranslationFile(string $domain) : string
+	protected function parseTranslationFile(string $domain): string
 	{
 		return Localization::parse($domain, $this->getLocale());
 	}
@@ -72,7 +73,7 @@ trait TraitTranslatable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function loadThemeTranslation(string $domain, ?string $path = null) : bool
+	protected function loadThemeTranslation(string $domain, ?string $path = null): bool
 	{
 		return Localization::loadTheme($domain, $path);
 	}
@@ -83,7 +84,7 @@ trait TraitTranslatable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function loadChildTranslation(string $domain, ?string $path = null) : bool
+	protected function loadChildTranslation(string $domain, ?string $path = null): bool
 	{
 		return Localization::loadChild($domain, $path);
 	}
@@ -94,18 +95,18 @@ trait TraitTranslatable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function getTranslatorLocale() : string
+	protected function getTranslatorLocale(): string
 	{
 		return (string)Translator::getLocale();
 	}
-	
+
 	/**
 	 * Check whether translator is active.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function hasTranslator() : bool
+	protected function hasTranslator(): bool
 	{
 		return (bool)Translator::isActive();
 	}
@@ -117,15 +118,15 @@ trait TraitTranslatable
 	 * @param string $locale
 	 * @return string
 	 */
-	protected function normalizeLocale(string $locale) : string
+	protected function normalizeLocale(string $locale): string
 	{
 		$lang   = Localization::parseLang($locale);
 		$region = Localization::parseRegion($locale);
 
-		if ( $lang === $region ) {
+		if ($lang === $region) {
 			return $lang;
 		}
-		
+
 		return Localization::normalizeLocale($locale);
 	}
 }

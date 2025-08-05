@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -19,7 +20,7 @@ final class ShortcodeTest extends TestCase
     {
         $default = ['att1' => '', 'att2' => '2', 'att3' => '', 'att4' => 4];
         $atts    = ['att1' => '1', 'att2' => 2, 'att3' => '3'];
-        $atts = Shortcode::getAtts($default,$atts, '');
+        $atts = Shortcode::getAtts($default, $atts, '');
         $this->assertEquals($atts, ['att1' => '1', 'att2' => 2, 'att3' => '3', 'att4' => 4]);
     }
 
@@ -41,7 +42,7 @@ final class ShortcodeTest extends TestCase
     {
         $this->assertSame(Shortcode::formatSep('1|2|3'), '1,2,3');
         $this->assertSame(Shortcode::formatSep('1;2;3'), '1,2,3');
-        $this->assertSame(Shortcode::formatSep('1; 2; 3',true), '1,2,3');
+        $this->assertSame(Shortcode::formatSep('1; 2; 3', true), '1,2,3');
     }
 
     public function testSetAttsValues()
@@ -87,10 +88,10 @@ final class ShortcodeTest extends TestCase
     {
         $atts = ['att-1', 'att-2' => '2', 'att-3' => 3, 'att-4' => false, 'att-5' => []];
         $this->assertTrue(Shortcode::hasValue($atts, 'att-2', '2'));
-        $this->assertTrue(Shortcode::hasValue($atts, 'att-3',3));
-        $this->assertTrue(Shortcode::hasValue($atts, 'att-4',false));
-        $this->assertTrue(Shortcode::hasValue($atts, 'att-5',[]));
-        $this->assertFalse(Shortcode::hasValue($atts, 'att-2',2));
+        $this->assertTrue(Shortcode::hasValue($atts, 'att-3', 3));
+        $this->assertTrue(Shortcode::hasValue($atts, 'att-4', false));
+        $this->assertTrue(Shortcode::hasValue($atts, 'att-5', []));
+        $this->assertFalse(Shortcode::hasValue($atts, 'att-2', 2));
     }
 
     public function testIsEmpty()
@@ -124,7 +125,7 @@ final class ShortcodeTest extends TestCase
 
     public function testDo()
     {
-        add_shortcode('shortcode',function(){
+        add_shortcode('shortcode', function () {
             return 'shortcode';
         });
         $this->assertSame(Shortcode::do('content [shortcode]'), 'content shortcode');
@@ -132,7 +133,7 @@ final class ShortcodeTest extends TestCase
 
     public function testRender()
     {
-        add_shortcode('shortcode', function(){
+        add_shortcode('shortcode', function () {
             return 'shortcode';
         });
         $this->expectOutputString('content shortcode');

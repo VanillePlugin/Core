@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -27,7 +28,7 @@ final class Attachment
 	 */
 	public static function insert(string $path, array $data)
 	{
-		if ( ($id = self::preInsert($path,$data)) ) {
+		if (($id = self::preInsert($path, $data))) {
 			self::update($id); // Should not be tested
 			return [
 				'id'  => $id,
@@ -46,19 +47,19 @@ final class Attachment
 	 * @param array $data
 	 * @return int
 	 */
-	public static function preInsert(string $path, array $data = []) : int
+	public static function preInsert(string $path, array $data = []): int
 	{
 		$data = self::getDefaultData($data);
-		if ( empty($data['title']) ) {
+		if (empty($data['title'])) {
 			$data['title'] = File::getName($path);
 		}
 		$attachment = [
-	        'guid'           => $data['url'],
-	        'post_title'     => Stringify::sanitizeText($data['title']),
-	        'post_content'   => Stringify::sanitizeText($data['content']),
-	        'post_excerpt'   => Stringify::sanitizeText($data['excerpt']),
-	        'post_mime_type' => $data['type'],
-	        'post_status'    => $data['status']
+			'guid'           => $data['url'],
+			'post_title'     => Stringify::sanitizeText($data['title']),
+			'post_content'   => Stringify::sanitizeText($data['content']),
+			'post_excerpt'   => Stringify::sanitizeText($data['excerpt']),
+			'post_mime_type' => $data['type'],
+			'post_status'    => $data['status']
 		];
 		return (int)wp_insert_attachment($attachment, $path, $data['parent']);
 	}
@@ -70,9 +71,9 @@ final class Attachment
 	 * @param int $id
 	 * @return bool
 	 */
-	public static function update(int $id) : bool
+	public static function update(int $id): bool
 	{
-		if ( ($post = Post::get($id)) ) {
+		if (($post = Post::get($id))) {
 			$path = self::getAttachedFile($post->ID);
 			$meta = self::generateMeta($id, $path);
 			return self::updateMeta($id, $meta);
@@ -87,7 +88,7 @@ final class Attachment
 	 * @param int $id
 	 * @return string
 	 */
-	public static function getAttachedFile(int $id) : string
+	public static function getAttachedFile(int $id): string
 	{
 		return (string)get_attached_file($id);
 	}
@@ -100,10 +101,10 @@ final class Attachment
 	 * @param string $path
 	 * @return array
 	 */
-	public static function generateMeta(int $id, string $path) : array
+	public static function generateMeta(int $id, string $path): array
 	{
-		if ( !TypeCheck::isFunction('wp_generate_attachment_metadata') ) {
-		    require_once Globals::rootDir('wp-admin/includes/image.php');
+		if (!TypeCheck::isFunction('wp_generate_attachment_metadata')) {
+			require_once Globals::rootDir('wp-admin/includes/image.php');
 		}
 		return (array)wp_generate_attachment_metadata($id, $path);
 	}
@@ -116,7 +117,7 @@ final class Attachment
 	 * @param array $data
 	 * @return bool
 	 */
-	public static function updateMeta(int $id, array $data) : bool
+	public static function updateMeta(int $id, array $data): bool
 	{
 		return (bool)wp_update_attachment_metadata($id, $data);
 	}
@@ -128,7 +129,7 @@ final class Attachment
 	 * @param string $title
 	 * @return int
 	 */
-	public static function getIdByTitle(string $title) : int
+	public static function getIdByTitle(string $title): int
 	{
 		return self::getIdByUrl(
 			(string)self::getUrlByTitle($title)
@@ -142,7 +143,7 @@ final class Attachment
 	 * @param int $id
 	 * @return string
 	 */
-	public static function getUrlById(int $id) : string
+	public static function getUrlById(int $id): string
 	{
 		return wp_get_attachment_url($id);
 	}
@@ -154,7 +155,7 @@ final class Attachment
 	 * @param string $url
 	 * @return int
 	 */
-	public static function getIdByUrl(string $url) : int
+	public static function getIdByUrl(string $url): int
 	{
 		return attachment_url_to_postid($url);
 	}
@@ -168,7 +169,7 @@ final class Attachment
 	 */
 	public static function getUrlByTitle(string $title)
 	{
-		if ( ($attachment = Post::getByTitle($title, 'attachment')) ) {
+		if (($attachment = Post::getByTitle($title, 'attachment'))) {
 			return $attachment['guid'] ?? false;
 		}
 		return false;
@@ -182,7 +183,7 @@ final class Attachment
 	 * @param mixed $size
 	 * @return string
 	 */
-	public static function getImageById(int $id, $size = 'thumbnail') : string
+	public static function getImageById(int $id, $size = 'thumbnail'): string
 	{
 		$src = wp_get_attachment_image_src($id, $size);
 		return $src[0] ?? '';
@@ -195,7 +196,7 @@ final class Attachment
 	 * @param array $data
 	 * @return array
 	 */
-	public static function getDefaultData(array $data = []) : array
+	public static function getDefaultData(array $data = []): array
 	{
 		return Arrayify::merge([
 			'url'     => '',

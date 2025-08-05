@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,7 +17,9 @@ namespace VanillePlugin;
 
 use VanillePlugin\exc\ConfigException;
 use VanillePlugin\inc\{
-    TypeCheck, Stringify, Arrayify
+	TypeCheck,
+	Stringify,
+	Arrayify
 };
 use JsonSchema\Validator;
 
@@ -36,17 +39,17 @@ final class VanillePluginValidator
 	 */
 	public static function validate($data, string $schema)
 	{
-		if ( !self::isValid($data, $schema, $error) ) {
+		if (!self::isValid($data, $schema, $error)) {
 
-			if ( TypeCheck::isString($error) ) {
+			if (TypeCheck::isString($error)) {
 				throw new ConfigException(
 					ConfigException::invalidConfig($error, $schema)
 				);
 			}
 
-	        throw new ConfigException(
-	            ConfigException::invalidConfigFormat($schema)
-	        );
+			throw new ConfigException(
+				ConfigException::invalidConfigFormat($schema)
+			);
 		}
 	}
 
@@ -59,7 +62,7 @@ final class VanillePluginValidator
 	 * @var string $error
 	 * @return bool
 	 */
-	private static function isValid($data, string $schema, &$error = null) : bool
+	private static function isValid($data, string $schema, &$error = null): bool
 	{
 		$validator = new Validator();
 		$path = Stringify::formatPath(__DIR__ . "/bin/{$schema}.schema.json");
@@ -67,7 +70,7 @@ final class VanillePluginValidator
 			'$ref' => "file://{$path}"
 		]);
 
-		if ( !$validator->isValid() ) {
+		if (!$validator->isValid()) {
 			$errors = $validator->getErrors();
 			$error  = Arrayify::shift($errors);
 			$error  = "{$error['message']} [{$error['property']}]";

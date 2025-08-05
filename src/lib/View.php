@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,7 +16,8 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\int\{
-    ViewInterface, CallableInterface
+    ViewInterface,
+    CallableInterface
 };
 
 /**
@@ -45,15 +47,15 @@ class View implements ViewInterface
      */
     private $callables = [];
 
-	/**
-	 * @inheritdoc
-	 */
-	public function setCallables(?CallableInterface $callable = null)
-	{
+    /**
+     * @inheritdoc
+     */
+    public function setCallables(?CallableInterface $callable = null)
+    {
         $default   = $this->getDefaultCallables();
         $callables = ($callable) ? $callable->getCallables() : [];
-		$this->callables = $this->mergeArray($default, $callables);
-	}
+        $this->callables = $this->mergeArray($default, $callables);
+    }
 
     /**
      * @inheritdoc
@@ -61,16 +63,16 @@ class View implements ViewInterface
     public function render(string $tpl = 'default', array $content = [], bool $end = false)
     {
         echo $this->assign($tpl, $content);
-        if ( $end ) {
+        if ($end) {
             die;
         }
     }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function assign(string $tpl = 'default', array $content = []) : string
-	{
+    /**
+     * @inheritdoc
+     */
+    public function assign(string $tpl = 'default', array $content = []): string
+    {
         // Get environment
         $env = $this->getEnvironment($this->getPath($tpl), [
             'cache' => $this->getCachePath(),
@@ -78,7 +80,7 @@ class View implements ViewInterface
         ]);
 
         // Set callables
-        if ( !$this->callables ) {
+        if (!$this->callables) {
             $this->setCallables();
         }
 
@@ -91,16 +93,15 @@ class View implements ViewInterface
         try {
             $view = $env->load("{$tpl}{$this->getViewExtension()}");
             return $view->render($content);
-
         } catch (\Exception | \RuntimeException $e) {
-            if ( $this->hasDebug() ) {
+            if ($this->hasDebug()) {
                 die($e->getMessage());
             }
             $this->clearLastError();
         }
 
         return '{}';
-	}
+    }
 
     /**
      * Get default callables.
@@ -108,104 +109,103 @@ class View implements ViewInterface
      * @access protected
      * @return array
      */
-    protected function getDefaultCallables() : array
+    protected function getDefaultCallables(): array
     {
         $global = [
-			'dump' => function($var) {
+            'dump' => function ($var) {
                 var_dump($var);
             },
-			'isLoggedIn' => function() : bool {
+            'isLoggedIn' => function (): bool {
                 return $this->isLoggedIn();
             },
-			'hasDebug' => function() : bool {
+            'hasDebug' => function (): bool {
                 return $this->hasDebug();
             },
-			'isDebug' => function() : bool {
+            'isDebug' => function (): bool {
                 return $this->isDebug();
             },
-			'getConfig' => function(?string $key = null) {
+            'getConfig' => function (?string $key = null) {
                 return $this->getConfig($key);
             },
-			'getRoot' => function(?string $sub = null) : string {
+            'getRoot' => function (?string $sub = null): string {
                 return $this->getRoot($sub);
             },
-			'getNameSpace' => function() : string {
+            'getNameSpace' => function (): string {
                 return $this->getNameSpace();
             },
-			'getBaseUrl' => function() : string {
+            'getBaseUrl' => function (): string {
                 return $this->getBaseUrl();
             },
-			'getAssetUrl' => function() : string {
+            'getAssetUrl' => function (): string {
                 return $this->getAssetUrl();
             },
-			'nonce' => function($action = -1) : string {
+            'nonce' => function ($action = -1): string {
                 return $this->createToken($action);
             },
-			'translate' => function(?string $string) : string {
+            'translate' => function (?string $string): string {
                 return $this->translate($string);
             },
-			'translateVar' => function(string $string, $vars = null) : string {
+            'translateVar' => function (string $string, $vars = null): string {
                 return $this->translateVar($string, $vars);
             },
-			'unJson' => function(string $value, bool $isArray = false) {
+            'unJson' => function (string $value, bool $isArray = false) {
                 return $this->decodeJson($value, $isArray);
             },
-			'toJson' => function($value) {
+            'toJson' => function ($value) {
                 return $this->encodeJson($value);
             },
-			'serialize' => function($value) {
+            'serialize' => function ($value) {
                 return $this->serialize($value);
             },
-			'unserialize' => function(string $value) {
+            'unserialize' => function (string $value) {
                 return $this->unserialize($value);
             },
-			'limitString' => function(?string $string, int $limit) {
+            'limitString' => function (?string $string, int $limit) {
                 return $this->limitString($string, $limit);
             },
-			'getOption' => function(string $key, $default = false) {
+            'getOption' => function (string $key, $default = false) {
                 return $this->getOption($key, $default);
             },
-			'getPluginOption' => function(string $k, $d = false, bool $m = true) {
+            'getPluginOption' => function (string $k, $d = false, bool $m = true) {
                 return $this->getPluginOption($k, $d, $m);
             },
-			'hasFilter' => function(string $hook, $callback = false) {
+            'hasFilter' => function (string $hook, $callback = false) {
                 return $this->hasPluginFilter($hook, $callback);
             },
-			'applyFilter' => function(string $hook, $value, ...$args) {
+            'applyFilter' => function (string $hook, $value, ...$args) {
                 return $this->applyPluginFilter($hook, $value, ...$args);
             },
-			'hasAction' => function(string $hook, $callback = false) {
+            'hasAction' => function (string $hook, $callback = false) {
                 return $this->hasPluginAction($hook, $callback);
             },
-			'doAction' => function(string $hook, ...$args) {
+            'doAction' => function (string $hook, ...$args) {
                 $this->doPluginAction($hook, ...$args);
             }
         ];
 
-        if ( $this->isAdmin() ) {
+        if ($this->isAdmin()) {
 
             return $this->mergeArray([
-                'settingsFields' => function(string $group) {
+                'settingsFields' => function (string $group) {
                     $this->doSettingsFields($group);
                 },
-                'settingsSections' => function(string $page) {
+                'settingsSections' => function (string $page) {
                     $this->doSettingsSections($page);
                 },
-                'submitButton' => function(?string $text = null) {
+                'submitButton' => function (?string $text = null) {
                     $this->doSettingsSubmit($text);
                 },
-                'getCheckbox' => function($data, $value = true) {
+                'getCheckbox' => function ($data, $value = true) {
                     return $this->getCheckbox($data, $value);
                 }
             ], $global);
-
         }
 
         return $this->mergeArray([
-			'exit' => function(?int $status = null) {
+            'exit' => function (?int $status = null) {
                 exit($status);
             },
-			'getSession' => function(?string $key = null) {
+            'getSession' => function (?string $key = null) {
                 return $this->getSession($key);
             }
         ], $global);
@@ -219,12 +219,12 @@ class View implements ViewInterface
      * @param string $tpl
      * @return string
      */
-    protected function getPath(string $tpl) : string
+    protected function getPath(string $tpl): string
     {
         $path = $this->getThemeDir($this->getNameSpace());
         $path = $this->applyPluginFilter('template-path', $path);
         $file = "{$path}{$tpl}{$this->getViewExtension()}";
-        if ( $this->isFile($file) ) {
+        if ($this->isFile($file)) {
             return $path;
         }
         return $this->getViewPath();

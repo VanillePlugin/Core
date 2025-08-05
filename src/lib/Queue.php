@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -19,8 +20,8 @@ namespace VanillePlugin\lib;
  */
 class Queue
 {
-    use \VanillePlugin\VanillePluginConfig,
-        \VanillePlugin\tr\TraitCacheable;
+	use \VanillePlugin\VanillePluginConfig,
+		\VanillePlugin\tr\TraitCacheable;
 
 	/**
 	 * Add item to queue.
@@ -30,7 +31,7 @@ class Queue
 	 * @param string $name
 	 * @return bool
 	 */
-	public function add(string $item, string $name = 'in') : bool
+	public function add(string $item, string $name = 'in'): bool
 	{
 		$queue = $this->get($name);
 		$queue[] = $item;
@@ -45,9 +46,9 @@ class Queue
 	 * @param string $name
 	 * @return bool
 	 */
-	public function has(string $item, string $name = 'in') : bool
+	public function has(string $item, string $name = 'in'): bool
 	{
-		return $this->inArray($item, $this->get($name)) ;
+		return $this->inArray($item, $this->get($name));
 	}
 
 	/**
@@ -57,7 +58,7 @@ class Queue
 	 * @param string $name
 	 * @return bool
 	 */
-	public function delete(string $name = 'in') : bool
+	public function delete(string $name = 'in'): bool
 	{
 		$name = $this->applyNamespace("{$name}-queue");
 		return $this->setTransient($name, []);
@@ -70,10 +71,10 @@ class Queue
 	 * @param string $name
 	 * @return array
 	 */
-	private function get(string $name = 'in') : array
+	private function get(string $name = 'in'): array
 	{
 		$name = $this->applyNamespace("{$name}-queue");
-		if ( !($queue = $this->getTransient($name)) ) {
+		if (!($queue = $this->getTransient($name))) {
 			$queue = [];
 			$this->set($queue, $name);
 		}
@@ -88,7 +89,7 @@ class Queue
 	 * @param string $name
 	 * @return bool
 	 */
-	private function set(array $queue = [], string $name = 'in') : bool
+	private function set(array $queue = [], string $name = 'in'): bool
 	{
 		$name = $this->applyNamespace("{$name}-queue");
 		return $this->setTransient($name, $queue);

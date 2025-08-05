@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -30,11 +31,11 @@ final class Hasher extends Cache
      * @access private
      * @var string $secret, Hash secret
      * @var string $salt, Hash salt
-	 * @var int $ttl, Hash TTL
+     * @var int $ttl, Hash TTL
      */
     private $secret;
-	private $salt;
-	private $ttl;
+    private $salt;
+    private $ttl;
 
     public function __construct(string $secret = self::SECRET, string $salt = self::SALT, int $ttl = self::TTL)
     {
@@ -43,45 +44,45 @@ final class Hasher extends Cache
         $this->ttl    = $ttl;
     }
 
-	/**
-	 * Hash data.
-	 *
-	 * @access public
-	 * @param mixed $data
-	 * @return mixed
-	 */
-	public function hash($data = null)
-	{
-        if ( !$this->hasInternalCache() ) {
+    /**
+     * Hash data.
+     *
+     * @access public
+     * @param mixed $data
+     * @return mixed
+     */
+    public function hash($data = null)
+    {
+        if (!$this->hasInternalCache()) {
             return $data;
         }
 
         $key = $this->generateHash($data, $this->salt);
         $cache = $this->getInternalCache();
-        if ( !$cache->has($key) ) {
+        if (!$cache->has($key)) {
             $data = $this->encrypt($data, $this->secret, 'data:');
-            if ( !$cache->set($key, $data, $this->ttl) ) {
+            if (!$cache->set($key, $data, $this->ttl)) {
                 return $data;
             }
         }
 
         return "hash:{$key}";
-	}
+    }
 
-	/**
-	 * Unhash data.
-	 *
-	 * @access public
-	 * @param mixed $data
-	 * @return mixed
-	 */
-	public function unhash($data = null)
-	{
-        if ( !$this->hasInternalCache() ) {
+    /**
+     * Unhash data.
+     *
+     * @access public
+     * @param mixed $data
+     * @return mixed
+     */
+    public function unhash($data = null)
+    {
+        if (!$this->hasInternalCache()) {
             return $data;
         }
 
-        if ( $this->hasString((string)$data, 'hash:') ) {
+        if ($this->hasString((string)$data, 'hash:')) {
 
             $key = $this->generateHash($data, $this->salt);
             $key = $this->removeString('token:', $data);
@@ -89,11 +90,11 @@ final class Hasher extends Cache
             $cache = $this->getInternalCache();
             $temp  = $cache->get($key);
 
-            if ( $cache->has($key) ) {
+            if ($cache->has($key)) {
                 $data = $temp;
             }
         }
 
         return $this->decrypt($data, $this->secret, 'data:');
-	}
+    }
 }

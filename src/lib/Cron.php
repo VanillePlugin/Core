@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -52,7 +53,7 @@ class Cron implements CronInterface
 	 */
 	public function register()
 	{
-		$this->addFilter('cron-schedules', function($schedules) {
+		$this->addFilter('cron-schedules', function ($schedules) {
 			$custom = $this->sanitizeSchedules(
 				$this->getSchedules()
 			);
@@ -75,17 +76,17 @@ class Cron implements CronInterface
 	 */
 	public function run()
 	{
-		if ( $this->isInstalling() ) {
+		if ($this->isInstalling()) {
 			return;
 		}
-		
+
 		$events = $this->sanitizeEvents(
 			$this->getEvents()
 		);
 
 		foreach ($events as $event) {
 			$name = $this->applyNameSpace("do-{$event['name']}");
-			if ( !$this->next($name) ) {
+			if (!$this->next($name)) {
 				$this->schedule($event['schedule'], $name);
 			}
 		}
@@ -112,7 +113,7 @@ class Cron implements CronInterface
 	public function useServer()
 	{
 		$const = $this->undash(static::SERVER, true);
-		if ( !defined($const) ) {
+		if (!defined($const)) {
 			define($const, true);
 		}
 	}
@@ -120,7 +121,7 @@ class Cron implements CronInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function isServer() : bool
+	public function isServer(): bool
 	{
 		$const = $this->undash(static::SERVER, true);
 		return defined($const);
@@ -129,7 +130,7 @@ class Cron implements CronInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function next(string $name, array $args = []) : int
+	public function next(string $name, array $args = []): int
 	{
 		return (int)wp_next_scheduled($name, $args);
 	}
@@ -137,7 +138,7 @@ class Cron implements CronInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function schedule(string $interval, string $hook, array $args = []) : bool
+	public function schedule(string $interval, string $hook, array $args = []): bool
 	{
 		return wp_schedule_event($this->timestamp, $interval, $hook, $args, false);
 	}
@@ -145,7 +146,7 @@ class Cron implements CronInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function once(string $hook, array $args = []) : bool
+	public function once(string $hook, array $args = []): bool
 	{
 		return wp_schedule_single_event($this->timestamp, $hook, $args, false);
 	}
@@ -153,7 +154,7 @@ class Cron implements CronInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function unschedule(string $hook, array $args = []) : bool
+	public function unschedule(string $hook, array $args = []): bool
 	{
 		return wp_unschedule_event($this->timestamp, $hook, $args);
 	}
@@ -161,7 +162,7 @@ class Cron implements CronInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function clear(string $hook, array $args = []) : int
+	public function clear(string $hook, array $args = []): int
 	{
 		return (int)wp_clear_scheduled_hook($hook, $args);
 	}
@@ -174,7 +175,7 @@ class Cron implements CronInterface
 	 * @param array $events
 	 * @return array
 	 */
-	protected function sanitizeEvents(array $events) : array
+	protected function sanitizeEvents(array $events): array
 	{
 		$events = $this->uniqueMultiArray(
 			$this->applyPluginFilter('cron-events', $events)
@@ -182,18 +183,16 @@ class Cron implements CronInterface
 
 		foreach ($events as $key => $event) {
 
-			if ( !isset($event['callback'])  ) {
+			if (!isset($event['callback'])) {
 				$callback = $this->camelcase($event['name']);
 
-				if ( $this->hasObject('method', static::class, $callback) ) {
+				if ($this->hasObject('method', static::class, $callback)) {
 					$events[$key]['callback'] = [$this, $callback];
-
 				} else {
 					unset($events[$key]);
 					continue;
 				}
 			}
-
 		}
 
 		return $events;
@@ -207,7 +206,7 @@ class Cron implements CronInterface
 	 * @param array $schedules
 	 * @return array
 	 */
-	protected function sanitizeSchedules(array $schedules) : array
+	protected function sanitizeSchedules(array $schedules): array
 	{
 		$schedules = $this->uniqueMultiArray(
 			(array)$this->applyPluginFilter('cron-schedules', $schedules)
@@ -215,7 +214,7 @@ class Cron implements CronInterface
 
 		foreach ($schedules as $name => $data) {
 			$display = $data['display'] ?? false;
-			if ( !$display ) {
+			if (!$display) {
 				$display = $this->capitalize($name);
 			}
 			$display = $this->translate($display);

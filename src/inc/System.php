@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -22,9 +23,9 @@ final class System
      * @access public
      * @return bool
      */
-    public static function isCli() : bool
+    public static function isCli(): bool
     {
-    	if ( php_sapi_name() == 'cli' ) {
+        if (php_sapi_name() == 'cli') {
             return true;
         }
         return false;
@@ -37,11 +38,11 @@ final class System
      * @param float $percent
      * @return bool
      */
-    public static function isMemoryOut(float $percent = 0.9) : bool
+    public static function isMemoryOut(float $percent = 0.9): bool
     {
         $limit = self::getMemoryLimit() * $percent;
         $current = self::getMemoryUsage(true, true);
-        if ( $current >= $limit ) {
+        if ($current >= $limit) {
             return true;
         }
         return false;
@@ -53,24 +54,23 @@ final class System
      * @access public
      * @return int
      */
-    public static function getMemoryLimit() : int
+    public static function getMemoryLimit(): int
     {
-    	if ( TypeCheck::isFunction('ini-get') ) {
-    		$limit = self::getIni('memory-limit');
-    		if ( Stringify::contains(Stringify::lowercase($limit), 'g') ) {
-    			$limit = intval($limit) * 1024;
-    			$limit = "{$limit}M";
-    		}
-
-    	} else {
-    		// Default
-    		$limit = '128M';
-    	}
-    	if ( !$limit || $limit === -1 ) {
-    		// Unlimited
-    		$limit = '32000M';
-    	}
-    	return intval($limit) * 1024 * 1024;
+        if (TypeCheck::isFunction('ini-get')) {
+            $limit = self::getIni('memory-limit');
+            if (Stringify::contains(Stringify::lowercase($limit), 'g')) {
+                $limit = intval($limit) * 1024;
+                $limit = "{$limit}M";
+            }
+        } else {
+            // Default
+            $limit = '128M';
+        }
+        if (!$limit || $limit === -1) {
+            // Unlimited
+            $limit = '32000M';
+        }
+        return intval($limit) * 1024 * 1024;
     }
 
     /**
@@ -81,13 +81,13 @@ final class System
      * @param bool $format
      * @return int
      */
-    public static function getMemoryUsage(bool $real = true, bool $format = true) : int
+    public static function getMemoryUsage(bool $real = true, bool $format = true): int
     {
         $usage = memory_get_usage($real);
-        if ( $format ) {
+        if ($format) {
             $usage = round($usage / 1000000, 2);
         }
-    	return $usage;
+        return $usage;
     }
 
     /**
@@ -96,9 +96,9 @@ final class System
      * @access public
      * @return string
      */
-    public static function getPhpVersion() : string
+    public static function getPhpVersion(): string
     {
-    	return strtolower(PHP_VERSION);
+        return strtolower(PHP_VERSION);
     }
 
     /**
@@ -107,7 +107,7 @@ final class System
      * @access public
      * @return string
      */
-    public static function getOs() : string
+    public static function getOs(): string
     {
         return strtolower(PHP_OS);
     }
@@ -118,7 +118,7 @@ final class System
      * @access public
      * @return string
      */
-    public static function getOsName() : string
+    public static function getOsName(): string
     {
         return strtolower(PHP_OS_FAMILY);
     }
@@ -130,30 +130,29 @@ final class System
      * @param bool $format
      * @return array
      */
-    public static function getSchedule(bool $format = true) : array
+    public static function getSchedule(bool $format = true): array
     {
         $tasks = [];
-        if ( System::getOsName() == 'windows' ) {
-            if ( TypeCheck::isClass('COM') ) {
+        if (System::getOsName() == 'windows') {
+            if (TypeCheck::isClass('COM')) {
                 $schedule = new \COM('Schedule.Service');
                 $schedule->Connect();
                 $folder = $schedule->GetFolder('\\');
                 $collection = $folder->GetTasks(0);
-                if ( $collection->Count ) {
+                if ($collection->Count) {
                     foreach ($collection as $task) {
                         $name = $task->Name;
-                        if ( $format ) {
+                        if ($format) {
                             $name = Stringify::lowercase($name);
                         }
                         $tasks['win'][$name] = $task->Enabled;
                     }
                 }
             }
-
         } else {
-            if ( ($return = System::execute('crontab -l')) ) {
+            if (($return = System::execute('crontab -l'))) {
                 $tasks['lin'] = explode("\n", $return);
-                if ( $format ) {
+                if ($format) {
                     foreach ($tasks['lin'] as $key => $value) {
                         $tasks['lin'][$key] = Stringify::lowercase($value);
                     }
@@ -170,21 +169,21 @@ final class System
      * @param string $name
      * @return bool
      */
-    public static function hasScheduleTask(string $name) : bool
+    public static function hasScheduleTask(string $name): bool
     {
         $status = false;
-        if ( ($tasks = self::getSchedule()) ) {
-            if ( isset($tasks['win']) ) {
+        if (($tasks = self::getSchedule())) {
+            if (isset($tasks['win'])) {
                 foreach ($tasks['win'] as $key => $value) {
-                    if ( Stringify::contains($key, $name) && $value === true ) {
+                    if (Stringify::contains($key, $name) && $value === true) {
                         $status = true;
                         break;
                     }
                 }
             } else {
                 foreach ($tasks['lin'] as $line) {
-                    if ( Stringify::contains($line, $name) && substr($line, 0, 1) !== '#' ) {
-                        if ( !Stringify::contains($line, 'home=') ) {
+                    if (Stringify::contains($line, $name) && substr($line, 0, 1) !== '#') {
+                        if (!Stringify::contains($line, 'home=')) {
                             $status = true;
                             break;
                         }
@@ -205,7 +204,7 @@ final class System
      */
     public static function setIni($option, $value = null)
     {
-        if ( TypeCheck::isArray($option) ) {
+        if (TypeCheck::isArray($option)) {
             $temp = [];
             foreach ($option as $key => $value) {
                 $temp = ini_set($key, $value);
@@ -236,7 +235,7 @@ final class System
      * @param string $value
      * @return bool
      */
-    public static function setTimeLimit(int $seconds = 30) : bool
+    public static function setTimeLimit(int $seconds = 30): bool
     {
         return set_time_limit($seconds);
     }
@@ -285,11 +284,11 @@ final class System
      * @access public
      * @return array
      */
-    public static function getCpuUsage() : array
+    public static function getCpuUsage(): array
     {
         $usage = [];
-        if ( self::getOsName() == 'windows' ) {
-            if ( TypeCheck::isClass('COM') ) {
+        if (self::getOsName() == 'windows') {
+            if (TypeCheck::isClass('COM')) {
                 $system = new \COM('WinMgmts:\\\\.');
                 $cpu   = $system->InstancesOf('Win32_Processor');
                 $load  = 0;
@@ -303,7 +302,6 @@ final class System
                     'count' => $count
                 ];
             }
-
         } else {
             $load = self::getLoadAvg();
             $usage = [
@@ -320,43 +318,42 @@ final class System
      * @access public
      * @return int
      */
-    public static function getCpuCores() : int
+    public static function getCpuCores(): int
     {
         $count = 1; // Init with min
-        if ( !TypeCheck::isFunction('ini-get') ) {
+        if (!TypeCheck::isFunction('ini-get')) {
             return $count;
         }
 
-        if ( self::getIni('open-basedir') ) {
+        if (self::getIni('open-basedir')) {
             return $count;
         }
 
-        if ( self::getOsName() == 'windows' ) {
+        if (self::getOsName() == 'windows') {
             $count = (int)getenv('NUMBER_OF_PROCESSORS');
-
         } else {
-            if ( !($info = File::r('/proc/cpuinfo')) ) {
+            if (!($info = File::r('/proc/cpuinfo'))) {
                 return $count;
             }
-            if ( ($match = Stringify::matchAll('/^processor/m',$info)) ) {
+            if (($match = Stringify::matchAll('/^processor/m', $info))) {
                 $count = count($match);
             }
         }
         return $count;
     }
-    
+
     /**
      * Get memory usage.
      *
      * @access public
      * @return array
      */
-    public static function getSystemMemoryUsage() : array
+    public static function getSystemMemoryUsage(): array
     {
         $usage = [];
-        if ( self::getOsName() == 'windows' ) {
+        if (self::getOsName() == 'windows') {
 
-            if ( TypeCheck::isClass('COM') ) {
+            if (TypeCheck::isClass('COM')) {
                 $system = new \COM('WinMgmts:\\\\.');
                 $query  = 'SELECT FreePhysicalMemory,FreeVirtualMemory,';
                 $query .= 'TotalSwapSpaceSize,TotalVirtualMemorySize,';
@@ -375,7 +372,6 @@ final class System
                     'usage'     => round(($available / $total) * 100)
                 ];
             }
-
         } else {
             $free = self::runCommand('free');
             $free = (string)trim($free);
@@ -383,7 +379,7 @@ final class System
             $memory = explode(' ', $args[1]);
 
             // Format array
-            $memory = Arrayify::filter($memory, function($value) {
+            $memory = Arrayify::filter($memory, function ($value) {
                 return ($value !== null && $value !== false && $value !== '');
             });
 
@@ -410,10 +406,10 @@ final class System
      * @access public
      * @return array
      */
-    public static function getNetworkUsage() : array
+    public static function getNetworkUsage(): array
     {
         $usage = [];
-        if ( self::getOsName() == 'windows' ) {
+        if (self::getOsName() == 'windows') {
             $command = 'netstat -nt | findstr :80 | findstr ESTABLISHED | find /C /V ""';
             $connections = self::runCommand($command);
             $command = 'netstat -nt | findstr :80 | find /C /V ""';
@@ -422,7 +418,6 @@ final class System
                 'usage'       => $total,
                 'connections' => $connections
             ];
-
         } else {
             $command  = 'netstat -ntu | grep :80 | grep ESTABLISHED | grep -v LISTEN | ';
             $command .= "awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -rn | ";
@@ -446,7 +441,7 @@ final class System
      * @access public
      * @return array
      */
-    public static function getUsage() : array
+    public static function getUsage(): array
     {
         return [
             'cpu'     => self::getCpuUsage(),
@@ -462,7 +457,7 @@ final class System
      * @access public
      * @return array
      */
-    public static function getDiskUsage() : array
+    public static function getDiskUsage(): array
     {
         $free = self::getDiskFreeSpace();
         $total = self::getDiskTotalSpace();
@@ -482,10 +477,10 @@ final class System
      * @param bool $format
      * @return float
      */
-    public static function getDiskFreeSpace(string $dir = '.', bool $format = true) : float
+    public static function getDiskFreeSpace(string $dir = '.', bool $format = true): float
     {
         $space = disk_free_space($dir);
-        if ( $format ) {
+        if ($format) {
             round($space / 1000000000);
         }
         return (float)$space;
@@ -499,10 +494,10 @@ final class System
      * @param bool $format
      * @return float
      */
-    public static function getDiskTotalSpace(string $dir = '.', bool $format = true) : float
+    public static function getDiskTotalSpace(string $dir = '.', bool $format = true): float
     {
         $space = disk_total_space($dir);
-        if ( $format ) {
+        if ($format) {
             round($space / 1000000000);
         }
         return (float)$space;
@@ -530,23 +525,22 @@ final class System
     public static function getSize(string $dir = '.', bool $format = true)
     {
         $size = false;
-        if ( self::getOsName() == 'windows' ) {
-            if ( TypeCheck::isClass('COM') ) {
+        if (self::getOsName() == 'windows') {
+            if (TypeCheck::isClass('COM')) {
                 $system = new \COM('scripting.filesystemobject');
-                if ( TypeCheck::isObject($system) ) {
+                if (TypeCheck::isObject($system)) {
                     $path = $system->getfolder($dir);
                     $size = $path->size;
                     unset($system);
                 }
             }
-
         } else {
             $path = popen("/usr/bin/du -sk {$dir}", 'r');
             $size = fgets($path, 4096);
             $size = substr($size, 0, strpos($size, "\t"));
-            pclose ($path);
+            pclose($path);
         }
-        if ( $format ) {
+        if ($format) {
             $size = round($size / 1000000, 2);
         }
         return $size;
@@ -558,32 +552,32 @@ final class System
      * @access public
      * @return string
      */
-    public static function getMac() : string
+    public static function getMac(): string
     {
         $mac = self::execute('getmac');
         return (string)strtok($mac, ' ');
     }
-	/**
-	 * Get GLOBALS item value.
-	 * 
-	 * @access public
-	 * @param string $key
-	 * @return mixed
-	 */
-	public static function getGlobal(string $key = null)
-	{
-		return self::hasGlobal($key) ? $GLOBALS[$key] : null;
-	}
+    /**
+     * Get GLOBALS item value.
+     * 
+     * @access public
+     * @param string $key
+     * @return mixed
+     */
+    public static function getGlobal(string $key = null)
+    {
+        return self::hasGlobal($key) ? $GLOBALS[$key] : null;
+    }
 
-	/**
-	 * Check GLOBALS item value.
-	 * 
-	 * @access public
-	 * @param string $key
-	 * @return bool
-	 */
-	public static function hasGlobal(string $key) : bool
-	{
-		return isset($GLOBALS[$key]);
-	}
+    /**
+     * Check GLOBALS item value.
+     * 
+     * @access public
+     * @param string $key
+     * @return bool
+     */
+    public static function hasGlobal(string $key): bool
+    {
+        return isset($GLOBALS[$key]);
+    }
 }

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -27,7 +28,7 @@ final class Xml
 	 * @param int $args
 	 * @return mixed
 	 */
-	public static function parse(string $xml, int $args = 16384|20908)
+	public static function parse(string $xml, int $args = 16384 | 20908)
 	{
 		return @simplexml_load_string($xml, 'SimpleXMLElement', $args);
 	}
@@ -40,7 +41,7 @@ final class Xml
 	 * @param int $args
 	 * @return mixed
 	 */
-	public static function parseFile(string $path, int $args = 16384|20908)
+	public static function parseFile(string $path, int $args = 16384 | 20908)
 	{
 		return @simplexml_load_file($path, 'SimpleXMLElement', $args);
 	}
@@ -64,7 +65,7 @@ final class Xml
 	 * @param string $xml
 	 * @return string
 	 */
-	public static function format(string $xml) : string
+	public static function format(string $xml): string
 	{
 		$xml = Stringify::remove('<?xml version="1.0" encoding="utf-8" ?>', $xml);
 		$xml = Stringify::remove('</xml>', $xml);

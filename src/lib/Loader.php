@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -54,11 +55,11 @@ class Loader
 	{
 		$path = $this->format($path);
 		$dir = "{$this->getRoot()}/{$this->baseDir}/{$path}";
-		if ( $this->isDir($dir) ) {
+		if ($this->isDir($dir)) {
 			$files = $this->scan($dir, $path);
 			$className = $this->lowercase($className);
-			if ( isset($files[$className]) ) {
-				if ( $this->isType('class', $files[$className]) ) {
+			if (isset($files[$className])) {
+				if ($this->isType('class', $files[$className])) {
 					$class = $files[$className];
 					return new $class(...$args);
 				}
@@ -94,7 +95,7 @@ class Loader
 		$files = $this->scanDir($dir);
 		$namespace = $this->format("{$this->baseDir}/{$base}", true);
 		foreach ($files as $key => $name) {
-			if ( $this->matchString($this->pattern, $name) ) {
+			if ($this->matchString($this->pattern, $name)) {
 				$name = substr($name, 0, strrpos($name, '.php'));
 				$slug = $this->lowercase($name);
 				$files[$slug] = "{$namespace}\\{$name}";
@@ -114,14 +115,14 @@ class Loader
 	 */
 	protected function format(string $path, bool $namespace = false)
 	{
-        $path = ltrim($path, '/');
-        $path = rtrim($path, '/');
-        $path = ltrim($path, '\\');
-        $path = rtrim($path, '\\');
-        if ( $namespace ) {
-        	$path = $this->replaceString('/', '\\', $path);
+		$path = ltrim($path, '/');
+		$path = rtrim($path, '/');
+		$path = ltrim($path, '\\');
+		$path = rtrim($path, '\\');
+		if ($namespace) {
+			$path = $this->replaceString('/', '\\', $path);
 			$path = $this->applyNameSpace($path, '\\');
-        }
-        return $path;
+		}
+		return $path;
 	}
 }

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -59,7 +60,7 @@ class Form
 	 * @access public
 	 * @return array
 	 */
-	public function getOptions() : array
+	public function getOptions(): array
 	{
 		return $this->options;
 	}
@@ -70,7 +71,7 @@ class Form
 	 * @access public
 	 * @return array
 	 */
-	public function getAtts() : array
+	public function getAtts(): array
 	{
 		return $this->atts;
 	}
@@ -81,7 +82,7 @@ class Form
 	 * @access public
 	 * @return array
 	 */
-	public function getInputs() : array
+	public function getInputs(): array
 	{
 		return $this->inputs;
 	}
@@ -93,7 +94,7 @@ class Form
 	 * @param array $inputs
 	 * @return object
 	 */
-	public function setInputs(array $inputs = []) : self
+	public function setInputs(array $inputs = []): self
 	{
 		$this->inputs = $inputs;
 		return $this;
@@ -106,7 +107,7 @@ class Form
 	 * @param array $values
 	 * @return object
 	 */
-	public function setValues(array $values = []) : self
+	public function setValues(array $values = []): self
 	{
 		$this->values = $values;
 		return $this;
@@ -119,7 +120,7 @@ class Form
 	 * @param array $default
 	 * @return object
 	 */
-	public function setDefault(array $default = []) : self
+	public function setDefault(array $default = []): self
 	{
 		$this->default = $default;
 		return $this;
@@ -132,7 +133,7 @@ class Form
 	 * @param array $vars
 	 * @return object
 	 */
-	public function setVars(array $vars = []) : self
+	public function setVars(array $vars = []): self
 	{
 		$this->vars = $vars;
 		return $this;
@@ -146,7 +147,7 @@ class Form
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function setAttribute(string $key, $value) : bool
+	public function setAttribute(string $key, $value): bool
 	{
 		switch ($key) {
 
@@ -154,48 +155,48 @@ class Form
 			case 'id':
 			case 'class':
 			case 'name':
-				if ( !TypeCheck::isString($value) ) {
+				if (!TypeCheck::isString($value)) {
 					$value = '';
 				}
 				break;
 
 			case 'method':
 				$var = ['post', 'get'];
-				if ( !TypeCheck::isString($value) || !Stringify::contains($var, $value) ) {
+				if (!TypeCheck::isString($value) || !Stringify::contains($var, $value)) {
 					$value = '';
 				}
 				break;
 
 			case 'autocomplete':
 				$var = ['on', 'off'];
-				if ( !TypeCheck::isString($value) || !Stringify::contains($var, $value) ) {
+				if (!TypeCheck::isString($value) || !Stringify::contains($var, $value)) {
 					$value = '';
 				}
 				break;
 
 			case 'enctype':
 				$var = ['application/x-www-form-urlencoded', 'multipart/form-data', 'text/plain'];
-				if ( !TypeCheck::isString($value) || !Stringify::contains($var, $value) ) {
+				if (!TypeCheck::isString($value) || !Stringify::contains($var, $value)) {
 					$value = '';
 				}
 				break;
 
 			case 'target':
 				$var = ['_blank', '_self', '_parent', '_top'];
-				if ( !TypeCheck::isString($value) || !Stringify::contains($var, $value) ) {
+				if (!TypeCheck::isString($value) || !Stringify::contains($var, $value)) {
 					$value = '';
 				}
 				break;
 
 			case 'rel':
 				$var = ['external', 'help', 'license', 'next', 'nofollow', 'noopener', 'noreferrer', 'opener', 'prev', 'search'];
-				if ( !TypeCheck::isString($value) || !Stringify::contains($var, $value) ) {
+				if (!TypeCheck::isString($value) || !Stringify::contains($var, $value)) {
 					$value = '';
 				}
 				break;
 
 			case 'novalidate':
-				if ( !TypeCheck::isBool($value) ) {
+				if (!TypeCheck::isBool($value)) {
 					$value = false;
 				}
 				break;
@@ -216,13 +217,13 @@ class Form
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function setOptions(string $key, $value) : bool
+	public function setOptions(string $key, $value): bool
 	{
 		switch ($key) {
 
 			case 'form':
 			case 'submit':
-				if ( !TypeCheck::isBool($value) ) {
+				if (!TypeCheck::isBool($value)) {
 					$value = true;
 				}
 				break;
@@ -231,14 +232,14 @@ class Form
 			case 'submit-name':
 			case 'submit-before-html':
 			case 'submit-after-html':
-				if ( !TypeCheck::isString($value) ) {
+				if (!TypeCheck::isString($value)) {
 					$value = '';
 				}
 				break;
 
 			case 'submit-class':
 			case 'submit-wrap-class':
-				if ( !TypeCheck::isString($value) && !TypeCheck::isArray($value) ) {
+				if (!TypeCheck::isString($value) && !TypeCheck::isArray($value)) {
 					$value = '';
 				}
 				break;
@@ -250,7 +251,7 @@ class Form
 		$this->options[$key] = $value;
 		return true;
 	}
-	
+
 	/**
 	 * Add input field.
 	 *
@@ -262,7 +263,7 @@ class Form
 	 */
 	public function addInput($label, array $args = [], ?string $slug = null)
 	{
-		if ( !$slug ) {
+		if (!$slug) {
 			$slug = Stringify::slugify($label);
 		}
 		$args = $this->sanitizeInputAtts($args);
@@ -279,7 +280,7 @@ class Form
 	 */
 	public function addInputs(array $inputs)
 	{
-		foreach ( $inputs as $key => $args ) {
+		foreach ($inputs as $key => $args) {
 			$label = $input['label'] ?? "{$key}";
 			$slug  = $input['slug']  ?? null;
 			$this->addInput($label, $args, $slug);
@@ -292,7 +293,7 @@ class Form
 	 * @access public
 	 * @return string
 	 */
-	public function generate() : string
+	public function generate(): string
 	{
 		// Apply default
 		$this->applyDefault();
@@ -342,34 +343,34 @@ class Form
 	 */
 	protected function buildHeader()
 	{
-		if ( $this->options['form'] ) {
+		if ($this->options['form']) {
 			$this->output .= '<form method="' . $this->atts['method'] . '"';
-			if ( !empty($this->atts['id']) ) {
+			if (!empty($this->atts['id'])) {
 				$this->output .= ' id="' . $this->atts['id'] . '"';
 			}
-			if ( !empty($this->atts['enctype']) ) {
+			if (!empty($this->atts['enctype'])) {
 				$this->output .= ' enctype="' . $this->atts['enctype'] . '"';
 			}
-			if ( !empty($this->atts['name']) ) {
+			if (!empty($this->atts['name'])) {
 				$this->output .= ' name="' . $this->atts['name'] . '"';
 			}
-			if ( !empty($this->atts['action']) ) {
+			if (!empty($this->atts['action'])) {
 				$this->output .= ' action="' . $this->atts['action'] . '"';
 			}
-			if ( !empty($this->atts['class']) ) {
+			if (!empty($this->atts['class'])) {
 				$classes = $this->outputClasses($this->atts['class']);
 				$this->output .= ' class="' . $classes . '"';
 			}
-			if ( !empty($this->atts['autocomplete']) ) {
+			if (!empty($this->atts['autocomplete'])) {
 				$this->output .= ' autocomplete="' . $this->atts['autocomplete'] . '"';
 			}
-			if ( !empty($this->atts['target']) ) {
+			if (!empty($this->atts['target'])) {
 				$this->output .= ' target="' . $this->atts['target'] . '"';
 			}
-			if ( !empty($this->atts['rel']) ) {
+			if (!empty($this->atts['rel'])) {
 				$this->output .= ' rel="' . $this->atts['rel'] . '"';
 			}
-			if ( $this->atts['novalidate'] ) {
+			if ($this->atts['novalidate']) {
 				$this->output .= ' novalidate';
 			}
 			$this->output .= '>';
@@ -384,12 +385,12 @@ class Form
 	 */
 	protected function buildSubmit()
 	{
-		if ( !$this->hasSubmit && $this->options['submit'] ) {
+		if (!$this->hasSubmit && $this->options['submit']) {
 
-			if ( !empty($this->options['submit-before-html']) ) {
+			if (!empty($this->options['submit-before-html'])) {
 				$this->output .= $this->options['submit-before-html'];
 			}
-			if ( !empty($this->options['submit-wrap-class']) ) {
+			if (!empty($this->options['submit-wrap-class'])) {
 				$classes = $this->outputClasses($this->options['submit-wrap-class']);
 				$this->output .= '<div class="' . $classes . '">';
 			}
@@ -398,21 +399,21 @@ class Form
 			$this->output .= '<input type="submit" ';
 
 			// name attribute
-			if ( !empty($this->options['submit-name']) ) {
+			if (!empty($this->options['submit-name'])) {
 				$this->output .= 'name="' . $this->options['submit-name'] . '" ';
 			}
 
 			// class attribute
-			if ( !empty($this->options['submit-class']) ) {
+			if (!empty($this->options['submit-class'])) {
 				$this->output .= 'class="' . $this->options['submit-class'] . '" ';
 			}
 
 			// value attribute
 			$this->output .= 'value="' . $this->options['submit-text'] . '">';
-			if ( !empty($this->options['submit-wrap-class']) ) {
+			if (!empty($this->options['submit-wrap-class'])) {
 				$this->output .= '</div>';
 			}
-			if ( !empty($this->options['submit-after-html']) ) {
+			if (!empty($this->options['submit-after-html'])) {
 				$this->output .= $this->options['submit-after-html'];
 			}
 		}
@@ -426,7 +427,7 @@ class Form
 	 */
 	protected function buildClose()
 	{
-		if ( $this->options['form'] ) {
+		if ($this->options['form']) {
 			$this->output .= '</form>';
 		}
 	}
@@ -440,7 +441,7 @@ class Form
 	 */
 	protected function buildBody()
 	{
-		foreach ( $this->inputs as $input ) {
+		foreach ($this->inputs as $input) {
 
 			// Init temp html
 			$this->html = [
@@ -456,31 +457,33 @@ class Form
 			];
 
 			// Validate input type
-			if ( !$this->isValidType($input['type']) ) {
+			if (!$this->isValidType($input['type'])) {
 				$input['type'] = 'text';
 			}
 
 			// Set global value
-			if ( $input['use-request'] ) {
+			if ($input['use-request']) {
 				$except = ['html', 'string', 'title', 'radio', 'checkbox', 'select', 'submit'];
-				if ( !Stringify::contains($except, $input['type']) ) {
-					if ( HttpRequest::isSetted($input['name']) ) {
+				if (!Stringify::contains($except, $input['type'])) {
+					if (HttpRequest::isSetted($input['name'])) {
 						$input['value'] = HttpRequest::get($input['name']);
 					}
 				}
 			}
 
 			// Ignore default submit button
-			if ( $input['type'] === 'submit' ) {
+			if ($input['type'] === 'submit') {
 				$this->hasSubmit = true;
 			}
 
 			// Set temp html
-			if ( $input['type'] !== 'html' 
-			  && $input['type'] !== 'title' 
-			  && $input['type'] !== 'string' ) {
+			if (
+				$input['type'] !== 'html'
+				&& $input['type'] !== 'title'
+				&& $input['type'] !== 'string'
+			) {
 				$this->html['before'] = $this->getInputBefore($input);
-				if ( $input['display-label'] ) {
+				if ($input['display-label']) {
 					$this->html['label'] = $this->getInputLabel($input);
 				}
 				$this->html['opening']     = $this->getInputOpening($input['type']);
@@ -493,17 +496,17 @@ class Form
 			}
 
 			// Set custom html
-			if ( $input['type'] == 'html' ) {
+			if ($input['type'] == 'html') {
 				$this->output .= $input['html'];
 			}
 
 			// Set custom string
-			if ( $input['type'] == 'string' ) {
+			if ($input['type'] == 'string') {
 				$this->output .= $input['string'];
 			}
 
 			// Set custom title
-			if ( $input['type'] == 'title' ) {
+			if ($input['type'] == 'title') {
 				$this->output .= '<';
 				$this->output .= $input['title-tag'];
 				$this->output .= '>';
@@ -533,13 +536,12 @@ class Form
 	 * @param mixed $classes
 	 * @return string
 	 */
-	protected function outputClasses($classes = '') : string
+	protected function outputClasses($classes = ''): string
 	{
 		$class = '';
-		if ( TypeCheck::isArray($classes) && count($classes) > 0 ) {
+		if (TypeCheck::isArray($classes) && count($classes) > 0) {
 			$class = implode(' ', $classes);
-
-		} elseif ( TypeCheck::isString($classes) ) {
+		} elseif (TypeCheck::isString($classes)) {
 			$class .= $classes;
 		}
 		return $class;
@@ -600,14 +602,14 @@ class Form
 	protected function sanitizeInputAtts(array $atts)
 	{
 		foreach ($atts as $key => $value) {
-			if ( !empty($value) ) {
+			if (!empty($value)) {
 				switch ($key) {
 					case 'wrap-tag':
 					case 'title-tag':
 						$atts[$key] = Stringify::replace(['<', '>'], '', $value);
 						break;
 					case 'options':
-						if ( TypeCheck::isString($value) ) {
+						if (TypeCheck::isString($value)) {
 							$atts[$key] = [$value];
 						}
 						break;
@@ -673,9 +675,9 @@ class Form
 	protected function mergeOptions(array $options = [])
 	{
 		$options = Arrayify::merge($this->getDefaultOptions(), $options);
-		foreach ( $options as $key => $value ) {
-			if ( !$this->setOptions($key, $value) ) {
-				if ( isset($this->getDefaultOptions()[$key]) ) {
+		foreach ($options as $key => $value) {
+			if (!$this->setOptions($key, $value)) {
+				if (isset($this->getDefaultOptions()[$key])) {
 					$this->setOptions($key, $this->getDefaultOptions()[$key]);
 				}
 			}
@@ -692,9 +694,9 @@ class Form
 	protected function mergeAtts(array $atts = [])
 	{
 		$atts = Arrayify::merge($this->getDefaultAtts(), $atts);
-		foreach ( $atts as $key => $value ) {
-			if ( !$this->setAttribute($key, $value) ) {
-				if ( isset($this->getDefaultAtts()[$key]) ) {
+		foreach ($atts as $key => $value) {
+			if (!$this->setAttribute($key, $value)) {
+				if (isset($this->getDefaultAtts()[$key])) {
 					$this->setAttribute($key, $this->getDefaultAtts()[$key]);
 				}
 			}
@@ -708,7 +710,7 @@ class Form
 	 * @param string $type
 	 * @return bool
 	 */
-	protected function isValidType(string $type) : bool
+	protected function isValidType(string $type): bool
 	{
 		$types = [
 			'html',
@@ -739,7 +741,7 @@ class Form
 			'url',
 			'email'
 		];
-		if ( Stringify::contains($types, $type) ) {
+		if (Stringify::contains($types, $type)) {
 			return true;
 		}
 		return false;
@@ -752,7 +754,7 @@ class Form
 	 * @param string $type
 	 * @return bool
 	 */
-	protected function getInputElement(string $type = '') : string
+	protected function getInputElement(string $type = ''): string
 	{
 		switch ($type) {
 			case 'textarea':
@@ -764,7 +766,7 @@ class Form
 			case 'checkbox':
 				return '';
 				break;
-			
+
 			default:
 				return 'input';
 				break;
@@ -778,14 +780,14 @@ class Form
 	 * @param string $type
 	 * @return string
 	 */
-	protected function getInputClosing(string $type = '') : string
+	protected function getInputClosing(string $type = ''): string
 	{
 		switch ($type) {
 			case 'textarea':
 			case 'select':
 				return '</' . $type . '>';
 				break;
-			
+
 			default:
 				return '';
 				break;
@@ -799,10 +801,10 @@ class Form
 	 * @param array $input
 	 * @return string
 	 */
-	protected function getInputDescription(array $input = []) : string
+	protected function getInputDescription(array $input = []): string
 	{
 		$description = '';
-		if ( !empty($input['description']) ) {
+		if (!empty($input['description'])) {
 			$description = '<small>' . $input['description'] . '</small>';
 		}
 		return $description;
@@ -815,44 +817,44 @@ class Form
 	 * @param array $input
 	 * @return string
 	 */
-	protected function getInputLabel(array $input = []) : string
+	protected function getInputLabel(array $input = []): string
 	{
 		$label = '';
 		switch ($input['type']) {
 			case 'radio':
 			case 'checkbox':
-				if ( count($input['options']) > 0 ) {
-					if ( count($input['options']) > 1 ) {
+				if (count($input['options']) > 0) {
+					if (count($input['options']) > 1) {
 						$label .= '<p>';
 						$label .= $input['label'];
-						if ( $input['required'] ) {
+						if ($input['required']) {
 							$label .= ' <strong>(*)</strong>';
 						}
 						$label .= '</p>';
 					} else {
-						if ( !empty($input['id']) ) {
+						if (!empty($input['id'])) {
 							$label .= '<label for="' . $input['id'] . '">';
 						} else {
 							$label .= '<label>';
 						}
 						$label .= $input['label'];
-						if ( $input['required'] ) {
+						if ($input['required']) {
 							$label .= ' <strong>(*)</strong>';
 						}
 						$label .= '</label>';
 					}
 				}
 				break;
-			
+
 			default:
-				if ( $input['type'] !== 'hidden' && $input['type'] !== 'submit' ) {
-					if ( !empty($input['id']) ) {
+				if ($input['type'] !== 'hidden' && $input['type'] !== 'submit') {
+					if (!empty($input['id'])) {
 						$label .= '<label for="' . $input['id'] . '">';
 					} else {
 						$label .= '<label>';
 					}
 					$label .= $input['label'];
-					if ( $input['required'] ) {
+					if ($input['required']) {
 						$label .= ' <strong>(*)</strong>';
 					}
 					$label .= '</label>';
@@ -869,21 +871,21 @@ class Form
 	 * @param array $input
 	 * @return string
 	 */
-	protected function getInputBefore(array $input = []) : string
+	protected function getInputBefore(array $input = []): string
 	{
 		$before = '';
-		if ( $input['type'] !== 'html' && $input['type'] !== 'hidden' ) {
+		if ($input['type'] !== 'html' && $input['type'] !== 'hidden') {
 			$before .= $input['before-html'];
-			if ( !empty($input['wrap-tag']) ) {
+			if (!empty($input['wrap-tag'])) {
 				$before .= '<' . $input['wrap-tag'];
-				if ( !empty($input['wrap-id']) ) {
+				if (!empty($input['wrap-id'])) {
 					$before .= ' id="' . $input['wrap-id'] . '"';
 				}
-				if ( !empty($input['wrap-class']) ) {
+				if (!empty($input['wrap-class'])) {
 					$class = $this->outputClasses($input['wrap-class']);
 					$before .= ' class="' . $class . '"';
 				}
-				if ( !empty($input['wrap-style']) ) {
+				if (!empty($input['wrap-style'])) {
 					$before .= ' style="' . $input['wrap-style'] . '"';
 				}
 				$before .= '>';
@@ -899,11 +901,11 @@ class Form
 	 * @param array $input
 	 * @return string
 	 */
-	protected function getInputAfter(array $input = []) : string
+	protected function getInputAfter(array $input = []): string
 	{
 		$after = '';
-		if ( $input['type'] !== 'html' && $input['type'] !== 'hidden' ) {
-			if ( !empty($input['wrap-tag']) ) {
+		if ($input['type'] !== 'html' && $input['type'] !== 'hidden') {
+			if (!empty($input['wrap-tag'])) {
 				$after .= '</' . $input['wrap-tag'] . '>';
 			}
 			$after .= $input['after-html'];
@@ -918,14 +920,14 @@ class Form
 	 * @param string $type
 	 * @return string
 	 */
-	protected function getInputOpening(string $type = '') : string
+	protected function getInputOpening(string $type = ''): string
 	{
 		switch ($type) {
 			case 'radio':
 			case 'checkbox':
 				return '';
 				break;
-			
+
 			default:
 				return '<';
 				break;
@@ -939,7 +941,7 @@ class Form
 	 * @param array $input
 	 * @return string
 	 */
-	protected function getInputContent(array $input = []) : string
+	protected function getInputContent(array $input = []): string
 	{
 		$content = '';
 		switch ($input['type']) {
@@ -948,22 +950,22 @@ class Form
 				break;
 
 			case 'select':
-				foreach ( $input['options'] as $key => $option ) {
+				foreach ($input['options'] as $key => $option) {
 					$selected = false;
-					if ( $input['use-request'] ) {
-						if ( HttpRequest::isSetted($input['name']) ) {
-							if ( HttpRequest::get($input['name']) === $key ) {
+					if ($input['use-request']) {
+						if (HttpRequest::isSetted($input['name'])) {
+							if (HttpRequest::get($input['name']) === $key) {
 								$selected = true;
 							}
 						}
-					} elseif ( $input['selected'] === $key ) {
+					} elseif ($input['selected'] === $key) {
 						$selected = true;
 					}
 					$content .= '<option value="' . $key . '"';
-					if ( $selected ) {
+					if ($selected) {
 						$content .= ' selected';
 					}
-					if ( $input['multiple'] ) {
+					if ($input['multiple']) {
 						$content .= ' multiple';
 					}
 					$content .= '>' . $option . '</option>';
@@ -972,35 +974,34 @@ class Form
 
 			case 'radio':
 			case 'checkbox':
-				if ( count($input['options']) > 0 ) {
-					foreach ( $input['options'] as $key => $option ) {
+				if (count($input['options']) > 0) {
+					foreach ($input['options'] as $key => $option) {
 
 						// checked input
 						$checked = false;
-						if ( $input['checked'] ) {
+						if ($input['checked']) {
 							$checked = true;
 						}
 
-						if ( !$checked ) {
-							if ( $input['use-request'] ) {
-								if ( HttpRequest::isSetted($input['name']) ) {
-									if ( Stringify::contains(HttpRequest::get($input['name']), $key) ) {
+						if (!$checked) {
+							if ($input['use-request']) {
+								if (HttpRequest::isSetted($input['name'])) {
+									if (Stringify::contains(HttpRequest::get($input['name']), $key)) {
 										$checked = true;
 									}
 								}
 							}
 						}
-						
+
 						// Open input
 						$content .= '<input';
 
 						// id attribute
-						if ( count($input['options']) > 1 ) {
+						if (count($input['options']) > 1) {
 							$slug = Stringify::slugify($option);
 							$content .= ' id="' . $slug . '"';
-
 						} else {
-							if ( !empty($input['id']) ) {
+							if (!empty($input['id'])) {
 								$content .= ' id="' . $input['id'] . '"';
 							}
 						}
@@ -1010,33 +1011,33 @@ class Form
 
 						// name attribute
 						$content .= ' name="' . $input['name'] . '';
-						if ( count($input['options']) > 1 ) {
+						if (count($input['options']) > 1) {
 							$content .= '[]';
 						}
 						$content .= '"';
 
 						// class attribute
 						$class = $this->outputClasses($input['class']);
-						if ( !empty($class) ) {
+						if (!empty($class)) {
 							$content .= ' class="' . $class . '"';
 						}
 
 						// value attribute
-						if ( count($input['options']) > 1 ) {
+						if (count($input['options']) > 1) {
 							$content .= ' value="' . $key . '"';
 						}
-						
+
 						// Single attribute
-						if ( $checked ) {
+						if ($checked) {
 							$content .= ' checked';
 						}
-						if ( $input['required'] ) {
+						if ($input['required']) {
 							$content .= ' required';
 						}
 
 						// Close input
 						$content .= '>';
-						if ( count($input['options']) > 1 ) {
+						if (count($input['options']) > 1) {
 							$content .= '<label for="' . $slug . '">' . $option . '</label>';
 						}
 					}
@@ -1053,81 +1054,81 @@ class Form
 	 * @param array $input
 	 * @return string
 	 */
-	protected function getInputAtts(array $input) : string
+	protected function getInputAtts(array $input): string
 	{
 		$atts = '';
-		if ( $input['type'] !== 'radio' && $input['type'] !== 'checkbox' ) {
+		if ($input['type'] !== 'radio' && $input['type'] !== 'checkbox') {
 
 			$atts = ' ';
 
 			// id attributes
-			if ( !empty($input['id']) ) {
+			if (!empty($input['id'])) {
 				$atts .= 'id="' . $input['id'] . '" ';
 			}
 
 			// type textarea
-			if ( $input['type'] !== 'textarea' && $input['type'] !== 'select' ) {
-				if ( !empty($input['type']) ) {
+			if ($input['type'] !== 'textarea' && $input['type'] !== 'select') {
+				if (!empty($input['type'])) {
 					$atts .= 'type="' . $input['type'] . '" ';
 				}
 			}
 
 			// name attributes
-			if ( !empty($input['name']) ) {
+			if (!empty($input['name'])) {
 				$atts .= 'name="' . $input['name'] . '" ';
 			}
 
 			// class attributes
-			if ( $input['type'] !== 'hidden' ) {
-				if ( !empty($input['class']) ) {
+			if ($input['type'] !== 'hidden') {
+				if (!empty($input['class'])) {
 					$class = $this->outputClasses($input['class']);
 					$atts .= 'class="' . $class . '" ';
 				}
 			}
 
 			// placeholder attributes
-			if ( $input['type'] !== 'textarea' && $input['type'] !== 'select' ) {
-				if ( !empty($input['placeholder']) ) {
+			if ($input['type'] !== 'textarea' && $input['type'] !== 'select') {
+				if (!empty($input['placeholder'])) {
 					$atts .= 'placeholder="' . $input['placeholder'] . '" ';
 				}
 			}
 
 			// value attributes
-			if ( $input['type'] !== 'textarea' && $input['type'] !== 'select' ) {
-				if ( !empty($input['value']) ) {
+			if ($input['type'] !== 'textarea' && $input['type'] !== 'select') {
+				if (!empty($input['value'])) {
 					$atts .= 'value="' . $input['value'] . '" ';
 				}
 			}
 
 			// Special attributes
-			if ( $input['type'] == 'number' || $input['type'] == 'range' ) {
-				if ( !empty($input['min']) ) {
+			if ($input['type'] == 'number' || $input['type'] == 'range') {
+				if (!empty($input['min'])) {
 					$atts .= 'min="' . $input['min'] . '" ';
 				}
-				if ( !empty($input['max']) ) {
+				if (!empty($input['max'])) {
 					$atts .= 'max="' . $input['max'] . '" ';
 				}
-				if ( !empty($input['step']) ) {
+				if (!empty($input['step'])) {
 					$atts .= 'step="' . $input['step'] . '" ';
 				}
 			}
 
 			// style attribute
-			if ( !empty($input['style']) ) {
+			if (!empty($input['style'])) {
 				$atts .= 'style="' . $input['style'] . '" ';
 			}
 
 			// Single attributes
-			if ( $input['autofocus'] ) {
+			if ($input['autofocus']) {
 				$atts .= 'autofocus ';
 			}
-			if ( $input['disabled'] ) {
+			if ($input['disabled']) {
 				$atts .= 'disabled ';
 			}
-			if ( $input['required'] ) {
+			if ($input['required']) {
 				$atts .= 'required ';
 			}
-			if ( $input['readonly'] ) {
+			if ($input['readonly']) {
 				$atts .= 'readonly ';
 			}
 			$atts = rtrim($atts);
@@ -1145,16 +1146,14 @@ class Form
 	protected function applyValues()
 	{
 		foreach ($this->inputs as $key => $value) {
-			if ( isset($this->values[$value['name']]) ) {
+			if (isset($this->values[$value['name']])) {
 
-				if ( $value['type'] == 'select' ) {
+				if ($value['type'] == 'select') {
 					$this->inputs[$key]['selected'] = $this->values[$value['name']];
-
-				} elseif ( $value['type'] == 'checkbox' || $value['type'] == 'radio' ) {
-					if ( count($value['options']) == 1 && $this->values[$value['name']] == 1 ) {
+				} elseif ($value['type'] == 'checkbox' || $value['type'] == 'radio') {
+					if (count($value['options']) == 1 && $this->values[$value['name']] == 1) {
 						$this->inputs[$key]['checked'] = true;
 					}
-
 				} else {
 					$this->inputs[$key]['value'] = $this->values[$value['name']];
 				}
@@ -1171,9 +1170,9 @@ class Form
 	protected function applyDefault()
 	{
 		foreach ($this->inputs as $key => $value) {
-			if ( isset($this->default[$value['name']]) ) {
-				if ( $value['type'] == 'select' && empty($value['options']) ) {
-					if ( TypeCheck::isArray($this->default[$value['name']]) ) {
+			if (isset($this->default[$value['name']])) {
+				if ($value['type'] == 'select' && empty($value['options'])) {
+					if (TypeCheck::isArray($this->default[$value['name']])) {
 						$this->inputs[$key]['options'] = $this->default[$value['name']];
 					}
 				}

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -29,7 +30,7 @@ final class Exception extends \Exception
 	 * @param array $args
 	 * @return bool
 	 */
-	public static function handle(callable $callback, ?array $args = null) : bool
+	public static function handle(callable $callback, ?array $args = null): bool
 	{
 		return (bool)register_shutdown_function($callback, $args);
 	}
@@ -66,7 +67,7 @@ final class Exception extends \Exception
 	 * @param int $type
 	 * @return bool
 	 */
-	public static function trigger(string $error, int $type = 1024) : bool
+	public static function trigger(string $error, int $type = 1024): bool
 	{
 		return trigger_error($error, $type);
 	}
@@ -80,9 +81,9 @@ final class Exception extends \Exception
 	 * @param mixed $data
 	 * @return object
 	 */
-	public static function error($code, ?string $message = null, $data = []) : object
+	public static function error($code, ?string $message = null, $data = []): object
 	{
-	    return new WP_Error($code, $message, $data);
+		return new WP_Error($code, $message, $data);
 	}
 
 	/**
@@ -119,7 +120,7 @@ final class Exception extends \Exception
 	 */
 	public static function getError($object)
 	{
-		if ( self::isError($object) ) {
+		if (self::isError($object)) {
 			return $object->get_error_message();
 		}
 		return false;
@@ -132,7 +133,7 @@ final class Exception extends \Exception
 	 * @param mixed $object
 	 * @return bool
 	 */
-	public static function isError($object) : bool
+	public static function isError($object): bool
 	{
 		return is_wp_error($object);
 	}

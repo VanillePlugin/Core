@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -31,7 +32,7 @@ interface LoggerInterface
      * @param string $path
      * @return object
      */
-    function setPath(string $path) : self;
+    function setPath(string $path): self;
 
     /**
      * Set log filename.
@@ -39,7 +40,7 @@ interface LoggerInterface
      * @param string $filename
      * @return object
      */
-    function setFilename(string $filename) : self;
+    function setFilename(string $filename): self;
 
     /**
      * Set log extension.
@@ -47,7 +48,7 @@ interface LoggerInterface
      * @param string $extension
      * @return object
      */
-    function setExtension(string $extension) : self;
+    function setExtension(string $extension): self;
 
     /**
      * Log debug message.
@@ -56,7 +57,7 @@ interface LoggerInterface
      * @param bool $isArray
      * @return bool
      */
-    function debug($message, bool $isArray = false) : bool;
+    function debug($message, bool $isArray = false): bool;
 
     /**
      * Log error message.
@@ -64,7 +65,7 @@ interface LoggerInterface
      * @param string $message
      * @return bool
      */
-    function error(string $message) : bool;
+    function error(string $message): bool;
 
     /**
      * Log warning message.
@@ -72,7 +73,7 @@ interface LoggerInterface
      * @param string $message
      * @return bool
      */
-    function warning(string $message) : bool;
+    function warning(string $message): bool;
 
     /**
      * Log info message.
@@ -80,7 +81,7 @@ interface LoggerInterface
      * @param string $message
      * @return bool
      */
-    function info(string $message) : bool;
+    function info(string $message): bool;
 
     /**
      * Log custom message.
@@ -89,7 +90,7 @@ interface LoggerInterface
      * @param string $type
      * @return bool
      */
-    function custom(string $message, string $type = 'custom') : bool;
+    function custom(string $message, string $type = 'custom'): bool;
 
     /**
      * Log natif error.
@@ -100,5 +101,5 @@ interface LoggerInterface
      * @param string $headers
      * @return bool
      */
-    static function log(string $message, int $type = 0, ?string $path = null, ?string $headers = null) : bool;
+    static function log(string $message, int $type = 0, ?string $path = null, ?string $headers = null): bool;
 }

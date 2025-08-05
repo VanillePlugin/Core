@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -38,7 +39,7 @@ trait TraitRenderable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isScreen(string $screen) : bool
+	public function isScreen(string $screen): bool
 	{
 		return Page::isScreen($screen);
 	}
@@ -49,7 +50,7 @@ trait TraitRenderable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getCheckbox($data, $value = true) : string
+	public function getCheckbox($data, $value = true): string
 	{
 		return Page::getCheckbox($data, $value);
 	}
@@ -71,10 +72,10 @@ trait TraitRenderable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addMenuPage(array $settings = []) : string
+	protected function addMenuPage(array $settings = []): string
 	{
 		extract($settings);
-		if ( empty($icon) ) {
+		if (empty($icon)) {
 			$icon = 'dashicons-admin-plugins';
 		}
 		return Page::addMenu($title, $menu, $cap, $slug, $callback, $icon, $position);
@@ -89,7 +90,7 @@ trait TraitRenderable
 	protected function addSubMenuPage(array $settings = [])
 	{
 		extract($settings);
-		if ( $icon ) {
+		if ($icon) {
 			$menu = "{$icon} {$menu}";
 		}
 		return Page::addSubMenu($parent, $title, $menu, $cap, $slug, $callback);

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -24,7 +25,7 @@ interface AdminHelperInterface
 	/**
 	 * Plugin activate.
 	 * [Action: {plugin}-activate].
-     *
+	 *
 	 * @return void
 	 */
 	function activate();
@@ -100,7 +101,7 @@ interface AdminHelperInterface
 	 * @param array $links
 	 * @return array
 	 */
-	function action(array $links) : array;
+	function action(array $links): array;
 
 	/**
 	 * Plugin about.
@@ -109,7 +110,7 @@ interface AdminHelperInterface
 	 * @param string $output
 	 * @return string
 	 */
-	function about(string $output) : string;
+	function about(string $output): string;
 
 	/**
 	 * Plugin version.
@@ -118,7 +119,7 @@ interface AdminHelperInterface
 	 * @param string $output
 	 * @return string
 	 */
-	function version(string $output) : string;
+	function version(string $output): string;
 
 	/**
 	 * Plugin row.
@@ -128,7 +129,7 @@ interface AdminHelperInterface
 	 * @param string $file
 	 * @return array
 	 */
-	function row(array $meta, string $file) : array;
+	function row(array $meta, string $file): array;
 
 	/**
 	 * Plugin admin data (JS).
@@ -137,7 +138,7 @@ interface AdminHelperInterface
 	 * @param array $data
 	 * @return array
 	 */
-	function adminData(array $data) : array;
+	function adminData(array $data): array;
 
 	/**
 	 * Plugin global data (JS).
@@ -146,7 +147,7 @@ interface AdminHelperInterface
 	 * @param array $data
 	 * @return array
 	 */
-	function globalData(array $data) : array;
+	function globalData(array $data): array;
 
 	/**
 	 * Plugin auto-update.

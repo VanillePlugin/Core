@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -21,7 +22,7 @@ interface ModelInterface
 	 *
 	 * @return string
 	 */
-	function render() : string;
+	function render(): string;
 
 	/**
 	 * Get item by Id.
@@ -29,7 +30,7 @@ interface ModelInterface
 	 * @param mixed $id
 	 * @return array
 	 */
-	function get($id) : array;
+	function get($id): array;
 
 	/**
 	 * Get item by Id and lang.
@@ -37,7 +38,7 @@ interface ModelInterface
 	 * @param mixed $id
 	 * @return array
 	 */
-	function getWithLang($id) : array;
+	function getWithLang($id): array;
 
 	/**
 	 * Checl item exist.
@@ -45,7 +46,7 @@ interface ModelInterface
 	 * @param array $data
 	 * @return bool
 	 */
-	function exist(array $data) : bool;
+	function exist(array $data): bool;
 
 	/**
 	 * Add item.
@@ -53,7 +54,7 @@ interface ModelInterface
 	 * @param array $data
 	 * @return bool
 	 */
-	function add(array $data) : bool;
+	function add(array $data): bool;
 
 	/**
 	 * Update item.
@@ -61,7 +62,7 @@ interface ModelInterface
 	 * @param array $data
 	 * @return bool
 	 */
-	function save(array $data) : bool;
+	function save(array $data): bool;
 
 	/**
 	 * Update item status.
@@ -70,7 +71,7 @@ interface ModelInterface
 	 * @param int $status
 	 * @return bool
 	 */
-	function status($id, int $status = 0) : bool;
+	function status($id, int $status = 0): bool;
 
 	/**
 	 * Duplicate item.
@@ -78,7 +79,7 @@ interface ModelInterface
 	 * @param int $id
 	 * @return bool
 	 */
-	function duplicate($id) : bool;
+	function duplicate($id): bool;
 
 	/**
 	 * Delete item.
@@ -86,22 +87,22 @@ interface ModelInterface
 	 * @param int $id
 	 * @return bool
 	 */
-	function remove($id) : bool;
+	function remove($id): bool;
 
 	/**
 	 * Get items.
 	 *
 	 * @return array
 	 */
-	function fetch() : array;
+	function fetch(): array;
 
 	/**
 	 * Get items with langue.
 	 *
 	 * @return array
 	 */
-	function fetchWithLang() : array;
-	
+	function fetchWithLang(): array;
+
 	/**
 	 * Get cached item db instance.
 	 *
@@ -109,15 +110,15 @@ interface ModelInterface
 	 * @param bool $status
 	 * @return array
 	 */
-	static function getCached($key, ?bool &$status = null) : array;
-	
+	static function getCached($key, ?bool &$status = null): array;
+
 	/**
 	 * Generate class based cache key.
 	 *
 	 * @param mixed $key
 	 * @return string
 	 */
-	static function getCacheKey($key) : string;
+	static function getCacheKey($key): string;
 
 	/**
 	 * Format datatable:
@@ -126,7 +127,7 @@ interface ModelInterface
 	 * @param array $data
 	 * @return string
 	 */
-	function assign(array $data) : string;
+	function assign(array $data): string;
 
 	/**
 	 * Instance database table.

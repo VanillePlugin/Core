@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -25,7 +26,7 @@ final class HttpGet
 	 */
 	public static function get(?string $key = null)
 	{
-		if ( $key ) {
+		if ($key) {
 			return self::isSetted($key) ? $_GET[$key] : null;
 		}
 		return self::isSetted() ? $_GET : null;
@@ -43,7 +44,7 @@ final class HttpGet
 	{
 		$_GET[$key] = $value;
 	}
-	
+
 	/**
 	 * Check _GET value.
 	 *
@@ -51,9 +52,9 @@ final class HttpGet
 	 * @param string $key
 	 * @return bool
 	 */
-	public static function isSetted(?string $key = null) : bool
+	public static function isSetted(?string $key = null): bool
 	{
-		if ( $key ) {
+		if ($key) {
 			return isset($_GET[$key]);
 		}
 		return isset($_GET) && !empty($_GET);
@@ -68,9 +69,8 @@ final class HttpGet
 	 */
 	public static function unset(?string $key = null)
 	{
-		if ( $key ) {
+		if ($key) {
 			unset($_GET[$key]);
-
 		} else {
 			$_GET = [];
 		}

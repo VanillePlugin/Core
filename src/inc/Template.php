@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -33,7 +34,7 @@ final class Template
      * @param array $options
      * @return object
      */
-    public static function getEnvironment(string $path, array $options = []) : Environment
+    public static function getEnvironment(string $path, array $options = []): Environment
     {
         return new Environment(new Loader($path), $options);
     }
@@ -47,7 +48,7 @@ final class Template
      * @param array $options
      * @return object
      */
-    public static function extend(string $name, $callable = null, array $options = []) : Module
+    public static function extend(string $name, $callable = null, array $options = []): Module
     {
         return new Module($name, $callable, $options);
     }

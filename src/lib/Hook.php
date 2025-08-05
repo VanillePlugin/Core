@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -90,7 +91,7 @@ final class Hook
 	 */
 	public function get()
 	{
-		if ( $this->hasPluginFilter($this->filter) ) {
+		if ($this->hasPluginFilter($this->filter)) {
 			$registered = $this->getRegistered();
 			$hooks = $this->applyPluginFilter($this->filter, $registered);
 			return $this->filter($registered, $hooks);
@@ -112,14 +113,14 @@ final class Hook
 		$values = $this->getRegistered();
 
 		foreach ($values as $key => $value) {
-			$values[$key] = $this->map(function($item) {
+			$values[$key] = $this->map(function ($item) {
 				return $item['value'] ?? null;
 			}, $value);
 		}
 
-		if ( $group && isset($values[$group]) ) {
+		if ($group && isset($values[$group])) {
 			$values = (array)$values[$group];
-			if ( $option ) {
+			if ($option) {
 				return $values[$option] ?? null;
 			}
 		}
@@ -134,7 +135,7 @@ final class Hook
 	 * @param array $data
 	 * @return bool
 	 */
-	public function updateValues(array $data) : bool
+	public function updateValues(array $data): bool
 	{
 		$registered = $this->getRegistered();
 		foreach ($data as $group => $inputs) {
@@ -151,7 +152,7 @@ final class Hook
 	 * @access public
 	 * @return bool
 	 */
-	public function add() : bool
+	public function add(): bool
 	{
 		$hooks = [];
 		foreach ($this->getHooks() as $hook) {
@@ -179,28 +180,28 @@ final class Hook
 	 * @param array $hooks
 	 * @return array
 	 */
-	private function filter(array $registered, array $hooks) : array
+	private function filter(array $registered, array $hooks): array
 	{
 		foreach ($hooks as $group => $inputs) {
 
 			// Validate group
-			if ( !$this->inArray($group, $this->getHooks()) ) {
+			if (!$this->inArray($group, $this->getHooks())) {
 				unset($hooks[$group]);
 				continue;
 			}
 
 			// Validate group items
-			if ( count($registered[$group]) == $this->max ) {
+			if (count($registered[$group]) == $this->max) {
 				continue;
 			}
 
 			// Validate inputs
 			foreach ($inputs as $key => $args) {
 
-				if ( !$this->isType('string', $key) ) {
+				if (!$this->isType('string', $key)) {
 					continue;
 				}
-				if ( !$this->isType('array', $args) ) {
+				if (!$this->isType('array', $args)) {
 					continue;
 				}
 
@@ -210,33 +211,30 @@ final class Hook
 				unset($hooked['value']);
 
 				// Validate tags
-				if ( !$this->inArray($hooked['tag'], $this->tags)) {
+				if (!$this->inArray($hooked['tag'], $this->tags)) {
 					continue;
 				}
 
 				// Add or update input
-				if ( !isset($registered[$group][$key]) ) {
+				if (!isset($registered[$group][$key])) {
 					$registered[$group][$key] = $hooked;
 					$this->update($registered);
-
 				} else {
 					$saved = $registered[$group][$key];
 					$temp  = $saved['value'] ?? null;
 					unset($saved['value']);
 
-					if ( $this->diffArray($saved, $hooked) ) {
-						
+					if ($this->diffArray($saved, $hooked)) {
+
 						$registered[$group][$key] = $hooked;
 						$this->update($registered);
 
-						if ( $this->isType('null', $temp) ) {
+						if ($this->isType('null', $temp)) {
 							$registered[$group][$key]['value'] = $temp;
 						}
 					}
 				}
-
 			}
-
 		}
 
 		return $registered;
@@ -248,7 +246,7 @@ final class Hook
 	 * @access private
 	 * @return array
 	 */
-	private function getRegistered() : array
+	private function getRegistered(): array
 	{
 		return (array)$this->getPluginOption($this->option, []);
 	}
@@ -260,7 +258,7 @@ final class Hook
 	 * @param array $data
 	 * @return bool
 	 */
-	private function update(array $data) : bool
+	private function update(array $data): bool
 	{
 		return $this->updatePluginOption($this->option, $data);
 	}

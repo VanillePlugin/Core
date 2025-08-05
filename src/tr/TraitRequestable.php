@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,9 +16,13 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-    HttpRequest, HttpPost, HttpGet,
-	Response, Server, Stringify,
-    Upload
+	HttpRequest,
+	HttpPost,
+	HttpGet,
+	Response,
+	Server,
+	Stringify,
+	Upload
 };
 
 /**
@@ -32,9 +37,9 @@ trait TraitRequestable
 	 * @inheritdoc
 	 */
 	public function getRequest(?string $key = null)
-    {
-        return HttpRequest::get($key);
-    }
+	{
+		return HttpRequest::get($key);
+	}
 
 	/**
 	 * Check request value.
@@ -42,10 +47,10 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function hasRequest(?string $key = null) : bool
-    {
-        return HttpRequest::isSetted($key);
-    }
+	public function hasRequest(?string $key = null): bool
+	{
+		return HttpRequest::isSetted($key);
+	}
 
 	/**
 	 * Get HTTP POST value.
@@ -54,9 +59,9 @@ trait TraitRequestable
 	 * @inheritdoc
 	 */
 	public function getHttpPost(?string $key = null)
-    {
-        return HttpPost::get($key);
-    }
+	{
+		return HttpPost::get($key);
+	}
 
 	/**
 	 * Check HTTP POST value.
@@ -64,10 +69,10 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function hasHttpPost(?string $key = null) : bool
-    {
-        return HttpPost::isSetted($key);
-    }
+	public function hasHttpPost(?string $key = null): bool
+	{
+		return HttpPost::isSetted($key);
+	}
 
 	/**
 	 * Get HTTP GET value.
@@ -76,9 +81,9 @@ trait TraitRequestable
 	 * @inheritdoc
 	 */
 	public function getHttpGet(?string $key = null)
-    {
-        return HttpGet::get($key);
-    }
+	{
+		return HttpGet::get($key);
+	}
 
 	/**
 	 * Get HTTP GET value.
@@ -86,10 +91,10 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function hasHttpGet(?string $key = null) : bool
-    {
-        return HttpGet::isSetted($key);
-    }
+	public function hasHttpGet(?string $key = null): bool
+	{
+		return HttpGet::isSetted($key);
+	}
 
 	/**
 	 * Get blob value.
@@ -98,9 +103,9 @@ trait TraitRequestable
 	 * @inheritdoc
 	 */
 	public function getBlob(?string $key = null)
-    {
-        return Upload::get($key);
-    }
+	{
+		return Upload::get($key);
+	}
 
 	/**
 	 * Check blob value.
@@ -108,10 +113,10 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function hasBlob(?string $key = null) : bool
-    {
-        return Upload::isSetted($key);
-    }
+	public function hasBlob(?string $key = null): bool
+	{
+		return Upload::isSetted($key);
+	}
 
 	/**
 	 * Get server value.
@@ -120,9 +125,9 @@ trait TraitRequestable
 	 * @inheritdoc
 	 */
 	public function getServer(?string $key = null)
-    {
-        return Server::get($key);
-    }
+	{
+		return Server::get($key);
+	}
 
 	/**
 	 * Check server value.
@@ -130,10 +135,10 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function hasHttpServer(?string $key = null) : bool
-    {
-        return Server::isSetted($key);
-    }
+	public function hasHttpServer(?string $key = null): bool
+	{
+		return Server::isSetted($key);
+	}
 
 	/**
 	 * Get base URL.
@@ -141,10 +146,10 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getServerBaseUrl() : string
-    {
-        return Server::getBaseUrl();
-    }
+	public function getServerBaseUrl(): string
+	{
+		return Server::getBaseUrl();
+	}
 
 	/**
 	 * Get current URL.
@@ -152,7 +157,7 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getServerCurrentUrl($escape = false) : string
+	public function getServerCurrentUrl($escape = false): string
 	{
 		return Server::getCurrentUrl($escape);
 	}
@@ -163,10 +168,10 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getServerProtocol() : string
-    {
-        return Server::getProtocol();
-    }
+	public function getServerProtocol(): string
+	{
+		return Server::getProtocol();
+	}
 
 	/**
 	 * Get remote IP address.
@@ -185,7 +190,7 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isBasicAuth() : bool
+	public function isBasicAuth(): bool
 	{
 		return Server::isBasicAuth();
 	}
@@ -196,7 +201,7 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getBasicAuthUser() : string
+	public function getBasicAuthUser(): string
 	{
 		return Server::getBasicAuthUser();
 	}
@@ -207,7 +212,7 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getBasicAuthPwd() : string
+	public function getBasicAuthPwd(): string
 	{
 		return Server::getBasicAuthPwd();
 	}
@@ -218,10 +223,10 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-    public function getBearerToken() : string
-    {
-        return Server::getBearerToken();
-    }
+	public function getBearerToken(): string
+	{
+		return Server::getBearerToken();
+	}
 
 	/**
 	 * Check whether protocol is HTTPS (SSL).
@@ -229,54 +234,54 @@ trait TraitRequestable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isSsl() : bool
+	public function isSsl(): bool
 	{
 		return Server::isSsl();
 	}
 
-    /**
-     * Check if SSL verify is required (SNI).
-     *
+	/**
+	 * Check if SSL verify is required (SNI).
+	 *
 	 * @access public
 	 * @inheritdoc
-     */
-    public function mayRequireSSL(bool $verify = true) : bool
-    {
-    	return Server::mayRequireSSL($verify);
-    }
+	 */
+	public function mayRequireSSL(bool $verify = true): bool
+	{
+		return Server::mayRequireSSL($verify);
+	}
 
-    /**
-     * Get domain name from URL.
-     *
+	/**
+	 * Get domain name from URL.
+	 *
 	 * @access public
 	 * @inheritdoc
-     */
-    public function getDomainName(?string $url = null) : string
-    {
-    	return Server::getDomain($url);
-    }
+	 */
+	public function getDomainName(?string $url = null): string
+	{
+		return Server::getDomain($url);
+	}
 
-    /**
-     * Parse base from URL.
-     *
+	/**
+	 * Parse base from URL.
+	 *
 	 * @access public
 	 * @inheritdoc
-     */
-    public function parseBaseUrl(string $url) : string
-    {
-    	return Server::parseBaseUrl($url);
-    }
+	 */
+	public function parseBaseUrl(string $url): string
+	{
+		return Server::parseBaseUrl($url);
+	}
 
-    /**
-     * Parse URL.
-     *
+	/**
+	 * Parse URL.
+	 *
 	 * @access public
 	 * @inheritdoc
-     */
-    public function parseUrl(string $url, int $component = -1)
-    {
-    	return Stringify::parseUrl($url, $component);
-    }
+	 */
+	public function parseUrl(string $url, int $component = -1)
+	{
+		return Stringify::parseUrl($url, $component);
+	}
 
 	/**
 	 * Set HTTP response.

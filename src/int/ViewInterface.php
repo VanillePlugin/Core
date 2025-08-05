@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -16,13 +17,13 @@ namespace VanillePlugin\int;
 
 interface ViewInterface
 {
-	/**
-	 * Set extended view callables.
-	 *
+    /**
+     * Set extended view callables.
+     *
      * @param CallableInterface $callable
-	 * @return void
-	 */
-	function setCallables(?CallableInterface $callable = null);
+     * @return void
+     */
+    function setCallables(?CallableInterface $callable = null);
 
     /**
      * Render view.
@@ -41,5 +42,5 @@ interface ViewInterface
      * @param array $content
      * @return string
      */
-    function assign(string $tpl = 'default', array $content = []) : string;
+    function assign(string $tpl = 'default', array $content = []): string;
 }

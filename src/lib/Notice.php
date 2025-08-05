@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -24,7 +25,7 @@ class Notice extends View implements NoticeInterface
 	/**
 	 * @inheritdoc
 	 */
-    public final function display(callable $callable)
+	public final function display(callable $callable)
 	{
 		$this->addAction('admin-notices', $callable);
 	}
@@ -32,7 +33,7 @@ class Notice extends View implements NoticeInterface
 	/**
 	 * @inheritdoc
 	 */
-    public function do(string $message, string $type = 'info', array $args = [])
+	public function do(string $message, string $type = 'info', array $args = [])
 	{
 		$args = $this->mergeArray([
 			'icon'   => 'info',

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -23,12 +24,12 @@ use VanillePlugin\lib\Updater;
 trait TraitUpdatable
 {
 	/**
-     * Get update status.
-     *
+	 * Get update status.
+	 *
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isUpdated() : bool
+	public function isUpdated(): bool
 	{
 		return (new Updater())->isUpdated();
 	}
@@ -45,36 +46,36 @@ trait TraitUpdatable
 	}
 
 	/**
-     * Set update status.
-     *
+	 * Set update status.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function setAsUpdated() : bool
+	protected function setAsUpdated(): bool
 	{
 		return (new Updater())->setAsUpdated();
 	}
 
 	/**
-     * Remove plugin updates.
-     *
+	 * Remove plugin updates.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removeUpdates() : bool
+	protected function removeUpdates(): bool
 	{
 		return (new Updater())->remove();
 	}
 
 	/**
-     * Set upgrader listener.
-     *
+	 * Set upgrader listener.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
 	protected function doUpgrade(UpgraderInterface $upgrader)
 	{
-		if ( $this->isUpdated() ) {
+		if ($this->isUpdated()) {
 			$upgrader->upgrade();
 		}
 	}

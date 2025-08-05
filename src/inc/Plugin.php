@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -37,7 +38,7 @@ final class Plugin
 	 * @param string $path
 	 * @return string
 	 */
-	public static function getUrl(string $path) : string
+	public static function getUrl(string $path): string
 	{
 		$baseUrl = Globals::pluginUrl();
 		return Stringify::formatPath("{$baseUrl}/{$path}", true);
@@ -51,7 +52,7 @@ final class Plugin
 	 * @param string $path
 	 * @return string
 	 */
-	public static function getDir(string $path) : string
+	public static function getDir(string $path): string
 	{
 		$baseDir = Globals::pluginDir();
 		return Stringify::formatPath("{$baseDir}/{$path}", true);
@@ -65,7 +66,7 @@ final class Plugin
 	 * @param string $path
 	 * @return string
 	 */
-	public static function getMuDir(string $path) : string
+	public static function getMuDir(string $path): string
 	{
 		$baseDir = Globals::pluginMuDir();
 		return Stringify::formatPath("{$baseDir}/{$path}", true);
@@ -81,12 +82,12 @@ final class Plugin
 	 * @param bool $translate
 	 * @return array
 	 */
-	public static function getHeader(string $file, bool $markup = true, bool $translate = true) : array
+	public static function getHeader(string $file, bool $markup = true, bool $translate = true): array
 	{
-	    if ( !TypeCheck::isFunction('get_plugin_data') ) {
-	        require_once Globals::rootDir('wp-admin/includes/plugin.php');
-	    }
-	    $file = self::getDir($file);
+		if (!TypeCheck::isFunction('get_plugin_data')) {
+			require_once Globals::rootDir('wp-admin/includes/plugin.php');
+		}
+		$file = self::getDir($file);
 		return get_plugin_data($file, $markup, $translate);
 	}
 
@@ -100,9 +101,9 @@ final class Plugin
 	 * @param bool $context
 	 * @return array
 	 */
-	public static function getData(string $file, array $header = [], bool $context = false) : array
+	public static function getData(string $file, array $header = [], bool $context = false): array
 	{
-		if ( empty($header) ) {
+		if (empty($header)) {
 			$header['version'] = 'Version';
 		}
 		$file = self::getDir($file);

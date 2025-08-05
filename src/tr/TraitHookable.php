@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,7 +16,9 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-    Hook, Shortcode, Globals
+	Hook,
+	Shortcode,
+	Globals
 };
 
 /**
@@ -84,7 +87,7 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removeAction(string $name, $callback, int $priority = 10) : bool
+	protected function removeAction(string $name, $callback, int $priority = 10): bool
 	{
 		return Hook::removeAction($name, $callback, $priority);
 	}
@@ -108,7 +111,7 @@ trait TraitHookable
 	 */
 	protected function doAction(string $name, ...$args)
 	{
-		Hook::doAction($name,...$args);
+		Hook::doAction($name, ...$args);
 	}
 
 	/**
@@ -139,7 +142,7 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function removeFilter(string $name, $callback, int $priority = 10) : bool
+	protected function removeFilter(string $name, $callback, int $priority = 10): bool
 	{
 		return Hook::removeFilter($name, $callback, $priority);
 	}
@@ -227,7 +230,7 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function isCSS(string $id, string $list = 'enqueued') : bool
+	protected function isCSS(string $id, string $list = 'enqueued'): bool
 	{
 		return Hook::isCSS($id, $list);
 	}
@@ -238,7 +241,7 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function isJS(string $id, string $list = 'enqueued') : bool
+	protected function isJS(string $id, string $list = 'enqueued'): bool
 	{
 		return Hook::isJS($id, $list);
 	}
@@ -271,20 +274,20 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function assignJS(string $id, string $object, array $data = []) : bool
+	protected function assignJS(string $id, string $object, array $data = []): bool
 	{
 		return Hook::assignJS($id, $object, $data);
 	}
-	
+
 	/**
 	 * Check whether script exists.
 	 *
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function hasScript(string $search, $scripts) : bool
+	protected function hasScript(string $search, $scripts): bool
 	{
-	    return Hook::hasScript($search, $scripts);
+		return Hook::hasScript($search, $scripts);
 	}
 
 	/**
@@ -348,7 +351,7 @@ trait TraitHookable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function hasShortcode(string $tag) : bool
+	protected function hasShortcode(string $tag): bool
 	{
 		return Shortcode::has($tag);
 	}

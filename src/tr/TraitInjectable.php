@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -49,7 +50,7 @@ trait TraitInjectable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function addHooks() : bool
+	protected function addHooks(): bool
 	{
 		return (new Hook)->add();
 	}
@@ -60,7 +61,7 @@ trait TraitInjectable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function updateHookables(array $data) : bool
+	protected function updateHookables(array $data): bool
 	{
 		return (new Hook)->updateValues($data);
 	}

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -24,19 +25,19 @@ use VanillePlugin\exc\ModelException;
  */
 class Model extends Orm implements ModelInterface
 {
-	Use \VanillePlugin\VanillePluginOption;
+	use \VanillePlugin\VanillePluginOption;
 
 	/**
 	 * @inheritdoc
 	 */
 	public function __construct()
 	{
-		if ( !$this->table ) {
-	        throw new ModelException(
-	            ModelException::undefinedTable()
-	        );
+		if (!$this->table) {
+			throw new ModelException(
+				ModelException::undefinedTable()
+			);
 		}
-		
+
 		$this->key = "{$this->table}Id";
 		parent::__construct();
 	}
@@ -44,7 +45,7 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function render() : string
+	public function render(): string
 	{
 		return $this->assign(
 			self::fetch()
@@ -54,12 +55,12 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function get($id) : array
+	public function get($id): array
 	{
 		$key  = self::getCacheKey($id);
 		$data = $this->getPluginCache($key, $status);
 
-		if ( !$status ) {
+		if (!$status) {
 			$where = ["{$this->key}" => (int)$id];
 			$data  = $this->query(new OrmQuery([
 				'result' => 'row',
@@ -74,12 +75,12 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function getWithLang($id) : array
+	public function getWithLang($id): array
 	{
 		$key  = self::getCacheKey($id);
 		$data = $this->getPluginCache($key, $status);
 
-		if ( !$status ) {
+		if (!$status) {
 			$where = [
 				"{$this->key}" => (int)$id,
 				'lang' => $this->getLang()
@@ -97,7 +98,7 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function exist(array $data) : bool
+	public function exist(array $data): bool
 	{
 		return (bool)$this->query(new OrmQuery([
 			'result' => 'count',
@@ -108,11 +109,11 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function add(array $data) : bool
+	public function add(array $data): bool
 	{
 		$data = $this->format($data);
 		unset($data['date']);
-		if ( !$this->exist($data) ) {
+		if (!$this->exist($data)) {
 			return (bool)$this->create($data);
 		}
 		return false;
@@ -121,7 +122,7 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function save(array $data) : bool
+	public function save(array $data): bool
 	{
 		$where = ["{$this->key}" => (int)$data["{$this->key}"]];
 		$data = $this->format($data);
@@ -131,7 +132,7 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function status($id, int $status = 0) : bool
+	public function status($id, int $status = 0): bool
 	{
 		$where = ["{$this->key}" => (int)$id];
 		return (bool)$this->update([
@@ -142,9 +143,9 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function duplicate($id) : bool
+	public function duplicate($id): bool
 	{
-		if ( ($data = $this->get($id)) ) {
+		if (($data = $this->get($id))) {
 			unset($data['date']);
 			return $this->add($data);
 		}
@@ -154,7 +155,7 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function remove($id) : bool
+	public function remove($id): bool
 	{
 		$where = ["{$this->key}" => (int)$id];
 		return (bool)$this->delete($where);
@@ -163,12 +164,12 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function fetch() : array
+	public function fetch(): array
 	{
 		$key  = self::getCacheKey('all');
 		$data = $this->getPluginCache($key, $status);
-		
-		if ( !$status ) {
+
+		if (!$status) {
 			$data = $this->all();
 			$this->setPluginCache($key, $data);
 		}
@@ -179,28 +180,28 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function fetchWithLang() : array
+	public function fetchWithLang(): array
 	{
 		$key  = self::getCacheKey('all');
 		$data = $this->getPluginCache($key, $status);
-		
-		if ( !$status ) {
+
+		if (!$status) {
 			$data = $this->query(new OrmQuery([
 				'where' => ['lang' => $this->getLang()]
 			]));
 			$this->setPluginCache($key, $data);
 		}
-		
+
 		return (array)$data;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function assign(array $data) : string
+	public function assign(array $data): string
 	{
-		$wrapper = $this->map(function($item) {
-			if ( $this->isType('array', $item)) {
+		$wrapper = $this->map(function ($item) {
+			if ($this->isType('array', $item)) {
 				$item['action'] = '{actions}';
 				return $this->arrayValues($item);
 			}
@@ -217,7 +218,7 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public static function getCached($key, ?bool &$status = null) : array
+	public static function getCached($key, ?bool &$status = null): array
 	{
 		$key  = self::getCacheKey($key);
 		$data = (new Cache())->get($key, $status);
@@ -227,22 +228,22 @@ class Model extends Orm implements ModelInterface
 	/**
 	 * @inheritdoc
 	 */
-	public static function setCached($key, $data) : bool
+	public static function setCached($key, $data): bool
 	{
 		$key = self::getCacheKey($key);
 		return (new Cache())->set($key, $data);
 	}
-	
+
 	/**
 	 * @inheritdoc
 	 */
-	public static function getCacheKey($key) : string
+	public static function getCacheKey($key): string
 	{
 		$obj = basename(self::class);
 		$sub = basename(static::class);
 		return "{$obj}-{$sub}-{$key}";
 	}
-	
+
 	/**
 	 * @inheritdoc
 	 */
@@ -253,7 +254,7 @@ class Model extends Orm implements ModelInterface
 		$int = TypeCheck::hasInterface($class, 'ModelInterface');
 		$obj = TypeCheck::isObject($class, static::class);
 
-		if ( $int || $obj ) {
+		if ($int || $obj) {
 			return $class;
 		}
 
@@ -261,14 +262,14 @@ class Model extends Orm implements ModelInterface
 			ModelException::invalidInstance()
 		);
 	}
-	
+
 	/**
 	 * Format entities.
 	 *
 	 * @param array $data
 	 * @return array
 	 */
-	protected function format(array $data) : array
+	protected function format(array $data): array
 	{
 		return $data;
 	}

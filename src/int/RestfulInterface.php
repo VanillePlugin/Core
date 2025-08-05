@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -30,7 +31,7 @@ interface RestfulInterface
 	 *
 	 * @return object
 	 */
-	function register() : self;
+	function register(): self;
 
 	/**
 	 * Add REST routes.
@@ -49,7 +50,7 @@ interface RestfulInterface
 	 * @param string $prefix
 	 * @return object
 	 */
-	function prefix(string $prefix) : self;
+	function prefix(string $prefix): self;
 
 	/**
 	 * Disable REST index.
@@ -59,7 +60,7 @@ interface RestfulInterface
 	 * @param bool $grant
 	 * @return object
 	 */
-	function noIndex(bool $grant = false) : self;
+	function noIndex(bool $grant = false): self;
 
 	/**
 	 * Disable REST endpoints.
@@ -69,7 +70,7 @@ interface RestfulInterface
 	 * @param bool $grant
 	 * @return object
 	 */
-	function noRoute(array $except = []) : self;
+	function noRoute(array $except = []): self;
 
 	/**
 	 * Disable REST JSONP.
@@ -78,7 +79,7 @@ interface RestfulInterface
 	 *
 	 * @return object
 	 */
-	function noPadding() : self;
+	function noPadding(): self;
 
 	/**
 	 * Override REST response.
@@ -87,7 +88,7 @@ interface RestfulInterface
 	 *
 	 * @return object
 	 */
-	function override() : self;
+	function override(): self;
 
 	/**
 	 * Disable REST.

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -25,7 +26,7 @@ final class HttpPost
 	 */
 	public static function get(?string $key = null)
 	{
-		if ( $key ) {
+		if ($key) {
 			return self::isSetted($key) ? $_POST[$key] : null;
 		}
 		return self::isSetted() ? $_POST : null;
@@ -51,9 +52,9 @@ final class HttpPost
 	 * @param string $key
 	 * @return bool
 	 */
-	public static function isSetted(?string $key = null) : bool
+	public static function isSetted(?string $key = null): bool
 	{
-		if ( $key ) {
+		if ($key) {
 			return isset($_POST[$key]);
 		}
 		return isset($_POST) && !empty($_POST);
@@ -68,9 +69,8 @@ final class HttpPost
 	 */
 	public static function unset(?string $key = null)
 	{
-		if ( $key ) {
+		if ($key) {
 			unset($_POST[$key]);
-
 		} else {
 			$_POST = [];
 		}

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -74,7 +75,7 @@ final class Hook
 		self::addFilter("plugin_action_links_{$file}", $callback);
 		self::addFilter("network_admin_plugin_action_links_{$file}", $callback);
 	}
-	
+
 	/**
 	 * Add hook action.
 	 *
@@ -99,7 +100,7 @@ final class Hook
 	 * @param int $priority
 	 * @return bool
 	 */
-	public static function removeAction(string $name, $callback, int $priority = 10) : bool
+	public static function removeAction(string $name, $callback, int $priority = 10): bool
 	{
 		return remove_action(Format::hook($name), $callback, $priority);
 	}
@@ -167,7 +168,7 @@ final class Hook
 	 * @param int $priority
 	 * @return bool
 	 */
-	public static function removeFilter(string $name, $callback, int $priority = 10) : bool
+	public static function removeFilter(string $name, $callback, int $priority = 10): bool
 	{
 		return remove_filter(Format::hook($name), $callback, $priority);
 	}
@@ -225,8 +226,8 @@ final class Hook
 	 */
 	public static function addCSS(string $id, string $path, array $deps = [], $version = false, string $media = 'all')
 	{
-		if ( !Stringify::contains($path, 'http') ) {
-		    $path = Plugin::getUrl($path);
+		if (!Stringify::contains($path, 'http')) {
+			$path = Plugin::getUrl($path);
 		}
 		wp_register_style($id, $path, $deps, $version, $media);
 		wp_enqueue_style($id);
@@ -245,13 +246,13 @@ final class Hook
 	 */
 	public static function addJS(string $id, string $path, array $deps = [], $version = false, bool $footer = false)
 	{
-		if ( !Stringify::contains($path, 'http') ) {
-		    $path = Plugin::getUrl($path);
+		if (!Stringify::contains($path, 'http')) {
+			$path = Plugin::getUrl($path);
 		}
 		wp_register_script($id, $path, $deps, $version, $footer);
 		wp_enqueue_script($id);
 	}
-	
+
 	/**
 	 * Check enqueued CSS.
 	 *
@@ -260,7 +261,7 @@ final class Hook
 	 * @param string $list
 	 * @return bool
 	 */
-	public static function isCSS(string $id, string $list = 'enqueued') : bool
+	public static function isCSS(string $id, string $list = 'enqueued'): bool
 	{
 		return wp_style_is($id, $list);
 	}
@@ -273,7 +274,7 @@ final class Hook
 	 * @param string $list
 	 * @return bool
 	 */
-	public static function isJS(string $id, string $list = 'enqueued') : bool
+	public static function isJS(string $id, string $list = 'enqueued'): bool
 	{
 		return wp_script_is($id, $list);
 	}
@@ -313,7 +314,7 @@ final class Hook
 	 * @param array $data
 	 * @return bool
 	 */
-	public static function assignJS(string $id, string $object, array $data = []) : bool
+	public static function assignJS(string $id, string $object, array $data = []): bool
 	{
 		return wp_localize_script($id, $object, $data);
 	}
@@ -326,17 +327,17 @@ final class Hook
 	 * @param mixed $scripts
 	 * @return bool
 	 */
-	public static function hasScript(string $search, $scripts) : bool
+	public static function hasScript(string $search, $scripts): bool
 	{
-	    if ( !TypeCheck::isArray($scripts) ) {
-	    	$scripts = [$scripts];
-	    }
-	    foreach ($scripts as $script) {
-	        if ( Stringify::contains($search, $script) ) {
-	        	return true;
-	        }
-	    }
-	    return false;
+		if (!TypeCheck::isArray($scripts)) {
+			$scripts = [$scripts];
+		}
+		foreach ($scripts as $script) {
+			if (Stringify::contains($search, $script)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -350,13 +351,13 @@ final class Hook
 	{
 		$scripts = Globals::scripts()->queue ?? [];
 		foreach ($scripts as $script) {
-			if ( self::hasScript($script, $exclude) !== false ) {
+			if (self::hasScript($script, $exclude) !== false) {
 				self::removeJS($script);
 			}
 		}
 		$styles = Globals::styles()->queue ?? [];
 		foreach ($styles as $style) {
-			if ( self::hasScript($style, $exclude) !== false ) {
+			if (self::hasScript($style, $exclude) !== false) {
 				self::removeCSS($style);
 			}
 		}

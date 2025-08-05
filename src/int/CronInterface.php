@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -18,8 +19,8 @@ interface CronInterface
 {
 	/**
 	 * Init event timestamp.
-     *
-     * @param int $timestamp
+	 *
+	 * @param int $timestamp
 	 */
 	function __construct(?int $timestamp = null);
 
@@ -62,7 +63,7 @@ interface CronInterface
 	 *
 	 * @return bool
 	 */
-	function isServer() : bool;
+	function isServer(): bool;
 
 	/**
 	 * Get next event timestamp.
@@ -71,7 +72,7 @@ interface CronInterface
 	 * @param array $args
 	 * @return int
 	 */
-	function next(string $name, array $args = []) : int;
+	function next(string $name, array $args = []): int;
 
 	/**
 	 * Schedule recurring event.
@@ -81,7 +82,7 @@ interface CronInterface
 	 * @param array $args
 	 * @return bool
 	 */
-	function schedule(string $interval, string $hook, array $args = []) : bool;
+	function schedule(string $interval, string $hook, array $args = []): bool;
 
 	/**
 	 * Schedule event once.
@@ -90,7 +91,7 @@ interface CronInterface
 	 * @param array $args
 	 * @return bool
 	 */
-	function once(string $hook, array $args = []) : bool;
+	function once(string $hook, array $args = []): bool;
 
 	/**
 	 * Unschedule scheduled event.
@@ -99,7 +100,7 @@ interface CronInterface
 	 * @param array $args
 	 * @return bool
 	 */
-	function unschedule(string $hook, array $args = []) : bool;
+	function unschedule(string $hook, array $args = []): bool;
 
 	/**
 	 * Clear schedule event.
@@ -109,5 +110,5 @@ interface CronInterface
 	 * @param array $args
 	 * @return int
 	 */
-	function clear(string $hook, array $args = []) : int;
+	function clear(string $hook, array $args = []): int;
 }

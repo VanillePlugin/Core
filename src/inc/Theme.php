@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -23,10 +24,10 @@ final class Theme
 	 * @param string $path
 	 * @return string
 	 */
-	public static function getUrl(?string $path = null) : string
+	public static function getUrl(?string $path = null): string
 	{
 		$baseUrl = get_stylesheet_directory_uri();
-		if ( $path ) {
+		if ($path) {
 			return Stringify::formatPath("{$baseUrl}/{$path}", true);
 		}
 		return $baseUrl;
@@ -39,10 +40,10 @@ final class Theme
 	 * @param string $path
 	 * @return string
 	 */
-	public static function getDir(?string $path = null) : string
+	public static function getDir(?string $path = null): string
 	{
 		$baseDir = get_stylesheet_directory();
-		if ( $path ) {
+		if ($path) {
 			return Stringify::formatPath("{$baseDir}/{$path}", true);
 		}
 		return $baseDir;

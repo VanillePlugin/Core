@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -91,7 +92,7 @@ final class FileTest extends TestCase
     {
         File::w(__DIR__ . '/temp');
         File::addBreak(__DIR__ . '/temp', ' 123');
-        $this->assertSame(File::r(__DIR__ . '/temp'),PHP_EOL);
+        $this->assertSame(File::r(__DIR__ . '/temp'), PHP_EOL);
         File::remove(__DIR__ . '/temp');
     }
 
@@ -104,7 +105,7 @@ final class FileTest extends TestCase
     public function testCopy()
     {
         File::w(__DIR__ . '/temp');
-        File::copy(__DIR__ . '/temp',__DIR__ . '/temp2');
+        File::copy(__DIR__ . '/temp', __DIR__ . '/temp2');
         $this->assertTrue(File::exists(__DIR__ . '/temp'));
         File::remove(__DIR__ . '/temp');
         File::remove(__DIR__ . '/temp2');
@@ -113,7 +114,7 @@ final class FileTest extends TestCase
     public function testMove()
     {
         File::w(__DIR__ . '/temp');
-        File::move(__DIR__ . '/temp',__DIR__ . '/temp2');
+        File::move(__DIR__ . '/temp', __DIR__ . '/temp2');
         $this->assertTrue(File::exists(__DIR__ . '/temp2'));
         File::remove(__DIR__ . '/temp2');
     }
@@ -132,7 +133,7 @@ final class FileTest extends TestCase
     {
         File::w(__DIR__ . '/temp');
         $this->assertTrue(File::isEmpty(__DIR__ . '/temp'));
-        File::addString(__DIR__ . '/temp',1);
+        File::addString(__DIR__ . '/temp', 1);
         $this->assertFalse(File::isEmpty(__DIR__ . '/temp'));
         File::remove(__DIR__ . '/temp');
     }
@@ -181,7 +182,7 @@ final class FileTest extends TestCase
     public function testScanDir()
     {
         $this->assertTrue(
-            Arrayify::inArray('FileTest.php',File::scanDir(__DIR__))
+            Arrayify::inArray('FileTest.php', File::scanDir(__DIR__))
         );
     }
 
@@ -239,7 +240,7 @@ final class FileTest extends TestCase
     public function testValidate()
     {
         $this->assertSame(
-            File::validate('image.png',Image::mimes()),
+            File::validate('image.png', Image::mimes()),
             'image.png'
         );
     }

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -22,7 +23,7 @@ interface RequestInterface
 	 * @param string $method
 	 * @return object
 	 */
-	function setMethod(string $method) : self;
+	function setMethod(string $method): self;
 
 	/**
 	 * Set request base URL.
@@ -30,7 +31,7 @@ interface RequestInterface
 	 * @param string $url
 	 * @return object
 	 */
-	function setBaseUrl(string $url) : self;
+	function setBaseUrl(string $url): self;
 
 	/**
 	 * Set additional request args.
@@ -38,7 +39,7 @@ interface RequestInterface
 	 * @param array $args
 	 * @return object
 	 */
-	function setArgs(array $args = []) : self;
+	function setArgs(array $args = []): self;
 
 	/**
 	 * Add request arg.
@@ -55,7 +56,7 @@ interface RequestInterface
 	 * @param array $headers
 	 * @return object
 	 */
-	function setHeaders(array $headers = []) : self;
+	function setHeaders(array $headers = []): self;
 
 	/**
 	 * Add request header.
@@ -72,7 +73,7 @@ interface RequestInterface
 	 * @param array $cookies
 	 * @return object
 	 */
-	function setCookies(array $cookies = []) : self;
+	function setCookies(array $cookies = []): self;
 
 	/**
 	 * Add request cookie.
@@ -89,7 +90,7 @@ interface RequestInterface
 	 * @param array $body
 	 * @return object
 	 */
-	function setBody(array $body = []) : self;
+	function setBody(array $body = []): self;
 
 	/**
 	 * Add request body.
@@ -106,21 +107,21 @@ interface RequestInterface
 	 * @param string $url
 	 * @return object
 	 */
-	function send(?string $url = null) : self;
+	function send(?string $url = null): self;
 
 	/**
 	 * Get response body.
 	 *
 	 * @return string
 	 */
-	function body() : string;
+	function body(): string;
 
 	/**
 	 * Get response status code.
 	 *
 	 * @return int
 	 */
-	function status() : int;
+	function status(): int;
 
 	/**
 	 * Check response status.
@@ -128,14 +129,14 @@ interface RequestInterface
 	 * @param string $status
 	 * @return bool
 	 */
-	function hasStatus(string $status) : bool;
+	function hasStatus(string $status): bool;
 
 	/**
 	 * Check response content.
 	 *
 	 * @return bool
 	 */
-	function hasContent() : bool;
+	function hasContent(): bool;
 
 	/**
 	 * Check response item.
@@ -144,28 +145,28 @@ interface RequestInterface
 	 * @param string $value
 	 * @return bool
 	 */
-	function has(string $item, ?string $value = null) : bool;
+	function has(string $item, ?string $value = null): bool;
 
 	/**
 	 * Get formatted response from body.
 	 *
 	 * @return array
 	 */
-	function response() : array;
+	function response(): array;
 
 	/**
 	 * Get formatted response from body (XML).
 	 *
 	 * @return array
 	 */
-	function responseXml() : array;
+	function responseXml(): array;
 
 	/**
 	 * Check response error.
 	 *
 	 * @return bool
 	 */
-	function hasError() : bool;
+	function hasError(): bool;
 
 	/**
 	 * Get response error.
@@ -179,7 +180,7 @@ interface RequestInterface
 	 *
 	 * @return object
 	 */
-	function noSSL() : self;
+	function noSSL(): self;
 
 	/**
 	 * Check remote server status.
@@ -187,7 +188,7 @@ interface RequestInterface
 	 * @param int $code
 	 * @return bool
 	 */
-	function isDown(?int $code = null) : bool;
+	function isDown(?int $code = null): bool;
 
 	/**
 	 * Set <Bearer> authentication.
@@ -205,14 +206,14 @@ interface RequestInterface
 	 * @return void
 	 */
 	function setBasicAuth(string $user, ?string $pswd = null);
-	
+
 	/**
 	 * Get request timeout.
 	 * [Filter: {plugin}-request-timeout].
 	 *
 	 * @return int
 	 */
-	function timeout() : int;
+	function timeout(): int;
 
 	/**
 	 * Get request user-agent.
@@ -220,7 +221,7 @@ interface RequestInterface
 	 *
 	 * @return string
 	 */
-	function userAgent() : string;
+	function userAgent(): string;
 
 	/**
 	 * Filter request SSL.
@@ -230,7 +231,7 @@ interface RequestInterface
 	 * @param array $args
 	 * @return array
 	 */
-	function filterSSL($args) : array;
+	function filterSSL($args): array;
 
 	/**
 	 * Instance API.

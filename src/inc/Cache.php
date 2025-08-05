@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -44,7 +45,7 @@ final class Cache
 	 * @param string $group
 	 * @return bool
 	 */
-	public static function set($key, $value, int $ttl = 0, string $group = '') : bool
+	public static function set($key, $value, int $ttl = 0, string $group = ''): bool
 	{
 		return wp_cache_set($key, $value, $group, $ttl);
 	}
@@ -59,7 +60,7 @@ final class Cache
 	 * @param string $group
 	 * @return bool
 	 */
-	public static function add($key, $value, int $ttl = 0, string $group = '') : bool
+	public static function add($key, $value, int $ttl = 0, string $group = ''): bool
 	{
 		return wp_cache_add($key, $value, $group, $ttl);
 	}
@@ -74,7 +75,7 @@ final class Cache
 	 * @param string $group
 	 * @return bool
 	 */
-	public static function update($key, $value, int $ttl = 0, string $group = '') : bool
+	public static function update($key, $value, int $ttl = 0, string $group = ''): bool
 	{
 		return wp_cache_replace($key, $value, $group, $ttl);
 	}
@@ -87,7 +88,7 @@ final class Cache
 	 * @param string $group
 	 * @return bool
 	 */
-	public static function delete($key, string $group = '') : bool
+	public static function delete($key, string $group = ''): bool
 	{
 		return wp_cache_delete($key, $group);
 	}
@@ -98,7 +99,7 @@ final class Cache
 	 * @access public
 	 * @return bool
 	 */
-	public static function purge() : bool
+	public static function purge(): bool
 	{
 		return wp_cache_flush();
 	}

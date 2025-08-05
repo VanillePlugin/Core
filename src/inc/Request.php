@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -142,7 +143,7 @@ class Request
 	 * @param mixed $response
 	 * @return mixed
 	 */
-	public static function getStatusCode($response) : int
+	public static function getStatusCode($response): int
 	{
 		return (int)wp_remote_retrieve_response_code(
 			$response
@@ -156,7 +157,7 @@ class Request
 	 * @param mixed $response
 	 * @return string
 	 */
-	public static function getBody($response) : string
+	public static function getBody($response): string
 	{
 		return wp_remote_retrieve_body(
 			$response
@@ -171,7 +172,7 @@ class Request
 	 * @param mixed $response
 	 * @return string
 	 */
-	public static function getHeader(string $header, $response) : string
+	public static function getHeader(string $header, $response): string
 	{
 		return wp_remote_retrieve_header(
 			$response,
@@ -200,7 +201,7 @@ class Request
 	 * @param mixed $response
 	 * @return string
 	 */
-	public static function getMessage($response) : string
+	public static function getMessage($response): string
 	{
 		return wp_remote_retrieve_response_message(
 			$response
@@ -215,7 +216,7 @@ class Request
 	 * @param string $url
 	 * @return string
 	 */
-	public static function queryUrl(array $args, string $url) : string
+	public static function queryUrl(array $args, string $url): string
 	{
 		return add_query_arg($args, $url);
 	}

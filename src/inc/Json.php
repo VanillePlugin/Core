@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -66,7 +67,7 @@ final class Json extends File
 	 * @param int $depth
 	 * @return mixed
 	 */
-	public static function format($value, int $flags = 64|256, int $depth = 512)
+	public static function format($value, int $flags = 64 | 256, int $depth = 512)
 	{
 		return json_encode($value, $flags, $depth);
 	}

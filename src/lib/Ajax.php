@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -31,56 +32,54 @@ class Ajax implements AjaxInterface
 	private $actions = [];
 	private $isAdmin = false;
 
-    /**
-     * @inheritdoc
-     */
+	/**
+	 * @inheritdoc
+	 */
 	public final function __construct()
 	{
-		if ( !$this->isAjax() ) {
+		if (!$this->isAjax()) {
 			return;
 		}
 
-		if ( $this->isAdminCallable() ) {
+		if ($this->isAdminCallable()) {
 			$this->isAdmin = true;
 			$this->actions = $this->getAdminAjax();
-
-		} elseif ( $this->isFrontCallable() ) {
+		} elseif ($this->isFrontCallable()) {
 			$this->actions = $this->getFrontAjax();
 		}
 	}
 
-    /**
-     * @inheritdoc
-     */
+	/**
+	 * @inheritdoc
+	 */
 	public final function register()
 	{
 		foreach ($this->actions as $action) {
 			$action = $this->applyNamespace($action);
 			$this->addAction("wp-ajax-{$action}", [$this, 'callback']);
-			if ( !$this->isAdmin ) {
+			if (!$this->isAdmin) {
 				$this->addAction("wp-ajax-nopriv-{$action}", [$this, 'callback']);
 			}
 		}
 	}
 
-    /**
-     * @inheritdoc
-     */
+	/**
+	 * @inheritdoc
+	 */
 	public final function callback()
 	{
 		foreach ($this->actions as $action) {
 
-			if ( $this->isAction($action) ) {
+			if ($this->isAction($action)) {
 
 				$this->verifyToken($action);
-				if ( $this->isAdmin ) {
+				if ($this->isAdmin) {
 					$this->verifyPermission();
 				}
 
 				$action = $this->camelcase($action);
 				$this->{$action}();
 				break;
-				
 			}
 		}
 
@@ -95,10 +94,10 @@ class Ajax implements AjaxInterface
 	 * @param string $action
 	 * @return bool
 	 */
-	protected function isAction(string $action) : bool
+	protected function isAction(string $action): bool
 	{
 		$action = $this->applyNamespace($action);
-		if ( $this->getRequest('action') == $action ) {
+		if ($this->getRequest('action') == $action) {
 			return true;
 		}
 		return false;
@@ -113,7 +112,7 @@ class Ajax implements AjaxInterface
 	 */
 	protected function inPayload(string $item)
 	{
-		if ( !($value = $this->getRequest($item)) ) {
+		if (!($value = $this->getRequest($item))) {
 			return false;
 		}
 		return $value;
@@ -125,7 +124,7 @@ class Ajax implements AjaxInterface
 	 * @access protected
 	 * @return bool
 	 */
-	protected function isAdminCallable() : bool
+	protected function isAdminCallable(): bool
 	{
 		return $this->hasObject('interface', $this, 'AdminAjax');
 	}
@@ -136,7 +135,7 @@ class Ajax implements AjaxInterface
 	 * @access protected
 	 * @return bool
 	 */
-	protected function isFrontCallable() : bool
+	protected function isFrontCallable(): bool
 	{
 		return $this->hasObject('interface', $this, 'FrontAjax');
 	}

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,7 +16,10 @@ declare(strict_types=1);
 namespace VanillePlugin\tr;
 
 use VanillePlugin\inc\{
-	Globals, Page, Plugin, Theme
+	Globals,
+	Page,
+	Plugin,
+	Theme
 };
 use VanillePlugin\lib\Orm;
 
@@ -44,7 +48,7 @@ trait TraitConfigurable
 	 * @param string $key
 	 * @return bool
 	 */
-	public function isOption(string $key) : bool
+	public function isOption(string $key): bool
 	{
 		$value = $this->getOption($key, 'missing-option');
 		return ($value !== 'missing-option');
@@ -56,7 +60,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isAdmin() : bool
+	public function isAdmin(): bool
 	{
 		return Page::isAdmin();
 	}
@@ -67,7 +71,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isLogin() : bool
+	public function isLogin(): bool
 	{
 		return Page::isLogin();
 	}
@@ -78,29 +82,29 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isDebug() : bool
+	public function isDebug(): bool
 	{
 		return Globals::debug();
 	}
-	
+
 	/**
 	 * Get site installing status.
 	 *
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isInstalling() : bool
+	public function isInstalling(): bool
 	{
 		return Globals::installing();
 	}
-	
+
 	/**
 	 * Check whether multisite is enabled.
 	 *
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isMultisite() : bool
+	public function isMultisite(): bool
 	{
 		return Globals::multisite();
 	}
@@ -111,7 +115,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isMobile() : bool
+	public function isMobile(): bool
 	{
 		return Globals::mobile();
 	}
@@ -122,7 +126,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isAjax() : bool
+	public function isAjax(): bool
 	{
 		return Globals::ajax();
 	}
@@ -133,7 +137,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isApi() : bool
+	public function isApi(): bool
 	{
 		return Globals::api();
 	}
@@ -144,7 +148,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @return string
 	 */
-	public function getSiteVersion() : string
+	public function getSiteVersion(): string
 	{
 		return Globals::version();
 	}
@@ -155,7 +159,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getSiteRoles() : array
+	public function getSiteRoles(): array
 	{
 		return Globals::roles();
 	}
@@ -166,7 +170,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getAdminUrl(?string $path = null, string $scheme = 'admin') : string
+	public function getAdminUrl(?string $path = null, string $scheme = 'admin'): string
 	{
 		return Globals::adminUrl($path, $scheme);
 	}
@@ -177,7 +181,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getRestUrl(?string $path = null) : string
+	public function getRestUrl(?string $path = null): string
 	{
 		return Globals::restUrl($path);
 	}
@@ -188,7 +192,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getAjaxUrl(string $scheme = 'admin') : string
+	public function getAjaxUrl(string $scheme = 'admin'): string
 	{
 		return Globals::ajaxUrl($scheme);
 	}
@@ -201,7 +205,7 @@ trait TraitConfigurable
 	 * @param string $scheme
 	 * @return string
 	 */
-	public function getFrontUrl(?string $path = null, ?string $scheme = null) : string
+	public function getFrontUrl(?string $path = null, ?string $scheme = null): string
 	{
 		return Globals::url($path, $scheme);
 	}
@@ -212,7 +216,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function geSiteUrl(?string $path = null, string $scheme = 'relative') : string
+	public function geSiteUrl(?string $path = null, string $scheme = 'relative'): string
 	{
 		return Globals::siteUrl($path, $scheme);
 	}
@@ -223,7 +227,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function geSiteDomain() : string
+	public function geSiteDomain(): string
 	{
 		return Globals::siteDomain();
 	}
@@ -234,7 +238,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getPluginUrl(string $path) : string
+	public function getPluginUrl(string $path): string
 	{
 		return Plugin::getUrl($path);
 	}
@@ -245,7 +249,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getPluginDir(string $path) : string
+	public function getPluginDir(string $path): string
 	{
 		return Plugin::getDir($path);
 	}
@@ -256,7 +260,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getPluginMuDir(string $path) : string
+	public function getPluginMuDir(string $path): string
 	{
 		return Plugin::getMuDir($path);
 	}
@@ -267,7 +271,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getPluginHeader(string $file) : array
+	public function getPluginHeader(string $file): array
 	{
 		return Plugin::getHeader($file);
 	}
@@ -278,7 +282,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getThemeUrl(?string $path = null) : string
+	public function getThemeUrl(?string $path = null): string
 	{
 		return Theme::getUrl($path);
 	}
@@ -289,7 +293,7 @@ trait TraitConfigurable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function getThemeDir(?string $path = null) : string
+	public function getThemeDir(?string $path = null): string
 	{
 		return Theme::getDir($path);
 	}
@@ -316,7 +320,7 @@ trait TraitConfigurable
 	 * @param mixed $value
 	 * @return bool
 	 */
-	protected function addOption(string $key, $value) : bool
+	protected function addOption(string $key, $value): bool
 	{
 		return add_option($key, $value);
 	}
@@ -329,7 +333,7 @@ trait TraitConfigurable
 	 * @param mixed $value
 	 * @return bool
 	 */
-	protected function updateOption(string $key, $value) : bool
+	protected function updateOption(string $key, $value): bool
 	{
 		return update_option($key, $value);
 	}
@@ -341,7 +345,7 @@ trait TraitConfigurable
 	 * @param string $key
 	 * @return bool
 	 */
-	protected function removeOption(string $key) : bool
+	protected function removeOption(string $key): bool
 	{
 		return delete_option($key);
 	}
@@ -353,9 +357,9 @@ trait TraitConfigurable
 	 * @param string $namespace
 	 * @return bool
 	 */
-	protected function removeOptions(string $namespace) : bool
+	protected function removeOptions(string $namespace): bool
 	{
-		if ( !$namespace ) {
+		if (!$namespace) {
 			return false;
 		}
 		$db  = new Orm();

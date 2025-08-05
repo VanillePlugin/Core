@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -25,10 +26,10 @@ final class Cookie
 	 */
 	public static function get(?string $key = null)
 	{
-        if ( $key ) {
-            return self::isSetted($key) ? $_COOKIE[$key] : null;
-        }
-        return self::isSetted() ? $_COOKIE : null;
+		if ($key) {
+			return self::isSetted($key) ? $_COOKIE[$key] : null;
+		}
+		return self::isSetted() ? $_COOKIE : null;
 	}
 
 	/**
@@ -44,7 +45,7 @@ final class Cookie
 	{
 		return setcookie($key, $value, $options);
 	}
-	
+
 	/**
 	 * Check _COOKIE value.
 	 * 
@@ -52,14 +53,14 @@ final class Cookie
 	 * @param string $key
 	 * @return bool
 	 */
-	public static function isSetted(?string $key = null) : bool
+	public static function isSetted(?string $key = null): bool
 	{
-        if ( $key ) {
-            return isset($_COOKIE[$key]);
-        }
-        return isset($_COOKIE) && !empty($_COOKIE);
+		if ($key) {
+			return isset($_COOKIE[$key]);
+		}
+		return isset($_COOKIE) && !empty($_COOKIE);
 	}
-	
+
 	/**
 	 * Unset _COOKIE value.
 	 * 
@@ -69,9 +70,8 @@ final class Cookie
 	 */
 	public static function unset(?string $key = null)
 	{
-		if ( $key ) {
+		if ($key) {
 			unset($_COOKIE[$key]);
-
 		} else {
 			$_COOKIE = [];
 		}
@@ -83,20 +83,20 @@ final class Cookie
 	 * @access public
 	 * @return bool
 	 */
-	public static function clear() : bool
+	public static function clear(): bool
 	{
-        if ( System::getIni('session.use_cookies') ) {
-            $params = session_get_cookie_params();
-            self::set(Session::getName(), '', [
-            	'expires'  => time() - 42000,
-            	'path'     => $params['path'],
-            	'domain'   => $params['domain'],
-            	'secure'   => $params['secure'],
-            	'httponly' => $params['httponly'],
-            	'samesite' => $params['samesite']
-            ]);
-            return true;
-        }
-        return false;
+		if (System::getIni('session.use_cookies')) {
+			$params = session_get_cookie_params();
+			self::set(Session::getName(), '', [
+				'expires'  => time() - 42000,
+				'path'     => $params['path'],
+				'domain'   => $params['domain'],
+				'secure'   => $params['secure'],
+				'httponly' => $params['httponly'],
+				'samesite' => $params['samesite']
+			]);
+			return true;
+		}
+		return false;
 	}
 }

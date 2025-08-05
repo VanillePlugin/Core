@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -51,19 +52,19 @@ final class Geotargeting
 	private $code = false;
 	private $ttl = false;
 
-    /**
-     * Set redirection args.
-     *
-     * @param array $args
-     */
-    public function __construct(array $args = [])
+	/**
+	 * Set redirection args.
+	 *
+	 * @param array $args
+	 */
+	public function __construct(array $args = [])
 	{
 		$this->api    = $args['api']    ?? [];
 		$this->target = $args['target'] ?? false;
 		$this->code   = $args['code']   ?? false;
 		$this->ttl    = $args['ttl']    ?? false;
 
-		if ( !$this->ttl ) {
+		if (!$this->ttl) {
 			$this->ttl = time() + (86400 * 30);
 		}
 
@@ -76,7 +77,7 @@ final class Geotargeting
 	 * @access public
 	 * @return bool
 	 */
-	public function isDetected() : bool
+	public function isDetected(): bool
 	{
 		return ($this->getCountryCode() === $this->target);
 	}
@@ -114,30 +115,30 @@ final class Geotargeting
 	 * @return string
 	 * @see https://countrycode.org/
 	 */
-	public static function formatCountryCode(string $code) : string
+	public static function formatCountryCode(string $code): string
 	{
 		return substr(strtolower($code), 0, 2);
 	}
-	
+
 	/**
 	 * Get current country code.
 	 *
 	 * @access public
 	 * @return string
 	 */
-	public function getCountryCode() : string
+	public function getCountryCode(): string
 	{
-		if ( $this->code ) {
+		if ($this->code) {
 			return $this->code;
 		}
 
 		// Get visitor IP
-		if ( !($ip = Server::getIp()) ) {
+		if (!($ip = Server::getIp())) {
 			$ip = '0.0.0.0';
 		}
 
 		// Get IP from external API
-		if ( Arrayify::inArray($ip, self::$exception) ) {
+		if (Arrayify::inArray($ip, self::$exception)) {
 			$ip = $this->getApiAddressIp();
 		}
 
@@ -152,29 +153,28 @@ final class Geotargeting
 	 * @param string $ip
 	 * @return string
 	 */
-	private function getApiCountryCode(string $ip = '0.0.0.0') : string
+	private function getApiCountryCode(string $ip = '0.0.0.0'): string
 	{
 		$code	 = '';
 		$address = $this->api['geo']['address'] ?? '';
 		$param   = $this->api['geo']['param']   ?? '';
 
-		if ( !$address || !$param ) {
+		if (!$address || !$param) {
 			return $code;
 		}
 
 		$key = "geo-{$this->getVisitorId()}";
-		if ( !($code = Cache::get($key)) ) {
+		if (!($code = Cache::get($key))) {
 
 			$address  = Stringify::replace('{ip}', $ip, $address);
 			$response = Request::get($address, ['timeout' => 1]);
 
-			if ( Request::getStatusCode($response) == 200 ) {
+			if (Request::getStatusCode($response) == 200) {
 				$response = Json::decode(Request::getBody($response), true);
 				$code = $response[$param] ?? '';
 			}
 
 			Cache::set($key, $code, $this->ttl);
-
 		}
 
 		return self::formatCountryCode(
@@ -188,28 +188,27 @@ final class Geotargeting
 	 * @access private
 	 * @return string
 	 */
-	private function getApiAddressIp() : string
+	private function getApiAddressIp(): string
 	{
 		$ip      = '0.0.0.0';
 		$address = $this->api['ip']['address'] ?? '';
 		$param   = $this->api['ip']['param'] ?? '';
 
-		if ( !$address || !$param ) {
+		if (!$address || !$param) {
 			return $ip;
 		}
 
 		$key = "ip-{$this->getVisitorId()}";
-		
-		if ( !($ip = Cache::get($key)) ) {
+
+		if (!($ip = Cache::get($key))) {
 
 			$response = Request::get($address, ['timeout' => 1]);
-			if ( Request::getStatusCode($response) == 200 ) {
+			if (Request::getStatusCode($response) == 200) {
 				$response = Json::decode(Request::getBody($response), true);
 				$ip = $response[$param] ?? '';
 			}
 
 			Cache::set($key, $ip, $this->ttl);
-
 		}
 
 		return (string)$ip;
@@ -221,18 +220,18 @@ final class Geotargeting
 	 * @access private
 	 * @return string
 	 */
-    private function getVisitorId() : string
+	private function getVisitorId(): string
 	{
-        if ( Cookie::isSetted(self::$visitorKey) ) {
-            return Cookie::get(self::$visitorKey);
-        }
+		if (Cookie::isSetted(self::$visitorKey)) {
+			return Cookie::get(self::$visitorKey);
+		}
 
-        $visitorId = uniqid();
-        Cookie::set(self::$visitorKey, $visitorId, [
+		$visitorId = uniqid();
+		Cookie::set(self::$visitorKey, $visitorId, [
 			'expires' => $this->ttl,
 			'path'    => '/'
 		]);
 
-        return $visitorId;
-    }
+		return $visitorId;
+	}
 }

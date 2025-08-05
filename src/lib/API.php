@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -15,7 +16,8 @@ declare(strict_types=1);
 namespace VanillePlugin\lib;
 
 use VanillePlugin\inc\{
-	Request, TypeCheck
+	Request,
+	TypeCheck
 };
 use VanillePlugin\int\RequestInterface;
 use VanillePlugin\exc\RequestException;
@@ -26,8 +28,8 @@ use VanillePlugin\exc\RequestException;
  */
 class API extends Request implements RequestInterface
 {
-	Use \VanillePlugin\VanillePluginOption,
-	    \VanillePlugin\tr\TraitThrowable;
+	use \VanillePlugin\VanillePluginOption,
+		\VanillePlugin\tr\TraitThrowable;
 
 	/**
 	 * @access public
@@ -84,7 +86,7 @@ class API extends Request implements RequestInterface
 		], $this->auth);
 
 		// Debug
-		if ( ($this->debug = $this->hasDebug()) ) {
+		if (($this->debug = $this->hasDebug())) {
 			$this->logger = new Logger();
 		}
 	}
@@ -92,14 +94,14 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function send(?string $url = null) : self
+	public function send(?string $url = null): self
 	{
 		$url = $this->formatPath("{$this->url}{$url}");
-	
-		if ( ($token = $this->getAuth($type)) ) {
-			($type == 'basic') 
-			? $this->setBasicAuth($token)
-			: $this->setAuth($token);
+
+		if (($token = $this->getAuth($type))) {
+			($type == 'basic')
+				? $this->setBasicAuth($token)
+				: $this->setAuth($token);
 		}
 
 		$this->args = $this->mergeArray([
@@ -116,12 +118,12 @@ class API extends Request implements RequestInterface
 		$key = $this->toKey($this);
 		$this->response = $this->getPluginCache($key, $status);
 
-		if ( !$status ) {
+		if (!$status) {
 			$this->response = self::do($url, $this->args);
 			$this->setPluginCache($key, $this->response);
 		}
-		
-		if ( $this->hasError() && $this->debug ) {
+
+		if ($this->hasError() && $this->debug) {
 			$this->logger->debug($this, true);
 		}
 
@@ -131,7 +133,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function noSSL() : self
+	public function noSSL(): self
 	{
 		$this->args['sslverify'] = false;
 		return $this;
@@ -140,7 +142,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setMethod(string $method) : self
+	public function setMethod(string $method): self
 	{
 		$this->method = $method;
 		return $this;
@@ -149,7 +151,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setBaseUrl(string $url) : self
+	public function setBaseUrl(string $url): self
 	{
 		$this->url = $url;
 		return $this;
@@ -158,7 +160,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setArgs(array $args = []) : self
+	public function setArgs(array $args = []): self
 	{
 		$this->args = $args;
 		return $this;
@@ -175,7 +177,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setHeaders(array $headers = []) : self
+	public function setHeaders(array $headers = []): self
 	{
 		$this->headers = $headers;
 		return $this;
@@ -192,7 +194,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setCookies(array $cookies = []) : self
+	public function setCookies(array $cookies = []): self
 	{
 		$this->cookies = $cookies;
 		return $this;
@@ -209,7 +211,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function setBody(array $body = []) : self
+	public function setBody(array $body = []): self
 	{
 		$this->body = $body;
 		return $this;
@@ -226,9 +228,9 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function filterSSL($args) : array
+	public function filterSSL($args): array
 	{
-		if ( isset($args['reject-unsafe-urls']) ) {
+		if (isset($args['reject-unsafe-urls'])) {
 			$ssl = $this->applyPluginFilter('request-ssl', $this->isSsl());
 			$args['reject-unsafe-urls'] = $ssl;
 		}
@@ -261,10 +263,10 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function response() : array
+	public function response(): array
 	{
 		$data = [];
-		if ( !$this->hasError() ) {
+		if (!$this->hasError()) {
 			$body = $this->body();
 			$data = (array)$this->decodeJson($body, true);
 		}
@@ -274,10 +276,10 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function responseXml() : array
+	public function responseXml(): array
 	{
 		$data = [];
-		if ( !$this->hasError() ) {
+		if (!$this->hasError()) {
 			$body = $this->body();
 			$data = (array)$this->parseXml($body);
 		}
@@ -287,7 +289,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function body() : string
+	public function body(): string
 	{
 		return self::getBody($this->response);
 	}
@@ -295,7 +297,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function status() : int
+	public function status(): int
 	{
 		return self::getStatusCode($this->response);
 	}
@@ -303,7 +305,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function hasStatus(string $status) : bool
+	public function hasStatus(string $status): bool
 	{
 		return $this->has('status', $status);
 	}
@@ -311,7 +313,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function hasContent() : bool
+	public function hasContent(): bool
 	{
 		return $this->has('content');
 	}
@@ -319,11 +321,11 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function has(string $item, ?string $value = null) : bool
+	public function has(string $item, ?string $value = null): bool
 	{
 		$response = $this->response();
-		if ( isset($response[$item]) ) {
-			if ( $value ) {
+		if (isset($response[$item])) {
+			if ($value) {
 				return ($response[$item] == $value);
 			}
 			return !empty($response[$item]);
@@ -334,7 +336,7 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function timeout() : int
+	public function timeout(): int
 	{
 		$timeout = $this->getTimeout();
 		return $this->applyPluginFilter('request-timeout', $timeout);
@@ -343,13 +345,13 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function userAgent() : string
+	public function userAgent(): string
 	{
 		$plugin = $this->getPluginHeader(
 			$this->getMainFile()
 		);
 		$version = $plugin['Version'] ?? false;
-		if ( !$version ) {
+		if (!$version) {
 			$version = $this->getPluginVersion() ?: 'na';
 		}
 
@@ -369,10 +371,10 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function isDown(?int $code = null) : bool
+	public function isDown(?int $code = null): bool
 	{
 		$code = ($code) ? $code : static::DOWN;
-		if ( !$this->status() || ($this->status() >= $code) ) {
+		if (!$this->status() || ($this->status() >= $code)) {
 			return true;
 		}
 		return false;
@@ -381,9 +383,9 @@ class API extends Request implements RequestInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function hasError() : bool
+	public function hasError(): bool
 	{
-		if ( !$this->inArray($this->status(), (array)static::UP) ) {
+		if (!$this->inArray($this->status(), (array)static::UP)) {
 			return true;
 		}
 		return $this->isError($this->response);
@@ -394,7 +396,7 @@ class API extends Request implements RequestInterface
 	 */
 	public function error()
 	{
-		if ( !$this->inArray($this->status(), (array)static::UP) ) {
+		if (!$this->inArray($this->status(), (array)static::UP)) {
 			return self::getMessage($this->response);
 		}
 		return $this->getError($this->response);
@@ -410,7 +412,7 @@ class API extends Request implements RequestInterface
 		$int = TypeCheck::hasInterface($class, 'RequestInterface');
 		$obj = TypeCheck::isObject($class, static::class);
 
-		if ( $int || $obj ) {
+		if ($int || $obj) {
 			return $class;
 		}
 
@@ -428,12 +430,12 @@ class API extends Request implements RequestInterface
 	 */
 	protected function getAuth(?string &$type = null)
 	{
-		if ( $this->auth['token'] ) {
+		if ($this->auth['token']) {
 			$type = 'bearer';
 			return $this->auth['token'];
 		}
 
-		if ( $this->auth['user'] && $this->auth['pswd'] ) {
+		if ($this->auth['user'] && $this->auth['pswd']) {
 			$type = 'basic';
 			$auth = "{$this->auth['user']}:{$this->auth['pswd']}";
 			return $this->base64($auth);

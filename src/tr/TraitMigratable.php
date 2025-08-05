@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -27,7 +28,7 @@ trait TraitMigratable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isMigrated() : bool
+	public function isMigrated(): bool
 	{
 		return (new Migrate())->isMigrated();
 	}
@@ -38,7 +39,7 @@ trait TraitMigratable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function installTables() : bool
+	protected function installTables(): bool
 	{
 		return (new Migrate())->install();
 	}
@@ -49,7 +50,7 @@ trait TraitMigratable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function rebuildTables() : bool
+	protected function rebuildTables(): bool
 	{
 		return (new Migrate())->rebuild();
 	}
@@ -60,7 +61,7 @@ trait TraitMigratable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected static function dropTables() : bool
+	protected static function dropTables(): bool
 	{
 		return (new Migrate())->drop();
 	}
@@ -71,7 +72,7 @@ trait TraitMigratable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function upgradeTables() : bool
+	protected function upgradeTables(): bool
 	{
 		return (new Migrate())->upgrade();
 	}
@@ -82,7 +83,7 @@ trait TraitMigratable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function migrateOptions(array $options) : bool
+	protected function migrateOptions(array $options): bool
 	{
 		return (new Migrate())->option($options);
 	}
@@ -104,7 +105,7 @@ trait TraitMigratable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function importTable(string $table, array $data) : bool
+	protected function importTable(string $table, array $data): bool
 	{
 		return (new Migrate())->import($table, $data);
 	}
@@ -115,7 +116,7 @@ trait TraitMigratable
 	 * @access protected
 	 * @inheritdoc
 	 */
-	protected function clearTable(string $table) : bool
+	protected function clearTable(string $table): bool
 	{
 		return (bool)(new Migrate())->clear($table);
 	}

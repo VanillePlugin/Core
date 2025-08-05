@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -25,7 +26,7 @@ final class Upload
 	 */
 	public static function get(?string $key = null)
 	{
-		if ( $key ) {
+		if ($key) {
 			return self::isSetted($key) ? $_FILES[$key] : null;
 		}
 		return self::isSetted() ? $_FILES : null;
@@ -51,30 +52,29 @@ final class Upload
 	 * @param string $key
 	 * @return bool
 	 */
-	public static function isSetted(?string $key = null) : bool
+	public static function isSetted(?string $key = null): bool
 	{
-		if ( $key ) {
+		if ($key) {
 			return isset($_FILES[$key]);
 		}
 		return isset($_FILES) && !empty($_FILES);
 	}
 
-    /**
-     * Unset _FILES value.
-     *
-     * @access public
-     * @param string $key
-     * @return void
-     */
-    public static function unset(?string $key = null)
-    {
-        if ( $key ) {
-            unset($_FILES[$key]);
-
-        } else {
-            $_FILES = [];
-        }
-    }
+	/**
+	 * Unset _FILES value.
+	 *
+	 * @access public
+	 * @param string $key
+	 * @return void
+	 */
+	public static function unset(?string $key = null)
+	{
+		if ($key) {
+			unset($_FILES[$key]);
+		} else {
+			$_FILES = [];
+		}
+	}
 
 	/**
 	 * Move uploaded files.
@@ -84,7 +84,7 @@ final class Upload
 	 * @param string $to
 	 * @return bool
 	 */
-	public static function move(string $from, string $to) : bool
+	public static function move(string $from, string $to): bool
 	{
 		$to = Stringify::formatPath($to);
 		return move_uploaded_file($from, $to);
@@ -98,29 +98,29 @@ final class Upload
 	 * @param array $types, Mime types
 	 * @return array
 	 */
-	public static function sanitize(array $files, ?array $types = []) : array
+	public static function sanitize(array $files, ?array $types = []): array
 	{
 		$data  = [];
 		$types = self::getMimes($types);
 
 		foreach ($files as $file) {
 
-			if ( $file['error'] ) {
+			if ($file['error']) {
 				continue;
 			}
 
 			$name = $file['name'];
-			if ( !($ext = File::getExtension($name)) ) {
+			if (!($ext = File::getExtension($name))) {
 				continue;
 			}
 
 			$temp = $file['tmp_name'];
 			$type = File::getMimeType($temp, $ext, $types);
-			if ( $type == 'undefined' ) {
+			if ($type == 'undefined') {
 				continue;
 			}
 
-			if ( !Validator::isValidMime($name, $types) ) {
+			if (!Validator::isValidMime($name, $types)) {
 				continue;
 			}
 
@@ -135,7 +135,6 @@ final class Upload
 				'path' => $path,
 				'temp' => $temp
 			];
-
 		}
 
 		return $data;
@@ -150,12 +149,12 @@ final class Upload
 	 * @param string $time
 	 * @return array
 	 */
-	public static function handle(array $file, array $args = [], ?string $time = null) : array
+	public static function handle(array $file, array $args = [], ?string $time = null): array
 	{
 		$args = (!$args) ? ['test-form' => false] : $args;
 
-		if ( !TypeCheck::isFunction('wp-handle-upload') ) {
-		    require_once Globals::rootDir('wp-admin/includes/file.php');
+		if (!TypeCheck::isFunction('wp-handle-upload')) {
+			require_once Globals::rootDir('wp-admin/includes/file.php');
 		}
 
 		return wp_handle_upload($file, Format::undash($args), $time);
@@ -168,11 +167,11 @@ final class Upload
 	 * @param string $sub
 	 * @return string
 	 */
-	public static function getDir(?string $sub = null) : string
+	public static function getDir(?string $sub = null): string
 	{
 		$dir  = Globals::upload();
 		$path = $dir['basedir'] ?? '';
-		if ( $sub ) {
+		if ($sub) {
 			$path .= "/{$sub}";
 		}
 		return Stringify::formatPath($path);
@@ -185,11 +184,11 @@ final class Upload
 	 * @param string $sub
 	 * @return string
 	 */
-	public static function getUrl(?string $sub = null) : string
+	public static function getUrl(?string $sub = null): string
 	{
 		$dir = Globals::upload();
 		$url = $dir['baseurl'] ?? '';
-		if ( $sub ) {
+		if ($sub) {
 			$url .= "/{$sub}";
 		}
 		return Stringify::formatPath($url);
@@ -202,7 +201,7 @@ final class Upload
 	 * @param array $types
 	 * @return array
 	 */
-	public static function getMimes(?array $types = []) : array
+	public static function getMimes(?array $types = []): array
 	{
 		$mimes = [
 			'txt'  => 'text/plain',

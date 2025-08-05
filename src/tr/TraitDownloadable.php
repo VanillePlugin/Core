@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -22,19 +23,19 @@ use VanillePlugin\lib\Asset;
 trait TraitDownloadable
 {
 	/**
-     * Check whether plugin has asset.
-     *
+	 * Check whether plugin has asset.
+	 *
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function hasAsset() : bool
+	public function hasAsset(): bool
 	{
 		return (new Asset())->hasAsset();
 	}
 
 	/**
-     * Download plugin remote assets.
-     *
+	 * Download plugin remote assets.
+	 *
 	 * @access protected
 	 * @inheritdoc
 	 */

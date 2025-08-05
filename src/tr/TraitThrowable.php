@@ -1,9 +1,10 @@
 <?php
+
 /**
  * @author    : Jakiboy
  * @package   : VanillePlugin
  * @version   : 1.1.x
- * @copyright : (c) 2018 - 2024 Jihad Sinnaour <mail@jihadsinnaour.com>
+ * @copyright : (c) 2018 - 2025 Jihad Sinnaour <mail@jihadsinnaour.com>
  * @link      : https://jakiboy.github.io/VanillePlugin/
  * @license   : MIT
  *
@@ -38,7 +39,7 @@ trait TraitThrowable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function isError($object) : bool
+	public function isError($object): bool
 	{
 		return Exception::isError($object);
 	}
@@ -60,7 +61,7 @@ trait TraitThrowable
 	 * @access public
 	 * @inheritdoc
 	 */
-	public function triggerError(string $error, int $type = 1024) : bool
+	public function triggerError(string $error, int $type = 1024): bool
 	{
 		return Exception::trigger($error, $type);
 	}
@@ -73,7 +74,7 @@ trait TraitThrowable
 	 */
 	public function throwError(string $error)
 	{
-        Exception::throw($error);
+		Exception::throw($error);
 	}
 
 	/**
