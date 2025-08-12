@@ -1,22 +1,15 @@
 # VanillePlugin
 
-[![WordPress Plugin Framework](./.static/logo.png)](#)
+[![WordPress Plugin Framework](assets/logo.png)](#)
 
 VanillePlugin is a **WordPress plugin framework** (a wrapper library for core plugin functions)  
 that simplifies the [WordPress Plugin API](https://developer.wordpress.org/plugins/) and makes plugin development easier without hardcoding.
 
 ## ⚡ Installing:
 
-```
+```bash
 composer require vanilleplugin/core
 ```
-
----
-
-### Authors:
-
-- [Jakiboy](https://github.com/Jakiboy) (_Initial work_)
-- Any PR is welcome!
 
 ### ⭐ Support:
 
